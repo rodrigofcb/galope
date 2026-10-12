@@ -209,6 +209,39 @@ h2{font-family:var(--f-display);font-weight:400;font-size:30px;margin:0;filter:d
 .badge{font-family:var(--f-display);font-size:34px;margin:0;color:var(--gold);filter:drop-shadow(2px 0 0 var(--outline)) drop-shadow(-2px 0 0 var(--outline)) drop-shadow(0 3px 0 var(--outline))}
 .badge.lose{color:var(--ice)}
 
+/* Escolha de personagem: a roda em 3D ao fundo e o painel embaixo */
+#select{justify-content:flex-end;padding-inline:16px;gap:0;background:linear-gradient(180deg,rgba(11,7,32,0) 46%,rgba(11,7,32,.94) 68%)}
+#ltags{position:absolute;inset:0;pointer-events:none}
+.ntag{position:absolute;translate:-50% -100%;display:flex;flex-direction:column;align-items:center;gap:1px;white-space:nowrap;transition:opacity .3s}
+.ntag b{font-family:var(--f-display);font-weight:400;font-size:15px;filter:drop-shadow(0 2px 0 var(--outline))}
+.ntag span{font-family:var(--f-pixel);font-size:9px;letter-spacing:.06em;color:var(--muted)}
+.selp{position:relative;width:min(100%,360px);display:flex;flex-direction:column;gap:10px;text-align:left}
+.selp header{display:flex;flex-direction:column;gap:2px}
+.selp h2{font-size:26px;line-height:1.05}
+.selp .menu.row{width:100%}
+.selp .hint{max-width:none;font-size:12px;line-height:1.45}
+.pick{display:flex;flex-direction:column;gap:6px}
+.pick > span{font-family:var(--f-pixel);font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.pick.focus > span{color:var(--gold)}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.chip{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:12px;border:2px solid transparent;background:rgba(255,255,255,.07);color:var(--ink);font:800 14px var(--f-body);cursor:pointer}
+.chip i{width:26px;height:8px;border-radius:4px;display:block}
+.chip[aria-pressed=true]{border-color:var(--gold);background:rgba(255,214,96,.14)}
+.chip:disabled{opacity:.3;cursor:default}
+.chip:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* Transformação: só 2× e Pular, embaixo da imagem de cada um (giram junto com ela na dupla) */
+.tfx{position:absolute;inset:0;container-type:size;pointer-events:none}
+.tbox{position:absolute;left:50%;top:50%;width:100cqw;height:100cqh;translate:-50% -50%}
+.tbox.q1{rotate:90deg;width:100cqh;height:100cqw}
+.tbox.q3{rotate:-90deg;width:100cqh;height:100cqw}
+.ctrl{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:flex-end;padding:0 14px max(14px,env(safe-area-inset-bottom))}
+.two .ctrl{padding:0 12px 12px}
+.cbtn{pointer-events:auto;font-family:var(--f-pixel);font-size:12px;letter-spacing:.08em;color:var(--ink);background:rgba(20,10,50,.62);border:1px solid rgba(255,255,255,.32);border-radius:999px;padding:10px 16px;min-width:64px;cursor:pointer;text-transform:uppercase}
+.cbtn[aria-pressed=true]{background:var(--gold);color:var(--outline);border-color:var(--gold)}
+.cbtn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.wait{position:absolute;left:50%;top:22%;translate:-50% 0;margin:0;font-family:var(--f-display);font-size:20px;color:#fff;white-space:nowrap;filter:drop-shadow(0 2px 0 var(--outline)) drop-shadow(0 0 8px rgba(0,0,0,.5))}
+
 /* Opções */
 .opts{display:flex;flex-direction:column;gap:8px;width:min(100%,330px)}
 .opt{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;border-radius:14px;background:rgba(255,255,255,.06);color:var(--ink);font:800 15px var(--f-body);border:0;text-align:left;cursor:pointer;min-height:52px}
@@ -288,6 +321,17 @@ div.opt{cursor:default}
       <button class="btn ghost" id="bDemo" data-i18n="demo"></button>
       <div class="menu row"><button class="btn ghost sm" id="bOpt" data-i18n="options"></button><button class="btn ghost sm" id="bAlbum" data-i18n="album"></button></div>
       <p class="hint" data-i18n-html="hint"></p>
+    </div>
+  </section>
+
+  <section id="select" class="screen" hidden>
+    <div id="ltags"></div>
+    <div class="selp">
+      <header><p class="eyebrow" id="selMode"></p><h2 data-i18n="selTitle"></h2></header>
+      <div class="pick" id="pick0"><span><span data-i18n="pl"></span> 1</span><div class="chips"></div></div>
+      <div class="pick" id="pick1" hidden><span><span data-i18n="pl"></span> 2</span><div class="chips"></div></div>
+      <div class="menu row"><button class="btn ghost" id="sBack" data-i18n="back"></button><button class="btn" id="goT" data-i18n="transform"></button></div>
+      <p class="hint" id="selHint"></p>
     </div>
   </section>
 
@@ -394,6 +438,10 @@ div.opt{cursor:default}
       <div class="pad pl"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 54V30a18 18 0 0 1 36 0v24h-10V30a8 8 0 0 0-16 0v24z" fill="#fff" fill-opacity=".9"/><circle cx="19" cy="44" r="2" fill="#d42f7c"/><circle cx="45" cy="44" r="2" fill="#d42f7c"/><circle cx="20" cy="33" r="2" fill="#d42f7c"/><circle cx="44" cy="33" r="2" fill="#d42f7c"/></svg></div>
       <div class="pad pr"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 54V30a18 18 0 0 1 36 0v24h-10V30a8 8 0 0 0-16 0v24z" fill="#fff" fill-opacity=".9"/><circle cx="19" cy="44" r="2" fill="#2f55d4"/><circle cx="45" cy="44" r="2" fill="#2f55d4"/><circle cx="20" cy="33" r="2" fill="#2f55d4"/><circle cx="44" cy="33" r="2" fill="#2f55d4"/></svg></div>
     </div>
+    <div class="tfx" hidden><div class="tbox">
+      <p class="wait" data-i18n="waiting" hidden></p>
+      <div class="ctrl"><button class="cbtn b2x" aria-pressed="false" data-i18n-aria="fastL">2×</button><button class="cbtn bskip" data-i18n="skip"></button></div>
+    </div></div>
   </div>
 </template>
 
@@ -449,7 +497,10 @@ const STR = {
     orientFace: 'Frente a frente', orientSide: 'Lado a lado', rotL: 'Girar a imagem para a esquerda', rotR: 'Girar a imagem para a direita',
     ready: 'Pronto!', waiting: 'Esperando o outro…',
     win: 'Vitória!', lose: 'Quase!', tie: 'Empate!', sync: 'Sincronia!',
-    pauseL: 'Pausar', camL: 'Trocar câmera', viewL: 'Pista de gelo com unicórnios patinando'
+    pauseL: 'Pausar', camL: 'Trocar câmera', viewL: 'Pista de gelo com unicórnios patinando',
+    selTitle: 'Quem vai patinar?', transform: 'Transformar!', skip: 'Pular', fastL: 'Velocidade 2x',
+    selHint1: 'Toque no personagem na roda ou no nome. Na transformação, 2× acelera e Pular vai direto para a pista.',
+    selHint2: 'Cada um escolhe o seu: primeiro o jogador 1, depois o 2. Na transformação, cada lado tem o seu 2× e o seu Pular.'
   },
   es: {
     logo1: 'Galope', logo2: 'en el Hielo', sub: 'Ritmo · patines · brillantina',
@@ -474,7 +525,10 @@ const STR = {
     orientFace: 'Frente a frente', orientSide: 'Lado a lado', rotL: 'Girar la imagen a la izquierda', rotR: 'Girar la imagen a la derecha',
     ready: '¡Listo!', waiting: 'Esperando al otro…',
     win: '¡Victoria!', lose: '¡Casi!', tie: '¡Empate!', sync: '¡Sincronía!',
-    pauseL: 'Pausar', camL: 'Cambiar cámara', viewL: 'Pista de hielo con unicornios patinando'
+    pauseL: 'Pausar', camL: 'Cambiar cámara', viewL: 'Pista de hielo con unicornios patinando',
+    selTitle: '¿Quién va a patinar?', transform: '¡Transformar!', skip: 'Saltar', fastL: 'Velocidad 2x',
+    selHint1: 'Tocá el personaje en la ronda o el nombre. En la transformación, 2× acelera y Saltar va directo a la pista.',
+    selHint2: 'Cada uno elige el suyo: primero el jugador 1, después el 2. En la transformación, cada lado tiene su 2× y su Saltar.'
   }
 };
 // nomes whimsical: [bloco][0 = 5ª manobra, 1 = 6ª manobra, 2 = pose final]
@@ -726,13 +780,17 @@ const FOG = new THREE.Color(0x2b1f63);
 const U = {
   uRes: { value: new THREE.Vector2(RW / 2, RHT / 2) }, uLightDir: { value: new THREE.Vector3(0, 1, 0) },
   uLightCol: { value: new THREE.Color(1.0, .9, .96) }, uAmb: { value: new THREE.Color(.46, .42, .7) },
-  uFogCol: { value: FOG }, uFogNear: { value: 16 }, uFogFar: { value: 125 }, uScale: { value: 500 }
+  uFogCol: { value: FOG }, uFogNear: { value: 16 }, uFogFar: { value: 125 }, uScale: { value: 500 }, uTime: { value: 0 }
 };
+// luz ambiente: pista do jogo, transformação (noite → fundo multicor) e roda de escolha
+const AMB_GAME = new THREE.Color(.46, .42, .7), AMB_NIGHT = new THREE.Color(.5, .46, .72), AMB_BRIGHT = new THREE.Color(.86, .8, .92), AMB_LINE = new THREE.Color(.64, .6, .78);
 const LIGHT_WORLD = new THREE.Vector3(.45, 1, .8).normalize();
+// silhueta: cobre o que está acima de uSilY (a linha desce das mãos aos pés), com degradê e borda brilhante
+const NO_SIL = { uSil: { value: 0 }, uSilY: { value: 99 }, uBaseY: { value: 0 }, uHgt: { value: 1 } };
 const PSX_VS = `
 uniform vec2 uRes; uniform vec2 uRep; uniform vec3 uLightDir; uniform vec3 uLightCol; uniform vec3 uAmb;
 uniform float uEmissive; uniform float uFogNear; uniform float uFogFar; uniform float uFog;
-varying vec3 vUvW; varying vec3 vLit; varying float vFogF; varying vec3 vCol;
+varying vec3 vUvW; varying vec3 vLit; varying float vFogF; varying vec3 vCol; varying float vWY; varying float vRim;
 void main(){
   vec4 mv = modelViewMatrix * vec4(position, 1.0);
   vec4 p = projectionMatrix * mv;
@@ -744,6 +802,8 @@ void main(){
   float w = max(p.w, 0.0001);
   vUvW = vec3(uv * uRep * w, w);
   vFogF = uFog * clamp((-mv.z - uFogNear) / (uFogFar - uFogNear), 0.0, 1.0);
+  vWY = (modelMatrix * vec4(position, 1.0)).y;
+  vRim = 1.0 - abs(dot(n, normalize(-mv.xyz)));
   #ifdef USE_COLOR
   vCol = color;
   #else
@@ -752,26 +812,38 @@ void main(){
 }`;
 const PSX_FS = `
 uniform sampler2D map; uniform float uHasMap; uniform vec3 uColor; uniform vec3 uFogCol; uniform float uOpacity;
-varying vec3 vUvW; varying vec3 vLit; varying float vFogF; varying vec3 vCol;
+uniform float uSil; uniform float uSilY; uniform float uBaseY; uniform float uHgt; uniform float uTime;
+varying vec3 vUvW; varying vec3 vLit; varying float vFogF; varying vec3 vCol; varying float vWY; varying float vRim;
 void main(){
   vec4 t = vec4(1.0);
   if (uHasMap > 0.5) t = texture2D(map, vUvW.xy / vUvW.z);
   if (t.a < 0.5) discard;
   vec3 c = t.rgb * uColor * vCol * vLit;
+  if (uSil > 0.001) {
+    float cov = smoothstep(uSilY - 0.035, uSilY + 0.035, vWY) * uSil;
+    float g = clamp((vWY - uBaseY) / uHgt, 0.0, 1.0);
+    vec3 sc = mix(vec3(1.0, 0.42, 0.82), vec3(1.0, 0.96, 1.0), g);
+    sc *= 0.9 + 0.1 * sin(vWY * 38.0 - uTime * 7.0);
+    sc += vec3(0.55, 0.3, 1.0) * pow(vRim, 1.6);
+    float edge = (1.0 - smoothstep(0.0, 0.05, abs(vWY - uSilY))) * uSil;
+    c = mix(c, sc, cov) + edge * vec3(1.0, 0.95, 1.0);
+  }
   c = mix(c, uFogCol, vFogF);
   gl_FragColor = vec4(c, uOpacity);
 }`;
 function psxMat(o = {}) {
-  const rep = o.rep || [1, 1];
+  const rep = o.rep || [1, 1], S = o.sil || NO_SIL;
   return new THREE.ShaderMaterial({
     uniforms: {
-      uRes: U.uRes, uLightDir: U.uLightDir, uLightCol: U.uLightCol, uAmb: U.uAmb, uFogCol: U.uFogCol, uFogNear: U.uFogNear, uFogFar: U.uFogFar,
+      uRes: U.uRes, uLightDir: U.uLightDir, uLightCol: U.uLightCol, uAmb: U.uAmb, uFogCol: U.uFogCol, uFogNear: U.uFogNear, uFogFar: U.uFogFar, uTime: U.uTime,
+      uSil: S.uSil, uSilY: S.uSilY, uBaseY: S.uBaseY, uHgt: S.uHgt,
       map: { value: o.map || null }, uHasMap: { value: o.map ? 1 : 0 }, uRep: { value: new THREE.Vector2(rep[0], rep[1]) },
       uColor: { value: new THREE.Color(o.color !== undefined ? o.color : 0xffffff) }, uEmissive: { value: o.emissive || 0 },
       uOpacity: { value: o.opacity !== undefined ? o.opacity : 1 }, uFog: { value: o.fog === false ? 0 : 1 }
     },
     vertexShader: PSX_VS, fragmentShader: PSX_FS, vertexColors: !!o.vc,
     transparent: !!(o.transparent || o.additive), depthWrite: o.depthWrite !== undefined ? o.depthWrite : !o.additive,
+    depthTest: o.depthTest !== undefined ? o.depthTest : true,
     blending: o.additive ? THREE.AdditiveBlending : THREE.NormalBlending, side: o.side !== undefined ? o.side : THREE.FrontSide
   });
 }
@@ -966,82 +1038,6 @@ function buildWorld() {
   const AV = makePoints(70);
   for (let i = 0; i < 70; i++) { const row = i % 2, x = -46 + (i >> 1) * 2.7; AV.pos[i * 3] = x; AV.pos[i * 3 + 1] = 2.6; AV.pos[i * 3 + 2] = row ? -68 : -90; const cc = row ? C_GOLD : new THREE.Color(1, .6, .35); AV.col[i * 3] = cc.r; AV.col[i * 3 + 1] = cc.g; AV.col[i * 3 + 2] = cc.b; AV.size[i] = .9; AV.alpha[i] = .9; }
   scene.add(AV.pts);
-}
-
-/* --------- os unicórnios: jogador 1 rosa-violeta, jogador 2 turquesa --------- */
-const VARIANTS = [
-  { coat: coatTexOf([[255, 92, 172], [196, 72, 214], [98, 96, 236], [158, 80, 228], [255, 92, 172]], 3), snout: 0xffb3dc, plush: 0xff86c8, boot: 0xe4d4ff, hoof: 0x6a4aa8,
-    mane: [0xff6ab8, 0xc07bff, 0x7d93ff, 0x7fe6ff, 0xfff07a, 0xff9ad5], mane2: 0xff9ad5, tail: [0xff6ab8, 0x9a7bff, 0x7fe6ff] },
-  { coat: coatTexOf([[64, 214, 222], [74, 160, 250], [116, 118, 246], [58, 196, 206], [64, 214, 222]], 8), snout: 0xc4f6ff, plush: 0x5fd8cf, boot: 0xb8ffe0, hoof: 0x2c5aa6,
-    mane: [0x7dffc8, 0x7fe6ff, 0x7d93ff, 0xc07bff, 0xfff07a, 0x9dffd8], mane2: 0x9dffd8, tail: [0x7dffc8, 0x7d93ff, 0xc07bff] }
-];
-function buildUnicorn(V) {
-  const R = {};
-  const coat = psxMat({ map: V.coat, rep: [2, 1], side: DS }), coatH = psxMat({ map: V.coat, rep: [1.5, 1], side: DS });
-  const snoutM = psxMat({ map: fluffTex, color: V.snout, side: DS }), plush = psxMat({ map: fluffTex, color: V.plush, side: DS });
-  const dark = psxMat({ color: 0x1a0f2e, side: DS }), white = psxMat({ color: 0xffffff, emissive: .7, side: DS });
-  const hoofM = psxMat({ color: V.hoof, side: DS }), cheekM = psxMat({ color: 0xff4f9a, emissive: .45, side: DS });
-  const bootM = psxMat({ map: fluffTex, color: V.boot, side: DS }), bladeM = psxMat({ color: 0xe3ecf8, emissive: .35, side: DS });
-  R.hornMat = psxMat({ map: hornTex, emissive: .25, side: DS });
-  const add = (parent, geo, mat, x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0, sx = 1, sy = 1, sz = 1) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.rotation.set(rx, ry, rz); m.scale.set(sx, sy, sz); parent.add(m); return m; };
-  const G = () => new THREE.Group();
-  R.root = G(); R.root.rotation.order = 'YXZ'; R.spinner = G(); R.spinner.rotation.order = 'YXZ'; R.root.add(R.spinner);
-  R.body = G(); R.spinner.add(R.body);
-  add(R.body, new THREE.CylinderGeometry(.31, .27, .26, 7), coat, 0, -.06, 0);
-  R.torso = G(); R.body.add(R.torso);
-  add(R.torso, new THREE.CylinderGeometry(.28, .32, .64, 7), coat, 0, .3, 0);
-  add(R.torso, new THREE.BoxGeometry(.035, .5, .03), bladeM, 0, .32, .31);
-  R.chest = G(); R.chest.position.set(0, .35, 0); R.torso.add(R.chest);
-  // cabeça
-  R.neck = G(); R.neck.position.set(0, .6, .02); R.torso.add(R.neck);
-  const H = G(); H.position.set(0, .06, 0); R.neck.add(H); R.head = H;
-  add(H, new THREE.SphereGeometry(.31, 8, 6), coatH, 0, .27, 0, 0, 0, 0, 1, .93, 1.02);
-  add(H, new THREE.CylinderGeometry(.15, .19, .38, 8), snoutM, 0, .16, .36, HP, 0, 0);
-  for (const s of [1, -1]) {
-    add(H, new THREE.BoxGeometry(.04, .03, .02), dark, .055 * s, .19, .55);
-    add(H, new THREE.SphereGeometry(.085, 6, 5), white, .15 * s, .33, .22, 0, .35 * s, 0, 1, 1.25, .6);
-    add(H, new THREE.SphereGeometry(.058, 6, 4), dark, .157 * s, .32, .262, 0, .35 * s, 0, 1, 1.2, .6);
-    add(H, new THREE.BoxGeometry(.03, .03, .02), white, .145 * s, .355, .305);
-    add(H, new THREE.BoxGeometry(.07, .015, .015), dark, .19 * s, .45, .2, 0, .35 * s, -.5 * s);
-    add(H, new THREE.CircleGeometry(.055, 8), cheekM, .2 * s, .2, .255, 0, .6 * s, 0);
-    add(H, new THREE.ConeGeometry(.075, .2, 4), plush, .16 * s, .55, -.04, 0, 0, -.35 * s);
-  }
-  const horn = add(H, new THREE.ConeGeometry(.075, .44, 6, 2), R.hornMat, 0, .62, .1, .35, 0, 0);
-  R.hornTip = G(); R.hornTip.position.set(0, .22, 0); horn.add(R.hornTip);
-  const MANE = V.mane;
-  for (let i = 0; i < 6; i++) { const th = .2 + i * .27; add(H, new THREE.ConeGeometry(.1, .3, 4), psxMat({ color: MANE[i], emissive: .15, side: DS }), 0, .27 + .32 * Math.cos(th), -.32 * Math.sin(th) + .02, -th, 0, (i % 2 ? .25 : -.25)); }
-  add(H, new THREE.ConeGeometry(.08, .2, 4), psxMat({ color: V.mane2, emissive: .15, side: DS }), 0, .55, .14, .9, 0, 0);
-  // rabo
-  R.tail = []; let tp = R.body; const TC = V.tail;
-  for (let i = 0; i < 3; i++) { const g = G(); g.position.set(0, i === 0 ? -.02 : .2, i === 0 ? -.3 : 0); tp.add(g); add(g, new THREE.ConeGeometry(.11 - i * .02, .28, 5), psxMat({ color: TC[i], emissive: .15, side: DS }), 0, .12, 0); R.tail.push(g); tp = g; }
-  // braços
-  for (const s of [1, -1]) {
-    const sh = G(); sh.position.set(.34 * s, .5, 0); R.torso.add(sh);
-    add(sh, new THREE.CylinderGeometry(.085, .075, .32, 6), coat, 0, -.16, 0);
-    const el = G(); el.position.y = -.32; sh.add(el);
-    add(el, new THREE.CylinderGeometry(.075, .068, .27, 6), coat, 0, -.135, 0);
-    add(el, new THREE.CylinderGeometry(.09, .09, .05, 6), plush, 0, -.255, 0);
-    add(el, new THREE.CylinderGeometry(.075, .092, .09, 6), hoofM, 0, -.31, 0);
-    if (s > 0) { R.shL = sh; R.elL = el; } else { R.shR = sh; R.elR = el; }
-  }
-  // pernas e patins de pantufa
-  R.feet = [];
-  for (const s of [1, -1]) {
-    const hp = G(); hp.position.set(.15 * s, -.08, 0); R.body.add(hp);
-    add(hp, new THREE.CylinderGeometry(.125, .105, .45, 7), coat, 0, -.225, 0);
-    const kn = G(); kn.position.y = -.45; hp.add(kn);
-    add(kn, new THREE.CylinderGeometry(.105, .09, .42, 7), coat, 0, -.21, 0);
-    const sk = G(); sk.position.y = -.42; kn.add(sk);
-    add(sk, new THREE.BoxGeometry(.22, .15, .32), bootM, 0, -.04, .05);
-    add(sk, new THREE.CylinderGeometry(.13, .13, .05, 7), bootM, 0, .04, .02);
-    for (const e of [1, -1]) { add(sk, new THREE.BoxGeometry(.035, .045, .02), dark, .05 * e, -.01, .215); add(sk, new THREE.BoxGeometry(.012, .012, .01), white, .045 * e, .0, .228); }
-    add(sk, new THREE.BoxGeometry(.03, .04, .04), bladeM, 0, -.135, -.06); add(sk, new THREE.BoxGeometry(.03, .04, .04), bladeM, 0, -.135, .14);
-    add(sk, new THREE.BoxGeometry(.03, .04, .42), bladeM, 0, -.17, .05);
-    const f1 = G(); f1.position.set(0, -.19, .25); sk.add(f1); const f2 = G(); f2.position.set(0, -.19, -.15); sk.add(f2); R.feet.push(f1, f2);
-    if (s > 0) { R.hpL = hp; R.knL = kn; R.skL = sk; } else { R.hpR = hp; R.knR = kn; R.skR = sk; }
-  }
-  R.root.traverse(o => { if (o.isMesh) o.layers.set(1); });
-  return R;
 }
 
 /* ============================== poses e manobras: clipes feitos à mão ============================== */
@@ -1432,7 +1428,7 @@ function spawnAnimFx(pl, an) {
   if (an.kind === 'bail') {
     const g = new THREE.Group(), sm1 = psxMat({ color: 0xffe066, emissive: 1 });
     for (let i = 0; i < 3; i++) { const s = new THREE.Mesh(new THREE.OctahedronGeometry(.07, 0), sm1); s.position.set(Math.cos(i * TAU / 3) * .3, 0, Math.sin(i * TAU / 3) * .3); g.add(s); }
-    g.position.set(0, .78, 0);
+    g.position.set(0, .6, 0);   // no pescoço do boneco (que está em escala GAME_K): logo acima da cabeça
     an.fx.push(addFx(g, U_.neck, .9, (k, a, dt) => { g.rotation.y += dt * 9; }));
   }
 }
@@ -1732,7 +1728,7 @@ function renderView(pl) {
   updMoon(pl);
   U.uLightDir.value.copy(LIGHT_WORLD).transformDirection(cam.matrixWorldInverse);
   U.uScale.value = pl.RH / (2 * Math.tan(cam.fov * PI / 360));
-  U.uRes.value.set(pl.RTW / 2, pl.RH / 2);
+  U.uRes.value.set(pl.RTW / 2, pl.RH / 2); U.uAmb.value.copy(AMB_GAME);
   renderer.setRenderTarget(pl.rt); renderer.clear();
   // reflexo no gelo: os unicórnios espelhados pelo plano do gelo, desenhados antes do gelo translúcido
   MIR.scale.y = -1; MIR.updateMatrixWorld(true);
@@ -1742,7 +1738,7 @@ function renderView(pl) {
 }
 function render3D() {
   for (const pl of ACTIVE) renderView(pl);
-  renderer.setRenderTarget(null); renderer.clear(); renderer.render(postScene, postCam);
+  postRender();
 }
 
 /* ============================== pistas 2D ============================== */
@@ -1813,6 +1809,832 @@ function drawLanes(pl, T) {
   }
 }
 
+/* ============================== personagens: escolha na roda e transformação ============================== */
+const V3 = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
+function noiseFill(g, w, h, col, amp, seed) {
+  const R = mulberry(seed), c = new THREE.Color(col);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const n = (R() - .5) * amp; g.fillStyle = `rgb(${clamp(c.r * 255 + n, 0, 255) | 0},${clamp(c.g * 255 + n, 0, 255) | 0},${clamp(c.b * 255 + n, 0, 255) | 0})`; g.fillRect(x, y, 1, 1); }
+}
+// faixa da frente de um cilindro (a frente fica nas duas pontas da textura)
+function frontBand(g, w, h, hw, style, y0 = 0, y1 = h) { g.fillStyle = style; const px = Math.round(hw * w); g.fillRect(0, y0, px, y1 - y0); g.fillRect(w - px, y0, px, y1 - y0); }
+const solidTex = (col, amp = 14, seed = 1) => canvasTex(16, 16, (g, w, h) => noiseFill(g, w, h, col, amp, seed));
+// estampas
+const P_KNIT = (g, w, h) => { noiseFill(g, w, h, '#cbb38c', 10, 4); g.fillStyle = 'rgba(120,96,60,.35)'; for (let y = 0; y < h; y += 2) for (let x = (y / 2) % 2; x < w; x += 2) g.fillRect(x, y, 1, 1); };
+const P_TEE = (g, w, h) => { const R = mulberry(17); g.fillStyle = '#2d55d8'; g.fillRect(0, 0, w, h); const cs = ['#ff7a52', '#ff4fa8', '#7fc8ff', '#ffa43a', '#e2369c', '#3d1c8c']; for (let i = 0; i < 26; i++) { g.fillStyle = cs[(R() * cs.length) | 0]; const x = R() * w, y = R() * h, rx = 2 + R() * 7, ry = 1 + R() * 4; g.beginPath(); g.ellipse(x, y, rx, ry, R() * PI, 0, TAU); g.fill(); } };
+const P_FLORAL = (g, w, h, base = '#241a24') => { const R = mulberry(23); g.fillStyle = base; g.fillRect(0, 0, w, h); for (let i = 0; i < 22; i++) { const x = R() * w, y = R() * h; g.fillStyle = '#3f9a52'; g.fillRect(x + 2, y + 1, 3, 1); g.fillRect(x - 3, y - 1, 2, 2); const c = ['#ff6fae', '#ff9a3d', '#ff4f7a', '#ffd0e4', '#f2c14e'][(R() * 5) | 0]; g.fillStyle = c; for (let k = 0; k < 5; k++) { const a = k * TAU / 5; g.fillRect(Math.round(x + Math.cos(a) * 1.6), Math.round(y + Math.sin(a) * 1.6), 2, 2); } g.fillStyle = '#ffe680'; g.fillRect(Math.round(x), Math.round(y), 1, 1); } };
+const P_STRIPES = (g, w, h) => { g.fillStyle = '#f4f6fc'; g.fillRect(0, 0, w, h); g.fillStyle = '#6d90d8'; for (let x = 1; x < w; x += 4) g.fillRect(x, 0, 1, h); };
+const P_DOODLE = (g, w, h) => { const R = mulberry(41); g.fillStyle = '#f3f0ea'; g.fillRect(0, 0, w, h); for (let i = 0; i < 30; i++) { const x = R() * w, y = R() * h, k = R(); g.fillStyle = k < .45 ? '#1d1b22' : k < .75 ? '#e2343c' : k < .9 ? '#3b6cd8' : '#f2b232'; if (k < .45) { g.fillRect(x, y, 3, 1); g.fillRect(x + 2, y + 1, 2, 1); } else g.fillRect(x, y, 2, 2); } };
+const P_SHORTS_J = (g, w, h) => { noiseFill(g, w, h, '#9cab4c', 10, 6); g.fillStyle = 'rgba(232,240,190,.55)'; for (let x = 1; x < w; x += 3) g.fillRect(x, 0, 1, h); };
+const P_SOCKS_J = (g, w, h) => { const cs = ['#e8443a', '#ff8f2a', '#ffd23f', '#7b4bd6', '#e0369c', '#ff8f2a']; for (let y = 0; y < h; y++) { g.fillStyle = cs[Math.floor(y / 3) % cs.length]; g.fillRect(0, y, w, 1); } };
+const P_HAIR = (dark, light, streak) => (g, w, h) => { const R = mulberry(5); noiseFill(g, w, h, dark, 22, 9); for (let i = 0; i < 70; i++) { g.fillStyle = R() < .5 ? light : dark; g.fillRect(R() * w, R() * h, 2, 1); } if (streak) { g.fillStyle = streak; for (let i = 0; i < 160; i++) { const x = (R() < .6 ? R() * w * .3 : w * .7 + R() * w * .3), y = R() * h; g.fillRect(x, y, 1, 2); } } };
+/* --------- partículas de cada cena separada (transformação e roda) --------- */
+function makeParticles(scene, n) {
+  const P = makePoints(n); P.pts.renderOrder = 8; scene.add(P.pts);
+  Object.assign(P, { v: new Float32Array(n * 3), life: new Float32Array(n), max: new Float32Array(n), grav: new Float32Array(n), drag: new Float32Array(n), base: new Float32Array(n), next: 0 });
+  for (let i = 0; i < n; i++) P.pos[i * 3 + 1] = -999;
+  return P;
+}
+function pEmit(P, x, y, z, vx, vy, vz, life, size, col, grav = 0, drag = 0) {
+  const i = P.next; P.next = (P.next + 1) % P.n;
+  P.pos[i * 3] = x; P.pos[i * 3 + 1] = y; P.pos[i * 3 + 2] = z; P.v[i * 3] = vx; P.v[i * 3 + 1] = vy; P.v[i * 3 + 2] = vz;
+  P.life[i] = life; P.max[i] = life; P.grav[i] = grav; P.drag[i] = drag; P.base[i] = size;
+  P.col[i * 3] = col.r; P.col[i * 3 + 1] = col.g; P.col[i * 3 + 2] = col.b; P.size[i] = size; P.alpha[i] = 1;
+}
+function pBurst(P, p, n, spd, life, size, colFn, grav = 0, up = 0) {
+  for (let i = 0; i < n; i++) { const a = Math.random() * TAU, e = Math.random() * 2 - 1, r = Math.sqrt(1 - e * e), s = spd * (.4 + Math.random() * .6); pEmit(P, p.x, p.y, p.z, Math.cos(a) * r * s, e * s + up, Math.sin(a) * r * s, life * (.6 + Math.random() * .5), size * (.7 + Math.random() * .6), colFn(i), grav, 1.2); }
+}
+function pUpdate(P, dt) {
+  for (let i = 0; i < P.n; i++) {
+    if (P.life[i] <= 0) { if (P.alpha[i] !== 0) P.alpha[i] = 0; continue; }
+    P.life[i] -= dt; const k = Math.max(0, P.life[i] / P.max[i]), d = Math.exp(-P.drag[i] * dt);
+    P.v[i * 3] *= d; P.v[i * 3 + 1] = P.v[i * 3 + 1] * d - P.grav[i] * dt; P.v[i * 3 + 2] *= d;
+    P.pos[i * 3] += P.v[i * 3] * dt; P.pos[i * 3 + 1] += P.v[i * 3 + 1] * dt; P.pos[i * 3 + 2] += P.v[i * 3 + 2] * dt;
+    P.alpha[i] = Math.pow(k, .7) * (.75 + .25 * Math.sin(P.life[i] * 40 + i)); P.size[i] = P.base[i] * (.5 + .5 * k);
+  }
+  const a = P.geo.attributes; a.position.needsUpdate = a.palpha.needsUpdate = a.psize.needsUpdate = a.pcol.needsUpdate = true;
+}
+/* --------- a pista em Buenos Aires, uma cópia por cena separada --------- */
+function buildWorldIn(scene) {
+  const W = new THREE.Group(); scene.add(W);
+  const skyG = new THREE.SphereGeometry(110, 16, 12), pos = skyG.attributes.position, cols = [];
+  const top = new THREE.Color(0x0c0730), mid = new THREE.Color(0x2b1f63), hor = new THREE.Color(0x7a2f7c), low = new THREE.Color(0x0a0618), c = new THREE.Color();
+  for (let i = 0; i < pos.count; i++) { const y = pos.getY(i) / 110; if (y > .22) c.copy(mid).lerp(top, (y - .22) / .78); else if (y > 0) c.copy(hor).lerp(mid, y / .22); else c.copy(hor).lerp(low, Math.min(1, -y * 5)); cols.push(c.r, c.g, c.b); }
+  skyG.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
+  W.add(new THREE.Mesh(skyG, psxMat({ vc: true, emissive: 1, fog: false, side: THREE.BackSide })));
+  const R = mulberry(21), STARS = makePoints(240);
+  for (let i = 0; i < STARS.n; i++) { const a = R() * TAU, e = .12 + R() * .85, r = 100; STARS.pos[i * 3] = Math.cos(a) * Math.cos(e) * r; STARS.pos[i * 3 + 1] = Math.sin(e) * r; STARS.pos[i * 3 + 2] = Math.sin(a) * Math.cos(e) * r; const cc = R() < .8 ? C_WHITE : (R() < .5 ? C_GOLD : C_PINK); STARS.col[i * 3] = cc.r; STARS.col[i * 3 + 1] = cc.g; STARS.col[i * 3 + 2] = cc.b; STARS.size[i] = R() < .12 ? 2.2 : .5 + R() * .7; STARS.alpha[i] = .8; }
+  STARS.phase = Array.from({ length: STARS.n }, () => R() * TAU); W.add(STARS.pts);
+  const moon = new THREE.Mesh(new THREE.SphereGeometry(2.6, 16, 12), psxMat({ map: moonTex, emissive: 1, fog: false })); moon.position.set(9, 16, -86); W.add(moon);
+  const RX = 14, RZ = 8, gm = psxMat({ map: groundTex, color: 0xb8b0d8 });
+  const plate = (w, d, x, z) => { const g = new THREE.PlaneGeometry(w, d, Math.ceil(w / 6), Math.ceil(d / 6)); g.rotateX(-HP); const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * w / 3, uv.getY(i) * d / 3); const m = new THREE.Mesh(g, gm); m.position.set(x, -.01, z); W.add(m); };
+  plate(200, 90, 0, -RZ - 45); plate(200, 90, 0, RZ + 45); plate(93, RZ * 2, -RX - 46.5, 0); plate(93, RZ * 2, RX + 46.5, 0);
+  const iceG = new THREE.PlaneGeometry(RX * 2, RZ * 2, 28, 16); iceG.rotateX(-HP);
+  const ice = new THREE.Mesh(iceG, psxMat({ map: iceTex, rep: [7, 4], opacity: .74, transparent: true, depthWrite: true, color: 0xd6efff, emissive: .3 })); ice.renderOrder = 1; W.add(ice);
+  const board = (w, d, x, z, rx) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, .55, d), psxMat({ map: boardTex, rep: [rx, 1] })); m.position.set(x, .275, z); W.add(m); };
+  board(RX * 2 + .3, .15, 0, -RZ - .07, 14); board(RX * 2 + .3, .15, 0, RZ + .07, 14); board(.15, RZ * 2 + .3, -RX - .07, 0, 8); board(.15, RZ * 2 + .3, RX + .07, 0, 8);
+  const crowdTex = canvasTex(64, 16, (g, w, h) => { const R = mulberry(31); g.fillStyle = '#1e1640'; g.fillRect(0, 0, w, h); const cs = ['#ff6ab8', '#ffd66b', '#7fe6ff', '#b88cff', '#e9e2ff', '#7dffc8', '#ff9a5a']; for (let y = 1; y < h; y += 3) for (let x = (y % 2 ? 0 : 1); x < w; x += 3) if (R() < .7) { g.fillStyle = cs[(R() * cs.length) | 0]; g.fillRect(x, y, 1, 1); } });
+  const standM = psxMat({ map: crowdTex, rep: [16, 1], emissive: .25, color: 0xc8c0e8 });
+  for (let k = 0; k < 3; k++) { const m = new THREE.Mesh(new THREE.BoxGeometry(RX * 2 - 2, .7 + k * .7, 1.1), standM); m.position.set(0, (.7 + k * .7) / 2, -(RZ + 1.9 + k * 1.1)); W.add(m); }
+  const poleM = psxMat({ color: 0x8b80b8 }), lines = [-4.5, 0, 4.5], BULBS = makePoints(lines.length * 34), bcols = [C_PINK, C_GOLD, C_MINT, C_VIO, C_BLUE]; let bi = 0;
+  for (const z of lines) {
+    for (const x of [-RX - .5, RX + .5]) { const p = new THREE.Mesh(new THREE.CylinderGeometry(.07, .09, 6, 5), poleM); p.position.set(x, 3, z); W.add(p); }
+    for (let i = 0; i < 34; i++) { const x = -RX - .5 + (RX * 2 + 1) * i / 33, y = 5.9 - 1.1 * (1 - Math.pow(x / (RX + .5), 2)); BULBS.pos[bi * 3] = x; BULBS.pos[bi * 3 + 1] = y; BULBS.pos[bi * 3 + 2] = z; const cc = bcols[(i + lines.indexOf(z)) % 5]; BULBS.col[bi * 3] = cc.r; BULBS.col[bi * 3 + 1] = cc.g; BULBS.col[bi * 3 + 2] = cc.b; BULBS.size[bi] = .16; BULBS.alpha[bi] = 1; bi++; }
+  }
+  BULBS.pts.renderOrder = 6; W.add(BULBS.pts);
+  const R2 = mulberry(77), tints = [0xffffff, 0xd9d0ff, 0xffd8ee, 0xcfe6ff], OB = { x: -13, z: -80 };
+  for (let i = 0; i < 110; i++) {
+    const a = lerp(-PI, PI, R2()), Rr = 58 + R2() * 40, x = Math.sin(a) * Rr, z = -Math.cos(a) * Rr;
+    if (Math.abs(x - OB.x) < 9 && z < -50) continue;
+    const w = 5 + R2() * 8, d = 4 + R2() * 6, h = 3 + R2() * 7 * (R2() < .2 ? 1.6 : 1);
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), psxMat({ map: winTex, rep: [Math.max(1, Math.round(w / 3)), Math.max(1, Math.round(h / 5))], emissive: .5, color: tints[i % 4] })); m.position.set(x, h / 2, z); m.rotation.y = -a; W.add(m);
+  }
+  const obM = psxMat({ map: obTex, rep: [1, 3], color: 0xf0ecf8, emissive: .55 });
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(.48, .8, 12, 4, 4), obM); shaft.rotation.y = PI / 4; shaft.position.set(OB.x, 6, OB.z); W.add(shaft);
+  const tip = new THREE.Mesh(new THREE.ConeGeometry(.48, 1.3, 4), obM); tip.rotation.y = PI / 4; tip.position.set(OB.x, 12.65, OB.z); W.add(tip);
+  return { group: W, STARS, BULBS };
+}
+
+// Alturas em metros. Nadia e Cot estimadas pela foto do trio (Clau 1,73 m no meio): confirmar.
+const CHARS = [
+  { id: 'clau', name: 'Clau', h: 1.73, skin: '#ecbb98', hair: '#8a6a44', beard: '#9a6e46',
+    b: { shX: .19, chest: .172, waist: .172, belly: .11, hip: .168, hipX: .09, arm: .05, leg: .08, calf: .055, neck: .054 },
+    shirt: P_TEE, sleeve: .42, crew: '#1d3a9c', lanyard: true, shorts: solidTex('#d42a8e', 12, 3), shortsLen: .55, under: '#1d1b22', underLen: .9,
+    sock: '#1d1b22', sockH: .1, shoe: { col: '#1f1d24', sole: '#f1eee6', high: true }, glasses: 'sun', hat: 'bucket', hatCol: '#7a774f', watch: true,
+    smile: 1, uni: { coat: [[255, 92, 172], [196, 72, 214], [98, 96, 236], [158, 80, 228], [255, 92, 172]], mane: [0xff6ab8, 0xc07bff, 0x7d93ff, 0x7fe6ff, 0xfff07a, 0xff9ad5], tail: [0xff6ab8, 0x9a7bff, 0x7fe6ff], plush: 0xff86c8, snout: 0xffb3dc, boot: 0xe4d4ff, hoof: 0x6a4aa8, acc: 'bucket' }, dot: '#ff5cac' },
+  { id: 'cot', name: 'Cot', h: 1.70, skin: '#f0c6a5', hair: '#4a2c1e',
+    b: { shX: .165, chest: .14, waist: .122, belly: 0, hip: .155, hipX: .08, arm: .039, leg: .066, calf: .047, neck: .041 },
+    shirt: P_STRIPES, shirtOpen: '#f7f7f4', sleeve: 1.0, sleeveFore: .38, shorts: canvasTex(32, 16, P_DOODLE), shortsLen: .42,
+    sock: '#1d1b22', sockH: .05, shoe: { col: '#e4e6ea', sole: '#ffffff' }, glasses: 'sun', hat: 'cap', hatCol: '#a9cdee', hairStyle: 'curly',
+    smile: .6, uni: { coat: [[46, 58, 150], [30, 36, 104], [72, 60, 170], [38, 46, 124], [46, 58, 150]], goldStars: true, mane: [0x3a3fa8, 0xffd660, 0x23286e, 0x9cc4ff, 0xffd660, 0x4a48b8], tail: [0x3a3fa8, 0xffd660, 0x9cc4ff], plush: 0x9cbcff, snout: 0xd6e2ff, boot: 0xe8eeff, hoof: 0x1a1d4a, acc: 'cap' }, dot: '#2f3a9e' },
+  { id: 'nadia', name: 'Nadia', h: 1.62, skin: '#eab693', hair: '#3a2723', streak: '#d9d4dd',
+    b: { shX: .162, chest: .158, waist: .142, belly: 0, hip: .19, hipX: .095, arm: .048, leg: .086, calf: .056, neck: .043 },
+    shirt: P_FLORAL, shirtOpen: '#e2913a', crop: true, sleeve: .45, shorts: solidTex('#1e1c24', 10, 5), shortsLen: .5,
+    sock: '#f6f6f6', sockH: .05, shoe: { col: '#f7f7f7', sole: '#ffffff' }, glasses: 'round', hat: 'cap', hatCol: '#efe6d2', hairStyle: 'long', tattoo: true,
+    smile: 1, uni: { coat: [[255, 112, 92], [255, 150, 60], [255, 198, 72], [255, 104, 112], [255, 112, 92]], mane: [0x3a2420, 0xd9d4dd, 0x3a2420, 0xbfb8c6, 0x5a3a30, 0xeeeaf2], tail: [0x5a3a30, 0xd9d4dd, 0xbfb8c6], plush: 0xffc9a0, snout: 0xffdcc0, boot: 0xfff0e0, hoof: 0x8a4a2a, acc: 'round' }, dot: '#ff9a3d' },
+  { id: 'jodri', name: 'Jodri', h: 1.80, skin: '#a96e49', hair: '#16100e', beard: '#1b1412',
+    b: { shX: .212, chest: .2, waist: .2, belly: 0, hip: .19, hipX: .1, arm: .062, leg: .092, calf: .064, neck: .066 },
+    shirt: P_KNIT, vneck: true, sleeve: .5, shorts: canvasTex(16, 16, P_SHORTS_J), shortsLen: .42, trim: true, fanny: true,
+    sock: canvasTex(8, 30, P_SOCKS_J), sockH: .16, shoe: { col: '#1d1b22', sole: '#f1eee6', stripes: true }, glasses: 'sun', hairStyle: 'bun',
+    smile: 1.2, uni: { coat: [[64, 214, 222], [74, 160, 250], [116, 118, 246], [58, 196, 206], [64, 214, 222]], mane: [0x7dffc8, 0x7fe6ff, 0x7d93ff, 0xc07bff, 0xfff07a, 0x9dffd8], tail: [0x7dffc8, 0x7d93ff, 0xc07bff], plush: 0x5fd8cf, snout: 0xc4f6ff, boot: 0xb8ffe0, hoof: 0x2c5aa6, acc: 'sun', warmers: true }, dot: '#40d6de' }
+];
+const CHAR_BY_ID = Object.fromEntries(CHARS.map(c => [c.id, c]));
+
+function faceTex(D) {
+  return canvasTex(64, 64, (g, w, h) => {
+    noiseFill(g, w, h, D.skin, 8, 3);
+    const cx = 16, skin = new THREE.Color(D.skin), dk = '#' + skin.clone().multiplyScalar(.8).getHexString();
+    g.fillStyle = 'rgba(255,90,110,.28)'; g.fillRect(cx - 9, 36, 3, 2); g.fillRect(cx + 6, 36, 3, 2);
+    if (D.beard) { g.fillStyle = D.beard; g.fillRect(2, 37, 30, 13); g.fillRect(cx - 5, 36, 10, 2); g.fillStyle = D.skin; g.fillRect(cx - 3, 40, 6, 2); }
+    g.fillStyle = '#fff'; g.fillRect(cx - 6, 29, 3, 2); g.fillRect(cx + 3, 29, 3, 2);
+    g.fillStyle = '#2a1a14'; g.fillRect(cx - 5, 29, 2, 2); g.fillRect(cx + 3, 29, 2, 2);
+    g.fillStyle = D.hair; g.fillRect(cx - 7, 26, 4, 1); g.fillRect(cx + 3, 26, 4, 1);
+    g.fillStyle = dk; g.fillRect(cx - 1, 33, 2, 3);
+    g.fillStyle = '#7a1f2c'; const mw = Math.round(4 + 2 * D.smile); g.fillRect(cx - mw / 2, 41, mw, 2); g.fillStyle = '#fff'; g.fillRect(cx - mw / 2 + 1, 41, mw - 2, 1);
+  });
+}
+function torsoTex(D, part) {
+  return canvasTex(64, 32, (g, w, h) => {
+    D.shirt(g, w, h);
+    if (part === 'sleeve') return;
+    if (part === 'chest') {
+      if (D.vneck) { g.fillStyle = D.skin; for (let y = 0; y < 14; y++) { const hw = Math.max(0, 7 - y * .5); g.fillRect(0, y, hw, 1); g.fillRect(w - hw, y, hw, 1); } g.fillStyle = '#8a7350'; for (let y = 16; y < h; y += 5) g.fillRect(0, y, 1, 1); }
+      if (D.crew) { g.fillStyle = D.crew; g.fillRect(0, 0, w, 2); }
+      if (D.lanyard) { g.fillStyle = '#2a2420'; for (let y = 0; y < 18; y++) { g.fillRect(Math.round(4 - y * .18), y, 1, 1); g.fillRect(Math.round(w - 5 + y * .18), y, 1, 1); } }
+      if (D.shirtOpen) frontBand(g, w, h, .14, D.shirtOpen, 2, D.crop ? h - 4 : h);
+      if (D.crop) frontBand(g, w, h, .14, D.skin, h - 4, h);
+      if (D.shirtOpen && D.crop) { g.fillStyle = 'rgba(0,0,0,.15)'; for (let y = 3; y < h - 4; y += 2) { g.fillRect(0, y, Math.round(.14 * w), 1); g.fillRect(w - Math.round(.14 * w), y, Math.round(.14 * w), 1); } }
+    } else {
+      if (D.shirtOpen) frontBand(g, w, h, .16, D.crop ? D.skin : D.shirtOpen);
+    }
+  });
+}
+function skinTex(D, tattoo) { return canvasTex(32, 32, (g, w, h) => { noiseFill(g, w, h, D.skin, 8, 7); if (tattoo) { g.fillStyle = '#3a3040'; g.fillRect(2, 10, 3, 1); g.fillRect(3, 9, 1, 3); g.fillRect(1, 12, 5, 1); g.fillRect(2, 14, 3, 1); } }); }
+function uniCoatTex(V, seed) {
+  const base = coatTexOf(V.coat, seed);
+  if (!V.stripes && !V.flowers && !V.goldStars) return base;
+  return canvasTex(64, 64, (g, w, h) => {
+    g.drawImage(base.image, 0, 0);
+    if (V.stripes) { g.fillStyle = 'rgba(255,255,255,.75)'; for (let x = 2; x < w; x += 6) g.fillRect(x, 0, 2, h); }
+    if (V.goldStars) { const R = mulberry(seed + 5); for (let i = 0; i < 16; i++) { const x = Math.round(R() * w), y = Math.round(R() * h); g.fillStyle = '#ffd660'; g.fillRect(x, y - 1, 1, 3); g.fillRect(x - 1, y, 3, 1); if (R() < .4) { g.fillRect(x, y - 2, 1, 5); g.fillRect(x - 2, y, 5, 1); g.fillStyle = '#fff6c9'; g.fillRect(x, y, 1, 1); } } for (let i = 0; i < 26; i++) { g.fillStyle = R() < .5 ? '#ffe9a8' : '#c9d6ff'; g.fillRect(Math.round(R() * w), Math.round(R() * h), 1, 1); } }
+    if (V.flowers) { const R = mulberry(seed + 9); for (let i = 0; i < 18; i++) { const x = R() * w, y = R() * h, c = ['#ff9a3d', '#fff2a8', '#c2185b', '#ffffff'][(R() * 4) | 0]; g.fillStyle = '#3f9a52'; g.fillRect(x + 2, y + 2, 3, 1); g.fillStyle = c; for (let k = 0; k < 5; k++) { const a = k * TAU / 5; g.fillRect(Math.round(x + Math.cos(a) * 2), Math.round(y + Math.sin(a) * 2), 2, 2); } g.fillStyle = '#ffe066'; g.fillRect(Math.round(x), Math.round(y), 2, 2); } }
+  });
+}
+
+// Esqueleto compatível com o do unicórnio do jogo: root > spinner > body (bacia) > torso > neck > head,
+// ombros sh > cotovelo el > mão, quadris hp > joelho kn > tornozelo sk. Ossos apontam para -Y.
+const G = () => new THREE.Group();
+function addM(parent, geo, mat, x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0, sx = 1, sy = 1, sz = 1) { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.rotation.set(rx, ry, rz); m.scale.set(sx, sy, sz); parent.add(m); return m; }
+const cyl = (rt, rb, h, seg = 8) => new THREE.CylinderGeometry(rt, rb, h, seg);
+function buildCharacter(D) {
+  const H = D.h, B = D.b;
+  const L = { ankle: .045 * H, shin: .245 * H, thigh: .245 * H, pelvis: .04 * H, waist: .1 * H, chest: .15 * H, upper: .175 * H, fore: .15 * H, palm: .028 * H, r: .066 * H };
+  L.hipY = L.ankle + L.shin + L.thigh; L.bodyY = L.hipY + L.pelvis; L.shY = .23 * H; L.neckY = .245 * H;
+  const SIL = { uSil: { value: 0 }, uSilY: { value: 99 }, uBaseY: { value: 0 }, uHgt: { value: H } };
+  const R = { D, H, L, SIL, slots: {}, forms: { h: { torso: [], armL: [], armR: [], legL: [], legR: [], head: [] }, u: { torso: [], armL: [], armR: [], legL: [], legR: [], head: [] } }, state: { torso: 'h', armL: 'h', armR: 'h', legL: 'h', legR: 'h', head: 'h' } };
+  const hm = o => psxMat(Object.assign({ sil: SIL, side: DS }, o)), um = o => psxMat(Object.assign({ side: DS }, o));
+  const slot = (joint, form, part) => { const k = form + part + joint.uuid; let g = R.slots[k]; if (!g) { g = G(); joint.add(g); R.slots[k] = g; R.forms[form][part].push(g); if (form === 'u') g.visible = false; } return g; };
+  R.root = G(); R.root.rotation.order = 'YXZ'; R.spinner = G(); R.spinner.rotation.order = 'YXZ'; R.root.add(R.spinner);
+  R.body = G(); R.body.position.y = L.bodyY; R.spinner.add(R.body);
+  R.torso = G(); R.body.add(R.torso);
+  R.chest = G(); R.chest.position.set(0, .15 * H, 0); R.torso.add(R.chest);
+  R.neck = G(); R.neck.position.set(0, L.neckY, 0); R.torso.add(R.neck);
+  R.head = G(); R.head.position.set(0, .032 * H, 0); R.neck.add(R.head);
+  const skin = hm({ map: skinTex(D) }), skinT = hm({ map: skinTex(D, true) });
+  /* ---------- humano ---------- */
+  { // tronco
+    const T = slot(R.torso, 'h', 'torso'), Bd = slot(R.body, 'h', 'torso');
+    const chestM = hm({ map: torsoTex(D, 'chest') }), waistM = hm({ map: torsoTex(D, 'waist') }), shortsM = hm({ map: D.shorts, rep: [2, 1] });
+    addM(T, cyl((B.waist + B.chest) / 2, B.waist, L.waist, 10), waistM, 0, L.waist / 2, 0, 0, 0, 0, 1, 1, .8);
+    addM(T, cyl(B.chest * .86, B.chest, L.chest, 10), chestM, 0, L.waist + L.chest / 2, 0, 0, 0, 0, 1, 1, .72);
+    if (B.belly) addM(T, new THREE.SphereGeometry(B.belly, 8, 6), waistM, 0, L.waist * .45, B.waist * .42, 0, 0, 0, 1.15, .95, .9);
+    for (const s of [1, -1]) addM(T, new THREE.SphereGeometry(B.arm * 1.35, 7, 5), chestM, s * B.shX * .92, L.shY, 0);
+    addM(T, cyl(B.neck, B.neck * 1.08, .06 * H, 7), skin, 0, L.neckY + .015 * H, 0);
+    addM(Bd, cyl(B.waist * .98, B.hip, L.pelvis * 2.2, 10), shortsM, 0, -L.pelvis * .9, 0, 0, 0, 0, 1, 1, .8);
+    if (D.fanny) {
+      const fm = hm({ map: canvasTex(16, 16, (g, w, h) => P_FLORAL(g, w, h, '#f3e6c8')) });
+      addM(T, new THREE.BoxGeometry(.2, .09, .07), fm, 0, .005 * H, B.waist * .8 + B.belly * .55);
+      addM(T, new THREE.TorusGeometry(B.waist * 1.02, .009, 3, 14), hm({ color: 0x2a2228 }), 0, .01 * H, B.belly * .25, HP, 0, 0, 1, .82, 1);
+    }
+  }
+  for (const s of [1, -1]) { // braços
+    const part = s > 0 ? 'armL' : 'armR', sh = G(); sh.position.set(s * B.shX, L.shY, 0); R.torso.add(sh);
+    const el = G(); el.position.y = -L.upper; sh.add(el); const hand = G(); hand.position.y = -L.fore; el.add(hand);
+    if (s > 0) { R.shL = sh; R.elL = el; R.handL = hand; } else { R.shR = sh; R.elR = el; R.handR = hand; }
+    const Sh = slot(sh, 'h', part), El = slot(el, 'h', part), Hd = slot(hand, 'h', part), sleeveM = hm({ map: torsoTex(D, 'sleeve'), rep: [1, 1] });
+    addM(Sh, cyl(B.arm, B.arm * .86, L.upper, 7), skin, 0, -L.upper / 2, 0);
+    const sl = Math.min(1, D.sleeve) * L.upper; addM(Sh, cyl(B.arm * 1.3, B.arm * 1.2, sl, 8), sleeveM, 0, -sl / 2 + .005, 0);
+    addM(El, cyl(B.arm * .84, B.arm * .68, L.fore, 7), skin, 0, -L.fore / 2, 0);
+    if (D.sleeveFore) { const fl = D.sleeveFore * L.fore; addM(El, cyl(B.arm * 1.12, B.arm * 1.12, fl, 8), sleeveM, 0, -fl / 2, 0); addM(El, cyl(B.arm * 1.28, B.arm * 1.28, .035, 8), sleeveM, 0, -fl, 0); }
+    addM(Hd, new THREE.BoxGeometry(B.arm * 1.25, .085 * H * .55, B.arm * .75), skin, 0, -.025 * H, 0);
+    addM(Hd, new THREE.BoxGeometry(B.arm * .45, .03 * H, B.arm * .45), skin, s * B.arm * .2, -.012 * H, B.arm * .55);
+    if (D.watch) addM(El, cyl(B.arm * .78, B.arm * .78, .03, 8), hm({ color: s > 0 ? 0x16141a : 0xd23a3a }), 0, -L.fore + .03, 0);
+  }
+  for (const s of [1, -1]) { // pernas
+    const part = s > 0 ? 'legL' : 'legR', hp = G(); hp.position.set(s * B.hipX, -L.pelvis, 0); R.body.add(hp);
+    const kn = G(); kn.position.y = -L.thigh; hp.add(kn); const sk = G(); sk.position.y = -L.shin; kn.add(sk);
+    if (s > 0) { R.hpL = hp; R.knL = kn; R.skL = sk; } else { R.hpR = hp; R.knR = kn; R.skR = sk; }
+    const Hp = slot(hp, 'h', part), Kn = slot(kn, 'h', part), Sk = slot(sk, 'h', part);
+    addM(Hp, cyl(B.leg, B.leg * .74, L.thigh, 8), D.tattoo && s > 0 ? skinT : skin, 0, -L.thigh / 2, 0);
+    const shortsM = hm({ map: D.shorts, rep: [1, 1] }), sl = D.shortsLen * L.thigh;
+    addM(Hp, cyl(B.leg * 1.25, B.leg * 1.18, sl, 9), shortsM, 0, -sl / 2 + .01, 0);
+    if (D.trim) addM(Hp, cyl(B.leg * 1.21, B.leg * 1.21, .012, 9), hm({ color: 0xf4f2ea }), 0, -sl + .012, 0);
+    if (D.under) { const ul = D.underLen * L.thigh; addM(Hp, cyl(B.leg * 1.06, B.leg * .84, ul, 8), hm({ color: D.under }), 0, -ul / 2, 0); }
+    addM(Kn, cyl(B.calf, B.calf * .7, L.shin, 7), skin, 0, -L.shin / 2, 0);
+    const sockM = typeof D.sock === 'string' ? hm({ color: D.sock }) : hm({ map: D.sock }), sh_ = D.sockH * H;
+    addM(Kn, cyl(B.calf * .82, B.calf * .74, sh_, 7), sockM, 0, -L.shin + sh_ / 2, 0);
+    const S = D.shoe, shoeM = hm({ color: S.col }), soleM = hm({ color: S.sole });
+    addM(Sk, new THREE.BoxGeometry(.105, S.high ? .11 : .07, .25), shoeM, 0, S.high ? -.005 : -.022, .045);
+    addM(Sk, new THREE.BoxGeometry(.112, .022, .262), soleM, 0, -L.ankle + .011, .045);
+    if (S.stripes) for (const z of [0, .03, .06]) addM(Sk, new THREE.BoxGeometry(.108, .05, .01), soleM, 0, -.018, z, .5, 0, 0);
+    const f1 = G(); f1.position.set(0, -L.ankle, .16); Sk.add(f1); const f2 = G(); f2.position.set(0, -L.ankle, -.07); Sk.add(f2);
+    (R.hFeet = R.hFeet || []).push(f1, f2);
+  }
+  { // cabeça
+    const Hh = slot(R.head, 'h', 'head'), r = L.r, cy = .075 * H, hairM = hm({ map: canvasTex(32, 32, P_HAIR(D.hair, '#' + new THREE.Color(D.hair).multiplyScalar(1.6).getHexString(), D.streak)) });
+    addM(Hh, new THREE.SphereGeometry(r, 10, 8), hm({ map: faceTex(D) }), 0, cy, 0, 0, 0, 0, .9, 1.1, 1);
+    addM(Hh, new THREE.BoxGeometry(r * .2, r * .28, r * .22), skin, 0, cy - r * .1, r * .95);
+    for (const s of [1, -1]) addM(Hh, new THREE.SphereGeometry(r * .22, 5, 4), skin, s * r * .88, cy - r * .02, -r * .05, 0, 0, 0, .5, 1, .8);
+    // cabelo
+    const st = D.hairStyle;
+    if (st === 'bun') { addM(Hh, new THREE.SphereGeometry(r * 1.06, 10, 6, 0, TAU, 0, PI * .5), hairM, 0, cy + r * .02, -r * .04, -.3, 0, 0, .94, 1.16, 1.04); addM(Hh, new THREE.SphereGeometry(r * .42, 7, 6), hairM, 0, cy + r * .5, -r * .98); }
+    else if (st === 'long') { addM(Hh, new THREE.SphereGeometry(r * 1.05, 10, 6, 0, TAU, 0, PI * .55), hairM, 0, cy, -r * .02, -.2, 0, 0, .95, 1.12, 1.04); addM(Hh, new THREE.BoxGeometry(r * 1.9, r * 3.4, r * .5), hairM, 0, cy - r * 1.35, -r * .7, .1, 0, 0); for (const s of [1, -1]) addM(Hh, new THREE.BoxGeometry(r * .38, r * 2.5, r * .32), hm({ map: canvasTex(16, 16, P_HAIR('#9a929e', '#e6e1ea')) }), s * r * .86, cy - r * .9, r * .28, 0, 0, s * .06); }
+    else if (st === 'curly') { addM(Hh, new THREE.SphereGeometry(r * 1.07, 10, 6, 0, TAU, 0, PI * .55), hairM, 0, cy, -r * .02, -.25, 0, 0, .96, 1.12, 1.04); addM(Hh, new THREE.SphereGeometry(r * 1.32, 9, 7), hairM, 0, cy - r * .62, -r * .45, 0, 0, 0, 1.08, 1.0, .72); }
+    else { addM(Hh, new THREE.SphereGeometry(r * 1.04, 10, 6, 0, TAU, 0, PI * .5), hairM, 0, cy, -r * .05, -.35, 0, 0, .93, 1.1, 1.02); }
+    // óculos
+    if (D.glasses === 'sun') { const gm = hm({ color: 0x0e0c12 }); for (const s of [1, -1]) addM(Hh, new THREE.BoxGeometry(r * .44, r * .3, .012), gm, s * r * .34, cy + r * .1, r * .97, 0, s * .32, 0); addM(Hh, new THREE.BoxGeometry(r * .3, r * .06, .012), gm, 0, cy + r * .2, r * 1.01); for (const s of [1, -1]) addM(Hh, new THREE.BoxGeometry(.006, r * .06, r * .95), gm, s * r * .8, cy + r * .2, r * .45); }
+    if (D.glasses === 'round') { const fm = hm({ color: 0xd26a9a }), lm = hm({ color: 0xff8fc4, opacity: .55, transparent: true, depthWrite: false, emissive: .3 }); for (const s of [1, -1]) { addM(Hh, new THREE.TorusGeometry(r * .21, .0045, 4, 12), fm, s * r * .33, cy + r * .08, r * .98, 0, s * .3, 0); addM(Hh, new THREE.CircleGeometry(r * .2, 10), lm, s * r * .33, cy + r * .08, r * .985, 0, s * .3, 0); } addM(Hh, new THREE.BoxGeometry(r * .24, .006, .006), fm, 0, cy + r * .12, r * 1.02); }
+    // chapéus
+    if (D.hat === 'cap') { const cm = hm({ map: solidTex(D.hatCol, 10, 11) }); addM(Hh, new THREE.SphereGeometry(r * 1.1, 10, 5, 0, TAU, 0, PI * .5), cm, 0, cy + r * .2, -r * .02, -.12, 0, 0, .96, 1, 1.02); addM(Hh, new THREE.BoxGeometry(r * 1.3, r * .07, r * 1.0), cm, 0, cy + r * .3, r * 1.05, .14, 0, 0); addM(Hh, new THREE.SphereGeometry(r * .1, 5, 4), cm, 0, cy + r * 1.28, 0); }
+    if (D.hat === 'bucket') { const bm = hm({ map: solidTex(D.hatCol, 12, 13) }); addM(Hh, cyl(r * .9, r * 1.08, r * .78, 10), bm, 0, cy + r * .66, -r * .02); addM(Hh, cyl(r * 1.62, r * 1.62, r * .06, 12), bm, 0, cy + r * .3, 0, .06, 0, 0); addM(Hh, new THREE.TorusGeometry(r * .95, .004, 3, 14), hm({ color: 0x2a2420 }), 0, cy - r * .55, r * .2, HP + .35, 0, 0, .95, 1.2, 1); }
+  }
+  /* ---------- unicórnio (mesmo esqueleto) ---------- */
+  const V = D.uni, coat = um({ map: uniCoatTex(V, D.h * 100 | 0), rep: [2, 1] }), plush = um({ map: fluffTex, color: V.plush }), bootM = um({ map: fluffTex, color: V.boot });
+  const bladeM = um({ color: 0xe3ecf8, emissive: .35 }), hoofM = um({ color: V.hoof || 0x6a4aa8 }), dark = um({ color: 0x1a0f2e }), white = um({ color: 0xffffff, emissive: .7 });
+  { const T = slot(R.torso, 'u', 'torso'), Bd = slot(R.body, 'u', 'torso'), k = 1.1;
+    addM(T, cyl((B.waist + B.chest) / 2 * k, B.waist * k, L.waist, 10), coat, 0, L.waist / 2, 0, 0, 0, 0, 1, 1, .82);
+    addM(T, cyl(B.chest * .88 * k, B.chest * k, L.chest, 10), coat, 0, L.waist + L.chest / 2, 0, 0, 0, 0, 1, 1, .76);
+    if (B.belly) addM(T, new THREE.SphereGeometry(B.belly * 1.05, 8, 6), coat, 0, L.waist * .45, B.waist * .45, 0, 0, 0, 1.15, .95, .9);
+    for (const s of [1, -1]) addM(T, new THREE.SphereGeometry(B.arm * 1.5, 7, 5), coat, s * B.shX * .92, L.shY, 0);
+    addM(T, new THREE.BoxGeometry(.03, L.waist + L.chest * .85, .02), bladeM, 0, (L.waist + L.chest * .85) / 2, B.chest * .76 * k + .002 + (B.belly ? B.belly * .2 : 0));
+    addM(T, cyl(B.neck * 1.25, B.neck * 1.35, .07 * H, 7), coat, 0, L.neckY + .015 * H, 0);
+    addM(T, cyl(B.neck * 1.9, B.neck * 1.9, .03, 9), plush, 0, L.neckY - .005, 0);
+    addM(Bd, cyl(B.waist * k, B.hip * k, L.pelvis * 2.3, 10), coat, 0, -L.pelvis * .9, 0, 0, 0, 0, 1, 1, .82);
+    if (D.fanny) { addM(T, new THREE.BoxGeometry(.2, .09, .07), um({ map: canvasTex(16, 16, (g, w, h) => P_FLORAL(g, w, h, '#f3e6c8')) }), 0, .005 * H, B.waist * .85 + B.belly * .6); addM(T, new THREE.TorusGeometry(B.waist * k * 1.02, .009, 3, 14), um({ color: 0x2a2228 }), 0, .01 * H, B.belly * .25, HP, 0, 0, 1, .84, 1); }
+    // rabo
+    R.tail = []; let tp = Bd; const TC = V.tail || [V.mane[0], V.mane[2], V.mane[3]];
+    for (let i = 0; i < 3; i++) { const g = G(); g.position.set(0, i === 0 ? -L.pelvis * 1.2 : .17, i === 0 ? -B.hip * .78 : 0); tp.add(g); addM(g, new THREE.ConeGeometry(.095 - i * .018, .25, 5), um({ color: TC[i], emissive: .15 }), 0, .1, 0); R.tail.push(g); tp = g; }
+  }
+  for (const s of [1, -1]) {
+    const part = s > 0 ? 'armL' : 'armR', sh = s > 0 ? R.shL : R.shR, el = s > 0 ? R.elL : R.elR, hand = s > 0 ? R.handL : R.handR;
+    const Sh = slot(sh, 'u', part), El = slot(el, 'u', part), Hd = slot(hand, 'u', part);
+    addM(Sh, cyl(B.arm * 1.32, B.arm * 1.18, L.upper, 7), coat, 0, -L.upper / 2, 0);
+    addM(El, cyl(B.arm * 1.16, B.arm * 1.02, L.fore, 7), coat, 0, -L.fore / 2, 0);
+    addM(Hd, cyl(B.arm * 1.45, B.arm * 1.45, .04, 7), plush, 0, -.005, 0);
+    addM(Hd, cyl(B.arm * 1.05, B.arm * 1.3, .07, 7), hoofM, 0, -.05, 0);
+  }
+  for (const s of [1, -1]) {
+    const part = s > 0 ? 'legL' : 'legR', hp = s > 0 ? R.hpL : R.hpR, kn = s > 0 ? R.knL : R.knR, sk = s > 0 ? R.skL : R.skR;
+    const Hp = slot(hp, 'u', part), Kn = slot(kn, 'u', part), Sk = slot(sk, 'u', part);
+    addM(Hp, cyl(B.leg * 1.24, B.leg * 1.0, L.thigh, 8), coat, 0, -L.thigh / 2, 0);
+    addM(Kn, cyl(B.calf * 1.25, B.calf * 1.05, L.shin, 7), coat, 0, -L.shin / 2, 0);
+    if (V.warmers) addM(Kn, cyl(B.calf * 1.38, B.calf * 1.3, L.shin * .55, 8), um({ map: D.sock }), 0, -L.shin * .7, 0);
+    addM(Sk, new THREE.BoxGeometry(.16, .12, .27), bootM, 0, -.01, .04);
+    addM(Sk, cyl(B.calf * 1.5, B.calf * 1.5, .05, 8), bootM, 0, .05, 0);
+    for (const e of [1, -1]) { addM(Sk, new THREE.BoxGeometry(.03, .04, .02), dark, .045 * e, .02, .175); addM(Sk, new THREE.BoxGeometry(.012, .012, .01), white, .04 * e, .03, .187); }
+    addM(Sk, new THREE.BoxGeometry(.028, .04, .04), bladeM, 0, -.085, -.07); addM(Sk, new THREE.BoxGeometry(.028, .04, .04), bladeM, 0, -.085, .14);
+    addM(Sk, new THREE.BoxGeometry(.028, .035, .4), bladeM, 0, -.115, .04);
+    const f1 = G(); f1.position.set(0, -.133, .23); Sk.add(f1); const f2 = G(); f2.position.set(0, -.133, -.15); Sk.add(f2);
+    (R.uFeet = R.uFeet || []).push(f1, f2);
+  }
+  { // cabeça de unicórnio (a do jogo, na escala da pessoa)
+    const k = .64 * H / 1.75, Hh = slot(R.head, 'u', 'head'), Hs = G(); Hs.scale.setScalar(k); Hs.position.y = -.01; Hh.add(Hs);
+    const coatH = um({ map: uniCoatTex(V, D.h * 100 | 0), rep: [1.5, 1] }), snoutM = um({ map: fluffTex, color: V.snout }), cheekM = um({ color: 0xff4f9a, emissive: .45 });
+    addM(Hs, new THREE.SphereGeometry(.31, 8, 6), coatH, 0, .27, 0, 0, 0, 0, 1, .93, 1.02);
+    addM(Hs, cyl(.15, .19, .38, 8), snoutM, 0, .16, .36, HP, 0, 0);
+    for (const s of [1, -1]) {
+      addM(Hs, new THREE.BoxGeometry(.04, .03, .02), dark, .055 * s, .19, .55);
+      addM(Hs, new THREE.SphereGeometry(.085, 6, 5), white, .15 * s, .33, .22, 0, .35 * s, 0, 1, 1.25, .6);
+      addM(Hs, new THREE.SphereGeometry(.058, 6, 4), dark, .157 * s, .32, .262, 0, .35 * s, 0, 1, 1.2, .6);
+      addM(Hs, new THREE.BoxGeometry(.03, .03, .02), white, .145 * s, .355, .305);
+      addM(Hs, new THREE.CircleGeometry(.055, 8), cheekM, .2 * s, .2, .255, 0, .6 * s, 0);
+      addM(Hs, new THREE.ConeGeometry(.075, .2, 4), plush, .16 * s, .55, -.04, 0, 0, -.35 * s);
+    }
+    R.hornMat = um({ map: hornTex, emissive: .25 });
+    const horn = addM(Hs, new THREE.ConeGeometry(.075, .44, 6, 2), R.hornMat, 0, .62, .1, .35, 0, 0);
+    R.hornTip = G(); R.hornTip.position.set(0, .22, 0); horn.add(R.hornTip);
+    R.hornBaseLocal = V3(0, .62, .1).multiplyScalar(k).add(V3(0, -.01, 0)).add(V3(0, -.22 * k * Math.cos(.35), -.22 * k * Math.sin(.35)));
+    for (let i = 0; i < 6; i++) { const th = .2 + i * .27; addM(Hs, new THREE.ConeGeometry(.1, .3, 4), um({ color: V.mane[i], emissive: .15 }), 0, .27 + .32 * Math.cos(th), -.32 * Math.sin(th) + .02, -th, 0, (i % 2 ? .25 : -.25)); }
+    addM(Hs, new THREE.ConeGeometry(.08, .2, 4), um({ color: V.mane[1], emissive: .15 }), 0, .55, .14, .9, 0, 0);
+    if (V.acc === 'sun') { const gm = um({ color: 0x0e0c12 }); for (const s of [1, -1]) addM(Hs, new THREE.BoxGeometry(.2, .14, .02), gm, .155 * s, .34, .29, 0, .35 * s, 0); addM(Hs, new THREE.BoxGeometry(.12, .025, .02), gm, 0, .37, .33); }
+    if (V.acc === 'round') { const fm = um({ color: 0xd26a9a }), lm = um({ color: 0xff8fc4, opacity: .5, transparent: true, depthWrite: false, emissive: .3 }); for (const s of [1, -1]) { addM(Hs, new THREE.TorusGeometry(.105, .013, 4, 12), fm, .155 * s, .33, .3, 0, .35 * s, 0); addM(Hs, new THREE.CircleGeometry(.1, 10), lm, .155 * s, .33, .302, 0, .35 * s, 0); } addM(Hs, new THREE.BoxGeometry(.1, .02, .02), fm, 0, .35, .34); }
+    if (V.acc === 'cap') { const cm = um({ map: solidTex(D.hatCol, 10, 11) }); addM(Hs, new THREE.SphereGeometry(.325, 10, 5, 0, TAU, 0, PI * .5), cm, 0, .36, -.03, -.18, 0, 0, 1, .9, 1.02); addM(Hs, new THREE.BoxGeometry(.36, .025, .28), cm, 0, .43, .3, .3, 0, 0); }
+    if (V.acc === 'bucket') { const bm = um({ map: solidTex(D.hatCol, 12, 13) }); addM(Hs, cyl(.26, .32, .2, 10), bm, 0, .55, -.04); addM(Hs, cyl(.47, .47, .02, 12), bm, 0, .46, -.02, .1, 0, 0); }
+  }
+  R.root.traverse(o => { if (o.isMesh) o.layers.set(1); });
+  return R;
+}
+function setForm(R, part, form) { R.state[part] = form; for (const g of R.forms.h[part]) g.visible = form === 'h'; for (const g of R.forms.u[part]) g.visible = form === 'u'; }
+function setAllForms(R, form) { for (const p in R.state) setForm(R, p, form); }
+// No jogo, o unicórnio de cada jogador é o boneco do personagem escolhido na forma de unicórnio, um pouco maior
+// (do tamanho dos unicórnios antigos), para a câmera, as pistas e os efeitos da partida continuarem iguais.
+const GAME_K = 1.25, DEFAULT_CHARS = ['clau', 'jodri'];
+function rigForGame(id) { const R = buildCharacter(CHAR_BY_ID[id]); setAllForms(R, 'u'); R.feet = R.uFeet; R.body.scale.setScalar(GAME_K); return R; }
+let KEEP_TEX = null;   // texturas que vários bonecos dividem: não se descartam junto com um deles
+function disposeRig(o) {
+  if (!KEEP_TEX) { KEEP_TEX = new Set([hornTex, fluffTex, iceTex]); for (const D of CHARS) for (const x of [D.shorts, D.sock]) if (x && x.isTexture) KEEP_TEX.add(x); }
+  o.traverse(c => { if (c.geometry) c.geometry.dispose(); if (c.material) { const u = c.material.uniforms, m = u && u.map && u.map.value; if (m && !KEEP_TEX.has(m)) m.dispose(); c.material.dispose(); } });
+}
+function setPlayerChar(pl, id) {
+  if (!CHAR_BY_ID[id]) id = DEFAULT_CHARS[pl.id];
+  if (pl.uni && pl.charId === id) return;
+  const old = pl.uni;
+  if (old) { clearPoseFx(pl, false); for (const f of pl.anim.fx) killFx(f, .01); MIR.remove(old.root); disposeRig(old.root); }
+  pl.charId = id; pl.uni = rigForGame(id); MIR.add(pl.uni.root);
+  if (old) { pl.uni.root.visible = old.root.visible; applyPose(pl, pl.curPose, simT); updW(pl); }
+}
+/* ============================== pose: braços por IK, pernas e corpo por ângulos ============================== */
+const _S = V3(), _E = V3(), _T = V3(), _w = V3(), _q = V3(), _u = V3(), _f = V3(), _X = V3(), _Y = V3(), _Z = V3(), _P = V3();
+const _m4 = new THREE.Matrix4(), _qw = new THREE.Quaternion(), _qp = new THREE.Quaternion();
+// mão no alvo (espaço do personagem), cotovelo puxado na direção do polo
+function solveArm(R, side, tgt, pole) {
+  const sh = side > 0 ? R.shL : R.shR, el = side > 0 ? R.elL : R.elR, a = R.L.upper, b = R.L.fore + R.L.palm;
+  sh.parent.updateMatrixWorld(true);
+  sh.getWorldPosition(_S); _T.copy(tgt); R.root.localToWorld(_T);
+  _P.copy(pole).applyQuaternion(R.root.quaternion).normalize();
+  _w.subVectors(_T, _S); let d = _w.length(); _w.normalize();
+  d = clamp(d, Math.abs(a - b) + 1e-3, a + b - 1e-3);
+  const cA = (a * a + d * d - b * b) / (2 * a * d), sA = Math.sqrt(Math.max(0, 1 - cA * cA));
+  _q.copy(_P).addScaledVector(_w, -_P.dot(_w)); if (_q.lengthSq() < 1e-6) _q.set(0, 0, -1); _q.normalize();
+  _E.copy(_S).addScaledVector(_w, a * cA).addScaledVector(_q, a * sA);
+  _T.copy(_S).addScaledVector(_w, d);
+  _u.subVectors(_E, _S).normalize(); _f.subVectors(_T, _E).normalize();
+  _Y.copy(_u).negate(); _Z.copy(_f).addScaledVector(_u, -_f.dot(_u)); if (_Z.lengthSq() < 1e-6) _Z.copy(_q).negate(); _Z.normalize();
+  _X.crossVectors(_Y, _Z).normalize();
+  _m4.makeBasis(_X, _Y, _Z); _qw.setFromRotationMatrix(_m4);
+  sh.parent.getWorldQuaternion(_qp); sh.quaternion.copy(_qp.invert().multiply(_qw));
+  el.rotation.set(-Math.acos(clamp(_u.dot(_f), -1, 1)), 0, 0);
+}
+function ground(R) {
+  R.body.position.y = 0; R.root.updateMatrixWorld(true);
+  let minY = 1e9; for (const f of (R.state.legL === 'u' ? R.uFeet : R.hFeet)) { f.getWorldPosition(_v); R.spinner.worldToLocal(_v); if (_v.y < minY) minY = _v.y; }
+  R.body.position.y = -minY; R.root.updateMatrixWorld(true);
+}
+function applyFK(R, o, now) {
+  R.torso.rotation.set(o.lean, o.tw || 0, o.side || 0); R.neck.rotation.set(o.hd, o.hy || 0, 0); R.head.rotation.set(0, 0, 0);
+  setLimb(R.shL, 1, o.aL[0], o.aL[1]); R.elL.rotation.set(o.aL[2], 0, 0);
+  setLimb(R.shR, -1, o.aR[0], o.aR[1]); R.elR.rotation.set(o.aR[2], 0, 0);
+  setLimb(R.hpL, 1, o.lL[0], o.lL[1]); R.knL.rotation.set(o.lL[2], 0, 0); R.skL.rotation.set(o.fL || 0, 0, 0);
+  setLimb(R.hpR, -1, o.lR[0], o.lR[1]); R.knR.rotation.set(o.lR[2], 0, 0); R.skR.rotation.set(o.fR || 0, 0, 0);
+  if (R.tail) { const tw = Math.sin(now * 6) * .15; R.tail[0].rotation.x = -2.0 + 1.1 * (o.tail || .5) + tw; R.tail[1].rotation.x = .35 * (o.tail || .5) + tw * 1.3; R.tail[2].rotation.x = .3 * (o.tail || .5) + tw * 1.6; }
+  ground(R);
+}
+const POSE_IDLE = { lean: .02, hd: 0, ...A(.14, .1, -.18), lL: [.04, 0, .03], lR: [.04, 0, .03] };
+const POSE_SPIRAL = { lean: 1.0, hd: -.82, aL: [1.6, .7, -.1], aR: [1.45, .05, -.05], lL: [.03, 0, .06], lR: [1.8, -HP, .04], fR: .5, tail: .9 };
+
+/* ============================== coreografia da transformação (40 s) ============================== */
+// Trilhas por tempo: cada chave [t, valor]; entre chaves, curva suave.
+function track(keys) {
+  return t => {
+    if (t <= keys[0][0]) return keys[0][1];
+    for (let i = 0; i < keys.length - 1; i++) {
+      const [t0, a] = keys[i], [t1, b] = keys[i + 1];
+      if (t < t1) { const s = easeIO((t - t0) / (t1 - t0)); return Array.isArray(a) ? a.map((v, j) => lerp(v, b[j], s)) : lerp(a, b, s); }
+    }
+    return keys[keys.length - 1][1];
+  };
+}
+const T_FLASH = 37.0, T_FINAL = 37.45, T_END = 40;
+// o roteiro é escrito em segundos de 0 a 40; a reprodução base corre 2,5x até as fitas e 2x depois delas (cerca de 18 s no total)
+const T_RIBBONS = 21.5, baseRate = t => t < T_RIBBONS ? 2.5 : 2;
+const PARTS = [   // fitas: começa a enrolar, troca a peça, terminam de sair
+  { parts: ['torso'], a: 21.5, sw: 22.85, z: 24.1 },
+  { parts: ['armL', 'armR'], a: 25.4, sw: 26.75, z: 28.0 },
+  { parts: ['legL', 'legR'], a: 29.4, sw: 30.75, z: 32.0 }
+];
+// valores em frações da altura (y) ou metros (x, z), no espaço do personagem (frente = +z, esquerda dele = +x)
+function makeChoreo(R) {
+  const H = R.H, L = R.L, B = R.D.b, span = B.shX + L.upper + L.fore + L.palm;
+  const rest = s => [s * (B.shX + .05), .43 * H, .02];
+  const pocket = [-(B.hipX + B.leg * .9), .5 * H, .07];
+  const C = {};
+  C.float = track([[0, 0], [14.2, 0], [16.4, .3], [36.9, .34]]);
+  C.lean = track([[0, 0], [3.2, .02], [5.4, -.1], [11, -.1], [14.2, 0], [37, 0]]);
+  C.hd = track([[0, .03], [1.0, .22], [1.9, .28], [2.7, .2], [3.4, 0], [5.4, -.42], [11, -.38], [14.2, -.08], [18, -.22], [33, -.22], [36.9, -.32]]);
+  C.hy = track([[0, 0], [.9, -.3], [1.9, -.15], [2.8, 0]]);
+  // chifre: base e eixo; segura de 1,6 s a 14 s, depois flutua e desce até a testa
+  C.hornVis = t => t >= 1.6;
+  C.hornB = track([[1.6, [pocket[0] + .02, pocket[1] + .05, pocket[2] + .03]], [2.7, [-.02, .69 * H, .3]], [3.3, [0, .7 * H, .3]], [5.6, [0, H + .13, .09]], [11, [0, H + .15, .09]], [14.2, [0, H + .2, .06]], [15.8, [0, H + .44, .04]], [18, [0, H + .44, .04]], [36.9, [0, .985 * H, .07]]]);
+  C.hornA = track([[1.6, [.25, .8, .55]], [2.7, [0, 1, .18]], [3.3, [0, 1, .05]], [5.6, [0, 1, 0]], [33, [0, 1, 0]], [36.9, [0, .94, .34]]]);
+  C.held = t => t >= 1.6 && t < 14.2;
+  C.handR = track([[0, rest(-1)], [.8, rest(-1)], [1.45, pocket], [1.7, pocket], [14.2, pocket], [15.6, [-span * .93, .86 * H, .1]], [37, [-span * .92, .88 * H, .1]]]);
+  C.handL = track([[0, rest(1)], [2.5, rest(1)], [14.2, rest(1)], [15.6, [span * .93, .86 * H, .1]], [37, [span * .92, .88 * H, .1]]]);
+  C.poleR = track([[0, [-.3, -.2, -1]], [1.6, [-.6, -.3, -.8]], [2.7, [-1, -.5, -.4]], [5.2, [-1, .15, -.3]], [14.2, [-1, .15, -.3]], [15.6, [0, -.5, -1]]]);
+  C.poleL = track([[0, [.3, -.2, -1]], [2.5, [.3, -.2, -1]], [3.2, [1, -.5, -.4]], [5.2, [1, .15, -.3]], [14.2, [1, .15, -.3]], [15.6, [0, -.5, -1]]]);
+  C.handLJoin = t => seg(t, 2.6, 3.3);   // mão esquerda vai ao chifre
+  // pernas: em pé → flutuando com as pontas dos pés esticadas e um joelho dobrado
+  C.legL = track([[0, [0, .02, .02, 0]], [14.2, [0, .02, .02, 0]], [16, [-.06, -.05, .1, .65]], [29.0, [-.06, -.05, .1, .65]], [29.7, [-.04, .16, .06, .7]], [32.3, [-.04, .16, .06, .7]], [33.2, [-.06, -.05, .1, .65]]]);
+  C.legR = track([[0, [0, -.02, .02, 0]], [14.2, [0, -.02, .02, 0]], [16, [.18, .05, .55, .75]], [29.0, [.18, .05, .55, .75]], [29.7, [.1, -.18, .35, .75]], [32.3, [.1, -.18, .35, .75]], [33.2, [.18, .05, .55, .75]]]);
+  C.sil = track([[0, 0], [11.15, 0], [12.5, 1]]);
+  C.silY = t => lerp(H + .7, -.3, seg(t, 11.15, 12.6));
+  C.rainbow = track([[0, 0], [10.9, 0], [12.3, 1]]);
+  C.glow = track([[0, 0], [5.8, 0], [7.2, .45], [10.3, 1], [10.75, 1.7], [11.6, .7], [14.2, .55], [36.9, .9]]);
+  C.flash = t => t < 36.88 ? 0 : t < 37.08 ? seg(t, 36.88, 37.08) : t < 37.55 ? 1 : 1 - seg(t, 37.55, 38.35);
+  return C;
+}
+// câmera: [t, alvo (x, y em frações de H, z), azimute°, elevação°, meia largura, meia altura] para caber em qualquer formato de tela
+const CAMK = [
+  [0, [0, .52, 0], 20, 6, .62, 1.12], [1.0, [0, .5, 0], 22, 4, .6, 1.05], [2.0, [-.06, .55, .1], 18, 2, .44, .66], [3.2, [0, .66, .15], 10, 0, .4, .58],
+  [5.0, [0, .9, .05], 6, -10, .5, .84], [6.6, [0, 1.05, .08], 2, -16, .3, .4], [8.0, [0, 1.08, .08], 0, -20, .21, .28], [10.6, [0, 1.09, .08], 0, -22, .17, .23],
+  [11.4, [0, 1.09, .08], 0, -22, .19, .25], [12.6, [0, 1.0, .05], 0, -14, .34, .44], [14.6, [0, .68, 0], 0, 0, .86, 1.2],
+  [21.5, [0, .7, 0], 14, 2, .36, .42], [24.4, [0, .7, 0], 24, 2, .36, .42],
+  [25.3, [0, .8, 0], -4, 2, .9, .48], [28.4, [0, .8, 0], 8, 2, .9, .48], [29.3, [0, .3, .02], 6, 6, .5, .64], [32.4, [0, .3, .02], 18, 8, .5, .64],
+  [33.3, [0, .97, .02], 6, -4, .3, .36], [36.9, [0, .97, .03], 0, -3, .23, .28]
+];
+const CAMF = [[T_FINAL, [0, .5, 0], 34, 7, .95, 1.22], [T_END, [0, .5, 0], 56, 9, .95, 1.22], [T_END + 30, [0, .5, 0], 200, 9, .95, 1.22]];
+function camAt(keys, t) {
+  if (t <= keys[0][0]) return keys[0];
+  for (let i = 0; i < keys.length - 1; i++) { const a = keys[i], b = keys[i + 1]; if (t < b[0]) { const s = easeIO((t - a[0]) / (b[0] - a[0])); return [t, a[1].map((v, j) => lerp(v, b[1][j], s)), lerp(a[2], b[2], s), lerp(a[3], b[3], s), lerp(a[4], b[4], s), lerp(a[5], b[5], s)]; } }
+  return keys[keys.length - 1];
+}
+
+/* --------- efeitos: fundo multicor, brilho do chifre, fitas --------- */
+const RB_VS = `varying vec3 vDir; void main(){ vDir = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
+const RB_FS = `uniform float uTime; uniform float uMix; varying vec3 vDir;
+vec3 hsv(float h, float s, float v){ vec3 k = clamp(abs(mod(h * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0); return v * mix(vec3(1.0), k, s); }
+void main(){
+  vec3 d = normalize(vDir); float a = atan(d.x, d.z), e = asin(clamp(d.y, -1.0, 1.0));
+  float sw = a * 3.0 + e * 5.0 - uTime * 1.2;
+  float h = fract(e * 0.22 + a / 6.2832 + uTime * 0.06);
+  vec3 c = mix(vec3(0.42, 0.12, 0.62), hsv(h, 0.72, 1.0), 0.62 + 0.18 * sin(sw));
+  float rays = pow(0.5 + 0.5 * sin(a * 14.0 + e * 3.0 + uTime * 2.0), 10.0);
+  c = mix(c, vec3(1.0, 0.94, 1.0), 0.45 * rays);
+  float rings = pow(0.5 + 0.5 * sin(e * 26.0 - uTime * 4.0), 14.0);
+  c += vec3(0.25, 0.18, 0.3) * rings;
+  gl_FragColor = vec4(c, uMix);
+}`;
+function rainbowSphere() {
+  const m = new THREE.Mesh(new THREE.SphereGeometry(9, 24, 16), new THREE.ShaderMaterial({ uniforms: { uTime: U.uTime, uMix: { value: 0 } }, vertexShader: RB_VS, fragmentShader: RB_FS, side: THREE.BackSide, transparent: true, depthWrite: false }));
+  m.renderOrder = 2; m.frustumCulled = false; return m;
+}
+const starTex = canvasTex(64, 64, (g, w, h) => {
+  g.fillStyle = '#000'; g.fillRect(0, 0, w, h);
+  const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, '#ffffff'); gr.addColorStop(.16, '#fff0fa'); gr.addColorStop(.42, '#5a2648'); gr.addColorStop(1, '#000000');
+  g.fillStyle = gr; g.fillRect(0, 0, w, h); g.fillStyle = '#fff';
+  g.fillRect(31, 0, 2, 64); g.fillRect(0, 31, 64, 2); for (let i = 0; i < 22; i++) { g.fillRect(32 + i, 32 + i, 1, 1); g.fillRect(32 - i, 32 + i, 1, 1); g.fillRect(32 + i, 32 - i, 1, 1); g.fillRect(32 - i, 32 - i, 1, 1); }
+}, false);
+function ribbonGeo(len, r, turns, width, segs, phase) {
+  const pos = [], nor = [], uv = [], idx = [];
+  for (let i = 0; i <= segs; i++) {
+    const s = i / segs, a = phase + s * turns * TAU, y = -s * len, x = Math.cos(a) * r, z = Math.sin(a) * r;
+    pos.push(x, y + width / 2, z, x, y - width / 2, z); nor.push(Math.cos(a), 0, Math.sin(a), Math.cos(a), 0, Math.sin(a)); uv.push(s, 0, s, 1);
+    if (i < segs) { const k = i * 2; idx.push(k, k + 1, k + 2, k + 1, k + 3, k + 2); }
+  }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx); return g;
+}
+const RIB_COLS = [0xff5fb1, 0x9b5cff];
+// fitas de um grupo de peças: duas por segmento (rosa e roxa), presas nas juntas
+function makeRibbons(R, group) {
+  const H = R.H, L = R.L, B = R.D.b, list = [];
+  const mk = (joint, len, r, turns, y0, up) => RIB_COLS.forEach((col, k) => {
+    const segs = Math.round(turns * 18), g = ribbonGeo(len, r, turns, len / turns * .55, segs, k * PI);
+    const m = new THREE.Mesh(g, psxMat({ color: col, emissive: .55, side: DS, transparent: true })); m.position.y = y0; m.visible = false; m.renderOrder = 5;
+    joint.add(m); list.push({ m, n: g.index.count, up, spin: (k ? -1 : 1) * 2.2 });
+  });
+  if (group.parts[0] === 'torso') mk(R.torso, L.waist + L.chest + L.pelvis * 2, B.chest * 1.45 + B.belly * .4, 3.6, L.waist + L.chest + .02, false);
+  if (group.parts[0] === 'armL') for (const s of [1, -1]) { mk(s > 0 ? R.shL : R.shR, L.upper, B.arm * 2.1, 2.2, .02, false); mk(s > 0 ? R.elL : R.elR, L.fore + .06, B.arm * 1.9, 2.4, .01, false); }
+  if (group.parts[0] === 'legL') for (const s of [1, -1]) { mk(s > 0 ? R.hpL : R.hpR, L.thigh, B.leg * 1.5, 2.2, .02, true); mk(s > 0 ? R.knL : R.knR, L.shin + L.ankle + .03, B.calf * 1.95, 2.6, .01, true); }
+  return list;
+}
+
+/* ============================== palco da transformação de cada jogador ============================== */
+// Cena própria (pista, fundo multicor, partículas), desenhada no quadro de baixa resolução do jogador:
+// assim herda a orientação escolhida para aquele lado na dupla. Criado só quando é usado pela primeira vez.
+function makeStage(pl) {
+  const st = { id: pl.id, pl, scene: new THREE.Scene(), cam: new THREE.PerspectiveCamera(38, 1, .04, 260), t: 0, rate: 1, done: false, active: false, hold: false, off: 0, R: null, C: null, ev: {}, fx: [], RTW: RW, RH: 200 };
+  st.world = buildWorldIn(st.scene); st.ps = makeParticles(st.scene, 1200);
+  st.rb = rainbowSphere(); st.scene.add(st.rb);
+  st.MIR = G(); st.scene.add(st.MIR);
+  st.shadow = new THREE.Mesh(new THREE.CircleGeometry(.5, 12), psxMat({ color: 0x0a0520, opacity: .4, transparent: true, depthWrite: false })); st.shadow.rotation.x = -HP; st.shadow.position.y = .02; st.shadow.renderOrder = 3; st.scene.add(st.shadow);
+  // chifre solto e o brilho da ponta
+  st.horn = G(); const hornM = psxMat({ map: hornTex, emissive: .35, side: DS }); st.hornLen = .27;
+  const hc = addM(st.horn, new THREE.ConeGeometry(.045, st.hornLen, 6, 2), hornM, 0, st.hornLen / 2, 0); hc.renderOrder = 4; st.hornMat = hornM;
+  st.horn.visible = false; st.scene.add(st.horn);
+  st.glow = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), psxMat({ map: starTex, additive: true, emissive: 1, fog: false, depthTest: false })); st.glow.renderOrder = 9; st.glow.visible = false; st.scene.add(st.glow);
+  st.flashEl = pl.flashEl; st.waitEl = pl.waitEl; st.b2x = pl.b2x;
+  return st;
+}
+const stageOf = pl => pl.stage || (pl.stage = makeStage(pl));
+// prepara a transformação do personagem do jogador (o boneco só é refeito se o personagem mudou)
+function setupStage(st, charId) {
+  if (!st.R || st.R.D.id !== charId) {
+    if (st.R) { st.MIR.remove(st.R.root); disposeRig(st.R.root); }
+    st.R = buildCharacter(CHAR_BY_ID[charId]); st.MIR.add(st.R.root); st.C = makeChoreo(st.R);
+    st.ribbons = PARTS.map(p => makeRibbons(st.R, p)); st.fx = st.ribbons.flat();
+  } else setAllForms(st.R, 'h');
+  for (const f of st.fx) f.m.visible = false;
+  st.R.SIL.uSil.value = 0;
+  st.t = 0; st.rate = 1; st.done = false; st.active = true; st.hold = false; st.ev = {};
+  st.b2x.setAttribute('aria-pressed', 'false'); st.waitEl.hidden = true;
+  for (let i = 0; i < st.ps.n; i++) st.ps.life[i] = 0;
+}
+
+/* --------- um quadro da transformação --------- */
+const _hb = V3(), _ha = V3(), _side = V3(), _tf1 = V3(), _tf2 = V3(), _tcp = V3(), _tct = V3();
+function stageUpdate(st, dt, now) {
+  const R = st.R, C = st.C, H = R.H, L = R.L;
+  if (st.active && !st.done && !st.hold) { st.t += dt * st.rate * baseRate(st.t); if (st.t >= T_END) { st.done = true; onStageDone(st); } }
+  const t = st.t, final = t >= T_FINAL;
+  tfEvents(st, t);
+  if (!final) {
+    // ---- transformação: corpo flutua, braços por IK seguindo o chifre ----
+    const fl = C.float(t) + (t > 14.2 ? .025 * Math.sin(now * 2.2) * sm(14.2, 16.5, t) : 0);
+    R.root.position.set(0, fl, 0); R.root.rotation.set(0, 0, 0);
+    R.body.position.y = L.bodyY; R.spinner.rotation.set(0, 0, 0);
+    const breath = Math.sin(now * 2.4) * .015;
+    R.torso.rotation.set(C.lean(t) + breath, 0, t < 3 ? .03 * Math.sin(now * 1.3) : 0); R.neck.rotation.set(C.hd(t), C.hy(t), 0); R.head.rotation.set(0, 0, 0);
+    const [lp, lr, lk, lf] = C.legL(t), [rp, rr, rk, rf] = C.legR(t);
+    R.hpL.rotation.set(lp, 0, lr); R.knL.rotation.set(lk, 0, 0); R.skL.rotation.set(lf, 0, 0);
+    R.hpR.rotation.set(rp, 0, rr); R.knR.rotation.set(rk, 0, 0); R.skR.rotation.set(rf, 0, 0);
+    R.root.updateMatrixWorld(true);
+    // chifre
+    const hornOn = C.hornVis(t);
+    _hb.fromArray(C.hornB(t)); _ha.fromArray(C.hornA(t)).normalize();
+    if (t > 14.2) _hb.x += .02 * Math.sin(now * 1.7);
+    if (t > 5.6 && t < 14.2) { _hb.x += .004 * Math.sin(now * 37); _hb.y += .003 * Math.sin(now * 41); }
+    st.horn.visible = hornOn && R.state.head === 'h';
+    st.horn.position.copy(_hb); R.root.localToWorld(st.horn.position);
+    st.horn.quaternion.setFromUnitVectors(V3(0, 1, 0), _ha); st.horn.rotateY(t > 14.2 ? now * 1.4 : 0);
+    // mãos
+    const held = C.held(t);
+    _side.set(1, 0, 0);
+    const gripR = _tf1.copy(_hb).addScaledVector(_ha, .03).addScaledVector(_side, -.035).toArray();
+    const gripL = _tf2.copy(_hb).addScaledVector(_ha, .075).addScaledVector(_side, .035).toArray();
+    let hR = C.handR(t), hL = C.handL(t);
+    if (t >= 1.6 && t < 14.2) hR = gripR;
+    if (t < 14.2) { const j = C.handLJoin(t); if (j > 0) hL = C.handL(2.5).map((v, i) => lerp(v, gripL[i], easeIO(j))); }
+    if (t >= 14.2 && t < 15.6) { const s = easeIO(seg(t, 14.2, 15.6)), oR = C.handR(15.6), oL = C.handL(15.6); hR = gripR.map((v, i) => lerp(v, oR[i], s)); hL = gripL.map((v, i) => lerp(v, oL[i], s)); }
+    solveArm(R, -1, _tf1.fromArray(hR), _tf2.fromArray(C.poleR(t)));
+    solveArm(R, 1, _tf1.fromArray(hL), _tf2.fromArray(C.poleL(t)));
+    if (R.tail) { const tw = Math.sin(now * 5) * .2; R.tail[0].rotation.x = -1.4 + tw; R.tail[1].rotation.x = .3 + tw * 1.3; R.tail[2].rotation.x = .3 + tw * 1.6; }
+    R.root.updateMatrixWorld(true);
+    // silhueta e fundo
+    R.SIL.uSil.value = C.sil(t); R.SIL.uSilY.value = C.silY(t) + fl; R.SIL.uBaseY.value = fl; R.SIL.uHgt.value = H;
+    const rb = C.rainbow(t); st.rb.material.uniforms.uMix.value = rb; st.rb.visible = rb > .001; st.world.group.visible = rb < .999;
+    st.rb.position.set(0, H * .6 + fl, 0);
+    // brilho da ponta
+    const gl = hornOn ? C.glow(t) : 0; st.glow.visible = gl > .01 && st.horn.visible;
+    if (st.glow.visible) { st.horn.updateMatrixWorld(true); st.glow.position.set(0, st.hornLen, 0); st.horn.localToWorld(st.glow.position); const s = .12 + .5 * gl * (1 + .12 * Math.sin(now * 18)); st.glow.scale.set(s, s, s); st.glow.quaternion.copy(st.cam.quaternion); st.glow.rotateZ(now * .8); }
+    st.hornMat.uniforms.uEmissive.value = .35 + .65 * Math.min(1, gl);
+    st.shadow.visible = rb < .5; st.shadow.position.set(0, .02, 0); { const s = 1 / (1 + fl * 2); st.shadow.scale.set(s, s, s); }
+    // fitas
+    PARTS.forEach((p, gi) => ribbonsAt(st, st.ribbons[gi], p, t, now));
+    // cintilância ao redor durante o fundo multicor
+    if (rb > .5 && dt > 0) for (let i = cnt(dt * 40); i > 0; i--) { const a = Math.random() * TAU, r = rnd(.8, 2.4); pEmit(st.ps, Math.cos(a) * r, fl + rnd(0, H * 1.3), Math.sin(a) * r * .6 - .4, 0, rnd(.1, .4), 0, rnd(.8, 1.6), rnd(.04, .09), Math.random() < .5 ? C_WHITE : hueCol(Math.random()), 0, 0); }
+    if (gl > .3 && dt > 0) { st.glow.getWorldPosition(_tf1); for (let i = cnt(dt * 60 * gl); i > 0; i--) { const a = Math.random() * TAU, e = rnd(-1, 1); pEmit(st.ps, _tf1.x, _tf1.y, _tf1.z, Math.cos(a) * 1.2 * Math.sqrt(1 - e * e), e * 1.2, Math.sin(a) * 1.2 * Math.sqrt(1 - e * e), rnd(.3, .7), rnd(.03, .06), Math.random() < .6 ? C_WHITE : C_PINK, 0, 2); } }
+  } else {
+    // ---- depois do flash: o unicórnio na pista, em pose de patinação ----
+    st.rb.visible = false; st.world.group.visible = true; st.horn.visible = false; st.glow.visible = false; R.SIL.uSil.value = 0;
+    for (const p in R.state) if (R.state[p] !== 'u') setForm(R, p, 'u');
+    R.root.position.set(0, 0, 0); R.root.rotation.set(0, 0, 0); R.spinner.rotation.set(0, 0, 0);
+    const br = Math.sin(now * 3) * .03, o = Object.assign({}, POSE_SPIRAL, { lean: POSE_SPIRAL.lean + br, hd: POSE_SPIRAL.hd + br });
+    applyFK(R, o, now);
+    st.shadow.visible = true; R.chest.getWorldPosition(_tf1); st.shadow.position.set(_tf1.x, .02, _tf1.z); st.shadow.scale.set(1, 1, 1);
+    for (const f of st.fx) f.m.visible = false;
+    if (dt > 0) { R.chest.getWorldPosition(_tf1); for (let i = cnt(dt * 26); i > 0; i--) pEmit(st.ps, _tf1.x + rnd(-1.2, 1.2), _tf1.y + rnd(-1, 1.2), _tf1.z + rnd(-1.2, 1.2), 0, rnd(.1, .4), 0, rnd(.7, 1.3), rnd(.05, .09), PALETTE[(Math.random() * 6) | 0], 0, 0); }
+  }
+  if (R.hornMat) R.hornMat.uniforms.uEmissive.value = final ? .5 + .3 * Math.sin(now * 6) : .25;
+  st.flashEl.style.opacity = (st.C.flash(t) * (REDUCED ? .35 : 1)).toFixed(3);
+  pUpdate(st.ps, dt);
+  const w = st.world; if (w.group.visible) { for (let i = 0; i < w.STARS.n; i++) w.STARS.alpha[i] = .55 + .45 * Math.sin(now * 1.7 + w.STARS.phase[i]); w.STARS.geo.attributes.palpha.needsUpdate = true; }
+  stageCamera(st, now);
+}
+function ribbonsAt(st, list, p, t, now) {
+  const wrap = seg(t, p.a, p.sw), fly = seg(t, p.sw + .2, p.z);
+  for (const r of list) {
+    const on = t >= p.a && t < p.z;
+    r.m.visible = on; if (!on) continue;
+    const k = Math.max(6, Math.floor(r.n * easeOut(wrap) / 6) * 6);
+    r.m.geometry.setDrawRange(r.up ? r.n - k : 0, k);
+    const s = 1 + 2.6 * easeIO(fly); r.m.scale.set(s, 1 + .3 * fly, s);
+    r.m.rotation.y = r.spin * (t - p.a) * (1 + 3 * fly);
+    setOpacity(r.m, 1 - fly);
+  }
+}
+// momentos: trocas de peça, sons e explosões de brilho (disparam uma vez ao cruzar o tempo)
+function tfEvents(st, t) {
+  const R = st.R, ev = st.ev, P = st.ps;
+  const at = (k, time, fn) => { if (!ev[k] && t >= time) { ev[k] = 1; fn(); } };
+  const rate = st.rate * baseRate(t);
+  at('horn', 1.6, () => { SND.ting(); R.handR.getWorldPosition(_tf1); pBurst(P, _tf1, 14, 1.2, .5, .05, () => C_GOLD, 0, .3); });
+  at('rise', 7.0, () => SND.rise(3.6 / rate));
+  at('burst', 10.75, () => { SND.bling(); st.glow.getWorldPosition(_tf1); pBurst(P, _tf1, 90, 4, 1.1, .08, () => hueCol(Math.random()), 0, 0); });
+  at('bg', 11.0, () => SND.sweep(1.2 / rate));
+  at('open', 14.2, () => SND.chord());
+  PARTS.forEach((p, i) => {
+    at('w' + i, p.a, () => SND.wrap(1.3 / rate));
+    at('s' + i, p.sw, () => { for (const part of p.parts) setForm(R, part, 'u'); SND.pop(); for (const part of p.parts) { const j = part === 'torso' ? R.chest : part === 'armL' ? R.elL : part === 'armR' ? R.elR : part === 'legL' ? R.knL : R.knR; j.getWorldPosition(_tf1); pBurst(P, _tf1, 50, 2.4, .9, .07, () => Math.random() < .5 ? C_PINK : C_VIO, 0, .2); } });
+  });
+  at('touch', T_FLASH + .05, () => { setForm(R, 'head', 'u'); SND.flash(); });
+  at('final', T_FINAL, () => { for (const p in R.state) setForm(R, p, 'u'); applyFK(R, POSE_SPIRAL, 0); R.chest.getWorldPosition(_tf1); pBurst(P, _tf1, 120, 5, 1.3, .09, () => hueCol(Math.random()), 1, .5); SND.fanfare(); });
+}
+// braços abertos: a câmera dá uma volta completa em torno do personagem e fecha no peito quando as fitas começam
+const ORB0 = 14.6, ORB1 = 21.5;
+function stageCamera(st, now) {
+  const R = st.R, t = st.t, final = t >= T_FINAL, H = R.H;
+  let k;
+  if (!final && t > ORB0 && t < ORB1) {
+    const a = camAt(CAMK, ORB0), b = camAt(CAMK, ORB1), s = (t - ORB0) / (ORB1 - ORB0), e = (1 - Math.cos(PI * s)) / 2, w = sm(.62, 1, s);
+    k = [t, a[1].map((v, j) => lerp(v, b[1][j], w)), a[2] + (b[2] + 360 - a[2]) * e, lerp(a[3], b[3], s) + 7 * Math.sin(PI * s), lerp(a[4], b[4], w), lerp(a[5], b[5], w)];
+  } else k = camAt(final ? CAMF : CAMK, t);
+  const [x, yf, z] = k[1], az = k[2] * PI / 180, el = k[3] * PI / 180, hw = k[4], hh = k[5];
+  _tct.set(x, yf * H + (final ? 0 : R.root.position.y), z);
+  const fov = st.cam.fov, tn = Math.tan(fov * PI / 360), asp = st.RTW / st.RH;
+  const d = Math.max(hh / tn, hw / (tn * asp)) + .05;
+  _tcp.set(Math.sin(az) * Math.cos(el), Math.sin(el), Math.cos(az) * Math.cos(el)).multiplyScalar(d).add(_tct);
+  _tcp.x += .015 * Math.sin(now * .9); _tcp.y += .012 * Math.sin(now * 1.3);
+  st.cam.position.copy(_tcp); st.cam.lookAt(_tct); st.cam.updateMatrixWorld();
+}
+function setRate(st, r) { if (!st || !st.active || st.done || st.hold) return; st.rate = r; st.b2x.setAttribute('aria-pressed', String(r > 1)); }
+function skipStage(st) { if (!st || st.done || !st.active || st.hold) return; for (const p in st.R.state) setForm(st.R, p, 'u'); st.ev = { horn: 1, rise: 1, burst: 1, bg: 1, open: 1, w0: 1, w1: 1, w2: 1, s0: 1, s1: 1, s2: 1, touch: 1 }; st.t = T_FINAL; SND.flash(); }
+
+/* ============================== música e sons da transformação ============================== */
+// Loop mágico em Mi maior que ganha camadas conforme a transformação avança (na dupla, segue quem está mais adiante).
+const MUS = { on: false, next: 0, t0: 0, iv: null, lvl: 0, end: false, tok: 0 };
+const TF_PROG = [{ r: 40, t: [64, 68, 71] }, { r: 37, t: [61, 64, 68] }, { r: 45, t: [61, 64, 69] }, { r: 47, t: [63, 66, 71] }];
+const TF_MEL = [76, 80, 83, 88, 87, 83, 80, 83];
+function musLevel() { const ts = ACTIVE.map(pl => pl.stage).filter(s => s && s.active).map(s => s.t); const m = ts.length ? Math.max(...ts) : 0; return m < 7 ? 0 : m < 11 ? 1 : m < 14.2 ? 2 : m < 21.4 ? 3 : m < T_FINAL ? 4 : 5; }
+function musicStep(k, t) {
+  const bar = Math.floor(k / 16) % 4, s = k % 16, ch = TF_PROG[bar], L = MUS.lvl;
+  if (s === 0) I.pad(t, ch.t, 2.0, L >= 2 ? 1 : .75);
+  if (s % 4 === 0) I.bell(t, ch.t[(s / 4) % 3] + 24, L >= 3 ? .45 : .32, .6);
+  if (L >= 1) I.arp(t, ch.t[s % 3] + (s % 6 < 3 ? 12 : 24), L >= 3 ? .9 : .5);
+  if (L >= 2 && (s === 0 || s === 8)) I.bass(t, ch.r + 12, .5, .7);
+  if (L >= 2 && s % 2 === 0) I.hat(t, s % 4 === 2 ? .8 : .45);
+  if (L >= 3 && s % 4 === 0) I.kick(t, .85);
+  if (L >= 3 && (s === 4 || s === 12)) I.clap(t, .7);
+  if (L >= 4 && s % 2 === 0) I.bell(t, TF_MEL[(s / 2 + bar * 2) % 8], .4, .3);
+}
+function musicTick() {
+  if (!AC || !MUS.on) return;
+  MUS.lvl = musLevel();
+  const ahead = AC.currentTime + .2;
+  while (MUS.t0 + MUS.next * .125 < ahead) { const tt = MUS.t0 + MUS.next * .125; if (tt > AC.currentTime - .02 && !MUS.end) musicStep(MUS.next, tt); MUS.next++; }
+}
+function musicStart() { newMusicBus(); MUS.tok++; MUS.on = true; MUS.end = false; MUS.next = 0; MUS.t0 = AC.currentTime + .1; if (!MUS.iv) MUS.iv = setInterval(musicTick, 25); }
+function musicStop(fade) { MUS.end = true; const tok = ++MUS.tok; if (AC && musicBus) { try { musicBus.gain.setTargetAtTime(0, AC.currentTime, fade ? .8 : .05); } catch (e) {} } setTimeout(() => { if (MUS.tok === tok) MUS.on = false; }, fade ? 2600 : 100); }
+const SND = {
+  now: () => AC ? AC.currentTime + .01 : 0,
+  ting() { if (!AC) return; const t = SND.now(); I.bell(t, 93, .8, .7, sfxBus); I.bell(t + .07, 100, .5, .6, sfxBus); },
+  rise(d) { if (!AC) return; const t = SND.now(), s = AC.createBufferSource(); s.buffer = noiseBuf; s.loop = true; const f = AC.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 3; f.frequency.setValueAtTime(500, t); f.frequency.exponentialRampToValueAtTime(9000, t + d); const g = AC.createGain(); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.16, t + d); g.gain.exponentialRampToValueAtTime(.0001, t + d + .1); s.connect(f); f.connect(g); g.connect(sfxBus); s.start(t); s.stop(t + d + .2); for (let i = 0; i < 10; i++) I.bell(t + d * i / 10, 76 + i * 2, .25 + i * .03, .4, sfxBus); },
+  bling() { if (!AC) return; const t = SND.now(); [88, 92, 95, 100, 104, 107].forEach((n, i) => I.bell(t + i * .04, n, .55, .8, sfxBus)); noise(t, .8, sfxBus, .1, 'highpass', 6000, .5, .02); },
+  sweep(d) { if (!AC) return; const t = SND.now(), s = AC.createBufferSource(); s.buffer = noiseBuf; s.loop = true; const f = AC.createBiquadFilter(); f.type = 'lowpass'; f.Q.value = 8; f.frequency.setValueAtTime(8000, t); f.frequency.exponentialRampToValueAtTime(300, t + d); const g = AC.createGain(); g.gain.setValueAtTime(.18, t); g.gain.exponentialRampToValueAtTime(.0001, t + d); s.connect(f); f.connect(g); g.connect(sfxBus); s.start(t); s.stop(t + d + .1); },
+  chord() { if (!AC) return; const t = SND.now(); for (const n of [64, 68, 71, 76]) I.bell(t, n + 12, .45, 1.6, sfxBus); },
+  wrap(d) { if (!AC) return; const t = SND.now(); for (let i = 0; i < 12; i++) I.bell(t + d * .8 * i / 12, [64, 68, 71][i % 3] + 12 + 12 * Math.floor(i / 3) % 24, .3, .25, sfxBus); noise(t, d, sfxBus, .07, 'bandpass', 2500, 1.2, d * .6); },
+  pop() { if (!AC) return; const t = SND.now(); I.bell(t, 95, .7, .5, sfxBus); I.bell(t + .05, 102, .4, .4, sfxBus); noise(t, .15, sfxBus, .08, 'highpass', 5000, .7); },
+  flash() { if (!AC) return; const t = SND.now(); I.crash(t, 1); for (const n of [52, 64, 68, 71, 76, 83]) I.bell(t, n + 12, .45, 2.2, sfxBus); osc('sine', 55, t, .9, sfxBus, .45); },
+  fanfare() { if (!AC) return; const t = SND.now(); [76, 80, 83, 88].forEach((n, i) => I.bell(t + i * .12, n, .7, .6, sfxBus)); for (const n of [64, 68, 71, 76]) I.bell(t + .5, n + 12, .5, 1.8, sfxBus); }
+};
+
+/* ============================== escolha: os quatro em roda, de costas uns para os outros ============================== */
+// Câmera em coordenadas polares em volta da roda: aberta, ela gira devagar mostrando todos de corpo inteiro;
+// ao escolher alguém, contorna o grupo até ficar de frente para a pessoa e se aproxima.
+// A roda é desenhada no quadro do jogador 1 (tela inteira); a cena só é montada na primeira vez.
+const LINE = { scene: null, cam: new THREE.PerspectiveCamera(30, 1, .1, 260), Rs: [], rad: .46, focus: -1, wave: { i: -1, t0: -9 }, cs: null, idle: 0, RTW: 0, RH: 0 };
+const _lt = V3();
+function ensureLineup() {
+  if (LINE.scene) return;
+  LINE.scene = new THREE.Scene(); LINE.world = buildWorldIn(LINE.scene); LINE.MIR = G(); LINE.scene.add(LINE.MIR);
+  CHARS.forEach((D, i) => {
+    const R = buildCharacter(D), a = i * TAU / CHARS.length;   // cada um virado para fora da roda
+    R.ang = a; R.root.position.set(Math.sin(a) * LINE.rad, 0, Math.cos(a) * LINE.rad); R.root.rotation.y = a;
+    R.phase = i * 1.7; LINE.MIR.add(R.root); LINE.Rs.push(R);
+    const tag = document.createElement('div'); tag.className = 'ntag'; tag.innerHTML = '<b></b><span></span>';
+    tag.querySelector('b').textContent = D.name; tag.querySelector('span').textContent = D.h.toFixed(2).replace('.', ',') + ' m';
+    $('#ltags').appendChild(tag); R.tag = tag;
+  });
+}
+function focusOn(i, wave) { if (i < 0 && LINE.cs) LINE.idle = LINE.cs.phi; LINE.focus = i; if (wave && i >= 0) LINE.wave = { i, t0: performance.now() / 1000 }; }
+function lineupUpdate(now, dt) {
+  LINE.Rs.forEach((R, i) => {
+    const s = Math.sin(now * 1.6 + R.phase), o = Object.assign({}, POSE_IDLE, { lean: .02 + .015 * s, hd: .02 * s, hy: .12 * Math.sin(now * .5 + R.phase) });
+    o.aL = [.16 + .02 * s, .1, -.2]; o.aR = [.16 - .02 * s, .1, -.2];
+    const k = now - LINE.wave.t0;   // o escolhido acena
+    if (LINE.wave.i === i && k < 1.9) { const w = sm(0, .25, k) * (1 - sm(1.5, 1.9, k)); o.aR = [lerp(o.aR[0], 2.55 + .22 * Math.sin(k * 11), w), lerp(o.aR[1], .35, w), lerp(o.aR[2], -.9, w)]; o.hy = lerp(o.hy, 0, w); o.hd = lerp(o.hd, -.08, w); }
+    applyFK(R, o, now);
+  });
+  const ah = Math.tan(LINE.cam.fov * PI / 360), asp = LINE.RTW / LINE.RH, f = LINE.focus;
+  // vista aberta: a roda inteira de corpo inteiro; escolhido: da cabeça à cintura, de frente
+  const elW = 30 * PI / 180, dW = Math.max(2.4 / ah, (LINE.rad + .75) / (ah * asp)), DW = dW * Math.cos(elW), YW = .95 + dW * Math.sin(elW);
+  let phiT, DT = DW, YT = YW; _lt.set(0, .95, 0);
+  if (f < 0) { LINE.idle += dt * .16; phiT = LINE.idle; }
+  else {
+    const R = LINE.Rs[f], el = 6 * PI / 180, d = Math.max(.55 / ah, .4 / (ah * asp)), cy = .8 * R.H;
+    phiT = R.ang;
+    // primeiro contorna a roda; só se aproxima quando já está quase de frente
+    const near = 1 - clamp(Math.abs(wrapA(phiT - (LINE.cs ? LINE.cs.phi : phiT))) / 1.1, 0, 1), w = near * near * (3 - 2 * near);
+    DT = lerp(DW, LINE.rad + d * Math.cos(el), w); YT = lerp(YW, cy + d * Math.sin(el), w);
+    _lt.lerp(_tf2.set(Math.sin(R.ang) * LINE.rad, cy, Math.cos(R.ang) * LINE.rad), w);
+  }
+  const cs = LINE.cs || (LINE.cs = { phi: phiT, D: DT, Y: YT, T: _lt.clone() }), kk = 1 - Math.exp(-dt * 2.6), kd = 1 - Math.exp(-dt * 3.2);
+  cs.phi += wrapA(phiT - cs.phi) * kk; cs.D += (DT - cs.D) * kd; cs.Y += (YT - cs.Y) * kd; cs.T.lerp(_lt, kd);
+  LINE.cam.position.set(Math.sin(cs.phi) * cs.D, cs.Y, Math.cos(cs.phi) * cs.D); LINE.cam.lookAt(cs.T); LINE.cam.updateMatrixWorld();
+  LINE.Rs.forEach((R, i) => { R.head.getWorldPosition(_tf1); _tf1.y += R.H * .2; _tf1.project(LINE.cam); R.tag.style.left = ((_tf1.x + 1) / 2 * 100).toFixed(2) + '%'; R.tag.style.top = ((1 - _tf1.y) / 2 * 100).toFixed(2) + '%'; R.tag.style.opacity = (f < 0 || f === i) && _tf1.z < 1 ? 1 : 0; });
+}
+// toque direto no personagem da roda
+const lineRay = new THREE.Raycaster(); lineRay.layers.enableAll();
+app.addEventListener('pointerdown', e => {
+  if (state.screen !== 'select' || !LINE.scene || e.target.closest('.selp')) return;
+  const r = app.getBoundingClientRect();
+  lineRay.setFromCamera({ x: (e.clientX - r.left) / r.width * 2 - 1, y: -((e.clientY - r.top) / r.height * 2 - 1) }, LINE.cam);
+  let hit = -1;
+  for (const h of lineRay.intersectObjects(LINE.MIR.children, true)) { const i = LINE.Rs.findIndex(R => { let o = h.object; while (o) { if (o === R.root) return true; o = o.parent; } return false; }); if (i >= 0) { hit = i; break; } }
+  if (hit < 0) { focusOn(-1); return; }
+  const id = CHARS[hit].id, p = SEL.two ? SEL.focus : 0;
+  if (SEL.two && SEL.picks[1 - p] === id) { focusOn(hit, true); return; }
+  pick(p, id);
+});
+
+/* --------- desenho das cenas separadas (roda e palcos) no quadro de um jogador --------- */
+function renderStage(o, rb) {
+  const cam = o.cam;
+  U.uLightDir.value.copy(LIGHT_WORLD).transformDirection(cam.matrixWorldInverse);
+  U.uScale.value = o.RH / (2 * Math.tan(cam.fov * PI / 360)); U.uRes.value.set(o.RTW / 2, o.RH / 2);
+  U.uAmb.value.copy(o === LINE ? AMB_LINE : AMB_NIGHT).lerp(AMB_BRIGHT, rb || 0);
+  renderer.setRenderTarget(o.rt); renderer.clear();
+  if (!rb || rb < .999) { o.MIR.scale.y = -1; o.MIR.updateMatrixWorld(true); cam.layers.set(1); renderer.render(o.scene, cam); o.MIR.scale.y = 1; o.MIR.updateMatrixWorld(true); }
+  cam.layers.enableAll(); renderer.render(o.scene, cam);
+}
+function postRender() { renderer.setRenderTarget(null); renderer.clear(); renderer.render(postScene, postCam); }
+// a roda usa o quadro do jogador 1, com a imagem deslocada para cima (o painel de escolha ocupa a parte de baixo)
+function bindLine() {
+  const pl = PL[0]; LINE.rt = pl.rt;
+  if (LINE.RTW !== pl.RTW || LINE.RH !== pl.RH) { LINE.RTW = pl.RTW; LINE.RH = pl.RH; LINE.cam.aspect = LINE.RTW / LINE.RH; LINE.cam.setViewOffset(LINE.RTW, LINE.RH, 0, Math.round(LINE.RH * .23), LINE.RTW, LINE.RH); LINE.cam.updateProjectionMatrix(); }
+}
+// o palco usa o quadro do jogador; parado na tela de "Pronto!", a imagem sobe um pouco para o painel não cobrir o rosto
+function bindStage(st, pl, dt) {
+  st.rt = pl.rt; st.RTW = pl.RTW; st.RH = pl.RH;
+  const offT = st.hold ? .1 : 0; st.off += (offT - st.off) * (dt > 0 ? 1 - Math.exp(-dt * 2.5) : 1); if (Math.abs(st.off - offT) < .002) st.off = offT;
+  st.cam.aspect = st.RTW / st.RH;
+  if (st.off > 0) st.cam.setViewOffset(st.RTW, st.RH, 0, Math.round(st.RH * st.off), st.RTW, st.RH); else st.cam.clearViewOffset();
+  st.cam.updateProjectionMatrix();
+}
+function selFrame(now, dt) { bindLine(); lineupUpdate(now, dt); renderStage(LINE, 0); drawLanes(PL[0], 0); postRender(); }
+function tfFrame(now, dt) {
+  for (const pl of ACTIVE) {
+    const st = pl.stage; if (!st || !st.active) continue;
+    bindStage(st, pl, dt); stageUpdate(st, dt, now);
+    renderStage(st, st.t < T_FINAL ? st.C.rainbow(st.t) : 0); drawLanes(pl, 0);
+  }
+  postRender();
+}
+
+/* --------- fluxo: modo → roda → (dupla: "Pronto!") → transformação → partida --------- */
+const SEL = { two: false, picks: [null, null], focus: 0 };
+function renderChips() {
+  [0, 1].forEach(p => {
+    const box = $('#pick' + p + ' .chips'); box.innerHTML = '';
+    for (const D of CHARS) {
+      const b = document.createElement('button'); b.className = 'chip'; b.innerHTML = '<i></i><span></span>';
+      b.querySelector('i').style.background = D.dot; b.querySelector('span').textContent = D.name;
+      b.setAttribute('aria-pressed', String(SEL.picks[p] === D.id)); b.disabled = SEL.two && SEL.picks[1 - p] === D.id;
+      b.onclick = () => { SEL.focus = p; pick(p, D.id); }; box.appendChild(b);
+    }
+    $('#pick' + p).classList.toggle('focus', SEL.two && SEL.focus === p);
+  });
+  $('#pick1').hidden = !SEL.two;
+  $('#goT').disabled = !SEL.picks[0] || (SEL.two && !SEL.picks[1]);
+  $('#selMode').textContent = t(SEL.two ? 'p2' : 'p1');
+  $('#selHint').textContent = t(SEL.two ? 'selHint2' : 'selHint1');
+}
+function pick(p, id) {
+  if (SEL.two && SEL.picks[1 - p] === id) { focusOn(CHARS.findIndex(c => c.id === id), true); return; }   // já é do outro jogador
+  SEL.picks[p] = id; focusOn(CHARS.findIndex(c => c.id === id), true); if (SEL.two && p === 0 && !SEL.picks[1]) SEL.focus = 1; renderChips(); }
+function openSelect(two, keep) {
+  initAudio(); AC.resume().catch(() => {});
+  if (state.screen === 'title') goFull();
+  ensureLineup(); endTransformUI();
+  if (!keep) { SEL.picks = [null, null]; SEL.focus = 0; }
+  SEL.two = !!two;
+  LINE.cs = null; LINE.focus = -1; LINE.idle = 0; LINE.wave = { i: -1, t0: -9 };
+  setTwo(false); openScreen('select'); renderChips();
+}
+function confirmSelect() {
+  if (!SEL.picks[0] || (SEL.two && !SEL.picks[1])) return;
+  PL.forEach((pl, i) => { if (i === 0 || SEL.two) setPlayerChar(pl, SEL.picks[i]); });
+  store.set('chars', PL.map(pl => pl.charId));
+  if (SEL.two) openReady2(); else startTransform(false);
+}
+function startTransform(two) {
+  initAudio(); AC.resume().catch(() => {});
+  clearTimeout(TFX.end);
+  setTwo(two); show(null); state.screen = 'tf';
+  for (const pl of ACTIVE) setupStage(stageOf(pl), pl.charId);
+  for (const pl of PL) pl.tfx.hidden = !ACTIVE.includes(pl);
+  musicStart(); requestWake();
+}
+const TFX = { end: 0 };
+function onStageDone(st) {
+  const act = ACTIVE.map(pl => pl.stage);
+  if (act.every(s => s && s.done)) {
+    musicStop(true); for (const s of act) s.waitEl.hidden = true;
+    clearTimeout(TFX.end); TFX.end = setTimeout(() => { if (state.screen === 'tf') finishTransform(); }, 350);
+  } else st.waitEl.hidden = false;
+}
+function finishTransform() {
+  const two = state.two; endTransformUI();
+  startRun({ two }).then(() => { for (const pl of ACTIVE) flash(pl, .6); });
+}
+function endTransformUI() {
+  clearTimeout(TFX.end);
+  for (const pl of PL) { pl.tfx.hidden = true; pl.flashEl.style.opacity = ''; const st = pl.stage; if (st) { st.active = false; st.hold = false; } }
+}
+// para os testes: pula para um instante do roteiro, com as peças já trocadas até ali
+function tfSet(i, tm) {
+  const st = PL[i].stage, EVT = [['horn', 1.6], ['rise', 7], ['burst', 10.75], ['bg', 11], ['open', 14.2], ['w0', 21.5], ['s0', 22.85], ['w1', 25.4], ['s1', 26.75], ['w2', 29.4], ['s2', 30.75], ['touch', T_FLASH + .05], ['final', T_FINAL]];
+  st.t = tm; st.done = tm >= T_END; st.ev = {}; for (const [k, at] of EVT) if (at <= tm) st.ev[k] = 1;
+  setAllForms(st.R, 'h'); for (const g of PARTS) if (tm >= g.sw) for (const p of g.parts) setForm(st.R, p, 'u'); if (tm >= T_FLASH + .05) setForm(st.R, 'head', 'u');
+}
+
 /* ============================== jogadores ============================== */
 const WIN_P = .065, WIN_G = .14, WIN_X = .22;
 const state = { screen: 'title', paused: false, demo: false, two: false, songT: 0, clockInit: false, mi: -1, bi: -1, ended: false, manual: false, offset: store.get('offset', 0) / 1000 };
@@ -1828,11 +2650,15 @@ function makePlayer(id) {
   const pl = {
     id, el, lc: q('.lanes'), flashEl: q('.flash'), names: q('.names'), card: q('.card'), syncEl: q('.sync'), hud: q('.hud'), padsEl: q('.pads'),
     frame: q('.frame'), scoreEl: q('.sc'), multEl: q('.mult'), blkEl: q('.bn'), pipsEl: q('.pips'), demoTag: q('.demoTag'), camBtn: q('.camBtn'), pauseBtn: q('.pauseBtn'),
-    padEls: [q('.pad.pl'), q('.pad.pr')], fx2d: [], CW: 360, CH: 720, DPR: 1, laneTop: .55, laneHit: .8, namesY: .2
+    padEls: [q('.pad.pl'), q('.pad.pr')], fx2d: [], CW: 360, CH: 720, DPR: 1, laneTop: .55, laneHit: .8, namesY: .2,
+    tfx: q('.tfx'), tbox: q('.tbox'), waitEl: q('.wait'), b2x: q('.b2x'), bskip: q('.bskip'), stage: null
   };
   pl.g2 = pl.lc.getContext('2d');
   q('.who').textContent = 'J' + (id + 1);
-  pl.uni = buildUnicorn(VARIANTS[id]); MIR.add(pl.uni.root);
+  // transformação: 2× e Pular de cada lado, sem afetar o outro
+  pl.b2x.onclick = () => { const st = pl.stage; if (st) setRate(st, st.rate > 1 ? 1 : 2); };
+  pl.bskip.onclick = () => skipStage(pl.stage);
+  setPlayerChar(pl, (store.get('chars', DEFAULT_CHARS) || DEFAULT_CHARS)[id]);
   pl.shadow = new THREE.Mesh(new THREE.CircleGeometry(.62, 12), psxMat({ color: 0x0a0520, opacity: .4, transparent: true, depthWrite: false }));
   pl.shadow.rotation.x = -HP; pl.shadow.position.y = .02; pl.shadow.renderOrder = 3; scene.add(pl.shadow);
   pl.base = { s: id ? PATH_L / 2 : 0, spd: 0, yaw: 0, bank: 0, pos: new THREE.Vector3(), fwd: new THREE.Vector3(0, 0, 1) };
@@ -2081,6 +2907,7 @@ function layout() {
     const u = pl.quad.material.uniforms;
     if (two) u.uRect.value.set(-1, i ? 0 : -1, 1, i ? 1 : 0); else u.uRect.value.set(-1, -1, 1, 1);
     u.uRot.value = ((two && i ? 2 : 0) + q) % 4; pl.quad.visible = i === 0 || two;
+    pl.tbox.className = 'tbox q' + q;
   });
   for (const el of $$('.hin')) el.className = 'hin q' + (two ? OPT.rot[+el.dataset.p] : 0);
 }
@@ -2100,7 +2927,7 @@ function rotateSide(i, d) {
 }
 
 /* ============================== telas e fluxo ============================== */
-const screens = { title: $('#title'), ready2: $('#ready2'), options: $('#options'), album: $('#albumS'), calib: $('#calib'), pause: $('#pauseS'), results: $('#results'), results2: $('#results2') };
+const screens = { title: $('#title'), select: $('#select'), ready2: $('#ready2'), options: $('#options'), album: $('#albumS'), calib: $('#calib'), pause: $('#pauseS'), results: $('#results'), results2: $('#results2') };
 function show(id) { for (const k in screens) screens[k].hidden = k !== id; }
 function setHud(on) { for (const pl of PL) { pl.hud.hidden = !on; pl.padsEl.hidden = !on; } }
 // botão voltar do Android: uma entrada no histórico enquanto o jogo está fora da tela inicial
@@ -2113,6 +2940,7 @@ addEventListener('popstate', () => {
   if (state.screen === 'title') return;
   if (state.screen === 'play') { if (!state.paused) pause(0); pushNav(); return; }
   if (state.screen === 'calib') { cal.running = false; openOptions(); pushNav(); return; }
+  if (state.screen === 'ready2') { openSelect(true, true); pushNav(); return; }
   toMenu(true);
 });
 let wake = null;
@@ -2144,6 +2972,7 @@ function startRun(opts) {
   return AC.resume().then(go, go);
 }
 function toMenu(fromPop) {
+  endTransformUI(); if (MUS.on) musicStop(false);
   if (AC) newMusicBus();
   for (const pl of PL) { pl.auto = false; clearPoseFx(pl, false); pl.names.innerHTML = ''; }
   state.screen = 'title'; state.paused = false; state.ended = false; setHud(false);
@@ -2241,15 +3070,17 @@ function applyI18n() {
   updCamBtn(); updOffInfo();
   for (const b of $$('.rdy')) b.textContent = ready2[+b.dataset.p] ? t('waiting') : t('ready');
   updOrientUI();
+  if (state.screen === 'select') renderChips();
 }
 
-/* --------- dupla: os dois confirmam que estão em posição --------- */
+/* --------- dupla: os dois confirmam que estão em posição (cada um vê o seu personagem na sua metade) --------- */
 const ready2 = [false, false];
 function openReady2() {
   initAudio(); AC.resume().catch(() => {});
   ready2[0] = ready2[1] = false;
   for (const b of $$('.rdy')) { b.classList.remove('on'); b.textContent = t('ready'); }
   openScreen('ready2'); setTwo(true);
+  for (const pl of PL) { const st = stageOf(pl); setupStage(st, pl.charId); st.hold = true; st.off = .1; }
 }
 
 /* --------- calibração --------- */
@@ -2320,16 +3151,18 @@ addEventListener('keyup', e => { const k = KEYS[e.code]; const pl = k && ACTIVE[
 document.addEventListener('visibilitychange', () => { if (document.hidden) pause(0); else if (state.screen === 'play') requestWake(); });
 
 $$('.flag').forEach(b => { b.innerHTML = FLAGS[b.dataset.lang]; b.setAttribute('aria-label', b.dataset.lang === 'es' ? 'Español' : 'Português'); b.onclick = () => setLang(b.dataset.lang); });
-$('#b1p').onclick = () => startRun({});
-$('#b2p').onclick = openReady2;
+$('#b1p').onclick = () => openSelect(false);
+$('#b2p').onclick = () => openSelect(true);
+$('#goT').onclick = confirmSelect;
+$('#sBack').onclick = () => toMenu();
 $('#bDemo').onclick = () => startRun({ demo: true });
 $('#bOpt').onclick = openOptions;
 $('#bAlbum').onclick = openAlbum;
 $$('.rdy').forEach(b => b.onclick = () => {
   const i = +b.dataset.p; ready2[i] = !ready2[i]; b.classList.toggle('on', ready2[i]); b.textContent = ready2[i] ? t('waiting') : t('ready');
-  if (ready2[0] && ready2[1]) setTimeout(() => { if (state.screen === 'ready2' && ready2[0] && ready2[1]) startRun({ two: true }); }, 350);
+  if (ready2[0] && ready2[1]) setTimeout(() => { if (state.screen === 'ready2' && ready2[0] && ready2[1]) startTransform(true); }, 350);
 });
-$('#rBack').onclick = () => toMenu();
+$('#rBack').onclick = () => openSelect(true, true);
 $$('.rotb').forEach(b => b.onclick = () => rotateSide(+b.dataset.p, +b.dataset.d));
 $('#aBack').onclick = () => toMenu();
 $('#oBack').onclick = () => toMenu();
@@ -2382,6 +3215,10 @@ let last = performance.now();
 function frame(nowMs) { requestAnimationFrame(frame); if (!state.manual) tick(nowMs, null); }
 function tick(nowMs, forceDt) {
   let dt = forceDt !== null ? forceDt : Math.min(.05, Math.max(0, (nowMs - last) / 1000)); last = nowMs;
+  U.uTime.value = nowMs / 1000;
+  // escolha na roda e transformação têm cenas próprias
+  if (state.screen === 'select' && LINE.scene) { selFrame(nowMs / 1000, dt); return; }
+  if (state.screen === 'tf' || state.screen === 'ready2') { tfFrame(nowMs / 1000, dt); return; }
   let tt;
   if (preview) { tt = preview.t; dt = 0; }
   else if (state.screen === 'play' && AC) {
@@ -2431,6 +3268,7 @@ window.UG = {
   start: o => startRun(o || {}),
   auto: (i, on) => { PL[i].auto = on; },
   preview(b, lvl, ph, kind) { show(null); preview = { t: 100 + ph * MEAS }; setAnim(PL[0], kind || 'move', { b, lvl, t0: 100, landed: true }, preview.t); PL[0].tv.snap = true; },
+  previewAt(ph) { if (preview) preview.t = 100 + ph * MEAS; },
   stopPreview() { preview = null; setAnim(PL[0], 'skate', {}, performance.now() / 1000); },
   manual(on) { state.manual = on; }, advance(dt) { tick(performance.now(), dt); },
   cam: (i, c) => cutTo(PL[i], c), lang: setLang, screen: () => state.screen,
@@ -2451,6 +3289,12 @@ window.UG = {
   locate(x, y) { const r = app.getBoundingClientRect(), L = locate({ clientX: r.left + x, clientY: r.top + y }); return L && [L.pl.id, L.lane]; },
   camLock(pos, aim, fov) { PL[0].tv.lock = pos ? { pos: new THREE.Vector3(...pos), aim: new THREE.Vector3(...aim), fov } : null; },
   body: () => ({ chest: PL[0].W.chest.toArray(), horn: PL[0].W.horn.toArray(), yaw: PL[0].base.yaw, fwd: PL[0].base.fwd.toArray() }),
+  // escolha e transformação
+  sel: two => openSelect(!!two), go: () => confirmSelect(), char: (i, id) => setPlayerChar(PL[i], id),
+  pickChar(p, id) { SEL.focus = p; pick(p, id); },
+  selState: () => ({ screen: state.screen, two: SEL.two, picks: SEL.picks.slice(), focus: LINE.focus, go: !$('#goT').disabled, chars: PL.map(p => p.charId) }),
+  tf: () => ({ screen: state.screen, two: state.two, st: ACTIVE.map(pl => { const s = pl.stage; return s && { t: +s.t.toFixed(2), rate: s.rate, done: s.done, active: s.active, hold: s.hold, forms: s.R && Object.assign({}, s.R.state) }; }) }),
+  tfSet, tfRate: (i, r) => setRate(PL[i].stage, r), tfSkip: i => skipStage(PL[i].stage),
   gap: () => +((((PL[1].base.s - PL[0].base.s) % PATH_L) + PATH_L) % PATH_L / PATH_L).toFixed(3)
 };
 })();
