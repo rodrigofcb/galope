@@ -211,7 +211,7 @@ h2{font-family:var(--f-display);font-weight:400;font-size:30px;margin:0;filter:d
 
 /* Pose final a dois numa imagem só (os dois do mesmo lado da tela) */
 #pano{position:absolute;inset:0;container-type:size;pointer-events:none;z-index:2}
-#pano .tbox{--cx:.5;--nw:86%}
+#pano .tbox{--cx:.5;--nw:86%;--sx:.5;--sy:.78}
 #pano .names{top:11%}
 #pano .nmw{top:0;bottom:auto}
 .nmw.duo{flex-direction:column;align-items:center;gap:3px}
@@ -331,7 +331,7 @@ div.opt{cursor:default}
 <div id="app">
   <canvas id="view"></canvas>
   <div id="divider" hidden></div>
-  <div id="pano" hidden><div class="flash"></div><div class="tbox"><div class="names" aria-live="polite"></div></div></div>
+  <div id="pano" hidden><div class="flash"></div><div class="tbox"><div class="names" aria-live="polite"></div><div class="sync"></div></div></div>
   <p id="diag" hidden></p>
 
   <section id="title" class="screen">
@@ -1518,6 +1518,7 @@ function pairMeasure(mi) {
   const sec = sectionOf(mi), t0 = mi * MEAS;
   if (sec.k !== 'block') { if (sec.i === 0) for (const pl of PL) setAnim(pl, 'linger', { b: PAIR.landed, duo: roleOf(pl) }, state.songT); return; }
   const a = PL[0].ms[mi];
+  if (sameSide() && !PANO.on && (a.kind !== 'move' || a.level >= 5)) panoOn(undefined, true);   // lado a lado: a tela vira uma só a partir da primeira estrela
   if (a.kind === 'move' && a.level >= 5) for (const pl of PL) { const ms = pl.ms[mi], [ty, tl] = SEQ[ms.b][ms.level - 1]; ms.duo = true; setAnim(pl, 'move', { b: ty, lvl: tl, t0, duo: roleOf(pl) }, state.songT); }
   else if (a.kind === 'wind') { for (const pl of PL) { pl.ms[mi].duo = true; clearPoseFx(pl, false); setAnim(pl, 'wind', { b: a.b, t0, duo: roleOf(pl) }, state.songT); } startPoseFx(PL[PAIR.roleA], a.b, true); }
   else if (a.kind === 'hold') { PAIR.poseT = t0; for (const pl of PL) { pl.ms[mi].duo = true; setAnim(pl, 'hold', { b: a.b, t0, duo: roleOf(pl) }, state.songT); } }
@@ -1527,7 +1528,8 @@ function duoDone(pl, mi, b, i, tier) {
   pl.pend = { mi, b, i, tier };
   const o = partnerOf(pl); if (!o.pend || o.pend.mi !== mi) return;
   for (const p of PL) { p.pend = null; p.found.add('d' + b + '.' + i); }
-  if (i === 2) { PAIR.landed = b; if (sameSide()) { panoOn(); showNameIn(PANO.names, duoNameOf(b, i), tier, true); PANO.flash.animate([{ opacity: REDUCED ? .3 : .85 }, { opacity: 0 }], { duration: 700, easing: 'ease-out' }); return; } }
+  if (i === 2) { PAIR.landed = b; if (sameSide() && !PANO.on) panoOn(); }
+  if (PANO.on) { showNameIn(PANO.names, duoNameOf(b, i), tier, true); if (i === 2) PANO.flash.animate([{ opacity: REDUCED ? .3 : .85 }, { opacity: 0 }], { duration: 700, easing: 'ease-out' }); return; }
   for (const p of PL) showName(p, duoNameOf(b, i), tier, true);
 }
 function slotFor(pl, now) {
@@ -1588,10 +1590,12 @@ function spawnDuoFx(an) {
 const PANO = { on: false, q: 1, cam: new THREE.PerspectiveCamera(36, 2, .1, 260), RTW: RW, RH: 120, aim: new THREE.Vector3(), pos: new THREE.Vector3(), snap: true, t0: 0 };
 PANO.rt = new THREE.WebGLRenderTarget(RW, 120, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, depthBuffer: true, stencilBuffer: false });
 PANO.quad = postQuad(PANO.rt.texture); PANO.quad.visible = false;
-function panoOn(q) {
+// ao vivo (durante as manobras a dois): só a imagem 3D vira uma; pistas, cascos e placar de cada um continuam por cima
+function panoOn(q, live) {
   if (!PANO.el) return;
-  PANO.on = true; PANO.q = q !== undefined ? q : OPT.rot[0]; PANO.t0 = performance.now() / 1000; PANO.snap = true;
-  PANO.el.hidden = false; PANO.names.innerHTML = ''; for (const pl of PL) pl.el.hidden = true; $('#divider').hidden = true; layout();
+  PANO.on = true; PANO.live = !!live; PANO.q = q !== undefined ? q : OPT.rot[0]; PANO.t0 = performance.now() / 1000; PANO.snap = true;
+  PANO.el.hidden = false; PANO.names.innerHTML = ''; if (!live) for (const pl of PL) pl.el.hidden = true; $('#divider').hidden = true; layout();
+  PANO.flash.animate([{ opacity: REDUCED ? .25 : .7 }, { opacity: 0 }], { duration: 600, easing: 'ease-out' });
 }
 function panoOff() {
   if (!PANO.on) return;
@@ -1611,18 +1615,23 @@ function panoLayout() {
 function panoCamera(dt) {
   const a = PL[0].W, b = PL[1].W;
   _mid.copy(a.chest).add(b.chest).multiplyScalar(.5);
-  const top = Math.max(a.horn.y, b.horn.y, a.chest.y, b.chest.y, a.fL.y, b.fL.y) + .5, span = Math.hypot(a.chest.x - b.chest.x, a.chest.z - b.chest.z) + 3.4;
-  // o gelo um pouco abaixo da borda de baixo e o alto do casal a 70% da altura (o nome fica em cima)
-  const cam = PANO.cam, tn = Math.tan(cam.fov * PI / 360), hh = Math.max(1.6, (top + .25) / 1.4), hw = span / 2 + .3, ay = hh - .25;
-  const d = Math.max(hh / tn, hw / (tn * cam.aspect)), t = performance.now() / 1000 - PANO.t0, ang = PAIR.yaw + .22 + .25 * Math.sin(t * .35);
+  const top = Math.max(a.horn.y, b.horn.y, a.chest.y, b.chest.y, a.fL.y, b.fL.y) + .5, span = Math.hypot(a.chest.x - b.chest.x, a.chest.z - b.chest.z) + (PANO.live ? 2.6 : 3.4);
+  const low = Math.min(a.chest.y, b.chest.y) - 1.5, air = low > .6;   // no alto (saltos): enquadra só o casal, sem o gelo
+  // ao vivo, o casal fica na faixa do meio (as pistas de cada um ocupam as pontas); no fim, ocupa quase toda a largura
+  const cam = PANO.cam, tn = Math.tan(cam.fov * PI / 360), hw = (span / 2 + .3) / (PANO.live ? .38 : .9);
+  const hh = air ? Math.max(1.6, (top - low) / 2 + .7) : Math.max(1.6, (top + .25) / 1.4);
+  const d = Math.max(hh / tn, hw / (tn * cam.aspect)), H = d * tn, t = performance.now() / 1000 - PANO.t0, ang = PAIR.yaw + .22 + .25 * Math.sin(t * .35);
+  // no gelo: o gelo um pouco abaixo da borda de baixo e o alto do casal longe do nome, em cima
+  const ay = air ? (top + low) / 2 : Math.max(hh - .25, H * .82 - .35);
   _pq.set(_mid.x + Math.sin(ang) * d, ay + .5, _mid.z + Math.cos(ang) * d); keepOutOfStands(_pq);
   _pd.set(_mid.x, ay, _mid.z);
   if (PANO.snap || !(dt > 0)) { PANO.pos.copy(_pq); PANO.aim.copy(_pd); PANO.snap = false; }
-  else { const k = 1 - Math.exp(-dt * 2); PANO.pos.lerp(_pq, k); PANO.aim.lerp(_pd, k); }
+  else { const k = 1 - Math.exp(-dt * (air ? 6 : 2)); PANO.pos.lerp(_pq, k); PANO.aim.lerp(_pd, k); }
   cam.position.copy(PANO.pos); cam.lookAt(PANO.aim); cam.updateMatrixWorld();
 }
 function renderPano() {
-  const cam = PANO.cam;
+  const cam = PANO.cam, mp = PANO.mp || (PANO.mp = {});
+  mp.anim = PL[0].anim; mp.W = PL[0].W; mp.cam = cam; updMoon(mp);   // a lua do pulo lunar atrás do casal
   U.uLightDir.value.copy(LIGHT_WORLD).transformDirection(cam.matrixWorldInverse);
   U.uScale.value = PANO.RH / (2 * Math.tan(cam.fov * PI / 360)); U.uRes.value.set(PANO.RTW / 2, PANO.RH / 2); U.uAmb.value.copy(AMB_GAME);
   renderer.setRenderTarget(PANO.rt); renderer.clear();
@@ -1630,7 +1639,7 @@ function renderPano() {
   MIR.scale.y = 1; MIR.updateMatrixWorld(true); cam.layers.enableAll(); renderer.render(scene, cam);
 }
 SFX.duo = function () { if (!AC) return; const t = AC.currentTime; [81, 88, 93, 100, 105].forEach((n, k) => I.bell(t + k * .06, n, .55, .7, sfxBus)); };
-PANO.el = $('#pano'); PANO.names = $('#pano .names'); PANO.box = $('#pano .tbox'); PANO.flash = $('#pano .flash');
+PANO.el = $('#pano'); PANO.names = $('#pano .names'); PANO.box = $('#pano .tbox'); PANO.flash = $('#pano .flash'); PANO.sync = $('#pano .sync');
 
 /* --------- avaliação dos clipes --------- */
 const TENSION = .1;
@@ -3204,8 +3213,11 @@ function trySync(mi) {
   a.sync = b.sync = true;
   for (const [pl, ms] of [[PL[0], a], [PL[1], b]]) {
     const pts = SYNC_K * ms.level; pl.score += pts; pl.syncPts += pts; pl.stats.sync++;
-    const el = pl.syncEl; el.textContent = `${t('sync')} +${fmt(pts)}`; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
     ringFx(pl.uni.root.position.x, pl.uni.root.position.z, 4.5, .8, .1);
+    // imagem única: um só aviso no meio, em vez de um em cada metade
+    if (PANO.on && pl !== PL[0]) continue;
+    const el = PANO.on ? PANO.sync : pl.syncEl;
+    el.textContent = `${t('sync')} +${fmt(pts)}`; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
   }
   SFX.sync(); buzz(15);
   $('#divider').animate([{ filter: 'brightness(2.6)', scale: '1 3' }, { filter: 'brightness(1)', scale: '1 1' }], { duration: 650, easing: 'ease-out' });
