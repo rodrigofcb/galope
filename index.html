@@ -209,6 +209,14 @@ h2{font-family:var(--f-display);font-weight:400;font-size:30px;margin:0;filter:d
 .badge{font-family:var(--f-display);font-size:34px;margin:0;color:var(--gold);filter:drop-shadow(2px 0 0 var(--outline)) drop-shadow(-2px 0 0 var(--outline)) drop-shadow(0 3px 0 var(--outline))}
 .badge.lose{color:var(--ice)}
 
+/* Pose final a dois numa imagem só (os dois do mesmo lado da tela) */
+#pano{position:absolute;inset:0;container-type:size;pointer-events:none;z-index:2}
+#pano .tbox{--cx:.5;--nw:86%}
+#pano .names{top:11%}
+#pano .nmw{top:0;bottom:auto}
+.nmw.duo{flex-direction:column;align-items:center;gap:3px}
+.duoTag{font-family:var(--f-pixel);font-size:10px;letter-spacing:.16em;color:var(--mint);text-transform:uppercase;white-space:nowrap;filter:drop-shadow(0 2px 0 var(--outline))}
+
 /* Escolha de personagem: a roda em 3D ao fundo e o painel embaixo */
 #select{justify-content:flex-end;padding-inline:16px;gap:0;background:linear-gradient(180deg,rgba(11,7,32,0) 46%,rgba(11,7,32,.94) 68%)}
 #ltags{position:absolute;inset:0;pointer-events:none}
@@ -322,6 +330,7 @@ div.opt{cursor:default}
 <div id="app">
   <canvas id="view"></canvas>
   <div id="divider" hidden></div>
+  <div id="pano" hidden><div class="flash"></div><div class="tbox"><div class="names" aria-live="polite"></div></div></div>
   <p id="diag" hidden></p>
 
   <section id="title" class="screen">
@@ -522,7 +531,7 @@ const STR = {
     selTitle: 'Quem vai patinar?', transform: 'Transformar!', skip: 'Pular', fastL: 'Velocidade 2x',
     selHint1: 'Arraste para girar a roda. Toque no personagem ou no nome para escolher e toque de novo para desfazer. Na transformação, 2× acelera e Pular vai direto para a pista.',
     selHint2: 'Arraste para girar a roda. Primeiro escolhe o jogador 1, depois o 2; toque de novo para desfazer. O celular desenhado mostra a metade da tela de cada um e Inverter troca os lados.',
-    sideBot: 'embaixo', sideTop: 'em cima', swap: 'Inverter', swapL: 'Inverter os lados da tela'
+    sideBot: 'embaixo', sideTop: 'em cima', swap: 'Inverter', swapL: 'Inverter os lados da tela', duoTag: '✦ a dois ✦'
   },
   es: {
     logo1: 'Galope', logo2: 'en el Hielo', sub: 'Ritmo · patines · brillantina',
@@ -551,7 +560,7 @@ const STR = {
     selTitle: '¿Quién va a patinar?', transform: '¡Transformar!', skip: 'Saltar', fastL: 'Velocidad 2x',
     selHint1: 'Arrastrá para girar la ronda. Tocá el personaje o el nombre para elegir y tocá de nuevo para deshacer. En la transformación, 2× acelera y Saltar va directo a la pista.',
     selHint2: 'Arrastrá para girar la ronda. Primero elige el jugador 1, después el 2; tocá de nuevo para deshacer. El celular dibujado muestra la mitad de la pantalla de cada uno e Invertir cambia los lados.',
-    sideBot: 'abajo', sideTop: 'arriba', swap: 'Invertir', swapL: 'Invertir los lados de la pantalla'
+    sideBot: 'abajo', sideTop: 'arriba', swap: 'Invertir', swapL: 'Invertir los lados de la pantalla', duoTag: '✦ a dúo ✦'
   }
 };
 // nomes whimsical: [bloco][0 = 5ª manobra, 1 = 6ª manobra, 2 = pose final]
@@ -1292,6 +1301,336 @@ const C_BAIL = clip(1.5, [
   [1.5, SK[0]]
 ], tb => ({ yaw: .55 * Math.sin(tb * PI * 2.4) * (1 - sm(0, 1.5, tb)) }));
 
+/* ============================== manobras a dois (dupla em sincronia) ============================== */
+// Na dupla, quando os dois chegam juntos (corrente intacta, mesmo nível) às manobras com nome, elas viram manobras
+// novas a dois. Nos compassos antes, se os dois seguem sem erro, eles saem da trilha e vão se encontrar no meio da pista.
+// Cada manobra a dois tem o papel A (o personagem mais alto: a base, quem levanta) e o papel B, e diz onde cada um fica
+// em relação ao "ponto do casal", que patina numa elipse no meio da pista: x = para a esquerda do casal, z = para a
+// frente, y = altura, yaw = para onde olha. As coreografias são escritas com A à esquerda; quando os dois terminam
+// trocados de lado (Axel cruzado), tudo passa a ser espelhado.
+const DUO = { on: true };   // no protótipo dá para desligar e comparar com a versão solo
+const DUO_NAMES = {
+  pt: [['Ciranda de Purpurina', 'Roda-Gigante de Arco-Íris', 'Coração de Algodão-Doce'],
+       ['Tango da Via Láctea', 'Axel Portenho Cruzado', 'Constelação de Bombons'],
+       ['Torre Chifre-Broca', 'Lua de Mel de Pantufa', 'Big Bang de Pelúcia']],
+  es: [['Ronda de Brillantina', 'Vuelta al Mundo de Arcoíris', 'Corazón de Algodón de Azúcar'],
+       ['Tango de la Vía Láctea', 'Axel Porteño Cruzado', 'Constelación de Bombones'],
+       ['Torre Cuerno-Taladro', 'Luna de Miel en Pantuflas', 'Big Bang de Peluche']]
+};
+const duoNameOf = (b, i) => DUO_NAMES[OPT.lang][b][i];
+const lerpA = (a, b, t) => a + wrapA(b - a) * t;
+const MIR_KEYS = ['side', 'tw', 'hy', 'yaw', 'spin', 'tx'];
+function mirrorP(p) { const o = cloneP(p); o.aL = p.aR.slice(); o.aR = p.aL.slice(); o.lL = p.lR.slice(); o.lR = p.lL.slice(); for (const k of MIR_KEYS) if (k in o) o[k] = -o[k]; return o; }
+function mirrorClip(c) {
+  if (c._mir) return c._mir;
+  const m = { len: c.len, loop: c.loop, R: c.R.map(k => ({ t: k.t, p: mirrorP(k.p) })),
+    root: c.root ? tb => { const r = Object.assign({}, c.root(tb)); for (const k of MIR_KEYS) if (k in r) r[k] = -r[k]; return r; } : null };
+  m._mir = c; c._mir = m; return m;
+}
+const SIDE = .6;   // lado a lado: distância de cada um até o ponto do casal
+const dslot = (x, z = 0, yaw = 0, y = 0) => ({ x, z, yaw, y });
+const lookTo = (x, z) => Math.atan2(x, z);   // yaw para olhar na direção (x, z)
+const DUO_MOVES = {};   // chave 'tipo.nível' da manobra solo que ela substitui
+{ // bloco 1 · 5ª: Ciranda de Purpurina (no lugar do Tornado de Purpurina): de mãos dadas, um de frente para o outro, giram e sobem
+  const R0 = .72, HOLD = { lean: -.16, hd: -.22, side: 0, tw: 0, hy: 0, ...A(1.42, 1.42, -.08), lL: [.05, 0, .1], lR: [.85, -1.15, .35], tail: .8, sq: 1.04 };
+  const c = clip(4, [[.5, { lean: .1, hd: 0, ...A(1.1, 1.2, -.3), lL: [.08, .15, .5], lR: [.08, .15, .5], sq: .92 }], [1, HOLD], [3.3, HOLD], [3.7, { lean: .3, hd: -.2, ...A(1.2, .6, -.2), lL: [.06, .1, .4], lR: [.4, -1.0, .2], sq: .96 }], [4, SPIN_END]]);
+  DUO_MOVES['1.5'] = { nm: [0, 0], clips: [c, mirrorClip(c)], slot(r, tb) {
+    const sg = r ? -1 : 1, k = sm(0, .8, tb) * (1 - sm(3.3, 4, tb)), a = TAU * 3 * easeIO(seg(tb, .7, 3.5)) + (r ? PI : 0);
+    const fx = R0 * Math.cos(a), fz = -R0 * Math.sin(a);
+    return dslot(lerp(sg * SIDE, fx, k), lerp(0, fz, k), lerpA(0, lookTo(-fx, -fz), k), .55 * bump(seg(tb, 1, 3.4)));
+  } };
+}
+{ // bloco 1 · 6ª: Roda-Gigante de Arco-Íris (no lugar do Laço de Arco-Íris): de mãos dadas acima da cabeça, os dois formam o
+  // diâmetro de uma roda que dá uma volta inteira; B sobe com uma cambalhota até o alto e desce com outra no fim
+  const wb = tb => TAU * easeIO(seg(tb, .9, 3.3)), mnt = tb => easeIO(seg(tb, .3, .9)), dsm = tb => easeIO(seg(tb, 3.3, 3.9));
+  const UP = { lean: 0, hd: 0, side: 0, tw: 0, hy: 0, ...A(2.98, 0, 0), lL: [.03, 0, .04], lR: [.03, 0, .04], tail: .95, sq: 1 };
+  const END = { lean: .3, hd: -.15, ...A(1.3, .4, -.2), lL: [.06, .1, .4], lR: [.06, .1, .4], tail: .6, sq: .95 };
+  const cA = clip(4, [[.3, { lean: .1, ...A(1.6, 1.2, -.4), lL: [.1, .15, .6], lR: [.1, .15, .6], sq: .9 }], [.9, UP], [3.3, UP], [3.8, END], [4, {}]], tb => ({ flip: -wb(tb) }));
+  const cB = clip(4, [[.3, { lean: .35, ...A(.8, -.6, -.3), lL: [.5, HP, 1.2], lR: [.5, HP, 1.2], sq: .86 }], [.9, UP], [3.3, UP], [3.9, END], [4, {}]], tb => ({ flip: -PI * mnt(tb) - wb(tb) - PI * dsm(tb) }));
+  DUO_MOVES['0.5'] = { nm: [0, 1], clips: [cA, cB], rim: true, slot(r, tb, P) {
+    const b = wb(tb), hub = P.hub;
+    if (!r) { const k = sm(.3, .9, tb) * (1 - sm(3.3, 3.9, tb)), R = P.reach[0]; return dslot(SIDE * (1 - k), R * Math.sin(b) * k, 0, (hub - R * Math.cos(b)) * k); }
+    const s = mnt(tb) * (1 - dsm(tb)), R = P.reach[1];
+    return dslot(-SIDE * (1 - s), -R * Math.sin(b) * s, 0, (hub + R * Math.cos(b)) * s + .6 * bump(seg(tb, .3, .9)) + .6 * bump(seg(tb, 3.3, 3.9)));
+  } };
+}
+{ // bloco 2 · 5ª: Tango da Via Láctea (no lugar da Valsa da Via Láctea): abraçados, voam num círculo girando juntos e
+  // terminam numa queda de tango
+  const ta = tb => TAU * easeIO(seg(tb, .9, 3.6));
+  const TA = { lean: .12, hd: -.1, side: 0, tw: .1, hy: 0, aL: [1.25, .75, -.5], aR: [1.05, 1.45, -1.35], lL: [.08, .1, .3], lR: [.3, -.9, .2], tail: .6, sq: 1 };
+  const TA_AIR = { ...TA, lL: [.25, .4, .25], lR: [.65, -1.2, .6], tail: .95 };
+  const TA_DIP = { ...TA, lean: .6, hd: .3, lL: [.6, HP, 1.15], lR: [.5, -HP, .12], tail: .9, sq: .95 };
+  const TB = { ...TA, lean: -.05, hd: -.2 };
+  const TB_AIR = { ...TB, lL: [.15, .2, .2], lR: [1.3, -HP, 1.9], tail: .95 };
+  const TB_DIP = { ...TB, lean: -1.05, hd: -.75, aR: [2.4, -.6, -.2], lL: [.95, HP, .1], lR: [.15, 0, .5], tail: 1 };
+  const cA = clip(4, [[.6, TA], [1.2, TA_AIR], [3.3, TA_AIR], [3.75, TA_DIP], [4, TA_DIP]]);
+  const cB = clip(4, [[.6, TB], [1.2, TB_AIR], [3.3, TB_AIR], [3.75, TB_DIP], [4, TB_DIP]]);
+  DUO_MOVES['0.6'] = { nm: [1, 0], clips: [cA, mirrorClip(cB)], slot(r, tb) {
+    const a = ta(tb), k = sm(0, .7, tb), rho = 2 * a + (r ? PI : 0), rr = lerp(SIDE, .32, k);
+    const ox = rr * Math.cos(rho), oz = -rr * Math.sin(rho);
+    return dslot(1.2 * Math.sin(a) + ox, .7 * (1 - Math.cos(a)) + oz, lerpA(0, lookTo(-ox, -oz), k), 2.2 * bump(seg(tb, .95, 3.55)));
+  } };
+}
+{ // bloco 2 · 6ª: Axel Portenho Cruzado (no lugar do Axel Portenho Duodécuplo): saltam juntos, girando em sentidos opostos,
+  // e se cruzam no ar; aterrissam trocados de lado
+  const J = JUMPS[4];
+  DUO_MOVES['2.5'] = { nm: [1, 1], clips: [C_JUMP[4], mirrorClip(C_JUMP[4])], swap: (J.tA + J.tL) / 2, slot(r, tb) {
+    const sg = r ? -1 : 1, s = easeIO(seg(tb, J.tA, J.tL));
+    return dslot(sg * .95 * Math.cos(PI * s), sg * .55 * Math.sin(PI * s), 0, 0);
+  } };
+}
+{ // bloco 3 · 5ª: Torre Chifre-Broca (no lugar da Pirueta Chifre-Broca): A gira plantado no chifre e B fica de pé num
+  // patim dele, em arabesque, girando junto
+  const spinA = tb => TAU * 6 * easeIO(seg(tb, 1, 3.2)), on = tb => easeIO(seg(tb, .55, 1.05)) * (1 - easeIO(seg(tb, 3.0, 3.45)));
+  const ARAB = { lean: .95, hd: -.5, side: 0, tw: 0, hy: 0, aL: [1.7, -.2, -.1], aR: [2.5, .8, -.3], lL: [.03, 0, .05], lR: [1.65, -HP, .05], tail: .9, sq: 1 };
+  const TUCK = { lean: .1, hd: -.1, ...A(2.2, .3, -.4), lL: [.6, HP, 1.6], lR: [.6, HP, 1.6], sq: 1.05 };
+  const cB = clip(4, [[.35, { lean: .3, hd: 0, ...A(.8, -.6, -.3), lL: [.5, HP, 1.1], lR: [.5, HP, 1.1], sq: .88 }], [.75, TUCK], [1.1, ARAB], [2.95, ARAB], [3.2, TUCK], [3.6, { lean: .4, hd: -.1, ...A(1.2, .4, -.2), lL: [.4, HP, .8], lR: [.4, HP, .8], sq: .9 }], [4, { sq: 1 }]]);
+  DUO_MOVES['1.6'] = { nm: [2, 0], clips: [C_SPIN[5], mirrorClip(cB)], slot(r, tb, P) {
+    if (!r) return dslot(SIDE * .5);
+    const s = on(tb), t = P.topA;
+    return dslot(lerp(-SIDE, t.x, s), lerp(0, t.z, s), lerpA(0, spinA(tb), s), lerp(0, t.y, s) + .7 * bump(seg(tb, .55, 1.05)) + .5 * bump(seg(tb, 3.0, 3.45)));
+  } };
+}
+{ // bloco 3 · 6ª: Lua de Mel de Pantufa (no lugar do Pulo Lunar de Pantufa): sobem de mãos dadas até a lua, girando como um só
+  const J = JUMPS[5], jm = jumpClip(Object.assign({}, J, { air: { ...A(2.5, .2, -.1), aR: [1.25, 0, -.15], lL: [.55, 0, .1], lR: [.55, 0, .1], lean: -.15, hd: -.4, sq: 1.05, tail: 1 } }));
+  const c = { len: jm.len, R: jm.R, loop: false, root: tb => { const o = jm.root(tb); return { ty: o.ty, yaw: o.yaw, spin: 0 }; } };
+  DUO_MOVES['2.6'] = { nm: [2, 1], clips: [c, mirrorClip(c)], slot(r, tb) {
+    const rho = TAU * J.rot * seg(tb, J.tA, J.tL), d = r ? -.5 : .5;
+    return dslot(d * Math.cos(rho), -d * Math.sin(rho), rho, 0);
+  } };
+}
+// poses finais a dois: vento (compasso 7), subida (compasso 8, até aterrissar), pose e pose parada no intervalo
+const duoRot = (now, P, w) => { const d = Math.max(0, now - P.poseT); return w * (d - .8 * (1 - Math.exp(-d / .8))); };
+const DPREP_A = { lean: .3, hd: -.1, side: 0, tw: 0, hy: 0, ...A(1.1, 1.3, -.7), lL: [.45, HP, .9], lR: [.45, HP, .9], tail: .4, sq: .9 };
+const DPREP_B = { lean: .35, hd: 0, side: 0, tw: 0, hy: 0, ...A(.8, -.6, -.3), lL: [.5, HP, 1.1], lR: [.5, HP, 1.1], tail: .4, sq: .88 };
+const DUO_POSES = [];
+{ // bloco 1: Coração de Algodão-Doce: no mesmo pedestal de gelo, de frente um para o outro, os braços em arco formam um coração
+  const HEART = { lean: .22, hd: -.3, side: 0, tw: 0, hy: 0, aL: [2.45, 1.05, -1.0], aR: [2.6, .7, -.8], lL: [.03, 0, .05], lR: [1.45, -HP, .15], tail: 1, sq: 1 };
+  const fin = clip(4, [[.25, { ...HEART, sq: .9 }], [.6, HEART], [4, HEART]], () => ({ ty: PED_H }));
+  const lin = clip(4, [[1, HEART], [4, HEART]], () => ({ ty: PED_H }));
+  const face = lookTo(-1, .2);
+  DUO_POSES[0] = { nm: [0, 2], clips: { wind: [C_WIND[0], mirrorClip(C_WIND[0])], rise: [C_RISE[0], mirrorClip(C_RISE[0])], fin: [fin, mirrorClip(fin)], linger: [lin, mirrorClip(lin)] }, slot(r, ph, tb) {
+    const k = ph === 'wind' ? sm(0, 2.5, tb) : 1, sg = r ? -1 : 1;
+    return dslot(sg * lerp(SIDE, .62, k), 0, sg * face * k, 0);
+  } };
+}
+{ // bloco 2: Constelação de Bombons: A ergue B acima da cabeça, voando de bruços como uma estrela, e os dois giram devagar
+  const LIFTA = { lean: -.08, hd: -.4, side: 0, tw: 0, hy: 0, ...A(3.0, 0, 0), lL: [.22, .25, .25], lR: [.22, .25, .25], tail: .7, sq: 1 };
+  const STAR = { lean: 0, hd: -.9, side: 0, tw: 0, hy: 0, aL: [2.85, .35, 0], aR: [2.85, .35, 0], lL: [.08, 0, .05], lR: [.35, -HP, 1.3], tail: 1, sq: 1 };
+  const up = tb => easeIO(seg(tb, .45, 1.6));
+  const windA = clip(4, [[1, DPREP_A], [4, { ...DPREP_A, sq: .86 }]]), windB = clip(4, [[1, DPREP_B], [4, { ...DPREP_B, sq: .84 }]]);
+  const riseA = clip(4, [[.4, { ...DPREP_A, sq: .82 }], [1.4, LIFTA], [4, LIFTA]]);
+  const riseB = clip(4, [[.4, { lean: .1, hd: -.1, ...A(2.3, .3, -.3), lL: [.6, HP, 1.6], lR: [.6, HP, 1.6], sq: 1.05 }], [1.6, STAR], [4, STAR]], tb => ({ flip: HP * up(tb), tz: -1.1 * up(tb) }));
+  const finA = clip(4, [[1, LIFTA], [4, LIFTA]]), finB = clip(4, [[1, STAR], [4, STAR]], () => ({ flip: HP, tz: -1.1 }));
+  DUO_POSES[1] = { nm: [1, 2], clips: { wind: [windA, windB], rise: [riseA, riseB], fin: [finA, finB], linger: [finA, finB] }, slot(r, ph, tb, now, P) {
+    const k = ph === 'wind' ? sm(0, 2.5, tb) : 1, rot = ph === 'wind' ? 0 : duoRot(now, P, .9);
+    if (!r) return dslot(lerp(SIDE, 0, k), lerp(0, -.15, k), rot, 0);
+    const s = ph === 'rise' ? up(tb) : ph === 'wind' ? 0 : 1;
+    return dslot(lerp(-SIDE, 0, k), lerp(0, .5, k) * (1 - s) - .15 * s, rot + HP * s, s * P.lift + (ph === 'rise' ? .5 * bump(seg(tb, .45, 1.6)) : 0));
+  } };
+}
+{ // bloco 3: Big Bang de Pelúcia: espiral da morte: A gira plantado e B, deitada para trás quase rente ao gelo, roda em volta dele
+  const PIV = { lean: .45, hd: .45, side: 0, tw: 0, hy: 0, aL: [2.5, -.5, -.3], aR: [.8, 1.45, 0], lL: [1.1, HP, 2.05], lR: [.6, -HP, .1], tail: .9, sq: .96 };
+  const SPI = { lean: -.1, hd: -.5, side: 0, tw: 0, hy: 0, aL: [2.9, 0, -.1], aR: [.35, 1.2, 0], lL: [.2, .2, .55], lR: [.5, HP, .3], tail: 1, sq: 1 };
+  const back = tb => easeIO(seg(tb, .4, 1.6));
+  const windA = clip(4, [[1, DPREP_A], [4, { ...DPREP_A, sq: .86 }]]), windB = clip(4, [[1, DPREP_B], [4, { ...DPREP_B, sq: .84 }]]);
+  const riseA = clip(4, [[.4, { ...DPREP_A, sq: .84 }], [1.5, PIV], [4, PIV]]);
+  const riseB = clip(4, [[.4, DPREP_B], [1.6, SPI], [4, SPI]], tb => ({ flip: -1.2 * back(tb) }));
+  const finA = clip(4, [[1, PIV], [4, PIV]]), finB = clip(4, [[1, SPI], [4, SPI]], () => ({ flip: -1.2 }));
+  DUO_POSES[2] = { nm: [2, 2], clips: { wind: [windA, windB], rise: [riseA, riseB], fin: [finA, finB], linger: [finA, finB] }, slot(r, ph, tb, now, P) {
+    const k = ph === 'wind' ? sm(0, 2.5, tb) : 1, g = PI + (ph === 'wind' ? 0 : duoRot(now, P, 1.5));
+    const bx = .55 * Math.cos(g), bz = -.55 * Math.sin(g);
+    if (!r) return dslot(lerp(SIDE, 0, k), 0, lerpA(0, lookTo(bx, bz), k), 0);
+    return dslot(lerp(-SIDE, bx, k), lerp(0, bz, k), lerpA(0, lookTo(-bx, -bz), k), 0);
+  } };
+}
+function duoClip(kind, b, lvl, landed, r) {
+  let c;
+  if (kind === 'move') c = DUO_MOVES[b + '.' + lvl].clips[r];
+  else { const C = DUO_POSES[b].clips; c = (kind === 'wind' ? C.wind : kind === 'linger' ? C.linger : landed ? C.fin : C.rise)[r]; }
+  return PAIR.sideA < 0 ? mirrorClip(c) : c;
+}
+
+/* --------- o casal: encontro, vagas de cada um e troca suave entre figuras --------- */
+const PAIR = { w: 0, wt: 0, target: 0, th: 0, pos: new THREE.Vector3(), fwd: new THREE.Vector3(0, 0, 1), left: new THREE.Vector3(1, 0, 0), yaw: 0,
+  roleA: 0, sideA: 1, swapT0: -1, reach: [2.5, 2.5], hub: 2.5, lift: 2.6, topA: new THREE.Vector3(), poseT: 0, landed: -1, met: false, fx: new THREE.Group() };
+scene.add(PAIR.fx);
+const PAIR_RX = 5.4, PAIR_RZ = 2.5;   // elipse no meio da pista, dentro da trilha de cada um
+const roleOf = pl => pl.id === PAIR.roleA ? 0 : 1;
+const partnerOf = pl => PL[1 - pl.id];
+// dos pés às pontas dos cascos, com os braços para cima, na escala do jogo
+const reachOf = pl => (1.13 * CHAR_BY_ID[pl.charId].h + .1) * GAME_K;
+const sameSide = () => OPT.rot[0] === (OPT.rot[1] + 2) % 4;   // os dois vendo a tela do mesmo lado (lado a lado)
+function pairAnchor() {
+  const th = PAIR.th;
+  PAIR.pos.set(PAIR_RX * Math.cos(th), 0, PAIR_RZ * Math.sin(th)); PAIR.fwd.set(-PAIR_RX * Math.sin(th), 0, PAIR_RZ * Math.cos(th)).normalize();
+  PAIR.yaw = Math.atan2(PAIR.fwd.x, PAIR.fwd.z); PAIR.left.set(Math.cos(PAIR.yaw), 0, -Math.sin(PAIR.yaw));
+  PAIR.fx.position.copy(PAIR.pos); PAIR.fx.rotation.y = PAIR.yaw;
+}
+function pairBegin() {
+  if (PAIR.w <= 0) {
+    PAIR.roleA = CHAR_BY_ID[PL[1].charId].h > CHAR_BY_ID[PL[0].charId].h ? 1 : 0; PAIR.sideA = 1; PAIR.swapT0 = -1; PAIR.met = false;
+    // o ponto do casal começa um quarto de volta à frente do jogador 1 (o 2 está do outro lado da trilha)
+    const p = PL[0].base.pos; PAIR.th = Math.atan2(p.z / PAIR_RZ, p.x / PAIR_RX) + HP;
+    for (const pl of PL) { pl.pslot = null; pl.base.vyaw = pl.base.yaw; }
+  }
+  PAIR.reach = [reachOf(PL[PAIR.roleA]), reachOf(PL[1 - PAIR.roleA])]; PAIR.hub = Math.max(PAIR.reach[0], PAIR.reach[1]); PAIR.lift = PAIR.reach[0] + .15;
+  PAIR.target = 1; PAIR.landed = -1;
+}
+// fim da dupla (separação, erro ou intervalo): quem estava numa figura a dois volta para a versão solo
+function pairEnd() {
+  PAIR.target = 0; PAIR.landed = -1; panoOff();
+  for (const pl of PL) {
+    const an = pl.anim; if (an.duo === undefined) continue;
+    if (an.kind === 'move') setAnim(pl, 'move', { b: an.b, lvl: an.lvl, t0: an.t0 }, state.songT);
+    else if (an.kind === 'linger') setAnim(pl, 'skate', {}, state.songT);
+    else setAnim(pl, an.kind, { b: an.b, t0: an.t0, landed: an.landed }, state.songT);
+  }
+}
+function pairReset() { PAIR.target = 0; PAIR.wt = 0; PAIR.w = 0; PAIR.landed = -1; PAIR.sideA = 1; panoOff(); for (const pl of PL) { pl.base.y = 0; pl.pslot = null; pl.pend = null; } }
+// alguém errou: a dupla se desfaz; o nome que o outro esperava aparece na versão solo e a pose dele volta a ser solo
+function pairBreak(pl) {
+  const o = partnerOf(pl);
+  if (o.pend) { const pn = o.pend; o.pend = null; showName(o, nameOf(pn.b, pn.i), pn.tier); o.found.add(pn.b + '.' + pn.i); }
+  pl.pend = null;
+  if (o.posing && (o.anim.kind === 'wind' || o.anim.kind === 'hold')) startPoseFx(o, o.anim.b);
+  pairEnd();
+}
+// a dupla continua neste compasso? (os dois sem erro, no mesmo nível, a caminho das manobras com nome ou na pose)
+function pairWanted(mi) {
+  if (!DUO.on || ACTIVE.length < 2) return false;
+  const sec = sectionOf(mi);
+  if (sec.k === 'break') return PAIR.landed >= 0 && sec.i === 0;
+  if (sec.k === 'outro') return PAIR.landed >= 0;
+  if (sec.k !== 'block') return false;
+  const a = PL[0].ms[mi], b = PL[1].ms[mi];
+  if (!a || !b || !a.ok || !b.ok || a.kind !== b.kind) return false;
+  if (a.kind === 'move') return a.level === b.level && (a.level >= 5 || (a.level >= 3 && a.level >= a.m));
+  return true;
+}
+// começo de compasso, depois de cada jogador decidir a sua manobra: aproxima, troca para a figura a dois ou separa
+function pairMeasure(mi) {
+  if (ACTIVE.length < 2) return;
+  const want = pairWanted(mi);
+  if (want && !PAIR.target) pairBegin(); else if (!want && PAIR.target) pairEnd();
+  if (!want) return;
+  const sec = sectionOf(mi), t0 = mi * MEAS;
+  if (sec.k !== 'block') { if (sec.i === 0) for (const pl of PL) setAnim(pl, 'linger', { b: PAIR.landed, duo: roleOf(pl) }, state.songT); return; }
+  const a = PL[0].ms[mi];
+  if (a.kind === 'move' && a.level >= 5) for (const pl of PL) { const ms = pl.ms[mi], [ty, tl] = SEQ[ms.b][ms.level - 1]; ms.duo = true; setAnim(pl, 'move', { b: ty, lvl: tl, t0, duo: roleOf(pl) }, state.songT); }
+  else if (a.kind === 'wind') { for (const pl of PL) { pl.ms[mi].duo = true; clearPoseFx(pl, false); setAnim(pl, 'wind', { b: a.b, t0, duo: roleOf(pl) }, state.songT); } startPoseFx(PL[PAIR.roleA], a.b, true); }
+  else if (a.kind === 'hold') { PAIR.poseT = t0; for (const pl of PL) { pl.ms[mi].duo = true; setAnim(pl, 'hold', { b: a.b, t0, duo: roleOf(pl) }, state.songT); } }
+}
+// manobra a dois completada: o nome só aparece quando os dois completam (se um errar, o outro vê o nome solo)
+function duoDone(pl, mi, b, i, tier) {
+  pl.pend = { mi, b, i, tier };
+  const o = partnerOf(pl); if (!o.pend || o.pend.mi !== mi) return;
+  for (const p of PL) { p.pend = null; p.found.add('d' + b + '.' + i); }
+  if (i === 2) { PAIR.landed = b; if (sameSide()) { panoOn(); showNameIn(PANO.names, duoNameOf(b, i), tier, true); PANO.flash.animate([{ opacity: REDUCED ? .3 : .85 }, { opacity: 0 }], { duration: 700, easing: 'ease-out' }); return; } }
+  for (const p of PL) showName(p, duoNameOf(b, i), tier, true);
+}
+function slotFor(pl, now) {
+  const r = roleOf(pl), an = pl.anim, tb = (now - an.t0) / BEAT; let s;
+  if (an.duo !== undefined && an.kind === 'move') s = DUO_MOVES[an.b + '.' + an.lvl].slot(r, tb, PAIR);
+  else if (an.duo !== undefined) s = DUO_POSES[an.b].slot(r, an.kind === 'wind' ? 'wind' : an.kind === 'linger' ? 'linger' : an.landed ? 'fin' : 'rise', tb, now, PAIR);
+  else s = dslot(r ? -SIDE : SIDE);
+  if (PAIR.sideA < 0) { s.x = -s.x; s.yaw = -s.yaw; }
+  return s;
+}
+const _pq = new THREE.Vector3(), _pd = new THREE.Vector3(), _mid = new THREE.Vector3();
+// cada quadro: o ponto do casal anda pela elipse; cada um vai da sua trilha (peso 0) para a sua vaga no casal (peso 1).
+// Na troca de figura, a diferença entre a vaga velha e a nova some aos poucos, para ninguém pular de lugar.
+function pairUpdate(dt) {
+  const snap = !(dt > 0);
+  if (!snap) PAIR.wt = clamp(PAIR.wt + (PAIR.target ? dt / 3.6 : -dt / 2.6), 0, 1);
+  PAIR.w = PAIR.wt * PAIR.wt * (3 - 2 * PAIR.wt);
+  if (PAIR.w <= 0) { for (const pl of PL) { pl.base.y = 0; pl.pslot = null; } return; }
+  if (PAIR.target && !snap) { const spd = (PL[0].base.spd + PL[1].base.spd) / 2; PAIR.th += dt * spd * .5 / Math.max(.5, Math.hypot(PAIR_RX * Math.sin(PAIR.th), PAIR_RZ * Math.cos(PAIR.th))); }
+  pairAnchor();
+  { const W_ = PL[PAIR.roleA].W; _pd.copy(W_.fL).sub(PAIR.pos); PAIR.topA.set(_pd.dot(PAIR.left) * PAIR.sideA, _pd.y, _pd.dot(PAIR.fwd)); }
+  if (!PAIR.met && PAIR.w > .97 && PAIR.target) { PAIR.met = true; SFX.duo(); }
+  const k = snap ? 0 : Math.exp(-dt * 5), w = PAIR.w;
+  for (const pl of PL) {
+    const s = slotFor(pl, simT), B = pl.base;
+    if (!pl.pslot || snap) pl.sdel = { x: 0, z: 0, y: 0, yaw: 0 };
+    else if (pl.slotAnim !== pl.anim) pl.sdel = { x: pl.pslot.x - s.x, z: pl.pslot.z - s.z, y: pl.pslot.y - s.y, yaw: wrapA(pl.pslot.yaw - s.yaw) };
+    else { const d = pl.sdel; d.x *= k; d.z *= k; d.y *= k; d.yaw *= k; }
+    pl.slotAnim = pl.anim;
+    const d = pl.sdel, x = s.x + d.x, z = s.z + d.z, y = s.y + d.y, yw = s.yaw + d.yaw;
+    pl.pslot = { x, z, y, yaw: yw };
+    _pq.copy(PAIR.pos).addScaledVector(PAIR.left, x).addScaledVector(PAIR.fwd, z);
+    B.pos.lerp(_pq, w);
+    // rumo: indo e voltando, olha para onde está patinando; na vaga, para onde a figura manda
+    if (!snap && B.ppos) { const dx = B.pos.x - B.ppos.x, dz = B.pos.z - B.ppos.z; if (dx * dx + dz * dz > 1e-7) B.vyaw = lerpA(B.vyaw, Math.atan2(dx, dz), 1 - Math.exp(-dt * 8)); }
+    B.ppos.copy(B.pos);
+    B.yaw = lerpA(lerpA(B.yaw, B.vyaw, sm(0, .2, w)), PAIR.yaw + yw, snap ? 1 : sm(.8, 1, w));
+    B.fwd.set(Math.sin(B.yaw), 0, Math.cos(B.yaw)); B.bank *= 1 - w; B.y = y * w;
+  }
+}
+// efeitos que pertencem ao casal (presos ao ponto do casal): o aro da roda-gigante e o funil da ciranda
+function spawnDuoFx(an) {
+  if (an.kind !== 'move') return;
+  const dm = DUO_MOVES[an.b + '.' + an.lvl];
+  if (dm.rim) {
+    const m = new THREE.Mesh(rainbowGeo(new THREE.TorusGeometry(PAIR.hub, .12, 4, 48)), psxMat({ vc: true, additive: true, emissive: 1, opacity: 0, side: DS }));
+    m.rotation.y = HP; m.position.set(0, PAIR.hub, 0);
+    an.fx.push(addFx(m, PAIR.fx, MEAS * 1.05, (k, a, dt, al) => { m.rotation.x += dt * 2; setOpacity(m, .85 * sm(.15, .3, k) * (1 - sm(.85, 1, k)) * al); }));
+  }
+  if (an.b === 1 && an.lvl === 5) {
+    const g = new THREE.ConeGeometry(2.0, 3.6, 14, 3, true); rainbowGeo(g, 'y');
+    const m = new THREE.Mesh(g, psxMat({ vc: true, additive: true, emissive: 1, opacity: 0, side: THREE.BackSide })); m.rotation.x = PI; m.position.y = 1.8;
+    an.fx.push(addFx(m, PAIR.fx, MEAS * 1.05, (k, a, dt, al) => { m.rotation.y += dt * 12; setOpacity(m, .45 * bump(seg(k, .1, .95)) * al); }));
+  }
+}
+
+/* --------- pose final a dois vista numa imagem só (os dois sentados do mesmo lado da tela) --------- */
+const PANO = { on: false, q: 1, cam: new THREE.PerspectiveCamera(36, 2, .1, 260), RTW: RW, RH: 120, aim: new THREE.Vector3(), pos: new THREE.Vector3(), snap: true, t0: 0 };
+PANO.rt = new THREE.WebGLRenderTarget(RW, 120, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, depthBuffer: true, stencilBuffer: false });
+PANO.quad = postQuad(PANO.rt.texture); PANO.quad.visible = false;
+function panoOn(q) {
+  if (!PANO.el) return;
+  PANO.on = true; PANO.q = q !== undefined ? q : OPT.rot[0]; PANO.t0 = performance.now() / 1000; PANO.snap = true;
+  PANO.el.hidden = false; PANO.names.innerHTML = ''; for (const pl of PL) pl.el.hidden = true; $('#divider').hidden = true; layout();
+}
+function panoOff() {
+  if (!PANO.on) return;
+  PANO.on = false; PANO.el.hidden = true; PANO.names.innerHTML = '';
+  for (const pl of PL) pl.el.hidden = !(pl.id === 0 || state.two); $('#divider').hidden = !state.two; layout();
+}
+function panoLayout() {
+  PANO.quad.visible = PANO.on; if (!PANO.on) return;
+  const q = PANO.q, odd = q % 2 === 1, Wi = odd ? APPH : APPW, Hi = odd ? APPW : APPH;
+  PANO.RTW = Math.round(RW * Wi / APPW); PANO.RH = Math.round(RW * Hi / APPW); PANO.rt.setSize(PANO.RTW, PANO.RH);
+  PANO.cam.aspect = PANO.RTW / PANO.RH; PANO.cam.updateProjectionMatrix();
+  const u = PANO.quad.material.uniforms; u.uRect.value.set(-1, -1, 1, 1); u.uRot.value = q;
+  for (const pl of PL) pl.quad.visible = false;
+  PANO.box.className = 'tbox q' + q;
+}
+// câmera de transmissão: de frente para o casal, um pouco de lado, enquadrando os dois de corpo inteiro e balançando devagar
+function panoCamera(dt) {
+  const a = PL[0].W, b = PL[1].W;
+  _mid.copy(a.chest).add(b.chest).multiplyScalar(.5);
+  const top = Math.max(a.horn.y, b.horn.y, a.chest.y, b.chest.y, a.fL.y, b.fL.y) + .5, span = Math.hypot(a.chest.x - b.chest.x, a.chest.z - b.chest.z) + 3.4;
+  // o gelo um pouco abaixo da borda de baixo e o alto do casal a 70% da altura (o nome fica em cima)
+  const cam = PANO.cam, tn = Math.tan(cam.fov * PI / 360), hh = Math.max(1.6, (top + .25) / 1.4), hw = span / 2 + .3, ay = hh - .25;
+  const d = Math.max(hh / tn, hw / (tn * cam.aspect)), t = performance.now() / 1000 - PANO.t0, ang = PAIR.yaw + .22 + .25 * Math.sin(t * .35);
+  _pq.set(_mid.x + Math.sin(ang) * d, ay + .5, _mid.z + Math.cos(ang) * d); keepOutOfStands(_pq);
+  _pd.set(_mid.x, ay, _mid.z);
+  if (PANO.snap || !(dt > 0)) { PANO.pos.copy(_pq); PANO.aim.copy(_pd); PANO.snap = false; }
+  else { const k = 1 - Math.exp(-dt * 2); PANO.pos.lerp(_pq, k); PANO.aim.lerp(_pd, k); }
+  cam.position.copy(PANO.pos); cam.lookAt(PANO.aim); cam.updateMatrixWorld();
+}
+function renderPano() {
+  const cam = PANO.cam;
+  U.uLightDir.value.copy(LIGHT_WORLD).transformDirection(cam.matrixWorldInverse);
+  U.uScale.value = PANO.RH / (2 * Math.tan(cam.fov * PI / 360)); U.uRes.value.set(PANO.RTW / 2, PANO.RH / 2); U.uAmb.value.copy(AMB_GAME);
+  renderer.setRenderTarget(PANO.rt); renderer.clear();
+  MIR.scale.y = -1; MIR.updateMatrixWorld(true); cam.layers.set(1); renderer.render(scene, cam);
+  MIR.scale.y = 1; MIR.updateMatrixWorld(true); cam.layers.enableAll(); renderer.render(scene, cam);
+}
+SFX.duo = function () { if (!AC) return; const t = AC.currentTime; [81, 88, 93, 100, 105].forEach((n, k) => I.bell(t + k * .06, n, .55, .7, sfxBus)); };
+PANO.el = $('#pano'); PANO.names = $('#pano .names'); PANO.box = $('#pano .tbox'); PANO.flash = $('#pano .flash');
+
 /* --------- avaliação dos clipes --------- */
 const TENSION = .1;
 function trackVel(pl, pose, dt) {
@@ -1381,6 +1720,7 @@ function updBases(dt) {
   if (ACTIVE.length < 2) { updBase(PL[0], dt, 1); return; }
   const gap = (((PL[1].base.s - PL[0].base.s) % PATH_L) + PATH_L) % PATH_L / PATH_L, e = gap - .5;
   updBase(PL[0], dt, clamp(1 + e * 1.3, .6, 1.4)); updBase(PL[1], dt, clamp(1 - e * 1.3, .6, 1.4));
+  if (PAIR.target || PAIR.wt > 0) pairUpdate(dt);
 }
 
 /* --------- aplicar a pose ao boneco --------- */
@@ -1388,7 +1728,7 @@ const _v = new THREE.Vector3(), _dir = new THREE.Vector3(), DOWN = new THREE.Vec
 function setLimb(g, side, e, a) { e = clamp(e, 0, 3.06); const s = Math.sin(e); _dir.set(side * s * Math.cos(a), -Math.cos(e), s * Math.sin(a)).normalize(); g.quaternion.setFromUnitVectors(DOWN, _dir); }
 function applyPose(pl, o, now) {
   const R = pl.uni, B = pl.base;
-  R.root.position.set(B.pos.x, 0, B.pos.z); R.root.rotation.set(0, B.yaw + o.yaw, B.bank);
+  R.root.position.set(B.pos.x, B.y || 0, B.pos.z); R.root.rotation.set(0, B.yaw + o.yaw, B.bank);
   R.spinner.position.set(o.tx, o.ty, o.tz); R.spinner.rotation.set(o.flip, o.spin, 0);
   { const sq = clamp(isFinite(o.sq) ? o.sq : 1, .5, 1.6), sx = 1 / Math.sqrt(sq); R.spinner.scale.set(sx, sq, sx); }
   R.torso.rotation.set(o.lean, o.tw, o.side); R.neck.rotation.set(o.hd, o.hy, 0);
@@ -1439,6 +1779,7 @@ function moonBoing(pl) {
 // efeitos que acompanham uma manobra
 function spawnAnimFx(pl, an) {
   const U_ = pl.uni;
+  if (an.duo !== undefined) { if (an.duo === 0) spawnDuoFx(an); return; }
   if (an.kind === 'move' && an.b === 0 && an.lvl === 5) {
     const m = new THREE.Mesh(rainbowGeo(new THREE.TorusGeometry(1.6, .12, 4, 40)), psxMat({ vc: true, additive: true, emissive: 1, opacity: 0, side: DS }));
     m.rotation.y = HP; m.position.set(0, 1.6, 0);
@@ -1466,22 +1807,22 @@ function clearPoseFx(pl, melt) {
   }
   pl.poseFx = null;
 }
-function startPoseFx(pl, b) {
+function startPoseFx(pl, b, duo) {
   clearPoseFx(pl, false);
-  const pf = pl.poseFx = { b, items: [] }, U_ = pl.uni;
+  const pf = pl.poseFx = { b, items: [], k: duo ? 1.75 : 1, hk: duo ? 1.9 : 1 }, U_ = pl.uni, par = duo ? PAIR.fx : null;
   if (b === 0) {
     const g = new THREE.Group(), mat = psxMat({ map: iceTex, rep: [1, 2], color: 0xc4f0ff, emissive: .6, opacity: .88, transparent: true, side: DS });
-    const col = new THREE.Mesh(new THREE.CylinderGeometry(.3, .5, PED_H, 6), mat); col.position.y = PED_H / 2; g.add(col);
-    for (let i = 0; i < 5; i++) { const c = new THREE.Mesh(new THREE.ConeGeometry(.1, .45 + (i % 2) * .3, 4), mat); const a = i * TAU / 5; c.position.set(Math.cos(a) * .62, .2, Math.sin(a) * .62); c.rotation.set(Math.sin(a) * .4, 0, -Math.cos(a) * .4); g.add(c); }
+    const col = new THREE.Mesh(new THREE.CylinderGeometry(duo ? 1.05 : .3, duo ? 1.3 : .5, PED_H, duo ? 9 : 6), mat); col.position.y = PED_H / 2; g.add(col);
+    for (let i = 0; i < (duo ? 8 : 5); i++) { const n = duo ? 8 : 5, rr = duo ? 1.45 : .62, c = new THREE.Mesh(new THREE.ConeGeometry(.1, .45 + (i % 2) * .3, 4), mat); const a = i * TAU / n; c.position.set(Math.cos(a) * rr, .2, Math.sin(a) * rr); c.rotation.set(Math.sin(a) * .4, 0, -Math.cos(a) * .4); g.add(c); }
     g.scale.y = .01;
-    pf.ped = g; pf.items.push(addFx(g, U_.root, 999, null));
+    pf.ped = g; pf.items.push(addFx(g, par || U_.root, 999, null));
   } else if (b === 1) {
     const g = new THREE.Group(); const cols = [0xff6ab8, 0x7dffc8, 0xffe066, 0xb27bff, 0x7fc7ff, 0xffffff, 0xff9a5a, 0x9dff6a];
     for (let i = 0; i < 8; i++) { const s = new THREE.Mesh(new THREE.OctahedronGeometry(.13, 0), psxMat({ color: cols[i], emissive: .7 })); g.add(s); }
-    g.position.y = 1.1; pf.cand = g; pf.ang = 0; pf.items.push(addFx(g, U_.root, 999, null));
+    g.position.y = 1.1; pf.cand = g; pf.ang = 0; pf.items.push(addFx(g, par || U_.root, 999, null));
   } else {
     const g = new THREE.Mesh(rainbowGeo(new THREE.SphereGeometry(1, 10, 8), 'y'), psxMat({ vc: true, additive: true, emissive: 1, opacity: .0, side: THREE.BackSide }));
-    g.position.y = 1.2; g.scale.setScalar(.2); pf.orb = g; pf.items.push(addFx(g, U_.spinner, 999, null));
+    g.position.y = 1.2; g.scale.setScalar(.2); pf.orb = g; pf.items.push(addFx(g, par || U_.spinner, 999, null));
   }
 }
 function updPoseFx(pl, dt, now) {
@@ -1494,12 +1835,12 @@ function updPoseFx(pl, dt, now) {
   }
   if (b === 1 && pf.cand) {
     const spd = k === 'wind' ? 2 + 4 * p : (k === 'hold' && !landed) ? 7 : .6; pf.ang += dt * spd;
-    const kids = pf.cand.children, r = landed ? 1.55 + .08 * Math.sin(now * 6) : 1.3 + .3 * p;
-    kids.forEach((s, i) => { const a = pf.ang + i * TAU / kids.length; s.position.set(Math.cos(a) * r, (landed ? .25 : .5 * Math.sin(a * 2)) + (landed ? 1.3 : 0), Math.sin(a) * r); s.rotation.y += dt * 4; s.scale.setScalar(landed ? 1 + .25 * Math.sin(now * 8 + i) : 1); });
+    const kids = pf.cand.children, r = (landed ? 1.55 + .08 * Math.sin(now * 6) : 1.3 + .3 * p) * pf.k;
+    kids.forEach((s, i) => { const a = pf.ang + i * TAU / kids.length; s.position.set(Math.cos(a) * r, (landed ? .25 : .5 * Math.sin(a * 2)) + (landed ? 1.3 * pf.hk : 0), Math.sin(a) * r); s.rotation.y += dt * 4; s.scale.setScalar(landed ? 1 + .25 * Math.sin(now * 8 + i) : 1); });
   }
   if (b === 2 && pf.orb) {
     const sc = k === 'wind' ? .3 + .6 * p : k === 'hold' && !landed ? .9 + .6 * clamp(p / .5, 0, 1) : 1.5;
-    pf.orb.scale.setScalar(sc * (1 + .05 * Math.sin(now * 20))); pf.orb.rotation.y += dt * 2;
+    pf.orb.scale.setScalar(sc * pf.k * (1 + .05 * Math.sin(now * 20))); pf.orb.rotation.y += dt * 2;
     setOpacity(pf.orb, k === 'wind' ? .28 * sm(0, .3, p) : .32);
   }
 }
@@ -1578,12 +1919,15 @@ function clipFor(kind, b, lvl, landed) {
 }
 function setAnim(pl, kind, o, now) {
   for (const f of pl.anim.fx) killFx(f, .25);
-  const b = o.b || 0, lvl = o.lvl || 0, landed = !!o.landed, c = clipFor(kind, b, lvl, landed);
+  const b = o.b || 0, lvl = o.lvl || 0, landed = !!o.landed, duo = o.duo;
+  // depois do Axel cruzado (passada a metade), os dois ficam trocados de lado: as figuras seguintes vêm espelhadas
+  { const pv = pl.anim; if (pv.duo !== undefined && pv.kind === 'move' && PAIR.swapT0 !== pv.t0) { const dm = DUO_MOVES[pv.b + '.' + pv.lvl]; if (dm && dm.swap && (now - pv.t0) / BEAT > dm.swap) { PAIR.sideA *= -1; PAIR.swapT0 = pv.t0; } } }
+  const c = duo !== undefined ? duoClip(kind, b, lvl, landed, duo) : clipFor(kind, b, lvl, landed);
   let t0 = o.t0 !== undefined ? o.t0 : now;
   if (kind === 'skate') t0 = Math.floor(now / BEAT) * BEAT;      // remadas alinhadas com a batida
   if ((kind === 'hold' && landed) || kind === 'linger' || kind === 'bail') t0 = now;
   const snap = cloneP(pl.lastRaw && finiteP(pl.lastRaw) ? pl.lastRaw : pl.lastBase); snap.yaw = wrapA(snap.yaw); snap.spin = wrapA(snap.spin); snap.flip = wrapA(snap.flip);
-  pl.anim = { kind, b, lvl, t0, landed, flags: {}, fx: [], inst: { clip: c, K: instKeys(pl, c, (now - t0) / BEAT, snap) } };
+  pl.anim = { kind, b, lvl, t0, landed, duo, flags: {}, fx: [], inst: { clip: c, K: instKeys(pl, c, (now - t0) / BEAT, snap) } };
   spawnAnimFx(pl, pl.anim);
 }
 function targetPose(pl, now) {
@@ -1605,7 +1949,7 @@ function animate(pl, t, dt) {
   const W = pl.W;
   if (!isFinite(W.chest.x + W.chest.y + W.chest.z)) { diag('corpo ' + pl.anim.kind); applyPose(pl, cloneP(N), t); updW(pl); }
   pl.shadow.position.x = W.chest.x; pl.shadow.position.z = W.chest.z;
-  { const h = Math.max(0, pl.curPose.ty), s = 1 / (1 + h * .6); pl.shadow.scale.set(s, s, s); pl.shadow.material.uniforms.uOpacity.value = .4 * s; }
+  { const h = Math.max(0, pl.curPose.ty + (pl.base.y || 0)), s = 1 / (1 + h * .6); pl.shadow.scale.set(s, s, s); pl.shadow.material.uniforms.uOpacity.value = .4 * s; }
   fxTick(pl, dt, t); updPoseFx(pl, dt, t);
 }
 
@@ -1629,7 +1973,7 @@ function cutTo(pl, i, poseB) { const tv = pl.tv, v = poseB !== undefined; if (i 
 // se o unicórnio passa um tempo de costas para a câmera atual, corta (no tempo da música) para uma que veja ele de frente
 function reframe(pl) {
   const tv = pl.tv, B = pl.base;
-  if (OPT.cam !== 'tv' || tv.cur < 0 || tv.virt || performance.now() - (tv.cutAt || 0) < 2600) return;
+  if (OPT.cam !== 'tv' || tv.cur < 0 || tv.virt || PAIR.w > .2 || performance.now() - (tv.cutAt || 0) < 2600) return;
   const c = CAMS[tv.cur], d = Math.hypot(c.p.x - B.pos.x, c.p.z - B.pos.z) || 1;
   const front = ((c.p.x - B.pos.x) * B.fwd.x + (c.p.z - B.pos.z) * B.fwd.z) / d;
   if (front < -.4 && B.spd > 1) cutTo(pl, pickCam(pl, () => true, true, 6, 45));
@@ -1649,9 +1993,10 @@ function pickCam(pl, filter, wantFront, dmin, dmax) {
 const CAM_ZMIN = -8.9, CAM_XMAX = 19;
 function keepOutOfStands(v) { if (v.z < CAM_ZMIN) v.z = CAM_ZMIN; v.x = clamp(v.x, -CAM_XMAX, CAM_XMAX); return v; }
 function poseCam(pl, b) {
-  const B = pl.base;
+  const B = PAIR.w > .5 ? PAIR : pl.base;
   _left.set(Math.cos(B.yaw), 0, -Math.sin(B.yaw));
-  const side = b === 0 ? .95 : b === 1 ? .6 : .3, front = b === 0 ? .35 : b === 1 ? .8 : 1;
+  // na pose a dois, mais de frente para o casal, para um não esconder o outro
+  const duo = B === PAIR, side = duo ? .35 : b === 0 ? .95 : b === 1 ? .6 : .3, front = duo ? 1 : b === 0 ? .35 : b === 1 ? .8 : 1;
   let best = null;
   for (const sg of [1, -1]) {   // tenta o lado esquerdo e o direito do unicórnio
     const d = new THREE.Vector3().addScaledVector(_left, side * sg).addScaledVector(B.fwd, front).normalize();
@@ -1684,17 +2029,19 @@ function updateCamera(pl, dt) {
   if (moonJ) cap = 40;   // no pulo lunar a câmera acompanha o unicórnio até o alto
   else if (an.kind === 'move' && an.b === 2) cap = JUMPS[an.lvl - 1].cap || 2.5;
   else if (an.kind === 'move' && an.b === 0 && an.lvl >= 5) cap = 3.4;
-  _aim.set(W.chest.x + B.fwd.x * B.spd * .2, Math.min(W.chest.y + .2, 1.05 + cap), W.chest.z + B.fwd.z * B.spd * .2);
+  const lead = B.spd * .2 * (1 - PAIR.w);
+  _aim.set(W.chest.x + B.fwd.x * lead, Math.min(W.chest.y + .2, 1.05 + cap), W.chest.z + B.fwd.z * lead);
+  if (PAIR.w > 0 && ACTIVE.length > 1) { const oc = partnerOf(pl).W.chest; _mid.set((W.chest.x + oc.x) / 2, (W.chest.y + oc.y) / 2 + .2, (W.chest.z + oc.z) / 2); _aim.lerp(_mid, PAIR.w); }
   const posing = an.kind === 'wind' || an.kind === 'hold' || an.kind === 'linger';
   let fovT;
   if (OPT.cam === 'tv') {
     if (tv.cur < 0) _cp.copy(poseCam(pl, tv.poseB));
     else { const c = CAMS[tv.cur]; _cp.copy(c.p); if (c.rail) _cp.x = clamp(B.pos.x * .7, -12, 12); }
-    fovT = clamp(2 * Math.atan(tv.visH / 2 / _cp.distanceTo(_aim)) * 180 / PI, 14, 62);
+    fovT = clamp(2 * Math.atan(tv.visH * (1 + .35 * PAIR.w) / 2 / _cp.distanceTo(_aim)) * 180 / PI, 14, 66);
     if (tv.cur >= 0 && CAMS[tv.cur].low) fovT = clamp(fovT * 1.12, 14, 66);
   } else {
     if (posing) _cp.copy(poseCam(pl, an.b));
-    else { _left.set(Math.cos(B.yaw), 0, -Math.sin(B.yaw)); _cp.set(B.pos.x - B.fwd.x * 6.8 + _left.x * 2.6, 2.7 + Math.min(pl.curPose.ty, 4) * .5, B.pos.z - B.fwd.z * 6.8 + _left.z * 2.6); keepOutOfStands(_cp); }
+    else { const Bc = PAIR.w > .5 ? PAIR : B; _left.set(Math.cos(Bc.yaw), 0, -Math.sin(Bc.yaw)); _cp.set(B.pos.x - Bc.fwd.x * 6.8 + _left.x * 2.6, 2.7 + Math.min(pl.curPose.ty, 4) * .5, B.pos.z - Bc.fwd.z * 6.8 + _left.z * 2.6); keepOutOfStands(_cp); }
     fovT = moonJ ? clamp(2 * Math.atan(tv.visH / 2 / _cp.distanceTo(_aim)) * 180 / PI, 14, 52) : 52 * tv.chaseK;
   }
   if (!isFinite(_cp.x + _cp.y + _cp.z)) { diag('alvo câmera'); _cp.copy(tv.pos); }
@@ -1761,6 +2108,7 @@ function renderView(pl) {
   cam.layers.enableAll(); renderer.render(scene, cam);
 }
 function render3D() {
+  if (PANO.on) { renderPano(); postRender(); return; }
   for (const pl of ACTIVE) renderView(pl);
   postRender();
 }
@@ -2722,7 +3070,7 @@ function makePlayer(id) {
   setPlayerChar(pl, (store.get('chars', DEFAULT_CHARS) || DEFAULT_CHARS)[id]);
   pl.shadow = new THREE.Mesh(new THREE.CircleGeometry(.62, 12), psxMat({ color: 0x0a0520, opacity: .4, transparent: true, depthWrite: false }));
   pl.shadow.rotation.x = -HP; pl.shadow.position.y = .02; pl.shadow.renderOrder = 3; scene.add(pl.shadow);
-  pl.base = { s: id ? PATH_L / 2 : 0, spd: 0, yaw: 0, bank: 0, pos: new THREE.Vector3(), fwd: new THREE.Vector3(0, 0, 1) };
+  pl.base = { s: id ? PATH_L / 2 : 0, spd: 0, yaw: 0, bank: 0, y: 0, vyaw: 0, ppos: new THREE.Vector3(), pos: new THREE.Vector3(), fwd: new THREE.Vector3(0, 0, 1) }; pl.pend = null;
   pl.cam = new THREE.PerspectiveCamera(48, 1, .1, 260);
   pl.rt = new THREE.WebGLRenderTarget(RW, 200, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, depthBuffer: true, stencilBuffer: false });
   pl.RTW = RW; pl.RH = 200; pl.quad = postQuad(pl.rt.texture);
@@ -2825,6 +3173,7 @@ function onMiss(pl, n) {
     pip(pl, Math.min(ms.m, 6), 'x'); if (ms.m < 6) pip(pl, 6, 'x');
     if (pl.posing || ms.kind !== 'move') { pl.posing = false; clearPoseFx(pl, false); }
     setAnim(pl, 'bail', {}, state.songT);
+    if (PAIR.target) pairBreak(pl);
   }
   updMult(pl);
 }
@@ -2834,16 +3183,18 @@ function checkMeasure(pl, mi) {
   ms.done = true;
   if (ms.kind === 'move') {
     pl.chain++; if (ms.m < 6) pip(pl, ms.m, 'o');
-    if (ms.level >= 5) { const i = ms.level - 5; showName(pl, nameOf(ms.b, i), ms.level - 4); pl.found.add(ms.b + '.' + i); }
+    if (ms.level >= 5) { const i = ms.level - 5; if (ms.duo && PAIR.target) duoDone(pl, mi, ms.b, i, ms.level - 4); else { showName(pl, nameOf(ms.b, i), ms.level - 4); pl.found.add(ms.b + '.' + i); } }
   } else if (ms.kind === 'hold') landPose(pl, ms);
   if (state.two) trySync(mi);
 }
 function landPose(pl, ms) {
   const b = ms.b; pl.lastPoseBlock = b; pl.stats.poses++; pl.score += POSE_BONUS;
-  setAnim(pl, 'hold', { b, t0: ms.mi * MEAS, landed: true }, state.songT);
+  const duo = ms.duo && PAIR.target ? roleOf(pl) : undefined;
+  setAnim(pl, 'hold', { b, t0: ms.mi * MEAS, landed: true, duo }, state.songT);
   landFx(pl, b); pip(pl, 6, 'o');
   if (!pl.auto && !state.two) buzz([20, 40, 30]);
-  showName(pl, nameOf(b, 2), 3); pl.found.add(b + '.2');
+  if (duo !== undefined) duoDone(pl, ms.mi, b, 2, 3);
+  else { showName(pl, nameOf(b, 2), 3); pl.found.add(b + '.2'); }
 }
 // sincronia: os dois fecham o mesmo compasso só com PERFEITO
 function trySync(mi) {
@@ -2891,6 +3242,7 @@ function gameUpdate(dt) {
     for (const pl of ACTIVE) processNotes(pl, nextStart);
     state.mi++;
     for (const pl of ACTIVE) onMeasureStart(pl, state.mi);
+    pairMeasure(state.mi);
   }
   for (const pl of ACTIVE) processNotes(pl, T);
   const bi = Math.floor(T / BEAT); if (bi !== state.bi) { state.bi = bi; for (const pl of ACTIVE) onBeat(pl, bi); }
@@ -2904,10 +3256,11 @@ function gameUpdate(dt) {
 
 /* ============================== nomes e cartões ============================== */
 let lastNameSfx = 0;
-function showName(pl, text, tier) {
-  const box = pl.names;
+function showName(pl, text, tier, duo) { showNameIn(pl.names, text, tier, duo); if (tier === 2) flash(pl, .12); }
+function showNameIn(box, text, tier, duo) {
   for (const el of [...box.children]) { el.classList.add('old'); setTimeout(() => el.remove(), 320); }
-  const wrap = document.createElement('div'); wrap.className = 'nmw t' + tier;
+  const wrap = document.createElement('div'); wrap.className = 'nmw t' + tier + (duo ? ' duo' : '');
+  if (duo) { const tg = document.createElement('span'); tg.className = 'duoTag'; tg.textContent = t('duoTag'); wrap.appendChild(tg); }
   if (tier === 3) { const bu = document.createElement('div'); bu.className = 'burst'; wrap.appendChild(bu); }
   const el = document.createElement('div'); el.className = 'nm t' + tier; wrap.appendChild(el);
   const words = text.split(' ');
@@ -2918,7 +3271,6 @@ function showName(pl, text, tier) {
   const life = tier === 1 ? 2.0 : tier === 2 ? 2.4 : 3.6;
   setTimeout(() => { wrap.classList.add('old'); setTimeout(() => wrap.remove(), 320); }, life * 1000);
   const now = performance.now(); if (now - lastNameSfx > 150) { SFX.name(tier); lastNameSfx = now; }   // na dupla, o mesmo nome toca uma vez só
-  if (tier === 2) flash(pl, .12);
 }
 function showCard(pl, small, big, dur, kind) {
   const c = pl.card; c.className = 'card ' + kind; c.innerHTML = '';
@@ -2970,6 +3322,7 @@ function layout() {
     u.uRot.value = ((two && i ? 2 : 0) + q) % 4; pl.quad.visible = i === 0 || two;
     pl.tbox.className = 'tbox q' + q;
   });
+  panoLayout();
   for (const el of $$('.hin')) el.className = 'hin q' + (two ? OPT.rot[+el.dataset.p] : 0);
 }
 // giro em quartos de volta no sentido horário (coordenadas de tela, y para baixo)
@@ -3024,6 +3377,7 @@ function startRun(opts) {
     Object.assign(state, { screen: 'play', paused: false, demo: !!opts.demo, songT: -.4, clockInit: false, mi: -1, bi: -99, ended: false });
     for (const pl of ACTIVE) resetPlayer(pl, !!opts.demo);
     for (const f of fxL) killFx(f, .1);
+    pairReset();
     show(null); setHud(true); ptrs.clear();
     songT0 = AC.currentTime + .4; nextStep = 0;
     for (const pl of ACTIVE) { setAnim(pl, 'skate', {}, state.songT); pl.tv.virt = false; pl.tv.cur = 0; pl.tv.snap = true; }
@@ -3033,7 +3387,7 @@ function startRun(opts) {
   return AC.resume().then(go, go);
 }
 function toMenu(fromPop) {
-  endTransformUI(); if (MUS.on) musicStop(false);
+  endTransformUI(); if (MUS.on) musicStop(false); pairReset();
   if (AC) newMusicBus();
   for (const pl of PL) { pl.auto = false; clearPoseFx(pl, false); pl.names.innerHTML = ''; }
   state.screen = 'title'; state.paused = false; state.ended = false; setHud(false);
@@ -3065,7 +3419,7 @@ function resume() {
 function judgesOf(pct) { const g = 6 * pct, sp = .25 * (1 - pct); return [g - sp, g, g + sp * .6].map(v => (Math.round(clamp(v, 0, 6) * 10) / 10).toFixed(1)); }
 const pctOf = pl => clamp((pl.score - pl.syncPts) / pl.max, 0, 1);
 function endGame() {
-  state.ended = true; setHud(false);
+  state.ended = true; setHud(false); pairReset();
   const real = !ACTIVE.some(pl => pl.auto);
   if (real) { for (const pl of ACTIVE) for (const id of pl.found) album.add(id); store.set('album', [...album]); }
   if (state.two) showResults2(); else showResults1(real);
@@ -3302,12 +3656,13 @@ function tick(nowMs, forceDt) {
     if (state.screen === 'calib') calibFrame();
   }
   simT = tt;
-  if (dt > 0) updBases(dt);
+  if (dt > 0) updBases(dt); else if (preview && PAIR.target) pairUpdate(0);
   for (const pl of ACTIVE) animate(pl, tt, dt);
   updFx(dt); updParticles(dt);
   if (STARS) { const ts = nowMs / 1000; for (let i = 0; i < STARS.n; i++) STARS.alpha[i] = .55 + .45 * Math.sin(ts * 1.7 + STARS.phase[i]); STARS.geo.attributes.palpha.needsUpdate = true; }
   if (BULBS) { const ts = nowMs / 1000; for (let i = 0; i < BULBS.n; i++) BULBS.alpha[i] = .75 + .25 * Math.sin(ts * 3 + i * 1.3); BULBS.geo.attributes.palpha.needsUpdate = true; }
   for (const pl of ACTIVE) { if (preview) pl.tv.snap = true; updateCamera(pl, dt); }
+  if (PANO.on) panoCamera(dt);
   render3D();
   for (const pl of ACTIVE) { drawLanes(pl, tt); placeNames(pl); }
 }
@@ -3331,6 +3686,36 @@ window.UG = {
   auto: (i, on) => { PL[i].auto = on; },
   preview(b, lvl, ph, kind) { show(null); preview = { t: 100 + ph * MEAS }; setAnim(PL[0], kind || 'move', { b, lvl, t0: 100, landed: true }, preview.t); PL[0].tv.snap = true; },
   previewAt(ph) { if (preview) preview.t = 100 + ph * MEAS; },
+  // dupla em sincronia
+  duo: on => { DUO.on = !!on; if (!on && PAIR.target) pairEnd(); },
+  rot: r => { OPT.rot = r.slice(0, 2); updOrientUI(); layout(); },
+  pair: () => ({ w: +PAIR.w.toFixed(2), target: PAIR.target, roleA: PAIR.roleA, sideA: PAIR.sideA, landed: PAIR.landed, pano: PANO.on, anims: PL.map(p => [p.anim.kind, p.anim.b, p.anim.lvl, p.anim.duo]), found: PL.map(p => [...p.found]), pos: PL.map(p => [+p.base.pos.x.toFixed(2), +p.base.pos.z.toFixed(2), +(p.base.y || 0).toFixed(2)]) }),
+  // pula a música para o compasso antes de um bloco (protótipo e testes); as notas que ficaram para trás não contam
+  jump(b) {
+    if (state.screen !== 'play' || !AC) return;
+    const mi0 = b === 0 ? 3 : BLOCK_START[b] - 1, T = mi0 * MEAS - .02;
+    newMusicBus(); applyVolumes();
+    songT0 = AC.currentTime + .1 - T; nextStep = Math.max(0, Math.ceil((T + .12) / S16)); state.clockInit = false; state.songT = T; state.mi = mi0 - 1; state.bi = Math.floor(T / BEAT); state.ended = false;
+    pairReset();
+    for (const pl of ACTIVE) { for (const n of pl.notes) if (n.t < T + .3) { if (!n.j) n.j = 'p'; if (n.hold && !n.tail) n.tail = 'ok'; } pl.chain = 0; pl.posing = false; clearPoseFx(pl, false); setAnim(pl, 'skate', {}, T); pl.names.innerHTML = ''; }
+  },
+  // prévia de uma figura a dois parada num instante: 'tipo.nível' (manobra) ou 'bloco' com fase wind/rise/fin/linger
+  duoShow(key, ph, kind, q = 1) {
+    if (!state.two) setTwo(true);
+    show(null); setHud(false);
+    pairBegin(); PAIR.wt = PAIR.w = 1; PAIR.th = -HP; PAIR.sideA = 1; PAIR.swapT0 = 100; pairAnchor(); PAIR.poseT = 100;
+    for (const pl of PL) { pl.pslot = null; pl.base.pos.copy(PAIR.pos); clearPoseFx(pl, false); }
+    for (const f of fxL) killFx(f, .01); updFx(1);
+    const [x, y] = String(key).split('.').map(Number);
+    for (const pl of PL) {
+      const r = roleOf(pl);
+      if (!kind || kind === 'move') setAnim(pl, 'move', { b: x, lvl: y, t0: 100, duo: r }, 100);
+      else setAnim(pl, kind === 'fin' || kind === 'rise' ? 'hold' : kind, { b: x, t0: 100, landed: kind === 'fin', duo: r }, 100);
+    }
+    if (kind && kind !== 'move') startPoseFx(PL[PAIR.roleA], x, true);
+    preview = { t: 100 + ph * MEAS }; panoOn(q);
+  },
+  duoStop() { preview = null; pairReset(); setTwo(false); show('title'); },
   stopPreview() { preview = null; setAnim(PL[0], 'skate', {}, performance.now() / 1000); },
   manual(on) { state.manual = on; }, advance(dt) { tick(performance.now(), dt); },
   cam: (i, c) => cutTo(PL[i], c), lang: setLang, screen: () => state.screen,
