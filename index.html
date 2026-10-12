@@ -55,6 +55,14 @@ body{height:100%;margin:0;background:var(--deep);color:var(--ink);font-family:va
 #app.two .pv.p0{top:50%}
 #app.two .pv.p1{rotate:180deg}
 .lanes{position:absolute;inset:0;width:100%;height:100%;display:block}
+/* zona = a visão sem a faixa dos cascos; o quadro dentro dela gira junto com a imagem (orientação de cada lado na dupla) */
+.zone{position:absolute;left:0;right:0;top:0;bottom:var(--padH);container-type:size;pointer-events:none}
+.frame{position:absolute;left:50%;top:50%;width:100cqw;height:100cqh;translate:-50% -50%;--cx:.5;--sx:.5;--sy:.66;--nw:92%}
+.frame.q1{rotate:90deg;width:100cqh;height:100cqw}
+.frame.q3{rotate:-90deg;width:100cqh;height:100cqw}
+.frame.q1 .card,.frame.q3 .card{left:calc(var(--cx) * 100%);right:auto;width:var(--nw);translate:-50% 0;padding:0}
+.frame.q1 .card.title .c2,.frame.q3 .card.title .c2{font-size:30px}
+.frame.q1 .sync,.frame.q3 .sync{white-space:normal;width:var(--nw);text-align:center;font-size:18px;line-height:1.05}
 .flash{position:absolute;inset:0;background:#fff;opacity:0}
 #divider{position:absolute;left:0;right:0;top:50%;height:4px;translate:0 -50%;background:linear-gradient(90deg,var(--pink),var(--gold),var(--mint),var(--blue));box-shadow:0 0 12px rgba(255,214,96,.55);pointer-events:none}
 
@@ -66,6 +74,11 @@ body{height:100%;margin:0;background:var(--deep);color:var(--ink);font-family:va
 .score .lbl{font-size:9px;letter-spacing:.14em;color:var(--muted)}
 .score b{font-size:20px;font-weight:400;font-variant-numeric:tabular-nums;line-height:1}
 .two .score b{font-size:16px}
+/* na dupla o placar fica numa linha só, para não invadir as pistas quando a imagem está girada */
+.two .score{flex-direction:row;flex-wrap:wrap;align-items:baseline;column-gap:6px}
+.two .score .lbl{display:none}
+.two .tag{margin-top:0}
+.two .camBtn{display:none}
 .mult{font-size:12px;color:var(--gold)}
 .who{display:none;align-self:flex-start;font-family:var(--f-pixel);font-size:10px;padding:3px 6px;border-radius:4px;text-shadow:none}
 .two .who{display:inline-block}
@@ -100,8 +113,8 @@ body{height:100%;margin:0;background:var(--deep);color:var(--ink);font-family:va
 .pad.on{translate:0 5px;filter:brightness(1.22);box-shadow:inset 0 -4px 0 rgba(0,0,0,.18),0 1px 0 var(--sh),0 4px 10px rgba(0,0,0,.4)}
 
 /* Nomes das manobras */
-.names{position:absolute;left:0;right:0;top:11.5%;height:0;pointer-events:none}
-.nmw{position:absolute;top:0;left:50%;translate:-50% 0;width:92%;display:flex;justify-content:center;transition:opacity .3s,translate .3s}
+.names{position:absolute;left:0;right:0;top:14%;height:0;pointer-events:none;translate:calc((var(--cx) - .5) * 100%) 0}
+.nmw{position:absolute;top:0;left:50%;translate:-50% 0;width:var(--nw);display:flex;justify-content:center;transition:opacity .3s,translate .3s}
 .nmw.old{opacity:0;translate:-50% -26px}
 .nm{position:relative;text-align:center;font-family:var(--f-display);line-height:1.04;text-wrap:balance}
 .nm .w{display:inline-block;white-space:nowrap}
@@ -124,17 +137,17 @@ body{height:100%;margin:0;background:var(--deep);color:var(--ink);font-family:va
 .two .nm.t3{font-size:clamp(19px,6.2cqw,26px)}
 
 /* Sincronia (dupla) */
-.sync{position:absolute;left:50%;top:55%;translate:-50% 0;font-family:var(--f-display);font-size:clamp(18px,6cqw,24px);color:var(--mint);white-space:nowrap;opacity:0;pointer-events:none;filter:drop-shadow(2px 0 0 var(--outline)) drop-shadow(-2px 0 0 var(--outline)) drop-shadow(0 2px 0 var(--outline)) drop-shadow(0 -2px 0 var(--outline)) drop-shadow(0 0 10px rgba(125,255,200,.9))}
+.sync{position:absolute;left:calc(var(--sx) * 100%);top:calc(var(--sy) * 100%);translate:-50% 0;font-family:var(--f-display);font-size:clamp(18px,6cqw,24px);color:var(--mint);white-space:nowrap;opacity:0;pointer-events:none;filter:drop-shadow(2px 0 0 var(--outline)) drop-shadow(-2px 0 0 var(--outline)) drop-shadow(0 2px 0 var(--outline)) drop-shadow(0 -2px 0 var(--outline)) drop-shadow(0 0 10px rgba(125,255,200,.9))}
 .sync.show{animation:syncIn 1.5s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes syncIn{0%{opacity:0;scale:.5}15%{opacity:1;scale:1.15}30%{scale:1}80%{opacity:1}100%{opacity:0;translate:-50% -14px}}
 
 /* Cartões de bloco e contagem */
 #diag{position:absolute;left:8px;bottom:calc(16.5% + 6px);margin:0;font-family:var(--f-pixel);font-size:9px;letter-spacing:.04em;color:var(--gold);background:rgba(11,7,32,.75);padding:3px 6px;border-radius:4px;pointer-events:none;max-width:70%;z-index:5}
-.card{position:absolute;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;text-align:center;opacity:0;padding:0 16px}
-.card.title{top:13%}
-.card.count{top:38%}
-.two .card.title{top:17%}
-.two .card.count{top:22%}
+.card{position:absolute;left:0;right:0;translate:calc((var(--cx) - .5) * 100%) 0;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;text-align:center;opacity:0;padding:0 16px}
+.card.title{top:15.5%}
+.card.count{top:45%}
+.two .card.title{top:21%}
+.two .card.count{top:28%}
 .card.show{animation:cardIn .4s cubic-bezier(.2,1.5,.4,1) both,cardOut .35s ease-in var(--hold,1s) forwards}
 .card .c1{font-family:var(--f-pixel);font-size:11px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase;text-shadow:0 2px 0 var(--outline)}
 .card .c2{font-family:var(--f-display);font-size:clamp(34px,11cqw,50px);color:#fff;filter:drop-shadow(2px 0 0 var(--outline)) drop-shadow(-2px 0 0 var(--outline)) drop-shadow(0 2px 0 var(--outline)) drop-shadow(0 -2px 0 var(--outline)) drop-shadow(0 5px 0 rgba(0,0,0,.3))}
@@ -175,14 +188,23 @@ h2{font-family:var(--f-display);font-weight:400;font-size:30px;margin:0;filter:d
 
 /* Telas divididas da dupla */
 .split{padding:0;display:grid;grid-template-rows:1fr 1fr;gap:0;align-items:stretch;justify-items:stretch}
-.half{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px 20px;text-align:center;min-height:0;overflow:hidden}
+.half{position:relative;container-type:size;min-height:0;overflow:hidden}
 .half.flip{rotate:180deg}
-#ready2 .half{justify-content:flex-end;padding-bottom:28px;background:linear-gradient(180deg,rgba(14,8,40,0) 25%,rgba(14,8,40,.9) 72%)}
+.hin{position:absolute;left:50%;top:50%;width:100cqw;height:100cqh;translate:-50% -50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px 20px;text-align:center}
+.hin.q1{rotate:90deg;width:100cqh;height:100cqw}
+.hin.q3{rotate:-90deg;width:100cqh;height:100cqw}
+#ready2 .hin{justify-content:flex-end;padding-bottom:22px;background:linear-gradient(180deg,rgba(14,8,40,0) 22%,rgba(14,8,40,.9) 66%)}
+.orient{display:flex;align-items:center;gap:10px;font-family:var(--f-pixel);font-size:11px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+.rotb{width:42px;height:42px;border-radius:50%;border:0;background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 2px rgba(255,255,255,.28);color:#fff;font-size:22px;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0}
+.rotb:disabled{opacity:.3;cursor:default}
+.rotb:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.olbl{min-width:12ch;text-align:center}
 #ready2 .who2{font-family:var(--f-display);font-size:30px;margin:0;filter:drop-shadow(0 3px 0 var(--outline))}
 #ready2 .j1{color:#ffb1db}
 #ready2 .j2{color:var(--teal)}
 #ready2 .btn.on{background:var(--mint);color:var(--outline);box-shadow:0 5px 0 #2e9c74}
-#results2 .half{background:var(--panel);gap:8px;justify-content:safe center}
+#results2 .half{background:var(--panel)}
+#results2 .hin{gap:8px;justify-content:safe center}
 #results2 .half.flip{background:rgba(10,30,44,.9)}
 .badge{font-family:var(--f-display);font-size:34px;margin:0;color:var(--gold);filter:drop-shadow(2px 0 0 var(--outline)) drop-shadow(-2px 0 0 var(--outline)) drop-shadow(0 3px 0 var(--outline))}
 .badge.lose{color:var(--ice)}
@@ -215,7 +237,10 @@ div.opt{cursor:default}
 .nudge{display:flex;align-items:center;gap:10px;font-family:var(--f-pixel);font-size:13px}
 
 /* Resultado */
-#pauseS.flip{rotate:180deg}
+#pauseS.r1,#pauseS.r3{inset:auto;left:50%;top:50%;width:100cqh;height:100cqw;translate:-50% -50%}
+#pauseS.r1{rotate:90deg}
+#pauseS.r2{rotate:180deg}
+#pauseS.r3{rotate:-90deg}
 .judges{display:flex;gap:10px}
 .jc{width:70px;padding:10px 0 8px;background:#f7f3ea;color:#1b1030;border-radius:6px;box-shadow:0 5px 0 #b9ad95,0 10px 18px rgba(0,0,0,.4);font-family:var(--f-pixel);display:flex;flex-direction:column;align-items:center;gap:4px;rotate:-3deg}
 .jc:nth-child(2){rotate:2deg;translate:0 -4px}
@@ -267,17 +292,19 @@ div.opt{cursor:default}
   </section>
 
   <section id="ready2" class="screen split" hidden>
-    <div class="half flip">
+    <div class="half flip"><div class="hin" data-p="1">
       <p class="who2 j2"><span data-i18n="pl"></span> 2</p>
       <p class="hint" data-i18n="readyHint"></p>
+      <div class="orient"><button class="rotb" data-p="1" data-d="-1" data-i18n-aria="rotL">↺</button><span class="olbl" data-p="1"></span><button class="rotb" data-p="1" data-d="1" data-i18n-aria="rotR">↻</button></div>
       <button class="btn alt rdy" data-p="1" data-i18n="ready"></button>
-    </div>
-    <div class="half">
+    </div></div>
+    <div class="half"><div class="hin" data-p="0">
       <p class="who2 j1"><span data-i18n="pl"></span> 1</p>
       <p class="hint" data-i18n="readyHint"></p>
+      <div class="orient"><button class="rotb" data-p="0" data-d="-1" data-i18n-aria="rotL">↺</button><span class="olbl" data-p="0"></span><button class="rotb" data-p="0" data-d="1" data-i18n-aria="rotR">↻</button></div>
       <button class="btn rdy" data-p="0" data-i18n="ready"></button>
       <button class="btn ghost sm" id="rBack" data-i18n="back"></button>
-    </div>
+    </div></div>
   </section>
 
   <section id="options" class="screen panelS" hidden>
@@ -344,8 +371,8 @@ div.opt{cursor:default}
   </section>
 
   <section id="results2" class="screen split" hidden>
-    <div class="half flip"><div class="rc" id="rc1"></div><div class="menu row"><button class="btn sm r2again" data-i18n="again"></button><button class="btn ghost sm r2menu" data-i18n="menu"></button></div></div>
-    <div class="half"><div class="rc" id="rc0"></div><div class="menu row"><button class="btn sm r2again" data-i18n="again"></button><button class="btn ghost sm r2menu" data-i18n="menu"></button></div></div>
+    <div class="half flip"><div class="hin" data-p="1"><div class="rc" id="rc1"></div><div class="menu row"><button class="btn sm r2again" data-i18n="again"></button><button class="btn ghost sm r2menu" data-i18n="menu"></button></div></div></div>
+    <div class="half"><div class="hin" data-p="0"><div class="rc" id="rc0"></div><div class="menu row"><button class="btn sm r2again" data-i18n="again"></button><button class="btn ghost sm r2menu" data-i18n="menu"></button></div></div></div>
   </section>
 </div>
 
@@ -353,6 +380,7 @@ div.opt{cursor:default}
   <div class="pv">
     <canvas class="lanes"></canvas>
     <div class="flash"></div>
+    <div class="zone"><div class="frame">
     <div class="names" aria-live="polite"></div>
     <div class="card"></div>
     <div class="sync"></div>
@@ -361,6 +389,7 @@ div.opt{cursor:default}
       <div class="blk"><span class="bn"></span><div class="pips"></div></div>
       <div class="right"><button class="icon pauseBtn" data-i18n-aria="pauseL"><i></i></button><button class="pill camBtn" data-i18n-aria="camL">CÂM TV</button></div>
     </header>
+    </div></div>
     <div class="pads" hidden>
       <div class="pad pl"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 54V30a18 18 0 0 1 36 0v24h-10V30a8 8 0 0 0-16 0v24z" fill="#fff" fill-opacity=".9"/><circle cx="19" cy="44" r="2" fill="#d42f7c"/><circle cx="45" cy="44" r="2" fill="#d42f7c"/><circle cx="20" cy="33" r="2" fill="#d42f7c"/><circle cx="44" cy="33" r="2" fill="#d42f7c"/></svg></div>
       <div class="pad pr"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 54V30a18 18 0 0 1 36 0v24h-10V30a8 8 0 0 0-16 0v24z" fill="#fff" fill-opacity=".9"/><circle cx="19" cy="44" r="2" fill="#2f55d4"/><circle cx="45" cy="44" r="2" fill="#2f55d4"/><circle cx="20" cy="33" r="2" fill="#2f55d4"/><circle cx="44" cy="33" r="2" fill="#2f55d4"/></svg></div>
@@ -416,7 +445,8 @@ const STR = {
     reset: 'Apagar progresso', resetQ: 'Apagar o álbum de nomes, o recorde e a calibração? Não dá para desfazer.', resetYes: 'Apagar', cancel: 'Cancelar', resetDone: 'Progresso apagado.',
     albumTitle: 'Álbum de nomes', albumCount: '{n} de 9 nomes descobertos', albumHint: 'Faça a sequência inteira sem errar para descobrir o nome de cada manobra.',
     kinds: ['deslize', 'giro', 'salto', 'pose final'],
-    pl: 'Jogador', readyHint: 'Deitem o celular na mesa, um de frente para o outro. Seus dois cascos ficam na borda do seu lado.',
+    pl: 'Jogador', readyHint: 'Deitem o celular na mesa. Seus dois cascos ficam na borda do seu lado. Se forem jogar lado a lado, girem a imagem com ↺ ↻.',
+    orientFace: 'Frente a frente', orientSide: 'Lado a lado', rotL: 'Girar a imagem para a esquerda', rotR: 'Girar a imagem para a direita',
     ready: 'Pronto!', waiting: 'Esperando o outro…',
     win: 'Vitória!', lose: 'Quase!', tie: 'Empate!', sync: 'Sincronia!',
     pauseL: 'Pausar', camL: 'Trocar câmera', viewL: 'Pista de gelo com unicórnios patinando'
@@ -440,7 +470,8 @@ const STR = {
     reset: 'Borrar progreso', resetQ: '¿Borrar el álbum de nombres, el récord y la calibración? No se puede deshacer.', resetYes: 'Borrar', cancel: 'Cancelar', resetDone: 'Progreso borrado.',
     albumTitle: 'Álbum de nombres', albumCount: '{n} de 9 nombres descubiertos', albumHint: 'Hacé la secuencia entera sin errores para descubrir el nombre de cada figura.',
     kinds: ['deslizamiento', 'giro', 'salto', 'pose final'],
-    pl: 'Jugador', readyHint: 'Apoyen el celular en la mesa, uno frente al otro. Tus dos cascos están en el borde de tu lado.',
+    pl: 'Jugador', readyHint: 'Apoyen el celular en la mesa. Tus dos cascos están en el borde de tu lado. Si van a jugar lado a lado, giren la imagen con ↺ ↻.',
+    orientFace: 'Frente a frente', orientSide: 'Lado a lado', rotL: 'Girar la imagen a la izquierda', rotR: 'Girar la imagen a la derecha',
     ready: '¡Listo!', waiting: 'Esperando al otro…',
     win: '¡Victoria!', lose: '¡Casi!', tie: '¡Empate!', sync: '¡Sincronía!',
     pauseL: 'Pausar', camL: 'Cambiar cámara', viewL: 'Pista de hielo con unicornios patinando'
@@ -467,8 +498,10 @@ const langGuess = () => { try { return (navigator.language || 'pt').toLowerCase(
 const OPT = {
   lang: store.get('lang', null) || langGuess(),
   music: store.get('music', true) !== false, sfx: store.get('sfx', true) !== false, vib: store.get('vib', true) !== false,
-  cam: store.get('cam', 'tv') === 'chase' ? 'chase' : 'tv'
+  cam: store.get('cam', 'tv') === 'chase' ? 'chase' : 'tv',
+  rot: (store.get('rot2', [0, 0]) || [0, 0]).slice(0, 2).map(q => [0, 1, 3].includes(q) ? q : 0)
 };
+while (OPT.rot.length < 2) OPT.rot.push(0);
 if (!STR[OPT.lang]) OPT.lang = 'pt';
 function t(k, vars) {
   let s = STR[OPT.lang][k]; if (s === undefined) s = STR.pt[k];
@@ -745,15 +778,18 @@ function psxMat(o = {}) {
 const DS = THREE.DoubleSide;
 // Pós-processamento: cor de 15 bits com pontilhado (dithering) 4x4. Um quadro por jogador; o do jogador 2 gira 180°.
 const postScene = new THREE.Scene(), postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-const POST_VS = `uniform vec4 uRect; uniform float uFlip; varying vec2 vUv;
-  void main(){ vUv = uFlip > 0.5 ? vec2(1.0) - uv : uv; gl_Position = vec4(mix(uRect.xy, uRect.zw, uv), 0.0, 1.0); }`;
+const POST_VS = `uniform vec4 uRect; uniform float uRot; varying vec2 vUv;
+  void main(){
+    vec2 r = uv;
+    if (uRot > 2.5) r = vec2(uv.y, 1.0 - uv.x); else if (uRot > 1.5) r = vec2(1.0) - uv; else if (uRot > 0.5) r = vec2(1.0 - uv.y, uv.x);
+    vUv = r; gl_Position = vec4(mix(uRect.xy, uRect.zw, uv), 0.0, 1.0); }`;
 const POST_FS = `uniform sampler2D tex; varying vec2 vUv;
   float b2(vec2 a){ a = floor(a); return fract(a.x / 2.0 + a.y * a.y * 0.75); }
   float b4(vec2 a){ return b2(0.5 * a) * 0.25 + b2(a); }
   void main(){ vec3 c = texture2D(tex, vUv).rgb; c += (b4(gl_FragCoord.xy) - 0.47) / 26.0; c = floor(c * 31.0 + 0.5) / 31.0; gl_FragColor = vec4(c, 1.0); }`;
 function postQuad(tex) {
   const m = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({
-    uniforms: { tex: { value: tex }, uRect: { value: new THREE.Vector4(-1, -1, 1, 1) }, uFlip: { value: 0 } },
+    uniforms: { tex: { value: tex }, uRect: { value: new THREE.Vector4(-1, -1, 1, 1) }, uRot: { value: 0 } },
     vertexShader: POST_VS, fragmentShader: POST_FS, depthTest: false, depthWrite: false
   }));
   m.frustumCulled = false; postScene.add(m); return m;
@@ -1696,7 +1732,7 @@ function renderView(pl) {
   updMoon(pl);
   U.uLightDir.value.copy(LIGHT_WORLD).transformDirection(cam.matrixWorldInverse);
   U.uScale.value = pl.RH / (2 * Math.tan(cam.fov * PI / 360));
-  U.uRes.value.set(RW / 2, pl.RH / 2);
+  U.uRes.value.set(pl.RTW / 2, pl.RH / 2);
   renderer.setRenderTarget(pl.rt); renderer.clear();
   // reflexo no gelo: os unicórnios espelhados pelo plano do gelo, desenhados antes do gelo translúcido
   MIR.scale.y = -1; MIR.updateMatrixWorld(true);
@@ -1722,6 +1758,9 @@ function drawLanes(pl, T) {
   if (state.screen !== 'play') return;
   const top = CH * pl.laneTop, hit = CH * pl.laneHit, span = hit - top, AP = 1.25, lw = Math.min(100, CW * .25), R = Math.min(22, CW * .055);
   const yOf = t => hit - (t - T) / AP * span;
+  // textos das pistas acompanham a orientação da imagem daquele lado
+  const q = pl.geo ? pl.geo.q : 0;
+  const say = (s, x, y) => { if (!q) { g2.fillText(s, x, y); return; } g2.save(); g2.translate(x, y); g2.rotate(q * HP); g2.textBaseline = 'middle'; g2.fillText(s, 0, 0); g2.restore(); };
   for (let l = 0; l < 2; l++) {
     const x = laneX(pl, l), gr = g2.createLinearGradient(0, top, 0, hit + 30);
     gr.addColorStop(0, `rgba(${LANE_COL[l]},0)`); gr.addColorStop(1, `rgba(${LANE_COL[l]},.28)`);
@@ -1753,7 +1792,7 @@ function drawLanes(pl, T) {
       rr(x - tw / 2, yE, tw, Math.max(0, yH - yE), 9); g2.fill(); g2.strokeStyle = 'rgba(255,255,255,.85)'; g2.lineWidth = 2; g2.stroke();
       starPath(x, yE, R * .7); g2.fillStyle = '#fff'; g2.fill();
       if (!n.j) { starPath(x, y, R * 1.15); g2.fillStyle = LANE_HEX[n.lane]; g2.fill(); g2.lineWidth = 3; g2.strokeStyle = '#fff'; g2.stroke(); }
-      if (n.lane === 0 && !n.j) { g2.font = `11px Silkscreen, monospace`; g2.fillStyle = '#fff'; g2.textAlign = 'center'; g2.fillText(t('hold'), CW / 2, y + 4); }
+      if (n.lane === 0 && !n.j) { g2.font = `11px Silkscreen, monospace`; g2.fillStyle = '#fff'; g2.textAlign = 'center'; say(t('hold'), CW / 2, y + 4); }
     } else {
       if (n.pair && n.lane === 0) { g2.strokeStyle = 'rgba(255,255,255,.75)'; g2.lineWidth = 5; g2.beginPath(); g2.moveTo(laneX(pl, 0) + R, y); g2.lineTo(laneX(pl, 1) - R, y); g2.stroke(); }
       starPath(x, y, R); g2.fillStyle = LANE_HEX[n.lane]; g2.fill(); g2.lineWidth = 3; g2.strokeStyle = '#fff'; g2.stroke();
@@ -1770,7 +1809,7 @@ function drawLanes(pl, T) {
     if (e.j !== 'm') { g2.strokeStyle = e.j === 'p' ? `rgba(255,214,96,${1 - k})` : `rgba(125,255,200,${1 - k})`; g2.lineWidth = 4 * (1 - k) + 1; g2.beginPath(); g2.arc(x, hit, R + 6 + k * 30, 0, TAU); g2.stroke(); }
     g2.font = `${e.j === 'p' ? 14 : 13}px Silkscreen, monospace`; g2.textAlign = 'center';
     g2.fillStyle = e.j === 'p' ? `rgba(255,214,96,${1 - k})` : e.j === 'g' ? `rgba(125,255,200,${1 - k})` : `rgba(255,140,180,${1 - k})`;
-    g2.fillText(lbl[e.j], x, hit - R - 18 - k * 22);
+    say(lbl[e.j], x, hit - R - (q ? 52 : 18) - k * 22);
   }
 }
 
@@ -1788,7 +1827,7 @@ function makePlayer(id) {
   const q = s => el.querySelector(s);
   const pl = {
     id, el, lc: q('.lanes'), flashEl: q('.flash'), names: q('.names'), card: q('.card'), syncEl: q('.sync'), hud: q('.hud'), padsEl: q('.pads'),
-    scoreEl: q('.sc'), multEl: q('.mult'), blkEl: q('.bn'), pipsEl: q('.pips'), demoTag: q('.demoTag'), camBtn: q('.camBtn'), pauseBtn: q('.pauseBtn'),
+    frame: q('.frame'), scoreEl: q('.sc'), multEl: q('.mult'), blkEl: q('.bn'), pipsEl: q('.pips'), demoTag: q('.demoTag'), camBtn: q('.camBtn'), pauseBtn: q('.pauseBtn'),
     padEls: [q('.pad.pl'), q('.pad.pr')], fx2d: [], CW: 360, CH: 720, DPR: 1, laneTop: .55, laneHit: .8, namesY: .2
   };
   pl.g2 = pl.lc.getContext('2d');
@@ -1799,7 +1838,7 @@ function makePlayer(id) {
   pl.base = { s: id ? PATH_L / 2 : 0, spd: 0, yaw: 0, bank: 0, pos: new THREE.Vector3(), fwd: new THREE.Vector3(0, 0, 1) };
   pl.cam = new THREE.PerspectiveCamera(48, 1, .1, 260);
   pl.rt = new THREE.WebGLRenderTarget(RW, 200, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, depthBuffer: true, stencilBuffer: false });
-  pl.RH = 200; pl.quad = postQuad(pl.rt.texture);
+  pl.RTW = RW; pl.RH = 200; pl.quad = postQuad(pl.rt.texture);
   pl.tv = { cur: 0, virt: false, poseB: 0, cutAt: 0, snap: true, pos: new THREE.Vector3(0, 7.5, 25), aim: new THREE.Vector3(), fov: 30, shake: 0, visH: 9, offY: .12, chaseK: 1 };
   pl.ACC = {}; ACC_CH.forEach(k => pl.ACC[k] = { x: 0, v: 0 });
   pl.vel = {}; pl.prevPose = null; pl.lastRaw = null; pl.curPose = cloneP(N); pl.lastBase = cloneP(N); pl.goodPose = cloneP(N);
@@ -2002,10 +2041,14 @@ function showCard(pl, small, big, dur, kind) {
   void c.offsetWidth; c.classList.add('show');
 }
 const _p = new THREE.Vector3();
+// nome acima do chifre: projeção na imagem → posição na visão do jogador → posição no quadro (que pode estar girado)
 function placeNames(pl) {
+  const g = pl.geo; if (!g) return;
   pl.uni.hornTip.getWorldPosition(_p); _p.project(pl.cam);
-  let y = (1 - _p.y) / 2 - (state.two ? .03 : .07); if (!isFinite(y)) y = .2;
-  y = state.two ? clamp(y, .3, .44) : clamp(y, .1, .3);
+  if (!isFinite(_p.x + _p.y)) return;
+  const [dx, dy] = rotCW(g.q, (_p.x / 2) * g.Wi, (-_p.y / 2) * g.Hi);
+  const fv = toFrame(g, (dx + g.W / 2) / g.W, (dy + g.H / 2) / g.H)[1];
+  const y = state.two ? clamp(fv - .04, (52 + 80) / g.Hf, .62) : clamp(fv - .07 * g.H / g.Hz, .12, .36);
   pl.namesY += (y - pl.namesY) * .15; pl.names.style.top = (pl.namesY * 100).toFixed(2) + '%';
 }
 
@@ -2016,17 +2059,44 @@ function layout() {
   const two = state.two, DPR = Math.min(2, window.devicePixelRatio || 1);
   RHT = Math.max(200, Math.round(RW * APPH / APPW));
   renderer.setSize(RW, RHT, false);
-  const rh = two ? Math.floor(RHT / 2) : RHT, ph = two ? APPH / 2 : APPH;
+  const ph = two ? APPH / 2 : APPH;
   PL.forEach((pl, i) => {
-    const tv = pl.tv; pl.RH = rh; pl.rt.setSize(RW, rh);
-    tv.offY = two ? .2 : .12; tv.visH = two ? 6.6 : 9; tv.chaseK = two ? .8 : 1;
-    pl.cam.aspect = RW / rh; pl.cam.setViewOffset(RW, rh, 0, Math.round(rh * tv.offY), RW, rh); pl.cam.updateProjectionMatrix();
+    const tv = pl.tv, q = two ? OPT.rot[i] : 0, odd = q % 2 === 1;
+    // geometria da visão (W x H), da zona sem os cascos (W x Hz), da imagem girada (Wi x Hi) e do quadro girado (Wf x Hf)
+    const W = APPW, H = ph, Hz = H * (1 - (two ? .21 : .165));
+    const g = pl.geo = { q, W, H, Hz, Wi: odd ? H : W, Hi: odd ? W : H, Wf: odd ? Hz : W, Hf: odd ? W : Hz };
+    pl.RTW = Math.round(RW * g.Wi / W); pl.RH = Math.round(RW * g.Hi / W); pl.rt.setSize(pl.RTW, pl.RH);
+    tv.visH = two ? 6.6 : 9; tv.chaseK = two ? .8 : 1;
+    // onde o peito do unicórnio deve ficar na visão: fora das pistas e do placar
+    const T = !two ? [.5, .38] : q === 0 ? [.5, .3] : q === 1 ? [.42, .21] : [.58, .21];
+    const [a, b] = rotCW((4 - q) % 4, (T[0] - .5) * W, (T[1] - .5) * H), iu = a / g.Wi + .5, iv = b / g.Hi + .5;
+    pl.cam.aspect = pl.RTW / pl.RH; pl.cam.setViewOffset(pl.RTW, pl.RH, Math.round((.5 - iu) * pl.RTW), Math.round((.5 - iv) * pl.RH), pl.RTW, pl.RH); pl.cam.updateProjectionMatrix();
+    // quadro com placar, nomes e cartões, girado junto com a imagem
+    const cx = q ? toFrame(g, T[0], T[1])[0] : .5, [sx, sy] = q ? [cx, .84] : toFrame(g, .5, .55);
+    pl.frame.className = 'frame q' + q;
+    pl.frame.style.setProperty('--cx', cx.toFixed(3)); pl.frame.style.setProperty('--sx', sx.toFixed(3)); pl.frame.style.setProperty('--sy', sy.toFixed(3));
+    pl.frame.style.setProperty('--nw', q ? Math.round(2 * Math.min(cx, 1 - cx) * g.Wf * .96) + 'px' : '92%');
     pl.CW = APPW; pl.CH = ph; pl.DPR = DPR; pl.lc.width = Math.round(APPW * DPR); pl.lc.height = Math.round(ph * DPR);
     pl.laneTop = two ? .42 : .55; pl.laneHit = two ? .745 : .8;
     const u = pl.quad.material.uniforms;
     if (two) u.uRect.value.set(-1, i ? 0 : -1, 1, i ? 1 : 0); else u.uRect.value.set(-1, -1, 1, 1);
-    u.uFlip.value = two && i ? 1 : 0; pl.quad.visible = i === 0 || two;
+    u.uRot.value = ((two && i ? 2 : 0) + q) % 4; pl.quad.visible = i === 0 || two;
   });
+  for (const el of $$('.hin')) el.className = 'hin q' + (two ? OPT.rot[+el.dataset.p] : 0);
+}
+// giro em quartos de volta no sentido horário (coordenadas de tela, y para baixo)
+function rotCW(q, a, b) { return q === 1 ? [-b, a] : q === 2 ? [-a, -b] : q === 3 ? [b, -a] : [a, b]; }
+// ponto da visão (frações de W e H) → frações do quadro girado
+function toFrame(g, px, py) { const [a, b] = rotCW((4 - g.q) % 4, px * g.W - g.W / 2, py * g.H - g.Hz / 2); return [a / g.Wf + .5, b / g.Hf + .5]; }
+// orientação da imagem de cada lado na dupla: ↺ e ↻ andam por lado a lado (esquerda), frente a frente, lado a lado (direita)
+const ROT_ORDER = [3, 0, 1];
+function updOrientUI() {
+  for (const el of $$('.olbl')) el.textContent = OPT.rot[+el.dataset.p] ? t('orientSide') : t('orientFace');
+  for (const b of $$('.rotb')) { const k = ROT_ORDER.indexOf(OPT.rot[+b.dataset.p]) + +b.dataset.d; b.disabled = k < 0 || k >= ROT_ORDER.length; }
+}
+function rotateSide(i, d) {
+  const k = clamp(ROT_ORDER.indexOf(OPT.rot[i]) + d, 0, ROT_ORDER.length - 1);
+  OPT.rot[i] = ROT_ORDER[k]; store.set('rot2', OPT.rot); updOrientUI(); layout();
 }
 
 /* ============================== telas e fluxo ============================== */
@@ -2077,7 +2147,7 @@ function toMenu(fromPop) {
   if (AC) newMusicBus();
   for (const pl of PL) { pl.auto = false; clearPoseFx(pl, false); pl.names.innerHTML = ''; }
   state.screen = 'title'; state.paused = false; state.ended = false; setHud(false);
-  setTwo(false); show('title'); screens.pause.classList.remove('flip');
+  setTwo(false); show('title'); screens.pause.className = 'screen panelS';
   if (AC && AC.state === 'suspended') AC.resume().catch(() => {});
   setAnim(PL[0], 'skate', {}, performance.now() / 1000); updOffInfo();
   releaseWake();
@@ -2087,7 +2157,7 @@ let resuming = false;
 function pause(by) {
   if (state.screen !== 'play' || state.paused || state.ended || resuming) return;
   state.paused = true; if (AC) AC.suspend().catch(() => {});
-  screens.pause.classList.toggle('flip', state.two && by === 1); show('pause');
+  screens.pause.className = 'screen panelS r' + (state.two ? ((by === 1 ? 2 : 0) + OPT.rot[by]) % 4 : 0); show('pause');
   for (const pl of ACTIVE) { pl.down = [0, 0]; } ptrs.clear();
 }
 function resume() {
@@ -2170,6 +2240,7 @@ function applyI18n() {
   for (const pl of PL) updBlk(pl);
   updCamBtn(); updOffInfo();
   for (const b of $$('.rdy')) b.textContent = ready2[+b.dataset.p] ? t('waiting') : t('ready');
+  updOrientUI();
 }
 
 /* --------- dupla: os dois confirmam que estão em posição --------- */
@@ -2259,6 +2330,7 @@ $$('.rdy').forEach(b => b.onclick = () => {
   if (ready2[0] && ready2[1]) setTimeout(() => { if (state.screen === 'ready2' && ready2[0] && ready2[1]) startRun({ two: true }); }, 350);
 });
 $('#rBack').onclick = () => toMenu();
+$$('.rotb').forEach(b => b.onclick = () => rotateSide(+b.dataset.p, +b.dataset.d));
 $('#aBack').onclick = () => toMenu();
 $('#oBack').onclick = () => toMenu();
 $('#oMusic').onclick = () => { OPT.music = !OPT.music; store.set('music', OPT.music); applyVolumes(); syncOptUI(); };

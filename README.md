@@ -12,7 +12,7 @@ Jogo de ritmo para celular: unicórnios de pantufa patinam no gelo numa praça d
 - Teclado: F e J (jogador 1); Q e P (jogador 2); Esc pausa.
 
 ## Dois jogadores
-Celular deitado na mesa, um de frente para o outro. A tela se divide ao meio e a metade de cima gira para quem está do outro lado; cada um usa os dois cascos da sua borda. Quando os dois fecham o mesmo compasso só com PERFEITO, ganham o bônus de **Sincronia**.
+Celular deitado na mesa. A tela se divide ao meio e cada um usa os dois cascos da sua borda. Por padrão os dois ficam frente a frente (a metade de cima vem girada para quem está do outro lado); para jogar lado a lado, com o celular deitado de lado, cada um gira a imagem da sua metade com ↺ ↻ na tela de "Pronto!". Os cascos e as pistas não mudam de lugar, e a escolha fica salva. Quando os dois fecham o mesmo compasso só com PERFEITO, ganham o bônus de **Sincronia**.
 
 ## Instalar no Android
 Abra o link no Chrome (não no navegador interno de outro app), menu ⋮ > Instalar app. Depois de cada atualização, feche o app e abra de novo.

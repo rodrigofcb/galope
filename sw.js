@@ -1,7 +1,7 @@
 // Galope no Gelo: funciona offline depois da primeira visita.
 // Rede primeiro para o HTML (atualizações chegam logo); cache primeiro para o resto.
 // Subir VERSION a cada publicação.
-const VERSION = 'galope-v1';
+const VERSION = 'galope-v2';
 const SHELL = [
   './', 'index.html', 'manifest.webmanifest', 'vendor/three.min.js',
   'fonts/titan-one-latin-400-normal.woff2', 'fonts/silkscreen-latin-400-normal.woff2',
