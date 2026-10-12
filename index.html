@@ -321,6 +321,7 @@ div.opt{cursor:default}
 .album li em{font-style:normal;font-family:var(--f-pixel);font-size:9px;letter-spacing:.06em;color:var(--muted)}
 .album li span{color:var(--ink);font-weight:800;line-height:1.3}
 .album li span.lock{color:rgba(255,255,255,.3);font-weight:500}
+.album li.sep{display:block;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.12);font-family:var(--f-pixel);font-size:10px;letter-spacing:.14em;color:var(--mint);text-transform:uppercase}
 .album li small{display:block;font-family:var(--f-pixel);font-size:9px;font-weight:400;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
 .album.big li{font-size:15px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.07)}
 @media (prefers-reduced-motion:reduce){.burst{animation:none}.nm.t3 .c{animation:drop .3s both}}
@@ -521,7 +522,7 @@ const STR = {
     calRes: 'Atraso medido: <b>{m} ms</b> (já aplicado).<br>Variação: <b>±{s} ms</b>, {q}.', calQ: ['ótima para jogo de ritmo', 'boa', 'alta; o atraso deste aparelho oscila'],
     back: 'Voltar', optLang: 'Idioma', optMusic: 'Música', optSfx: 'Efeitos sonoros', optVib: 'Vibração', optCam: 'Câmera', camTvL: 'TV', camChL: 'SEGUE',
     reset: 'Apagar progresso', resetQ: 'Apagar o álbum de nomes, o recorde e a calibração? Não dá para desfazer.', resetYes: 'Apagar', cancel: 'Cancelar', resetDone: 'Progresso apagado.',
-    albumTitle: 'Álbum de nomes', albumCount: '{n} de 9 nomes descobertos', albumHint: 'Faça a sequência inteira sem errar para descobrir o nome de cada manobra.',
+    albumTitle: 'Álbum de nomes', albumCount: '{n} de 18 nomes descobertos', albumHint: 'Faça a sequência inteira sem errar para descobrir o nome de cada manobra. Os nomes a dois aparecem quando os dois jogadores chegam juntos, sem erro, às manobras com nome.', albumDuo: 'A dois',
     kinds: ['deslize', 'giro', 'salto', 'pose final'],
     pl: 'Jogador', readyHint: 'Deitem o celular na mesa. Seus dois cascos ficam na borda do seu lado. Se forem jogar lado a lado, girem a imagem com ↺ ↻.',
     orientFace: 'Frente a frente', orientSide: 'Lado a lado', rotL: 'Girar a imagem para a esquerda', rotR: 'Girar a imagem para a direita',
@@ -550,7 +551,7 @@ const STR = {
     calRes: 'Retraso medido: <b>{m} ms</b> (ya aplicado).<br>Variación: <b>±{s} ms</b>, {q}.', calQ: ['excelente para un juego de ritmo', 'buena', 'alta; el retraso de este dispositivo oscila'],
     back: 'Volver', optLang: 'Idioma', optMusic: 'Música', optSfx: 'Efectos de sonido', optVib: 'Vibración', optCam: 'Cámara', camTvL: 'TV', camChL: 'SIGUE',
     reset: 'Borrar progreso', resetQ: '¿Borrar el álbum de nombres, el récord y la calibración? No se puede deshacer.', resetYes: 'Borrar', cancel: 'Cancelar', resetDone: 'Progreso borrado.',
-    albumTitle: 'Álbum de nombres', albumCount: '{n} de 9 nombres descubiertos', albumHint: 'Hacé la secuencia entera sin errores para descubrir el nombre de cada figura.',
+    albumTitle: 'Álbum de nombres', albumCount: '{n} de 18 nombres descubiertos', albumHint: 'Hacé la secuencia entera sin errores para descubrir el nombre de cada figura. Los nombres a dúo aparecen cuando los dos jugadores llegan juntos, sin errores, a las figuras con nombre.', albumDuo: 'A dúo',
     kinds: ['deslizamiento', 'giro', 'salto', 'pose final'],
     pl: 'Jugador', readyHint: 'Apoyen el celular en la mesa. Tus dos cascos están en el borde de tu lado. Si van a jugar lado a lado, giren la imagen con ↺ ↻.',
     orientFace: 'Frente a frente', orientSide: 'Lado a lado', rotL: 'Girar la imagen a la izquierda', rotR: 'Girar la imagen a la derecha',
@@ -3047,7 +3048,7 @@ function tfSet(i, tm) {
 /* ============================== jogadores ============================== */
 const WIN_P = .065, WIN_G = .14, WIN_X = .22;
 const state = { screen: 'title', paused: false, demo: false, two: false, songT: 0, clockInit: false, mi: -1, bi: -1, ended: false, manual: false, offset: store.get('offset', 0) / 1000 };
-const album = new Set((store.get('album', []) || []).filter(x => /^[0-2]\.[0-2]$/.test(x)));
+const album = new Set((store.get('album', []) || []).filter(x => /^d?[0-2]\.[0-2]$/.test(x)));
 const PL = [];
 let ACTIVE = [];
 let preview = null;
@@ -3456,6 +3457,16 @@ function fillAlbum(ol, withKinds) {
     em.textContent = i === 0 ? t('blocks')[b].toUpperCase() : '';
     const got = album.has(b + '.' + i); sp.textContent = got ? nameOf(b, i) : '? ? ?'; if (!got) sp.className = 'lock';
     if (withKinds) { const k = document.createElement('small'); k.textContent = t('kinds')[kindOf(b, i)]; sp.appendChild(k); }
+    li.append(em, sp); ol.appendChild(li);
+  }
+  if (!withKinds) return;
+  // manobras a dois: só na dupla, quando os dois chegam juntos às manobras com nome
+  const hd = document.createElement('li'); hd.className = 'sep'; hd.textContent = t('albumDuo'); ol.appendChild(hd);
+  for (let b = 0; b < 3; b++) for (let i = 0; i < 3; i++) {
+    const li = document.createElement('li'), em = document.createElement('em'), sp = document.createElement('span');
+    em.textContent = i === 0 ? t('blocks')[b].toUpperCase() : '';
+    const got = album.has('d' + b + '.' + i); sp.textContent = got ? duoNameOf(b, i) : '? ? ?'; if (!got) sp.className = 'lock';
+    const k = document.createElement('small'); k.textContent = t('kinds')[kindOf(b, i)]; sp.appendChild(k);
     li.append(em, sp); ol.appendChild(li);
   }
 }

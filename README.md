@@ -17,6 +17,9 @@ Depois de escolher o modo, cada jogador escolhe o seu personagem numa roda de qu
 ## Dois jogadores
 Celular deitado na mesa. A tela se divide ao meio e cada um usa os dois cascos da sua borda. Por padrão os dois ficam frente a frente (a metade de cima vem girada para quem está do outro lado); para jogar lado a lado, com o celular deitado de lado, cada um gira a imagem da sua metade com ↺ ↻ na tela de "Pronto!". Os cascos e as pistas não mudam de lugar, e a escolha fica salva. Quando os dois fecham o mesmo compasso só com PERFEITO, ganham o bônus de **Sincronia**.
 
+## Manobras a dois
+Na dupla, se os dois chegam juntos e sem erro às manobras com nome, eles se encontram no meio da pista e cada uma vira uma manobra nova a dois (levantamentos, roda-gigante, tango, torre no chifre e mais), com nome próprio. Se um erra, o outro termina sozinho e a dupla se desfaz até o próximo bloco. Na pose final, se os dois estão sentados lado a lado vendo a tela do mesmo lado, a tela dividida dá lugar a uma imagem panorâmica única. Os 9 nomes a dois ficam numa seção própria do **Álbum**.
+
 ## Instalar no Android
 Abra o link no Chrome (não no navegador interno de outro app), menu ⋮ > Instalar app. Depois de cada atualização, feche o app e abra de novo.
 
