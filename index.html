@@ -82,8 +82,8 @@ body{height:100%;margin:0;background:var(--deep);color:var(--ink);font-family:va
 .mult{font-size:12px;color:var(--gold)}
 .who{display:none;align-self:flex-start;font-family:var(--f-pixel);font-size:10px;padding:3px 6px;border-radius:4px;text-shadow:none}
 .two .who{display:inline-block}
-.p0 .who{background:var(--pink);color:#fff}
-.p1 .who{background:var(--teal);color:var(--outline)}
+.who.j1{background:var(--pink);color:#fff}
+.who.j2{background:var(--teal);color:var(--outline)}
 .blk{display:flex;flex-direction:column;align-items:center;gap:7px;padding-top:2px}
 .blk span{font-family:var(--f-display);font-size:13px;letter-spacing:.02em;filter:drop-shadow(0 2px 0 var(--outline));white-space:nowrap}
 .two .blk span{font-size:11px}
@@ -221,8 +221,23 @@ h2{font-family:var(--f-display);font-weight:400;font-size:30px;margin:0;filter:d
 .selp .menu.row{width:100%}
 .selp .hint{max-width:none;font-size:12px;line-height:1.45}
 .pick{display:flex;flex-direction:column;gap:6px}
-.pick > span{font-family:var(--f-pixel);font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
-.pick.focus > span{color:var(--gold)}
+.pkh{display:flex;align-items:center;gap:7px;min-height:24px;font-family:var(--f-pixel);font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.pick.focus .plbl{color:var(--gold)}
+/* na dupla: celular desenhado com a metade da tela de cada jogador, e o botão de inverter os lados */
+.mini,.side,.swapb{display:none}
+#select.duo .mini{display:block;position:relative;width:12px;height:19px;border-radius:3px;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.55);flex:none}
+.mini::after{content:'';position:absolute;left:2.5px;right:2.5px;height:6px;border-radius:1px;background:var(--c)}
+.mini.bot::after{bottom:2.5px}
+.mini.top::after{top:2.5px}
+#pick0 .mini{--c:var(--pink)}
+#pick1 .mini{--c:var(--teal)}
+#select.duo .side{display:inline;color:var(--ink)}
+#select.duo .swapb{display:inline-block;margin-left:auto;font:400 10px var(--f-pixel);letter-spacing:.06em;text-transform:uppercase;color:var(--ink);background:rgba(255,255,255,.08);border:0;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.25);border-radius:999px;padding:6px 10px;cursor:pointer}
+.swapb:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.swapb .arr{font:700 13px/1 system-ui,sans-serif;vertical-align:-1px}
+.ntag .own{font-style:normal;font-family:var(--f-pixel);font-size:9px;letter-spacing:.06em;padding:2px 5px;border-radius:4px;margin-bottom:2px}
+.ntag .own.j1{background:var(--pink);color:#fff}
+.ntag .own.j2{background:var(--teal);color:var(--outline)}
 .chips{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .chip{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:12px;border:2px solid transparent;background:rgba(255,255,255,.07);color:var(--ink);font:800 14px var(--f-body);cursor:pointer}
 .chip i{width:26px;height:8px;border-radius:4px;display:block}
@@ -328,8 +343,14 @@ div.opt{cursor:default}
     <div id="ltags"></div>
     <div class="selp">
       <header><p class="eyebrow" id="selMode"></p><h2 data-i18n="selTitle"></h2></header>
-      <div class="pick" id="pick0"><span><span data-i18n="pl"></span> 1</span><div class="chips"></div></div>
-      <div class="pick" id="pick1" hidden><span><span data-i18n="pl"></span> 2</span><div class="chips"></div></div>
+      <div class="pick" id="pick0">
+        <div class="pkh"><i class="mini" aria-hidden="true"></i><span class="plbl"><span data-i18n="pl"></span> 1</span><span class="side"></span><button class="swapb" id="swapS" data-i18n-aria="swapL"><b class="arr" aria-hidden="true">⇅</b> <span data-i18n="swap"></span></button></div>
+        <div class="chips"></div>
+      </div>
+      <div class="pick" id="pick1" hidden>
+        <div class="pkh"><i class="mini" aria-hidden="true"></i><span class="plbl"><span data-i18n="pl"></span> 2</span><span class="side"></span></div>
+        <div class="chips"></div>
+      </div>
       <div class="menu row"><button class="btn ghost" id="sBack" data-i18n="back"></button><button class="btn" id="goT" data-i18n="transform"></button></div>
       <p class="hint" id="selHint"></p>
     </div>
@@ -337,13 +358,13 @@ div.opt{cursor:default}
 
   <section id="ready2" class="screen split" hidden>
     <div class="half flip"><div class="hin" data-p="1">
-      <p class="who2 j2"><span data-i18n="pl"></span> 2</p>
+      <p class="who2 j2"><span data-i18n="pl"></span> <span class="pn">2</span></p>
       <p class="hint" data-i18n="readyHint"></p>
       <div class="orient"><button class="rotb" data-p="1" data-d="-1" data-i18n-aria="rotL">↺</button><span class="olbl" data-p="1"></span><button class="rotb" data-p="1" data-d="1" data-i18n-aria="rotR">↻</button></div>
       <button class="btn alt rdy" data-p="1" data-i18n="ready"></button>
     </div></div>
     <div class="half"><div class="hin" data-p="0">
-      <p class="who2 j1"><span data-i18n="pl"></span> 1</p>
+      <p class="who2 j1"><span data-i18n="pl"></span> <span class="pn">1</span></p>
       <p class="hint" data-i18n="readyHint"></p>
       <div class="orient"><button class="rotb" data-p="0" data-d="-1" data-i18n-aria="rotL">↺</button><span class="olbl" data-p="0"></span><button class="rotb" data-p="0" data-d="1" data-i18n-aria="rotR">↻</button></div>
       <button class="btn rdy" data-p="0" data-i18n="ready"></button>
@@ -499,8 +520,9 @@ const STR = {
     win: 'Vitória!', lose: 'Quase!', tie: 'Empate!', sync: 'Sincronia!',
     pauseL: 'Pausar', camL: 'Trocar câmera', viewL: 'Pista de gelo com unicórnios patinando',
     selTitle: 'Quem vai patinar?', transform: 'Transformar!', skip: 'Pular', fastL: 'Velocidade 2x',
-    selHint1: 'Toque no personagem na roda ou no nome. Na transformação, 2× acelera e Pular vai direto para a pista.',
-    selHint2: 'Cada um escolhe o seu: primeiro o jogador 1, depois o 2. Na transformação, cada lado tem o seu 2× e o seu Pular.'
+    selHint1: 'Arraste para girar a roda. Toque no personagem ou no nome para escolher e toque de novo para desfazer. Na transformação, 2× acelera e Pular vai direto para a pista.',
+    selHint2: 'Arraste para girar a roda. Primeiro escolhe o jogador 1, depois o 2; toque de novo para desfazer. O celular desenhado mostra a metade da tela de cada um e Inverter troca os lados.',
+    sideBot: 'embaixo', sideTop: 'em cima', swap: 'Inverter', swapL: 'Inverter os lados da tela'
   },
   es: {
     logo1: 'Galope', logo2: 'en el Hielo', sub: 'Ritmo · patines · brillantina',
@@ -527,8 +549,9 @@ const STR = {
     win: '¡Victoria!', lose: '¡Casi!', tie: '¡Empate!', sync: '¡Sincronía!',
     pauseL: 'Pausar', camL: 'Cambiar cámara', viewL: 'Pista de hielo con unicornios patinando',
     selTitle: '¿Quién va a patinar?', transform: '¡Transformar!', skip: 'Saltar', fastL: 'Velocidad 2x',
-    selHint1: 'Tocá el personaje en la ronda o el nombre. En la transformación, 2× acelera y Saltar va directo a la pista.',
-    selHint2: 'Cada uno elige el suyo: primero el jugador 1, después el 2. En la transformación, cada lado tiene su 2× y su Saltar.'
+    selHint1: 'Arrastrá para girar la ronda. Tocá el personaje o el nombre para elegir y tocá de nuevo para deshacer. En la transformación, 2× acelera y Saltar va directo a la pista.',
+    selHint2: 'Arrastrá para girar la ronda. Primero elige el jugador 1, después el 2; tocá de nuevo para deshacer. El celular dibujado muestra la mitad de la pantalla de cada uno e Invertir cambia los lados.',
+    sideBot: 'abajo', sideTop: 'arriba', swap: 'Invertir', swapL: 'Invertir los lados de la pantalla'
   }
 };
 // nomes whimsical: [bloco][0 = 5ª manobra, 1 = 6ª manobra, 2 = pose final]
@@ -553,7 +576,8 @@ const OPT = {
   lang: store.get('lang', null) || langGuess(),
   music: store.get('music', true) !== false, sfx: store.get('sfx', true) !== false, vib: store.get('vib', true) !== false,
   cam: store.get('cam', 'tv') === 'chase' ? 'chase' : 'tv',
-  rot: (store.get('rot2', [0, 0]) || [0, 0]).slice(0, 2).map(q => [0, 1, 3].includes(q) ? q : 0)
+  rot: (store.get('rot2', [0, 0]) || [0, 0]).slice(0, 2).map(q => [0, 1, 3].includes(q) ? q : 0),
+  swap: store.get('swap2', false) === true   // dupla: jogador 1 na metade de cima (e o 2 embaixo)
 };
 while (OPT.rot.length < 2) OPT.rot.push(0);
 if (!STR[OPT.lang]) OPT.lang = 'pt';
@@ -1897,7 +1921,7 @@ function buildWorldIn(scene) {
 // Alturas em metros. Nadia e Cot estimadas pela foto do trio (Clau 1,73 m no meio): confirmar.
 const CHARS = [
   { id: 'clau', name: 'Clau', h: 1.73, skin: '#ecbb98', hair: '#8a6a44', beard: '#9a6e46',
-    b: { shX: .19, chest: .172, waist: .172, belly: .11, hip: .168, hipX: .09, arm: .05, leg: .08, calf: .055, neck: .054 },
+    b: { shX: .19, chest: .172, waist: .172, belly: 0, hip: .168, hipX: .09, arm: .05, leg: .08, calf: .055, neck: .054 },
     shirt: P_TEE, sleeve: .42, crew: '#1d3a9c', lanyard: true, shorts: solidTex('#d42a8e', 12, 3), shortsLen: .55, under: '#1d1b22', underLen: .9,
     sock: '#1d1b22', sockH: .1, shoe: { col: '#1f1d24', sole: '#f1eee6', high: true }, glasses: 'sun', hat: 'bucket', hatCol: '#7a774f', watch: true,
     smile: 1, uni: { coat: [[255, 92, 172], [196, 72, 214], [98, 96, 236], [158, 80, 228], [255, 92, 172]], mane: [0xff6ab8, 0xc07bff, 0x7d93ff, 0x7fe6ff, 0xfff07a, 0xff9ad5], tail: [0xff6ab8, 0x9a7bff, 0x7fe6ff], plush: 0xff86c8, snout: 0xffb3dc, boot: 0xe4d4ff, hoof: 0x6a4aa8, acc: 'bucket' }, dot: '#ff5cac' },
@@ -2479,7 +2503,7 @@ const SND = {
 // Câmera em coordenadas polares em volta da roda: aberta, ela gira devagar mostrando todos de corpo inteiro;
 // ao escolher alguém, contorna o grupo até ficar de frente para a pessoa e se aproxima.
 // A roda é desenhada no quadro do jogador 1 (tela inteira); a cena só é montada na primeira vez.
-const LINE = { scene: null, cam: new THREE.PerspectiveCamera(30, 1, .1, 260), Rs: [], rad: .46, focus: -1, wave: { i: -1, t0: -9 }, cs: null, idle: 0, RTW: 0, RH: 0 };
+const LINE = { scene: null, cam: new THREE.PerspectiveCamera(30, 1, .1, 260), Rs: [], rad: .46, focus: -1, wave: { i: -1, t0: -9 }, cs: null, idle: 0, spin: 0, drag: false, RTW: 0, RH: 0 };
 const _lt = V3();
 function ensureLineup() {
   if (LINE.scene) return;
@@ -2488,12 +2512,12 @@ function ensureLineup() {
     const R = buildCharacter(D), a = i * TAU / CHARS.length;   // cada um virado para fora da roda
     R.ang = a; R.root.position.set(Math.sin(a) * LINE.rad, 0, Math.cos(a) * LINE.rad); R.root.rotation.y = a;
     R.phase = i * 1.7; LINE.MIR.add(R.root); LINE.Rs.push(R);
-    const tag = document.createElement('div'); tag.className = 'ntag'; tag.innerHTML = '<b></b><span></span>';
+    const tag = document.createElement('div'); tag.className = 'ntag'; tag.innerHTML = '<i class="own" hidden></i><b></b><span></span>';
     tag.querySelector('b').textContent = D.name; tag.querySelector('span').textContent = D.h.toFixed(2).replace('.', ',') + ' m';
-    $('#ltags').appendChild(tag); R.tag = tag;
+    $('#ltags').appendChild(tag); R.tag = tag; R.own = tag.querySelector('.own');
   });
 }
-function focusOn(i, wave) { if (i < 0 && LINE.cs) LINE.idle = LINE.cs.phi; LINE.focus = i; if (wave && i >= 0) LINE.wave = { i, t0: performance.now() / 1000 }; }
+function focusOn(i, wave) { if (i < 0 && LINE.cs) LINE.idle = LINE.cs.phi; if (i >= 0) LINE.spin = 0; LINE.focus = i; if (wave && i >= 0) LINE.wave = { i, t0: performance.now() / 1000 }; }
 function lineupUpdate(now, dt) {
   LINE.Rs.forEach((R, i) => {
     const s = Math.sin(now * 1.6 + R.phase), o = Object.assign({}, POSE_IDLE, { lean: .02 + .015 * s, hd: .02 * s, hy: .12 * Math.sin(now * .5 + R.phase) });
@@ -2506,7 +2530,8 @@ function lineupUpdate(now, dt) {
   // vista aberta: a roda inteira de corpo inteiro; escolhido: da cabeça à cintura, de frente
   const elW = 30 * PI / 180, dW = Math.max(2.4 / ah, (LINE.rad + .75) / (ah * asp)), DW = dW * Math.cos(elW), YW = .95 + dW * Math.sin(elW);
   let phiT, DT = DW, YT = YW; _lt.set(0, .95, 0);
-  if (f < 0) { LINE.idle += dt * .16; phiT = LINE.idle; }
+  // aberta: gira sozinha devagar; o dedo arrasta a câmera e, ao soltar, ela segue com o embalo
+  if (f < 0) { if (!LINE.drag) { LINE.idle += dt * (.16 + LINE.spin); LINE.spin *= Math.exp(-dt * 2.5); } phiT = LINE.idle; }
   else {
     const R = LINE.Rs[f], el = 6 * PI / 180, d = Math.max(.55 / ah, .4 / (ah * asp)), cy = .8 * R.H;
     phiT = R.ang;
@@ -2515,24 +2540,44 @@ function lineupUpdate(now, dt) {
     DT = lerp(DW, LINE.rad + d * Math.cos(el), w); YT = lerp(YW, cy + d * Math.sin(el), w);
     _lt.lerp(_tf2.set(Math.sin(R.ang) * LINE.rad, cy, Math.cos(R.ang) * LINE.rad), w);
   }
-  const cs = LINE.cs || (LINE.cs = { phi: phiT, D: DT, Y: YT, T: _lt.clone() }), kk = 1 - Math.exp(-dt * 2.6), kd = 1 - Math.exp(-dt * 3.2);
+  const fast = LINE.drag || Math.abs(LINE.spin) > .05;
+  const cs = LINE.cs || (LINE.cs = { phi: phiT, D: DT, Y: YT, T: _lt.clone() }), kk = 1 - Math.exp(-dt * (fast ? 16 : 2.6)), kd = 1 - Math.exp(-dt * 3.2);
   cs.phi += wrapA(phiT - cs.phi) * kk; cs.D += (DT - cs.D) * kd; cs.Y += (YT - cs.Y) * kd; cs.T.lerp(_lt, kd);
   LINE.cam.position.set(Math.sin(cs.phi) * cs.D, cs.Y, Math.cos(cs.phi) * cs.D); LINE.cam.lookAt(cs.T); LINE.cam.updateMatrixWorld();
   LINE.Rs.forEach((R, i) => { R.head.getWorldPosition(_tf1); _tf1.y += R.H * .2; _tf1.project(LINE.cam); R.tag.style.left = ((_tf1.x + 1) / 2 * 100).toFixed(2) + '%'; R.tag.style.top = ((1 - _tf1.y) / 2 * 100).toFixed(2) + '%'; R.tag.style.opacity = (f < 0 || f === i) && _tf1.z < 1 ? 1 : 0; });
 }
-// toque direto no personagem da roda
+// arrastar o dedo gira a câmera em volta da roda; um toque sem arrastar escolhe (ou desfaz a escolha)
 const lineRay = new THREE.Raycaster(); lineRay.layers.enableAll();
+const LDRAG = { id: null, x0: 0, y0: 0, x: 0, t: 0, moved: false, v: 0 };
 app.addEventListener('pointerdown', e => {
-  if (state.screen !== 'select' || !LINE.scene || e.target.closest('.selp')) return;
+  if (state.screen !== 'select' || !LINE.scene || e.target.closest('.selp') || LDRAG.id !== null) return;
+  Object.assign(LDRAG, { id: e.pointerId, x0: e.clientX, y0: e.clientY, x: e.clientX, t: performance.now(), moved: false, v: 0 });
+  LINE.spin = 0;
+  try { app.setPointerCapture(e.pointerId); } catch (err) {}
+});
+app.addEventListener('pointermove', e => {
+  if (e.pointerId !== LDRAG.id || state.screen !== 'select') return;
+  if (!LDRAG.moved) { if (Math.hypot(e.clientX - LDRAG.x0, e.clientY - LDRAG.y0) < 9) return; LDRAG.moved = true; LINE.drag = true; if (LINE.focus >= 0) focusOn(-1); }
+  const now = performance.now(), da = -(e.clientX - LDRAG.x) / app.getBoundingClientRect().width * PI * 1.2;
+  LINE.idle += da; LDRAG.v = lerp(LDRAG.v, da / Math.max(.008, (now - LDRAG.t) / 1000), .5); LDRAG.x = e.clientX; LDRAG.t = now;
+});
+const lineUp = e => {
+  if (e.pointerId !== LDRAG.id) return;
+  LDRAG.id = null; LINE.drag = false;
+  if (LDRAG.moved) { LINE.spin = performance.now() - LDRAG.t < 90 ? clamp(LDRAG.v, -4, 4) : 0; return; }
+  if (e.type === 'pointerup' && state.screen === 'select') tapLineup(e.clientX, e.clientY);
+};
+app.addEventListener('pointerup', lineUp); app.addEventListener('pointercancel', lineUp);
+function tapLineup(x, y) {
   const r = app.getBoundingClientRect();
-  lineRay.setFromCamera({ x: (e.clientX - r.left) / r.width * 2 - 1, y: -((e.clientY - r.top) / r.height * 2 - 1) }, LINE.cam);
+  lineRay.setFromCamera({ x: (x - r.left) / r.width * 2 - 1, y: -((y - r.top) / r.height * 2 - 1) }, LINE.cam);
   let hit = -1;
   for (const h of lineRay.intersectObjects(LINE.MIR.children, true)) { const i = LINE.Rs.findIndex(R => { let o = h.object; while (o) { if (o === R.root) return true; o = o.parent; } return false; }); if (i >= 0) { hit = i; break; } }
   if (hit < 0) { focusOn(-1); return; }
-  const id = CHARS[hit].id, p = SEL.two ? SEL.focus : 0;
-  if (SEL.two && SEL.picks[1 - p] === id) { focusOn(hit, true); return; }
-  pick(p, id);
-});
+  const id = CHARS[hit].id, own = SEL.picks.indexOf(id);
+  if (own === 0 || (own === 1 && SEL.two)) { unpick(own); return; }   // toque em quem já foi escolhido desfaz a escolha
+  pick(SEL.two ? SEL.focus : 0, id);
+}
 
 /* --------- desenho das cenas separadas (roda e palcos) no quadro de um jogador --------- */
 function renderStage(o, rb) {
@@ -2585,22 +2630,38 @@ function renderChips() {
   $('#goT').disabled = !SEL.picks[0] || (SEL.two && !SEL.picks[1]);
   $('#selMode').textContent = t(SEL.two ? 'p2' : 'p1');
   $('#selHint').textContent = t(SEL.two ? 'selHint2' : 'selHint1');
+  $('#select').classList.toggle('duo', SEL.two);
+  // na dupla, a etiqueta de quem já foi escolhido mostra de qual jogador ele é
+  LINE.Rs.forEach((R, i) => { const j = SEL.picks.indexOf(CHARS[i].id), on = SEL.two && j >= 0; R.own.hidden = !on; if (on) { R.own.textContent = 'J' + (j + 1); R.own.className = 'own j' + (j + 1); } });
+  applySides();
 }
 function pick(p, id) {
-  if (SEL.two && SEL.picks[1 - p] === id) { focusOn(CHARS.findIndex(c => c.id === id), true); return; }   // já é do outro jogador
-  SEL.picks[p] = id; focusOn(CHARS.findIndex(c => c.id === id), true); if (SEL.two && p === 0 && !SEL.picks[1]) SEL.focus = 1; renderChips(); }
+  const i = CHARS.findIndex(c => c.id === id);
+  if (SEL.picks[p] === id) { unpick(p); return; }   // tocar de novo no mesmo desfaz a escolha
+  if (SEL.two && SEL.picks[1 - p] === id) { focusOn(i, true); return; }   // já é do outro jogador
+  SEL.picks[p] = id; focusOn(i, true); if (SEL.two && p === 0 && !SEL.picks[1]) SEL.focus = 1; renderChips();
+}
+function unpick(p) { SEL.picks[p] = null; if (SEL.two) SEL.focus = p; focusOn(-1); renderChips(); }
+// dupla: metade da tela de cada jogador. O jogador 1 fica embaixo (quadro PL[0]), a não ser que os lados estejam invertidos.
+const halfOf = j => j ^ (OPT.swap ? 1 : 0);   // jogador (0 = J1) ↔ metade (0 = de baixo); a troca é a própria inversa
+function applySides() {
+  PL.forEach((pl, i) => { const j = halfOf(i) + 1, w = pl.el.querySelector('.who'); w.textContent = 'J' + j; w.className = 'who j' + j; });
+  for (const h of $$('#ready2 .hin')) { const j = halfOf(+h.dataset.p) + 1, el = h.querySelector('.who2'); el.className = 'who2 j' + j; el.querySelector('.pn').textContent = j; h.querySelector('.rdy').classList.toggle('alt', j === 2); }
+  [0, 1].forEach(j => { const top = halfOf(j) === 1; $('#pick' + j + ' .mini').className = 'mini ' + (top ? 'top' : 'bot'); $('#pick' + j + ' .side').textContent = '· ' + t(top ? 'sideTop' : 'sideBot'); });
+}
+function swapSides() { OPT.swap = !OPT.swap; store.set('swap2', OPT.swap); renderChips(); for (const m of $$('#select .mini')) m.animate([{ scale: '1.5' }, { scale: '1' }], { duration: 300, easing: 'ease-out' }); }
 function openSelect(two, keep) {
   initAudio(); AC.resume().catch(() => {});
   if (state.screen === 'title') goFull();
   ensureLineup(); endTransformUI();
   if (!keep) { SEL.picks = [null, null]; SEL.focus = 0; }
   SEL.two = !!two;
-  LINE.cs = null; LINE.focus = -1; LINE.idle = 0; LINE.wave = { i: -1, t0: -9 };
+  LINE.cs = null; LINE.focus = -1; LINE.idle = 0; LINE.spin = 0; LINE.drag = false; LDRAG.id = null; LINE.wave = { i: -1, t0: -9 };
   setTwo(false); openScreen('select'); renderChips();
 }
 function confirmSelect() {
   if (!SEL.picks[0] || (SEL.two && !SEL.picks[1])) return;
-  PL.forEach((pl, i) => { if (i === 0 || SEL.two) setPlayerChar(pl, SEL.picks[i]); });
+  if (SEL.two) [0, 1].forEach(j => setPlayerChar(PL[halfOf(j)], SEL.picks[j])); else setPlayerChar(PL[0], SEL.picks[0]);
   store.set('chars', PL.map(pl => pl.charId));
   if (SEL.two) openReady2(); else startTransform(false);
 }
@@ -3069,7 +3130,7 @@ function applyI18n() {
   for (const pl of PL) updBlk(pl);
   updCamBtn(); updOffInfo();
   for (const b of $$('.rdy')) b.textContent = ready2[+b.dataset.p] ? t('waiting') : t('ready');
-  updOrientUI();
+  updOrientUI(); applySides();
   if (state.screen === 'select') renderChips();
 }
 
@@ -3155,6 +3216,7 @@ $('#b1p').onclick = () => openSelect(false);
 $('#b2p').onclick = () => openSelect(true);
 $('#goT').onclick = confirmSelect;
 $('#sBack').onclick = () => toMenu();
+$('#swapS').onclick = swapSides;
 $('#bDemo').onclick = () => startRun({ demo: true });
 $('#bOpt').onclick = openOptions;
 $('#bAlbum').onclick = openAlbum;
@@ -3291,7 +3353,8 @@ window.UG = {
   body: () => ({ chest: PL[0].W.chest.toArray(), horn: PL[0].W.horn.toArray(), yaw: PL[0].base.yaw, fwd: PL[0].base.fwd.toArray() }),
   // escolha e transformação
   sel: two => openSelect(!!two), go: () => confirmSelect(), char: (i, id) => setPlayerChar(PL[i], id),
-  pickChar(p, id) { SEL.focus = p; pick(p, id); },
+  pickChar(p, id) { SEL.focus = p; pick(p, id); }, tapLine: (x, y) => tapLineup(x, y), swap: () => swapSides(),
+  line: () => ({ phi: LINE.cs && +LINE.cs.phi.toFixed(3), idle: +LINE.idle.toFixed(3), focus: LINE.focus, spin: +LINE.spin.toFixed(2), sides: [halfOf(0), halfOf(1)], who: PL.map(p => p.el.querySelector('.who').textContent) }),
   selState: () => ({ screen: state.screen, two: SEL.two, picks: SEL.picks.slice(), focus: LINE.focus, go: !$('#goT').disabled, chars: PL.map(p => p.charId) }),
   tf: () => ({ screen: state.screen, two: state.two, st: ACTIVE.map(pl => { const s = pl.stage; return s && { t: +s.t.toFixed(2), rate: s.rate, done: s.done, active: s.active, hold: s.hold, forms: s.R && Object.assign({}, s.R.state) }; }) }),
   tfSet, tfRate: (i, r) => setRate(PL[i].stage, r), tfSkip: i => skipStage(PL[i].stage),

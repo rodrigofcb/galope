@@ -9,10 +9,10 @@ Jogo de ritmo para celular: unicórnios de pantufa patinam no gelo numa praça d
 - São 3 blocos (Básico, Avançado, Mágico) de 8 compassos. Cada compasso certo encadeia uma manobra mais impressionante: quatro sem nome, duas com nome e, nos compassos 7 e 8, a pose final.
 - Errou, a corrente recomeça e aquele bloco não chega mais à pontuação máxima.
 - Os nomes descobertos ficam no **Álbum** (só valem partidas jogadas, não a demonstração).
-- Teclado: F e J (jogador 1); Q e P (jogador 2); Esc pausa.
+- Teclado: F e J (metade de baixo); Q e P (metade de cima); Esc pausa.
 
 ## Personagens e transformação
-Depois de escolher o modo, cada jogador escolhe o seu personagem numa roda de quatro (toque no personagem ou no nome). Antes da partida vem a transformação em unicórnio, no estilo das garotas mágicas dos anos 90: **2×** acelera e **Pular** vai direto para a pista. Na dupla, cada lado tem os seus botões e a sua orientação de imagem. "Jogar de novo" e "Recomeçar" vão direto para a pista, com os mesmos personagens.
+Depois de escolher o modo, cada jogador escolhe o seu personagem numa roda de quatro: arraste para girar a roda, toque no personagem ou no nome para escolher e toque de novo para desfazer. Na dupla, um celular desenhado ao lado de cada jogador mostra a metade da tela que vai ser dele, e Inverter troca os lados. Antes da partida vem a transformação em unicórnio, no estilo das garotas mágicas dos anos 90: **2×** acelera e **Pular** vai direto para a pista. Na dupla, cada lado tem os seus botões e a sua orientação de imagem. "Jogar de novo" e "Recomeçar" vão direto para a pista, com os mesmos personagens.
 
 ## Dois jogadores
 Celular deitado na mesa. A tela se divide ao meio e cada um usa os dois cascos da sua borda. Por padrão os dois ficam frente a frente (a metade de cima vem girada para quem está do outro lado); para jogar lado a lado, com o celular deitado de lado, cada um gira a imagem da sua metade com ↺ ↻ na tela de "Pronto!". Os cascos e as pistas não mudam de lugar, e a escolha fica salva. Quando os dois fecham o mesmo compasso só com PERFEITO, ganham o bônus de **Sincronia**.
