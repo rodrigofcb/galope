@@ -512,12 +512,13 @@ div.opt{cursor:default}
     <header><p class="eyebrow" id="rpInfo"></p><h2 data-i18n="replay"></h2></header>
     <div class="rpSegs" id="rpSegs"></div>
     <div class="opt rpOr"><span data-i18n="rpOrient"></span><div class="seg"><button id="rpV" data-i18n="rpV"></button><button id="rpH" data-i18n="rpH"></button></div></div>
+    <div class="opt rpOr"><span data-i18n="rpCam"></span><div class="seg"><button id="rpCamTv" data-i18n="rpTv"></button><button id="rpCamCh" data-i18n="rpChase"></button><button id="rpCamFx" data-i18n="rpFix"></button></div></div>
     <div class="menu">
       <button class="btn" id="rpWatch" data-i18n="rpWatch"></button>
       <button class="btn alt" id="rpExport" data-i18n="rpExport"></button>
       <button class="btn ghost" id="rpBack" data-i18n="back"></button>
     </div>
-    <p class="hint" data-i18n="rpHint"></p>
+    <p class="hint"><span data-i18n="rpCamHint"></span><span data-i18n="rpHint"></span></p>
   </section>
 
   <section id="exportS" class="screen panelS" hidden>
@@ -621,8 +622,8 @@ const STR = {
     selHint2: 'Arraste para girar a roda. Primeiro escolhe o jogador 1, depois o 2; toque de novo para desfazer. O celular desenhado mostra a metade da tela de cada um e Inverter troca os lados.',
     sideBot: 'embaixo', sideTop: 'em cima', swap: 'Inverter', swapL: 'Inverter os lados da tela', duoTag: '✦ a dois ✦',
     phTitle: 'Onde vamos patinar?', phase: 'Fase', ph1: 'Pista de Buenos Aires', ph1s: 'Gelo ao ar livre, ao pé do Obelisco.', ph2: 'Discoteca Neon', ph2s: 'Boate dos anos 70: pista iluminada, neon e globo de espelhos.',
-    replay: 'Replay', seeReplay: 'Ver replay', rpWhole: 'Partida inteira', rpOrient: 'Vídeo', rpV: 'Em pé', rpH: 'Deitado', rpWatch: 'Assistir', rpExport: 'Exportar vídeo',
-    rpHint: 'Só a última partida fica guardada: ao começar outra, este replay é substituído. Exporte antes os vídeos que quiser guardar.',
+    replay: 'Replay', seeReplay: 'Ver replay', rpWhole: 'Partida inteira', rpOrient: 'Vídeo', rpV: 'Em pé', rpH: 'Deitado', rpCam: 'Câmera', rpTv: 'TV', rpChase: 'Segue', rpFix: 'Fixa', rpWatch: 'Assistir', rpExport: 'Exportar vídeo',
+    rpCamHint: 'TV corta entre câmeras de transmissão; Segue vai atrás do patinador; Fixa é uma só câmera na mureta, sem cortes, mostrando os dois na dupla. ', rpHint: 'Só a última partida fica guardada: ao começar outra, este replay é substituído. Exporte antes os vídeos que quiser guardar.',
     rpMaking: 'Gerando o vídeo… {p}%', rpAudio: 'Gravando o som…', rpDone: 'Vídeo pronto!', rpSave: 'Salvar ou compartilhar', rpClose: 'Fechar', rpFail: 'Não deu para gerar o vídeo neste aparelho.', close: 'Fechar'
   },
   es: {
@@ -654,8 +655,8 @@ const STR = {
     selHint2: 'Arrastrá para girar la ronda. Primero elige el jugador 1, después el 2; tocá de nuevo para deshacer. El celular dibujado muestra la mitad de la pantalla de cada uno e Invertir cambia los lados.',
     sideBot: 'abajo', sideTop: 'arriba', swap: 'Invertir', swapL: 'Invertir los lados de la pantalla', duoTag: '✦ a dúo ✦',
     phTitle: '¿Dónde vamos a patinar?', phase: 'Fase', ph1: 'Pista de Buenos Aires', ph1s: 'Hielo al aire libre, al pie del Obelisco.', ph2: 'Discoteca Neón', ph2s: 'Boliche de los años 70: pista iluminada, neón y bola de espejos.',
-    replay: 'Repetición', seeReplay: 'Ver repetición', rpWhole: 'Partida entera', rpOrient: 'Video', rpV: 'Vertical', rpH: 'Horizontal', rpWatch: 'Mirar', rpExport: 'Exportar video',
-    rpHint: 'Solo se guarda la última partida: al empezar otra, esta repetición se reemplaza. Exportá antes los videos que quieras guardar.',
+    replay: 'Repetición', seeReplay: 'Ver repetición', rpWhole: 'Partida entera', rpOrient: 'Video', rpV: 'Vertical', rpH: 'Horizontal', rpCam: 'Cámara', rpTv: 'TV', rpChase: 'Sigue', rpFix: 'Fija', rpWatch: 'Mirar', rpExport: 'Exportar video',
+    rpCamHint: 'TV corta entre cámaras de transmisión; Sigue va detrás del patinador; Fija es una sola cámara en la baranda, sin cortes, mostrando a los dos en el dúo. ', rpHint: 'Solo se guarda la última partida: al empezar otra, esta repetición se reemplaza. Exportá antes los videos que quieras guardar.',
     rpMaking: 'Generando el video… {p}%', rpAudio: 'Grabando el sonido…', rpDone: '¡Video listo!', rpSave: 'Guardar o compartir', rpClose: 'Cerrar', rpFail: 'No se pudo generar el video en este dispositivo.', close: 'Cerrar'
   }
 };
@@ -4638,6 +4639,7 @@ $('#bAlbum').onclick = openAlbum;
 for (const b of [$('#bReplay'), $('#rReplay'), ...$$('.r2replay')]) b.onclick = () => { initAudio(); openReplayScreen(); };
 $('#rpBack').onclick = () => toMenu();
 $('#rpV').onclick = () => setRpOrient('v'); $('#rpH').onclick = () => setRpOrient('h');
+$('#rpCamTv').onclick = () => setRpCam('tv'); $('#rpCamCh').onclick = () => setRpCam('chase'); $('#rpCamFx').onclick = () => setRpCam('fixed');
 $('#rpWatch').onclick = () => playReplay(RP.seg);
 $('#rpExport').onclick = () => exportReplay(RP.seg);
 $('#rpClose').onclick = () => replayStop();
@@ -4703,7 +4705,7 @@ function attractTick(now) {
 // e sem pistas nem cascos. Só a última partida jogada fica guardada; a próxima partida a substitui.
 // Exportar: a partida é desenhada de novo quadro a quadro (mais rápido que o tempo real quando o aparelho deixa),
 // codificada em H.264 pelo próprio Chrome (WebCodecs) e salva em MP4, com a música refeita fora do tempo real.
-const RP = { data: null, seg: 0, orient: store.get('rpOrient', 'v') === 'h' ? 'h' : 'v', mode: 'pl', fp: 0, both: false, t0: 0, t1: 0, exp: null, caps: [], cards: [], syncs: [], press: [], alt: null, angOff: 0, angT: 0, occT0: -1, aim: new THREE.Vector3() };
+const RP = { data: null, seg: 0, orient: store.get('rpOrient', 'v') === 'h' ? 'h' : 'v', cam: ['tv', 'chase', 'fixed'].includes(store.get('rpCam', 'tv')) ? store.get('rpCam', 'tv') : 'tv', fov: 40, mode: 'pl', fp: 0, both: false, t0: 0, t1: 0, exp: null, caps: [], cards: [], syncs: [], press: [], alt: null, angOff: 0, angT: 0, occT0: -1, aim: new THREE.Vector3(), cpos: new THREE.Vector3() };
 { const d = store.get('replay', null); if (d && d.v === 1 && Array.isArray(d.p) && d.p.length) RP.data = d; }
 // partes: a partida inteira e cada bloco (com a contagem/cartão antes e a pose parada depois)
 const RP_SEGS = [{ mi0: 0, mi1: 36, T0: -.4 }, { mi0: 3, mi1: 13 }, { mi0: 13, mi1: 23 }, { mi0: 23, mi1: 34 }];
@@ -4720,6 +4722,7 @@ function updReplayBtns() { for (const b of $$('.rpBtn')) b.hidden = !RP.data; }
 // prepara a partida para o replay a partir de T0 (as notas anteriores ficam com o resultado gravado, sem efeito)
 function replayPrepare(sgI) {
   const D = RP.data, sg = RP_SEGS[sgI], T0 = segT0(sg);
+  if (RP.savedCam === undefined) RP.savedCam = OPT.cam; OPT.cam = RP.cam === 'chase' ? 'chase' : 'tv';
   if (D.ph !== PHI) setPhase(D.ph);
   D.chars.forEach((id, i) => { if (PL[i].charId !== id) setPlayerChar(PL[i], id); });
   endTransformUI(); setTwo(!!D.two);
@@ -4755,9 +4758,10 @@ function playReplay(sgI) {
   AC.resume().then(go, go);
 }
 // fim da parte ou saída: volta para a tela do replay
+function rpRestoreCam() { if (RP.savedCam !== undefined) { OPT.cam = RP.savedCam; RP.savedCam = undefined; for (const pl of PL) { pl.tv.cur = 0; pl.tv.virt = false; pl.tv.snap = true; } } }
 function replayStop() {
   if (!state.replay) return;
-  state.replay = false; state.paused = false; state.ended = false; $('#rpUI').hidden = true;
+  state.replay = false; state.paused = false; state.ended = false; $('#rpUI').hidden = true; rpRestoreCam();
   if (AC) { newMusicBus(); if (AC.state === 'suspended') AC.resume().catch(() => {}); }
   pairReset(); panoOff(true); BALL.target = BALL.w = 0;
   for (const pl of PL) { clearPoseFx(pl, false); pl.names.innerHTML = ''; }
@@ -4784,7 +4788,34 @@ function replayDirect(mi) {
   if (fp !== RP.fp) PANO.snap = true;
   RP.fp = fp;
 }
+function fixedCam(dt) {
+  // uma câmera só, na mureta da frente, sem cortes: mostra os dois quando cabem no quadro (recuando um pouco se
+  // preciso); se estão longe demais um do outro para o formato da imagem, acompanha quem o diretor escolheu
+  const cam = PANO.cam, two = state.two, visK = RP.orient === 'h' ? .62 : 1, asp = Math.max(cam.aspect, .3), tn = Math.tan(33 * PI / 180);
+  let vis, aimOk = false;
+  if (two) {
+    const a = PL[0].W, b = PL[1].W; _mid.copy(a.chest).add(b.chest).multiplyScalar(.5);
+    const span = Math.hypot(a.chest.x - b.chest.x, a.chest.z - b.chest.z);
+    vis = Math.max(6.6 * (1 + .35 * PAIR.w), (span * 1.15 + 2.5) / asp);
+    _pq.set(clamp(_mid.x * .7, -12, 12), 4.6, 25); _pd.set(_mid.x, Math.max(1.2, _mid.y + .2), _mid.z);
+    const d0 = _pq.distanceTo(_pd), d = Math.max(d0, vis / 2 / tn);
+    if (d <= Math.min(32, PHI ? d0 + 3.5 : 32)) { if (d > d0) _pq.sub(_pd).multiplyScalar(d / d0).add(_pd); aimOk = true; }
+  }
+  if (!aimOk) {
+    const pl = PL[RP.fp], W = pl.W, B = pl.base, lead = B.spd * .2;
+    _pd.set(W.chest.x + B.fwd.x * lead, Math.min(W.chest.y + .2, 1.05 + camCap(pl)), W.chest.z + B.fwd.z * lead);
+    _pq.set(clamp(W.chest.x * .7, -12, 12), 4.6, 25); vis = (two ? 6.6 : 9) * (1 + .35 * PAIR.w);
+  }
+  const fovT = clamp(2 * Math.atan(vis / 2 / _pq.distanceTo(_pd)) * 180 / PI, 14, 66) * visK;
+  const moon = (two ? PL : [PL[0]]).some(isMoonJump);   // no pulo lunar a mira não pode atrasar, senão o casal escapa do quadro
+  if (PANO.snap || !(dt > 0) || moon) { RP.aim.copy(_pd); if (!moon || PANO.snap) RP.cpos.copy(_pq); RP.fov = fovT; PANO.snap = false; }
+  else { const k = 1 - Math.exp(-dt * 4); RP.aim.lerp(_pd, k); RP.cpos.lerp(_pq, 1 - Math.exp(-dt * 2.5)); RP.fov += (fovT - RP.fov) * k; }
+  cam.position.copy(RP.cpos); cam.lookAt(RP.aim);
+  if (Math.abs(cam.fov - RP.fov) > .01) { cam.fov = RP.fov; cam.updateProjectionMatrix(); }
+  cam.updateMatrixWorld();
+}
 function directorCam(dt) {
+  if (RP.cam === 'fixed') { fixedCam(dt); return; }
   const both = state.two && PAIR.w > .5, cam = PANO.cam, now = state.songT;
   if (both !== RP.both) { RP.both = both; PANO.snap = true; RP.alt = null; RP.angOff = 0; RP.occT0 = -1; }
   if (both) {
@@ -4970,10 +5001,12 @@ function openReplayScreen() {
     b.onclick = () => { RP.seg = i; openReplayScreen(); }; segs.appendChild(b);
   });
   $('#rpV').setAttribute('aria-pressed', String(RP.orient === 'v')); $('#rpH').setAttribute('aria-pressed', String(RP.orient === 'h'));
+  $('#rpCamTv').setAttribute('aria-pressed', String(RP.cam === 'tv')); $('#rpCamCh').setAttribute('aria-pressed', String(RP.cam === 'chase')); $('#rpCamFx').setAttribute('aria-pressed', String(RP.cam === 'fixed'));
   if (state.screen === 'title') pushNav();
   state.screen = 'replay'; show('replay');
 }
 function setRpOrient(o) { RP.orient = o; store.set('rpOrient', o); openReplayScreen(); }
+function setRpCam(m) { RP.cam = m; store.set('rpCam', m); openReplayScreen(); }
 
 /* --------- exportar em MP4 --------- */
 const EXP_FPS = 30;
@@ -5103,6 +5136,7 @@ async function exportReplay(sgI) {
   } finally {
     state.exporting = false; state.manual = false;
     if (state.screen === 'play') state.screen = 'export';
+    rpRestoreCam();
     if (state.replay) { state.replay = false; pairReset(); panoOff(true); BALL.target = BALL.w = 0; for (const pl of PL) { clearPoseFx(pl, false); pl.names.innerHTML = ''; } for (const f of fxL) killFx(f, .05); setTwo(false); setAnim(PL[0], 'skate', {}, performance.now() / 1000); }
     layout();
   }
@@ -5241,8 +5275,8 @@ window.UG = {
   ndc: () => ACTIVE.map(pl => { const q = pl.W.chest.clone().project(PANO.cam); return [+q.x.toFixed(2), +q.y.toFixed(2)]; }),
   occWhat() { const pls = state.two && PAIR.w > .5 ? PL : [PL[RP.fp]], out = []; for (const pt of occTargets(pls)) { _ocd.copy(pt).sub(PANO.cam.position); const d = _ocd.length(); _ocd.divideScalar(d); occRay.set(PANO.cam.position, _ocd); occRay.far = d - .35; for (const h of occRay.intersectObjects(occList(), false)) { const o = h.object, w = new THREE.Vector3(); o.getWorldPosition(w); out.push([o.geometry.type, w.toArray().map(v => +v.toFixed(1)), +h.distance.toFixed(1), pt.toArray().map(v => +v.toFixed(1))]); } } const pl0 = PL[RP.fp], pk = pickClearCam(pl0, occTargets([pl0]), PANO.cam.position); return { pick: pk && pk.toArray().map(v => +v.toFixed(1)), occT0: RP.occT0, cam: PANO.cam.position.toArray().map(v => +v.toFixed(1)), fp: RP.fp, tvcur: PL[RP.fp].tv.cur, virt: PL[RP.fp].tv.virt, hits: out }; },
   replayData: () => RP.data && { ph: RP.data.ph, two: RP.data.two, chars: RP.data.chars, n: RP.data.p.map(x => x.length), miss: RP.data.p.map(x => x.filter(r => r[0] === 2 || r[2] === 2).length) },
-  replay: (seg, o) => { if (o) RP.orient = o; playReplay(seg || 0); }, replayStop: () => replayStop(), rp: () => ({ on: !!state.replay, seg: RP.seg, fp: RP.fp, both: RP.both, mode: RP.mode, songT: state.songT, caps: RP.caps.length, score: ACTIVE.map(pl => pl.score), alt: !!RP.alt, angOff: +RP.angOff.toFixed(2), occ: blocked(PANO.cam.position, occTargets(state.two && PAIR.w > .5 ? PL : [PL[RP.fp]])), press: RP.press.length }),
-  exportReplay: async (seg, o) => { if (o) RP.orient = o; await exportReplay(seg || 0); const E = RP.exp; return E && { ok: !!E.blob, size: E.blob ? E.blob.size : 0, codec: E.codec, error: E.error, name: E.name }; },
+  replay: (seg, o, c) => { if (o) RP.orient = o; if (c) RP.cam = c; playReplay(seg || 0); }, replayStop: () => replayStop(), rp: () => ({ on: !!state.replay, seg: RP.seg, fp: RP.fp, both: RP.both, mode: RP.mode, songT: state.songT, caps: RP.caps.length, score: ACTIVE.map(pl => pl.score), alt: !!RP.alt, angOff: +RP.angOff.toFixed(2), occ: blocked(PANO.cam.position, occTargets(state.two && PAIR.w > .5 ? PL : [PL[RP.fp]])), press: RP.press.length }),
+  exportReplay: async (seg, o, c) => { if (o) RP.orient = o; if (c) RP.cam = c; await exportReplay(seg || 0); const E = RP.exp; return E && { ok: !!E.blob, size: E.blob ? E.blob.size : 0, codec: E.codec, error: E.error, name: E.name }; },
   exportBlob: async () => { const E = RP.exp; if (!E || !E.blob) return null; const b = new Uint8Array(await E.blob.arrayBuffer()); let s = ''; for (let i = 0; i < b.length; i += 32768) s += String.fromCharCode.apply(null, b.subarray(i, i + 32768)); return btoa(s); }, ball: () => ({ target: BALL.target, w: +BALL.w.toFixed(3), at: BALL.at.toArray().map(v => +v.toFixed(2)) }),
   gap: () => +((((PL[1].base.s - PL[0].base.s) % PATH_L) + PATH_L) % PATH_L / PATH_L).toFixed(3)
 };
