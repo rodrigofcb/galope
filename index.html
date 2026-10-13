@@ -1058,7 +1058,7 @@ void main(){
 }`;
 const PSX_FS = `
 uniform sampler2D map; uniform float uHasMap; uniform vec3 uColor; uniform vec3 uFogCol; uniform float uOpacity;
-uniform float uSil; uniform float uSilY; uniform float uBaseY; uniform float uHgt; uniform float uTime;
+uniform float uSil; uniform float uSilY; uniform float uBaseY; uniform float uHgt; uniform float uTime; uniform vec4 uFlat;
 varying vec3 vUvW; varying vec3 vLit; varying float vFogF; varying vec3 vCol; varying float vWY; varying float vRim;
 void main(){
   vec4 t = vec4(1.0);
@@ -1074,6 +1074,7 @@ void main(){
     float edge = (1.0 - smoothstep(0.0, 0.05, abs(vWY - uSilY))) * uSil;
     c = mix(c, sc, cov) + edge * vec3(1.0, 0.95, 1.0);
   }
+  c = mix(c, uFlat.rgb, uFlat.a);
   c = mix(c, uFogCol, vFogF);
   gl_FragColor = vec4(c, uOpacity);
 }`;
@@ -1085,7 +1086,7 @@ function psxMat(o = {}) {
       uSil: S.uSil, uSilY: S.uSilY, uBaseY: S.uBaseY, uHgt: S.uHgt,
       map: { value: o.map || null }, uHasMap: { value: o.map ? 1 : 0 }, uRep: { value: new THREE.Vector2(rep[0], rep[1]) },
       uColor: { value: new THREE.Color(o.color !== undefined ? o.color : 0xffffff) }, uEmissive: { value: o.emissive || 0 },
-      uOpacity: { value: o.opacity !== undefined ? o.opacity : 1 }, uFog: { value: o.fog === false ? 0 : 1 }
+      uOpacity: { value: o.opacity !== undefined ? o.opacity : 1 }, uFog: { value: o.fog === false ? 0 : 1 }, uFlat: { value: new THREE.Vector4(0, 0, 0, 0) }
     },
     vertexShader: PSX_VS, fragmentShader: PSX_FS, vertexColors: !!o.vc,
     transparent: !!(o.transparent || o.additive), depthWrite: o.depthWrite !== undefined ? o.depthWrite : !o.additive,
@@ -3018,18 +3019,32 @@ function inertiaPose(pl, o, dt) {
   return finiteP(out) ? out : o;
 }
 // rastros: guarda as últimas poses; quando o corpo gira depressa, as cópias aparecem nas poses de 45 e 90 ms atrás
-const GHOST = { dt: .045, min: 2.2 * TAU, full: 3.5 * TAU };
+// estilos: dt = intervalo entre cópias (s), op = opacidade de cada cópia, min/full = voltas/s em que o rastro começa e fica inteiro,
+// flat = cópias viram silhueta numa cor só (a cor do personagem puxada para o branco)
+const GHOST_STYLES = {
+  atual: { dt: .045, op: [.26, .13], min: 2.2, full: 3.5, flat: 0 },
+  leve: { dt: .03, op: [.15, .07], min: 2.2, full: 4.5, flat: 0 },
+  esteira: { dt: .025, op: [.12, .09, .06, .04], min: 2.2, full: 4.5, flat: 0 },
+  silhueta: { dt: .03, op: [.15, .09, .04], min: 2.2, full: 4.5, flat: 1 }
+};
+const NGHOST = 4; let GHOST = GHOST_STYLES.silhueta;
+function ghostStyle(pl) {
+  const D = CHAR_BY_ID[pl.charId] || CHARS[0], col = new THREE.Color(D.dot || '#ffffff').lerp(new THREE.Color('#ffffff'), .35);
+  for (const G of pl.ghosts) G.root.traverse(c => { const u = c.material && c.material.uniforms; if (u && u.uFlat) u.uFlat.value.set(col.r, col.g, col.b, GHOST.flat ? 1 : 0); });
+  pl.gStyle = GHOST;
+}
 function ghostTick(pl, t, dt) {
   const H = pl.hist, B = pl.base, o = pl.curPose;
   if (!H || !pl.ghosts) return;
+  if (pl.gStyle !== GHOST) ghostStyle(pl);
   const ang = o.spin + o.yaw + B.yaw, flip = o.flip;
   if (dt > 0 && H.length) { const L = H[H.length - 1]; pl.rotRate = lerp(pl.rotRate, (Math.abs(wrapA(ang - L.ang)) + Math.abs(wrapA(flip - L.flip))) / dt, .5); }
   H.push({ t, ang, flip, pose: cloneP(o), pos: B.pos.clone(), y: B.y || 0, yaw: B.yaw, bank: B.bank }); while (H.length > 2 && H[0].t < t - .25) H.shift();
-  const on = FLUID.on && FLUID.ghosts && !preview && pl.rotRate > GHOST.min, k = on ? sm(GHOST.min, GHOST.full, pl.rotRate) : 0;
+  const on = FLUID.on && FLUID.ghosts && !preview && pl.rotRate > GHOST.min * TAU, k = on ? sm(GHOST.min * TAU, GHOST.full * TAU, pl.rotRate) : 0;
   pl.ghosts.forEach((G, i) => {
-    let e = null; const tt = t - GHOST.dt * (i + 1); for (let q = H.length - 1; q >= 0; q--) if (H[q].t <= tt) { e = H[q]; break; }
+    let e = null; const tt = t - GHOST.dt * (i + 1); if (i < GHOST.op.length) for (let q = H.length - 1; q >= 0; q--) if (H[q].t <= tt) { e = H[q]; break; }
     if (!on || !e || !pl.uni.root.visible) { G.root.visible = false; return; }
-    G.root.visible = true; applyPose(pl, e.pose, t, G, { pos: e.pos, y: e.y, yaw: e.yaw, bank: e.bank }); setOpacity(G.root, (i ? .13 : .26) * k);
+    G.root.visible = true; applyPose(pl, e.pose, t, G, { pos: e.pos, y: e.y, yaw: e.yaw, bank: e.bank }); setOpacity(G.root, GHOST.op[i] * k);
   });
 }
 
@@ -3590,8 +3605,8 @@ function setPlayerChar(pl, id) {
   pl.charId = id; pl.uni = rigForGame(id); MIR.add(pl.uni.root);
   // rastros: duas cópias translúcidas do boneco, desenhadas nas poses de instantes anteriores nos movimentos rápidos
   if (pl.ghosts) for (const G of pl.ghosts) { MIR.remove(G.root); disposeRig(G.root); }
-  pl.ghosts = [0, 1].map(() => { const G = rigForGame(id); G.root.traverse(c => { if (c.material && c.material.uniforms) { c.material.transparent = true; c.material.depthWrite = false; } }); G.root.visible = false; MIR.add(G.root); return G; });
-  pl.hist = []; pl.rotRate = 0;
+  pl.ghosts = Array.from({ length: NGHOST }, () => { const G = rigForGame(id); G.root.traverse(c => { if (c.material && c.material.uniforms) { c.material.transparent = true; c.material.depthWrite = false; } }); G.root.visible = false; MIR.add(G.root); return G; });
+  pl.hist = []; pl.rotRate = 0; pl.gStyle = null;
   if (old) { pl.uni.root.visible = old.root.visible; applyPose(pl, pl.curPose, simT); updW(pl); }
 }
 /* ============================== pose: braços por IK, pernas e corpo por ângulos ============================== */
@@ -5348,6 +5363,7 @@ window.UG = {
   tfSet, tfRate: (i, r) => setRate(PL[i].stage, r), tfSkip: i => skipStage(PL[i].stage),
   phase: i => { setPhase(i); return PHI; },
   rotRate: (i = 0) => +(PL[i].rotRate / TAU).toFixed(2), ghostsOn: (i = 0) => PL[i].ghosts.map(G => G.root.visible),
+  ghostStyle: n => { if (n && GHOST_STYLES[n]) GHOST = GHOST_STYLES[n]; return Object.keys(GHOST_STYLES).find(k => GHOST_STYLES[k] === GHOST); },
   fluid: o => { Object.assign(FLUID, o || {}); return Object.assign({}, FLUID); },
   poseOf: (i = 0) => { const pl = PL[i], o = pl.lastBase; return { t: state.songT, spd: +pl.base.spd.toFixed(3), kind: pl.anim.kind, b: pl.anim.b, l: pl.anim.lvl, ch: [o.lean, o.side, o.tw, o.hd, o.hy, ...o.aL, ...o.aR, ...o.lL, ...o.lR, o.sq, o.ty].map(v => +v.toFixed(4)) }; },
   ndc: () => ACTIVE.map(pl => { const q = pl.W.chest.clone().project(PANO.cam); return [+q.x.toFixed(2), +q.y.toFixed(2)]; }),
