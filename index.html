@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#160d38">
-<meta name="description" content="Jogo de ritmo: unicórnios de pantufa patinam no gelo em Buenos Aires. Para 1 ou 2 jogadores.">
+<meta name="description" content="Jogo de ritmo: unicórnios de pantufa patinam no gelo em Buenos Aires e numa discoteca neon dos anos 70. Para 1 ou 2 jogadores.">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -292,6 +292,22 @@ div.opt{cursor:default}
 .res b{font-family:var(--f-pixel);font-weight:400;color:var(--gold)}
 .nudge{display:flex;align-items:center;gap:10px;font-family:var(--f-pixel);font-size:13px}
 
+/* Escolha da fase */
+.phases{display:grid;gap:12px;width:min(100%,330px)}
+.phc{display:grid;grid-template-columns:132px 1fr;gap:12px;align-items:center;padding:8px;border-radius:16px;border:2px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:var(--ink);text-align:left;cursor:pointer;font:inherit}
+.phc .art{width:132px;height:auto;border-radius:10px;display:block}
+.phc:active{translate:0 2px}
+.phc:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.phc[aria-pressed=true]{border-color:var(--gold);background:rgba(255,214,96,.1)}
+.phc.neon{border-color:rgba(255,61,184,.55);box-shadow:0 0 14px rgba(255,61,184,.25)}
+.phc.neon[aria-pressed=true]{border-color:var(--gold)}
+.pht{display:flex;flex-direction:column;gap:3px}
+.pht small{font-family:var(--f-pixel);font-size:9px;letter-spacing:.12em;color:var(--gold);text-transform:uppercase}
+.pht b{font-family:var(--f-display);font-weight:400;font-size:19px;line-height:1.1}
+.pht em{font-style:normal;font-size:12px;line-height:1.35;color:var(--muted)}
+.pht .phb{font-style:normal;font-family:var(--f-pixel);font-size:9px;letter-spacing:.06em;color:var(--mint)}
+.phc.neon .pht b{color:#ffd0f0;text-shadow:0 0 8px rgba(255,61,184,.8)}
+
 /* Resultado */
 #pauseS.r1,#pauseS.r3{inset:auto;left:50%;top:50%;width:100cqh;height:100cqw;translate:-50% -50%}
 #pauseS.r1{rotate:90deg}
@@ -321,6 +337,8 @@ div.opt{cursor:default}
 .album li em{font-style:normal;font-family:var(--f-pixel);font-size:9px;letter-spacing:.06em;color:var(--muted)}
 .album li span{color:var(--ink);font-weight:800;line-height:1.3}
 .album li span.lock{color:rgba(255,255,255,.3);font-weight:500}
+.album li.phsep{display:block;margin-top:14px;font-family:var(--f-display);font-size:18px;color:var(--gold);text-align:center}
+.album li.phsep:first-child{margin-top:0}
 .album li.sep{display:block;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.12);font-family:var(--f-pixel);font-size:10px;letter-spacing:.14em;color:var(--mint);text-transform:uppercase}
 .album li small{display:block;font-family:var(--f-pixel);font-size:9px;font-weight:400;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
 .album.big li{font-size:15px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.07)}
@@ -347,6 +365,21 @@ div.opt{cursor:default}
       <div class="menu row"><button class="btn ghost sm" id="bOpt" data-i18n="options"></button><button class="btn ghost sm" id="bAlbum" data-i18n="album"></button></div>
       <p class="hint" data-i18n-html="hint"></p>
     </div>
+  </section>
+
+  <section id="phaseS" class="screen panelS" hidden>
+    <header><p class="eyebrow" id="phMode"></p><h2 data-i18n="phTitle"></h2></header>
+    <div class="phases">
+      <button class="phc" data-ph="0">
+        <svg class="art" viewBox="0 0 160 84" aria-hidden="true"><defs><linearGradient id="phs1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0c0730"/><stop offset=".7" stop-color="#2b1f63"/><stop offset="1" stop-color="#7a2f7c"/></linearGradient></defs><rect width="160" height="84" fill="url(#phs1)"/><circle cx="128" cy="18" r="8" fill="#fff4c8"/><g fill="#fff"><rect x="20" y="12" width="1.5" height="1.5"/><rect x="58" y="8" width="1.5" height="1.5"/><rect x="92" y="20" width="1.5" height="1.5"/><rect x="146" y="40" width="1.5" height="1.5"/></g><path d="M40 62 43 14 46 62Z" fill="#f1edf6"/><path d="M43 9 45 14 41 14Z" fill="#f1edf6"/><path d="M8 52q72-18 144 0" stroke="#ffd660" stroke-width="1" stroke-dasharray="2 3" fill="none"/><ellipse cx="80" cy="74" rx="76" ry="12" fill="#bfe8ff" opacity=".85"/><ellipse cx="80" cy="74" rx="76" ry="12" fill="none" stroke="#ff4fa8" stroke-width="2"/></svg>
+        <span class="pht"><small><span data-i18n="phase"></span> 1</small><b data-i18n="ph1"></b><em data-i18n="ph1s"></em><i class="phb"></i></span>
+      </button>
+      <button class="phc neon" data-ph="1">
+        <svg class="art" viewBox="0 0 160 84" aria-hidden="true"><rect width="160" height="84" fill="#140a2a"/><g stroke-width="1.2" opacity=".8"><path d="M80 22 6 60M80 22 40 84M80 22 120 84M80 22 154 60M80 22 0 30M80 22 160 26" stroke="#fff6ff"/></g><path d="M80 0v12" stroke="#9a90b8"/><circle cx="80" cy="22" r="10" fill="#c9d3ec"/><path d="M70 22h20M72 17h16M72 27h16M80 12v20M75 13v18M85 13v18" stroke="#6b7090" stroke-width=".8"/><g><rect x="0" y="66" width="20" height="9" fill="#ff3db8"/><rect x="20" y="66" width="20" height="9" fill="#3df2ff"/><rect x="40" y="66" width="20" height="9" fill="#ffe14d"/><rect x="60" y="66" width="20" height="9" fill="#b04dff"/><rect x="80" y="66" width="20" height="9" fill="#4dff9a"/><rect x="100" y="66" width="20" height="9" fill="#ff3db8"/><rect x="120" y="66" width="20" height="9" fill="#3df2ff"/><rect x="140" y="66" width="20" height="9" fill="#ffe14d"/><rect x="0" y="75" width="20" height="9" fill="#b04dff"/><rect x="20" y="75" width="20" height="9" fill="#ffe14d"/><rect x="40" y="75" width="20" height="9" fill="#ff3db8"/><rect x="60" y="75" width="20" height="9" fill="#3df2ff"/><rect x="80" y="75" width="20" height="9" fill="#ffe14d"/><rect x="100" y="75" width="20" height="9" fill="#4dff9a"/><rect x="120" y="75" width="20" height="9" fill="#ff3db8"/><rect x="140" y="75" width="20" height="9" fill="#b04dff"/></g><text x="22" y="50" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="15" fill="none" stroke="#ff3db8" stroke-width="1.4">DISCO</text></svg>
+        <span class="pht"><small><span data-i18n="phase"></span> 2</small><b data-i18n="ph2"></b><em data-i18n="ph2s"></em><i class="phb"></i></span>
+      </button>
+    </div>
+    <button class="btn ghost" id="phBack" data-i18n="back"></button>
   </section>
 
   <section id="select" class="screen" hidden>
@@ -522,7 +555,7 @@ const STR = {
     calRes: 'Atraso medido: <b>{m} ms</b> (já aplicado).<br>Variação: <b>±{s} ms</b>, {q}.', calQ: ['ótima para jogo de ritmo', 'boa', 'alta; o atraso deste aparelho oscila'],
     back: 'Voltar', optLang: 'Idioma', optMusic: 'Música', optSfx: 'Efeitos sonoros', optVib: 'Vibração', optCam: 'Câmera', camTvL: 'TV', camChL: 'SEGUE',
     reset: 'Apagar progresso', resetQ: 'Apagar o álbum de nomes, o recorde e a calibração? Não dá para desfazer.', resetYes: 'Apagar', cancel: 'Cancelar', resetDone: 'Progresso apagado.',
-    albumTitle: 'Álbum de nomes', albumCount: '{n} de 18 nomes descobertos', albumHint: 'Faça a sequência inteira sem errar para descobrir o nome de cada manobra. Os nomes a dois aparecem quando os dois jogadores chegam juntos, sem erro, às manobras com nome.', albumDuo: 'A dois',
+    albumTitle: 'Álbum de nomes', albumCount: '{n} de 36 nomes descobertos', albumHint: 'Faça a sequência inteira sem errar para descobrir o nome de cada manobra. Os nomes a dois aparecem quando os dois jogadores chegam juntos, sem erro, às manobras com nome.', albumDuo: 'A dois',
     kinds: ['deslize', 'giro', 'salto', 'pose final'],
     pl: 'Jogador', readyHint: 'Deitem o celular na mesa. Seus dois cascos ficam na borda do seu lado. Se forem jogar lado a lado, girem a imagem com ↺ ↻.',
     orientFace: 'Frente a frente', orientSide: 'Lado a lado', rotL: 'Girar a imagem para a esquerda', rotR: 'Girar a imagem para a direita',
@@ -532,7 +565,8 @@ const STR = {
     selTitle: 'Quem vai patinar?', transform: 'Transformar!', skip: 'Pular', fastL: 'Velocidade 2x',
     selHint1: 'Arraste para girar a roda. Toque no personagem ou no nome para escolher e toque de novo para desfazer. Na transformação, 2× acelera e Pular vai direto para a pista.',
     selHint2: 'Arraste para girar a roda. Primeiro escolhe o jogador 1, depois o 2; toque de novo para desfazer. O celular desenhado mostra a metade da tela de cada um e Inverter troca os lados.',
-    sideBot: 'embaixo', sideTop: 'em cima', swap: 'Inverter', swapL: 'Inverter os lados da tela', duoTag: '✦ a dois ✦'
+    sideBot: 'embaixo', sideTop: 'em cima', swap: 'Inverter', swapL: 'Inverter os lados da tela', duoTag: '✦ a dois ✦',
+    phTitle: 'Onde vamos patinar?', phase: 'Fase', ph1: 'Pista de Buenos Aires', ph1s: 'Gelo ao ar livre, ao pé do Obelisco.', ph2: 'Discoteca Neon', ph2s: 'Boate dos anos 70: pista iluminada, neon e globo de espelhos.'
   },
   es: {
     logo1: 'Galope', logo2: 'en el Hielo', sub: 'Ritmo · patines · brillantina',
@@ -551,7 +585,7 @@ const STR = {
     calRes: 'Retraso medido: <b>{m} ms</b> (ya aplicado).<br>Variación: <b>±{s} ms</b>, {q}.', calQ: ['excelente para un juego de ritmo', 'buena', 'alta; el retraso de este dispositivo oscila'],
     back: 'Volver', optLang: 'Idioma', optMusic: 'Música', optSfx: 'Efectos de sonido', optVib: 'Vibración', optCam: 'Cámara', camTvL: 'TV', camChL: 'SIGUE',
     reset: 'Borrar progreso', resetQ: '¿Borrar el álbum de nombres, el récord y la calibración? No se puede deshacer.', resetYes: 'Borrar', cancel: 'Cancelar', resetDone: 'Progreso borrado.',
-    albumTitle: 'Álbum de nombres', albumCount: '{n} de 18 nombres descubiertos', albumHint: 'Hacé la secuencia entera sin errores para descubrir el nombre de cada figura. Los nombres a dúo aparecen cuando los dos jugadores llegan juntos, sin errores, a las figuras con nombre.', albumDuo: 'A dúo',
+    albumTitle: 'Álbum de nombres', albumCount: '{n} de 36 nombres descubiertos', albumHint: 'Hacé la secuencia entera sin errores para descubrir el nombre de cada figura. Los nombres a dúo aparecen cuando los dos jugadores llegan juntos, sin errores, a las figuras con nombre.', albumDuo: 'A dúo',
     kinds: ['deslizamiento', 'giro', 'salto', 'pose final'],
     pl: 'Jugador', readyHint: 'Apoyen el celular en la mesa. Tus dos cascos están en el borde de tu lado. Si van a jugar lado a lado, giren la imagen con ↺ ↻.',
     orientFace: 'Frente a frente', orientSide: 'Lado a lado', rotL: 'Girar la imagen a la izquierda', rotR: 'Girar la imagen a la derecha',
@@ -561,11 +595,12 @@ const STR = {
     selTitle: '¿Quién va a patinar?', transform: '¡Transformar!', skip: 'Saltar', fastL: 'Velocidad 2x',
     selHint1: 'Arrastrá para girar la ronda. Tocá el personaje o el nombre para elegir y tocá de nuevo para deshacer. En la transformación, 2× acelera y Saltar va directo a la pista.',
     selHint2: 'Arrastrá para girar la ronda. Primero elige el jugador 1, después el 2; tocá de nuevo para deshacer. El celular dibujado muestra la mitad de la pantalla de cada uno e Invertir cambia los lados.',
-    sideBot: 'abajo', sideTop: 'arriba', swap: 'Invertir', swapL: 'Invertir los lados de la pantalla', duoTag: '✦ a dúo ✦'
+    sideBot: 'abajo', sideTop: 'arriba', swap: 'Invertir', swapL: 'Invertir los lados de la pantalla', duoTag: '✦ a dúo ✦',
+    phTitle: '¿Dónde vamos a patinar?', phase: 'Fase', ph1: 'Pista de Buenos Aires', ph1s: 'Hielo al aire libre, al pie del Obelisco.', ph2: 'Discoteca Neón', ph2s: 'Boliche de los años 70: pista iluminada, neón y bola de espejos.'
   }
 };
 // nomes whimsical: [bloco][0 = 5ª manobra, 1 = 6ª manobra, 2 = pose final]
-const NAMES = {
+const NAMES1 = {
   pt: [
     ['Tornado de Purpurina', 'Laço de Arco-Íris', 'Suspiro de Algodão-Doce Eterno'],
     ['Valsa da Via Láctea', 'Axel Portenho Duodécuplo', 'Carrossel Cósmico Açucarado'],
@@ -577,6 +612,7 @@ const NAMES = {
     ['Pirueta Cuerno-Taladro', 'Salto Lunar en Pantuflas', 'Supernova de Peluche Arcoíris']
   ]
 };
+let NAMES = NAMES1;
 const FLAGS = {
   pt: '<svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" fill="#009b3a"/><path d="M14 2.2 25.6 10 14 17.8 2.4 10z" fill="#fedf00"/><circle cx="14" cy="10" r="4.6" fill="#002776"/><path d="M9.6 9.1c2.9-.6 6.2.1 8.7 1.9" stroke="#fff" stroke-width=".9" fill="none"/></svg>',
   es: '<svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" fill="#75aadb"/><rect y="6.67" width="28" height="6.67" fill="#fff"/><path d="M14 7.4v-.9M14 12.6v.9M11.4 10h-.9M16.6 10h.9M15.84 8.16l.42-.42M12.16 8.16l-.42-.42M15.84 11.84l.42.42M12.16 11.84l-.42.42" stroke="#f6b40e" stroke-width=".7"/><circle cx="14" cy="10" r="2" fill="#f6b40e" stroke="#85340a" stroke-width=".3"/></svg>'
@@ -604,17 +640,19 @@ const BPM = 120, BEAT = 60 / BPM, MEAS = BEAT * 4, S8 = BEAT / 2, S16 = BEAT / 4
 const BLOCK_START = [4, 14, 24], TOTAL_MEAS = 36;
 // manobra de cada etapa do bloco: [tipo (0 deslize, 1 giro, 2 salto), nível dentro do tipo]
 // todo bloco começa deslizando, tem deslize, giro e salto, e a dificuldade sobe de um bloco para o outro
-const SEQ = [
+const SEQ1 = [
   [[0, 1], [1, 1], [2, 1], [0, 2], [1, 5], [0, 5]],
   [[0, 3], [1, 2], [2, 2], [1, 3], [0, 6], [2, 5]],
   [[0, 4], [2, 3], [1, 4], [2, 4], [1, 6], [2, 6]]
 ];
+let SEQ = SEQ1;
 // 8 colcheias por compasso. L = casco esquerdo, R = direito, B = os dois, H = segurar os dois por 2 tempos
-const PATTERNS = [
+const PATTERNS1 = [
   ['L...R...', 'L...R...', 'L.R.L...', 'L...R.B.', 'L.R.L.R.', 'L.R.L.B.', 'L...R...', 'H.......'],
   ['L.R.L.R.', 'L.R.L.B.', 'LR..L.R.', 'L.R.LR..', 'L.RL.R..', 'L.RLR.B.', 'L.R.L.R.', 'H.......'],
   ['L.R.L.R.', 'LR..LR..', 'L.RLR.B.', 'LR.RL.B.', 'LR.LR.L.', 'LRL.RLB.', 'LR.LR.B.', 'H.......']
 ];
+let PATTERNS = PATTERNS1;
 const POSE_BONUS = 3000;
 function sectionOf(mi) {
   if (mi < 0) return { k: 'pre' };
@@ -718,7 +756,8 @@ const PROG = { intro: ['D', 'A', 'Bm', 'G'], block: ['D', 'A', 'Bm', 'G', 'D', '
 function chordOf(mi) { const s = sectionOf(mi); const k = s.k === 'intro' ? PROG.intro[s.i] : s.k === 'block' ? PROG.block[s.m] : s.k === 'break' ? PROG.break[s.i] : s.k === 'outro' ? PROG.outro[s.i] : 'D'; return CHORD[k]; }
 function guidePitch(ch, lane, slot) { const alt = (slot >> 1) & 1; return lane === 0 ? ch.t[alt] + 12 : (alt ? ch.t[0] + 24 : ch.t[2] + 12); }
 
-function playStep(s, t) {
+function playStep(s, t) { if (PHI) playStepD(s, t); else playStep1(s, t); }
+function playStep1(s, t) {
   const mi = Math.floor(s / 16), k = s % 16, sec = sectionOf(mi), ch = chordOf(mi);
   if (sec.k === 'intro') {
     if (k === 0) I.pad(t, ch.t, MEAS, sec.i < 2 ? .6 : .8);
@@ -764,6 +803,116 @@ function playStep(s, t) {
     if (sec.i < 3 && k % 2 === 0) I.hat(t, .5);
     if (sec.i < 3 && k % 4 === 0) I.bell(t, ch.t[(k / 4) % 3] + 24, .35, .6);
     if (sec.i === 3 && k === 0) { I.bell(t, ch.t[0] + 24, .6, 2); I.bass(t, ch.r + 12, MEAS, .6); }
+  }
+}
+/* --------- música da fase 2: discoteca dos anos 70 (mesmo andamento, mesmo mapa de compassos) --------- */
+// bumbo em todas as batidas, chimbal aberto no contratempo, palmas no 2 e no 4, baixo pulando oitavas,
+// cordas com subidas, guitarra abafada e acordes curtos de metais
+Object.assign(I, {
+  strings(t, notes, dur, v = 1) {
+    const f = AC.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 2600; f.Q.value = .4;
+    const hp = AC.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 220;
+    const g = AC.createGain(), a = Math.min(.3, dur * .3); g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(.05 * v, t + a);
+    g.gain.setValueAtTime(.05 * v, t + dur - .2); g.gain.linearRampToValueAtTime(.0001, t + dur);
+    const lfo = AC.createOscillator(), ld = AC.createGain(); lfo.frequency.value = 5.3; ld.gain.value = 7; lfo.connect(ld); lfo.start(t); lfo.stop(t + dur + .05);
+    f.connect(hp); hp.connect(g); g.connect(musicBus);
+    for (const n of notes) for (const d of [-9, 0, 9]) { const o = AC.createOscillator(); o.type = 'sawtooth'; o.frequency.value = mtof(n); o.detune.value = d; ld.connect(o.detune); o.connect(f); o.start(t); o.stop(t + dur + .05); }
+  },
+  // subida de cordas até a nota (o "swoosh" das orquestras de discoteca)
+  swoop(t, notes, dur = .45, v = 1) {
+    const f = AC.createBiquadFilter(); f.type = 'lowpass'; f.frequency.setValueAtTime(900, t); f.frequency.exponentialRampToValueAtTime(5200, t + dur);
+    const g = AC.createGain(); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.07 * v, t + dur * .85); g.gain.exponentialRampToValueAtTime(.0001, t + dur + .35);
+    f.connect(g); g.connect(musicBus);
+    for (const n of notes) for (const d of [-8, 8]) { const o = AC.createOscillator(); o.type = 'sawtooth'; o.detune.value = d; o.frequency.setValueAtTime(mtof(n - 12), t); o.frequency.exponentialRampToValueAtTime(mtof(n), t + dur); o.connect(f); o.start(t); o.stop(t + dur + .4); }
+  },
+  stab(t, notes, v = 1) {
+    const f = AC.createBiquadFilter(); f.type = 'lowpass'; f.Q.value = 3; f.frequency.setValueAtTime(4200, t); f.frequency.exponentialRampToValueAtTime(700, t + .2);
+    const g = AC.createGain(); env(g, t, .004, .07 * v, .2); f.connect(g); g.connect(musicBus);
+    for (const n of notes) for (const d of [-6, 6]) { const o = AC.createOscillator(); o.type = 'sawtooth'; o.frequency.value = mtof(n + 12); o.detune.value = d; o.connect(f); o.start(t); o.stop(t + .3); }
+  },
+  // guitarra abafada ("chicken scratch")
+  scratch(t, v = 1, n = 64) {
+    noise(t, .028, musicBus, .09 * v, 'bandpass', 2100, 2.2, .001);
+    const o = AC.createOscillator(), f = AC.createBiquadFilter(), g = AC.createGain(); o.type = 'square'; o.frequency.value = mtof(n); f.type = 'bandpass'; f.frequency.value = 1300; f.Q.value = 1.5;
+    env(g, t, .002, .035 * v, .04); o.connect(f); f.connect(g); g.connect(musicBus); o.start(t); o.stop(t + .08);
+  },
+  // teclado percussivo das notas-guia (no lugar dos sininhos da fase 1)
+  clav(t, n, v = 1, dur = .2) {
+    const f = AC.createBiquadFilter(); f.type = 'lowpass'; f.Q.value = 4; f.frequency.setValueAtTime(5200, t); f.frequency.exponentialRampToValueAtTime(900, t + dur);
+    const g = AC.createGain(); env(g, t, .002, .11 * v, dur); f.connect(g); g.connect(musicBus);
+    for (const [ty, m] of [['square', 1], ['sawtooth', 2]]) { const o = AC.createOscillator(); o.type = ty; o.frequency.value = mtof(n) * m; o.connect(f); o.start(t); o.stop(t + dur + .05); }
+    osc('sine', mtof(n), t, dur * 1.5, musicBus, .07 * v, .002);
+  },
+  lead(t, n, dur, v = 1) {
+    const f = AC.createBiquadFilter(); f.type = 'lowpass'; f.Q.value = 2; f.frequency.setValueAtTime(800, t); f.frequency.linearRampToValueAtTime(3600, t + .05); f.frequency.exponentialRampToValueAtTime(1500, t + dur);
+    const g = AC.createGain(); g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(.06 * v, t + .02); g.gain.setValueAtTime(.06 * v, t + dur * .7); g.gain.exponentialRampToValueAtTime(.0001, t + dur + .08);
+    f.connect(g); g.connect(musicBus);
+    for (const [ty, d] of [['sawtooth', -10], ['sawtooth', 10], ['square', 0]]) { const o = AC.createOscillator(); o.type = ty; o.frequency.value = mtof(n); o.detune.value = d; o.connect(f); o.start(t); o.stop(t + dur + .12); }
+  },
+  whistle(t, v = 1) {   // apito de pista
+    const o = AC.createOscillator(), g = AC.createGain(), lfo = AC.createOscillator(), ld = AC.createGain();
+    o.type = 'sine'; o.frequency.setValueAtTime(2600, t); lfo.frequency.value = 38; ld.gain.value = 140; lfo.connect(ld); ld.connect(o.frequency);
+    g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(.05 * v, t + .015); g.gain.setValueAtTime(.05 * v, t + .16); g.gain.exponentialRampToValueAtTime(.0001, t + .22);
+    o.connect(g); g.connect(musicBus); o.start(t); o.stop(t + .25); lfo.start(t); lfo.stop(t + .25);
+  }
+});
+const CHORD_D = { Am7: { r: 45, t: [60, 64, 67] }, D9: { r: 38, t: [60, 64, 66] }, Fmaj7: { r: 41, t: [60, 64, 69] }, G: { r: 43, t: [62, 67, 71] }, E7: { r: 40, t: [62, 64, 68] } };
+const PROG_D = { intro: ['Am7', 'D9', 'Am7', 'D9'], block: ['Am7', 'D9', 'Am7', 'D9', 'Fmaj7', 'G', 'E7', 'E7'], break: ['Fmaj7', 'E7'], outro: ['Am7', 'D9', 'Fmaj7', 'Am7'] };
+function chordOfD(mi) { const s = sectionOf(mi); const k = s.k === 'intro' ? PROG_D.intro[s.i] : s.k === 'block' ? PROG_D.block[s.m] : s.k === 'break' ? PROG_D.break[s.i] : s.k === 'outro' ? PROG_D.outro[s.i] : 'Am7'; return CHORD_D[k]; }
+// frase do metal (lá menor pentatônica), um compasso de cada lado: [passo, nota, duração em semicolcheias]
+const HOOK_D = [[[0, 69, 2], [3, 72, 1], [4, 74, 2], [6, 76, 3], [10, 74, 1], [11, 72, 2], [14, 69, 2]], [[0, 79, 3], [3, 76, 1], [4, 74, 2], [7, 72, 1], [8, 74, 3], [12, 76, 4]]];
+const SCR_D = 'x.xxx.x.x.xx.xx.';   // guitarra abafada em semicolcheias
+function playStepD(s, t) {
+  const mi = Math.floor(s / 16), k = s % 16, sec = sectionOf(mi), ch = chordOfD(mi), oct = k % 4 === 0 ? 0 : 12;
+  const bassLine = (v = 1) => { if (k % 2 === 0) I.bass(t, ch.r + (k % 4 === 2 ? 12 : 0) + (k === 14 ? -2 : 0), .2, v); };
+  if (sec.k === 'intro') {
+    if (k === 0) I.strings(t, ch.t, MEAS, .5 + .2 * sec.i);
+    I.hat(t, k % 4 === 2 ? .9 : .35, k % 4 === 2);
+    if (sec.i >= 1 && k % 4 === 0) I.kick(t, sec.i === 1 ? .6 : .85);
+    if (sec.i >= 2) bassLine(.8);
+    if (sec.i === 1 && k === 12) I.swoop(t, ch.t, BEAT * 2, .7);
+    if (sec.i === 3 && k % 4 === 0) I.block(t, k === 12 ? 86 : 79, 1);
+    if (sec.i === 3 && k >= 12) I.snare(t, .35 + .15 * (k - 12));
+  } else if (sec.k === 'block') {
+    const b = sec.b, m = sec.m, stop = m === 7 && k >= 8;
+    if (k === 0) { if (m === 0) I.swoop(t, ch.t.map(n => n + 12), .5, .9); I.strings(t, ch.t, MEAS, m === 7 ? .8 : .7); }
+    if (!stop) {
+      if (k % 4 === 0) I.kick(t);
+      if (k === 4 || k === 12) { I.clap(t, b === 0 ? .8 : 1); I.snare(t, .5); }
+      if (k % 4 === 2) I.hat(t, 1, true); else I.hat(t, k % 2 ? .3 : .5);
+      bassLine();
+      if (b >= 1 && k % 2 === 1 && SCR_D[k] === 'x') I.scratch(t, b === 2 ? 1 : .8, ch.t[0] - 12);
+      if (b >= 1 && (k === 6 || k === 14) && m < 6) I.stab(t, ch.t, b === 2 ? 1 : .8);
+      if (b === 2 && m < 6) for (const [st, n, d] of HOOK_D[m % 2]) if (st === k) I.lead(t, n, d * S16 * .95, .9);
+      if (b === 2 && m === 6 && k % 2 === 1) I.snare(t, .25);
+      if (m === 0 && k === 8 && b > 0) I.whistle(t, .8);
+    }
+    if (m === 6 && k === 8) { I.riser(t, MEAS); I.swoop(t + MEAS * .5 - .45, ch.t.map(n => n + 12), .45, .8); }
+    if (m === 7 && k === 8) { I.crash(t); I.kick(t); I.strings(t, ch.t.map(n => n + 12), MEAS * .5, 1); I.bell(t, ch.t[0] + 24, .5, 1.2); }
+    if (k % 2 === 0) {
+      const slot = k >> 1, c = PATTERNS[b][m][slot];
+      if (c === 'L' || c === 'B') I.clav(t, guidePitch(ch, 0, slot), 1);
+      if (c === 'R' || c === 'B') I.clav(t, guidePitch(ch, 1, slot), 1);
+      if (c === 'H') for (const n of ch.t) I.clav(t, n + 12, .8, 1.1);
+    }
+  } else if (sec.k === 'break') {
+    // virada de bateria: só ritmo e baixo, e uma subida de cordas para o próximo bloco
+    if (k % 4 === 0) I.kick(t, .9);
+    if (k === 4 || k === 12) I.clap(t, .9);
+    I.hat(t, k % 4 === 2 ? .9 : .4, k % 4 === 2);
+    if (sec.i === 0) { if (k % 2 === 0) I.bass(t, ch.r + oct, .18, .8); if (k === 0) I.strings(t, ch.t, MEAS, .45); }
+    if (sec.i === 1 && k === 0) I.bass(t, ch.r, MEAS * .5, .7);
+    if (sec.i === 1 && k >= 8) I.snare(t, .25 + .1 * (k - 8));
+    if (sec.i === 1 && k === 8) I.swoop(t, ch.t.map(n => n + 12), BEAT * 2, .9);
+  } else if (sec.k === 'outro') {
+    if (k === 0) I.strings(t, ch.t, MEAS, sec.i === 3 ? 1 : .7);
+    if (sec.i === 0 && k === 0) I.crash(t, .8);
+    if (sec.i < 2 && k % 4 === 0) I.kick(t, .85);
+    if (sec.i < 3 && (k === 4 || k === 12)) I.clap(t, .6);
+    if (sec.i < 3) I.hat(t, k % 4 === 2 ? .7 : .3, k % 4 === 2);
+    if (sec.i < 2) bassLine(.8);
+    if (sec.i < 2) for (const [st, n, d] of HOOK_D[sec.i]) if (st === k) I.lead(t, n, d * S16 * .95, .7);
+    if (sec.i === 3 && k === 0) { I.bell(t, ch.t[0] + 24, .6, 2); I.bass(t, ch.r, MEAS, .6); I.swoop(t, ch.t.map(n => n + 12), .6, .8); }
   }
 }
 let songT0 = 0, nextStep = 0, schedIv = null;
@@ -819,6 +968,7 @@ const U = {
 // luz ambiente: pista do jogo, transformação (noite → fundo multicor) e roda de escolha
 const AMB_GAME = new THREE.Color(.46, .42, .7), AMB_NIGHT = new THREE.Color(.5, .46, .72), AMB_BRIGHT = new THREE.Color(.86, .8, .92), AMB_LINE = new THREE.Color(.64, .6, .78);
 const LIGHT_WORLD = new THREE.Vector3(.45, 1, .8).normalize();
+const AMB_DISCO = new THREE.Color(.42, .34, .62), AMB_DISCO_LINE = new THREE.Color(.58, .5, .76);
 // silhueta: cobre o que está acima de uSilY (a linha desce das mãos aos pés), com degradê e borda brilhante
 const NO_SIL = { uSil: { value: 0 }, uSilY: { value: 99 }, uBaseY: { value: 0 }, uHgt: { value: 1 } };
 const PSX_VS = `
@@ -1000,8 +1150,10 @@ function updParticles(dt) {
 
 /* --------- mundo: pista, praça, Obelisco, céu --------- */
 const MOON = new THREE.Group(); const OB = { x: -13, z: -80 };
+const WORLD1 = new THREE.Group(); scene.add(WORLD1);
 let STARS, BULBS;
 function buildWorld() {
+  const W1 = WORLD1;
   // céu
   const skyG = new THREE.SphereGeometry(110, 16, 12), pos = skyG.attributes.position, cols = [];
   const top = new THREE.Color(0x0c0730), mid = new THREE.Color(0x2b1f63), hor = new THREE.Color(0x7a2f7c), low = new THREE.Color(0x0a0618), c = new THREE.Color();
@@ -1011,7 +1163,7 @@ function buildWorld() {
     cols.push(c.r, c.g, c.b);
   }
   skyG.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
-  scene.add(new THREE.Mesh(skyG, psxMat({ vc: true, emissive: 1, fog: false, side: THREE.BackSide })));
+  W1.add(new THREE.Mesh(skyG, psxMat({ vc: true, emissive: 1, fog: false, side: THREE.BackSide })));
   // estrelas do céu
   const R = mulberry(21); STARS = makePoints(240);
   for (let i = 0; i < STARS.n; i++) {
@@ -1021,38 +1173,38 @@ function buildWorld() {
     STARS.size[i] = R() < .12 ? 2.2 : .5 + R() * .7; STARS.alpha[i] = .8;
   }
   STARS.phase = Array.from({ length: STARS.n }, () => R() * TAU);
-  scene.add(STARS.pts);
+  W1.add(STARS.pts);
   // lua
   const moon = new THREE.Mesh(new THREE.SphereGeometry(2.6, 16, 12), psxMat({ map: moonTex, emissive: 1, fog: false }));
-  MOON.add(moon); MOON.position.set(9, 16, -86); scene.add(MOON);
+  MOON.add(moon); MOON.position.set(9, 16, -86); W1.add(MOON);
   // pista oficial: 28 x 16, com mureta nos quatro lados e arquibancadas nos lados compridos
   const RX = 14, RZ = 8;
   const gm = psxMat({ map: groundTex, rep: [1, 1], color: 0xb8b0d8 });
-  const plate = (w, d, x, z) => { const g = new THREE.PlaneGeometry(w, d, Math.ceil(w / 6), Math.ceil(d / 6)); g.rotateX(-HP); const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * w / 3, uv.getY(i) * d / 3); const m = new THREE.Mesh(g, gm); m.position.set(x, -.01, z); scene.add(m); };
+  const plate = (w, d, x, z) => { const g = new THREE.PlaneGeometry(w, d, Math.ceil(w / 6), Math.ceil(d / 6)); g.rotateX(-HP); const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * w / 3, uv.getY(i) * d / 3); const m = new THREE.Mesh(g, gm); m.position.set(x, -.01, z); W1.add(m); };
   plate(200, 90, 0, -RZ - 45); plate(200, 90, 0, RZ + 45); plate(93, RZ * 2, -RX - 46.5, 0); plate(93, RZ * 2, RX + 46.5, 0);
   const iceG = new THREE.PlaneGeometry(RX * 2, RZ * 2, 28, 16); iceG.rotateX(-HP);
   const ice = new THREE.Mesh(iceG, psxMat({ map: iceTex, rep: [7, 4], opacity: .74, transparent: true, depthWrite: true, color: 0xd6efff, emissive: .3 }));
-  ice.renderOrder = 1; scene.add(ice);
+  ice.renderOrder = 1; W1.add(ice);
   const bm = (rx) => psxMat({ map: boardTex, rep: [rx, 1] });
-  const board = (w, d, x, z, rx) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, .55, d), bm(rx)); m.position.set(x, .275, z); scene.add(m); };
+  const board = (w, d, x, z, rx) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, .55, d), bm(rx)); m.position.set(x, .275, z); W1.add(m); };
   board(RX * 2 + .3, .15, 0, -RZ - .07, 14); board(RX * 2 + .3, .15, 0, RZ + .07, 14); board(.15, RZ * 2 + .3, -RX - .07, 0, 8); board(.15, RZ * 2 + .3, RX + .07, 0, 8);
   // arquibancadas com público em pixels
   const crowdTex = canvasTex(64, 16, (g, w, h) => { const R = mulberry(31); g.fillStyle = '#1e1640'; g.fillRect(0, 0, w, h); const cs = ['#ff6ab8', '#ffd66b', '#7fe6ff', '#b88cff', '#e9e2ff', '#7dffc8', '#ff9a5a']; for (let y = 1; y < h; y += 3) for (let x = (y % 2 ? 0 : 1); x < w; x += 3) if (R() < .7) { g.fillStyle = cs[(R() * cs.length) | 0]; g.fillRect(x, y, 1, 1); } });
   const standM = psxMat({ map: crowdTex, rep: [16, 1], emissive: .25, color: 0xc8c0e8 });
-  for (const sz of [-1]) for (let k = 0; k < 3; k++) { const m = new THREE.Mesh(new THREE.BoxGeometry(RX * 2 - 2, .7 + k * .7, 1.1), standM); m.position.set(0, (.7 + k * .7) / 2, sz * (RZ + 1.9 + k * 1.1)); scene.add(m); }
+  for (const sz of [-1]) for (let k = 0; k < 3; k++) { const m = new THREE.Mesh(new THREE.BoxGeometry(RX * 2 - 2, .7 + k * .7, 1.1), standM); m.position.set(0, (.7 + k * .7) / 2, sz * (RZ + 1.9 + k * 1.1)); W1.add(m); }
   // postes e cordões de luz atravessando a pista
   const poleM = psxMat({ color: 0x8b80b8 });
   const lines = [-4.5, 0, 4.5]; BULBS = makePoints(lines.length * 34);
   let bi = 0; const bcols = [C_PINK, C_GOLD, C_MINT, C_VIO, C_BLUE];
   for (const z of lines) {
-    for (const x of [-RX - .5, RX + .5]) { const p = new THREE.Mesh(new THREE.CylinderGeometry(.07, .09, 6, 5), poleM); p.position.set(x, 3, z); scene.add(p); }
+    for (const x of [-RX - .5, RX + .5]) { const p = new THREE.Mesh(new THREE.CylinderGeometry(.07, .09, 6, 5), poleM); p.position.set(x, 3, z); W1.add(p); }
     for (let i = 0; i < 34; i++) {
       const x = -RX - .5 + (RX * 2 + 1) * i / 33, y = 5.9 - 1.1 * (1 - Math.pow(x / (RX + .5), 2));
       BULBS.pos[bi * 3] = x; BULBS.pos[bi * 3 + 1] = y; BULBS.pos[bi * 3 + 2] = z;
       const cc = bcols[(i + lines.indexOf(z)) % 5]; BULBS.col[bi * 3] = cc.r; BULBS.col[bi * 3 + 1] = cc.g; BULBS.col[bi * 3 + 2] = cc.b; BULBS.size[bi] = .16; BULBS.alpha[bi] = 1; bi++;
     }
   }
-  BULBS.pts.renderOrder = 6; scene.add(BULBS.pts);
+  BULBS.pts.renderOrder = 6; W1.add(BULBS.pts);
   // prédios em volta da praça
   const R2 = mulberry(77), tints = [0xffffff, 0xd9d0ff, 0xffd8ee, 0xcfe6ff];
   for (let i = 0; i < 110; i++) {
@@ -1060,19 +1212,255 @@ function buildWorld() {
     if (Math.abs(x - OB.x) < 9 && z < -50) continue;
     const w = 5 + R2() * 8, d = 4 + R2() * 6, h = 3 + R2() * 7 * (R2() < .2 ? 1.6 : 1);
     const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), psxMat({ map: winTex, rep: [Math.max(1, Math.round(w / 3)), Math.max(1, Math.round(h / 5))], emissive: .5, color: tints[i % 4] }));
-    m.position.set(x, h / 2, z); m.rotation.y = -a; scene.add(m);
+    m.position.set(x, h / 2, z); m.rotation.y = -a; W1.add(m);
   }
   // Obelisco
   const obM = psxMat({ map: obTex, rep: [1, 3], color: 0xf0ecf8, emissive: .55 });
-  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(.48, .8, 12, 4, 4), obM); shaft.rotation.y = PI / 4; shaft.position.set(OB.x, 6, OB.z); scene.add(shaft);
-  const tip = new THREE.Mesh(new THREE.ConeGeometry(.48, 1.3, 4), obM); tip.rotation.y = PI / 4; tip.position.set(OB.x, 12.65, OB.z); scene.add(tip);
-  const base = new THREE.Mesh(new THREE.BoxGeometry(3, .6, 3), psxMat({ color: 0x9a90c0 })); base.position.set(OB.x, .3, OB.z); scene.add(base);
-  const win = new THREE.Mesh(new THREE.BoxGeometry(.22, .32, .08), psxMat({ color: 0x1a1236 })); win.position.set(OB.x, 11.2, OB.z + .38); scene.add(win);
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(.48, .8, 12, 4, 4), obM); shaft.rotation.y = PI / 4; shaft.position.set(OB.x, 6, OB.z); W1.add(shaft);
+  const tip = new THREE.Mesh(new THREE.ConeGeometry(.48, 1.3, 4), obM); tip.rotation.y = PI / 4; tip.position.set(OB.x, 12.65, OB.z); W1.add(tip);
+  const base = new THREE.Mesh(new THREE.BoxGeometry(3, .6, 3), psxMat({ color: 0x9a90c0 })); base.position.set(OB.x, .3, OB.z); W1.add(base);
+  const win = new THREE.Mesh(new THREE.BoxGeometry(.22, .32, .08), psxMat({ color: 0x1a1236 })); win.position.set(OB.x, 11.2, OB.z + .38); W1.add(win);
   // luzes da avenida
   const AV = makePoints(70);
   for (let i = 0; i < 70; i++) { const row = i % 2, x = -46 + (i >> 1) * 2.7; AV.pos[i * 3] = x; AV.pos[i * 3 + 1] = 2.6; AV.pos[i * 3 + 2] = row ? -68 : -90; const cc = row ? C_GOLD : new THREE.Color(1, .6, .35); AV.col[i * 3] = cc.r; AV.col[i * 3 + 1] = cc.g; AV.col[i * 3 + 2] = cc.b; AV.size[i] = .9; AV.alpha[i] = .9; }
-  scene.add(AV.pts);
+  W1.add(AV.pts);
 }
+
+/* --------- fase 2: boate fechada dos anos 70, com pista de gelo iluminada, palco do DJ, neon e globo de espelhos --------- */
+// O salão cobre todas as câmeras: paredes em x = ±25 e z = ±30, teto a 14 m. A pista tem o mesmo tamanho da fase 1.
+const NEON = [0xff3db8, 0x3df2ff, 0xffe14d, 0xb04dff, 0x4dff9a, 0xff8a3d];
+const NEON_C = NEON.map(h => new THREE.Color(h));
+const HALL = { x: 25, z: 30, y: 14 };
+const tileTex = canvasTex(32, 32, (g, w, h) => {
+  const R = mulberry(8); g.fillStyle = '#eef6ff'; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 70; i++) { g.fillStyle = R() < .5 ? '#ffffff' : '#d6e8fb'; g.fillRect(Math.floor(R() * w), Math.floor(R() * h), 1 + Math.floor(R() * 2), 1); }
+  g.strokeStyle = 'rgba(255,255,255,.7)'; g.beginPath(); g.arc(R() * w, R() * h, 6 + R() * 12, 0, 1.4); g.stroke();
+  g.fillStyle = '#4a3a78'; g.fillRect(0, 0, w, 1); g.fillRect(0, 0, 1, h); g.fillStyle = '#7d6bb0'; g.fillRect(0, h - 1, w, 1); g.fillRect(w - 1, 0, 1, h);
+});
+const carpetTex = canvasTex(32, 32, (g, w, h) => {
+  noiseFill(g, w, h, '#2a1846', 10, 3); g.fillStyle = 'rgba(255,61,184,.35)';
+  for (let y = 0; y < h; y += 8) for (let x = (y / 8) % 2 ? 4 : 0; x < w; x += 8) { g.fillRect(x + 3, y + 1, 2, 6); g.fillRect(x + 1, y + 3, 6, 2); }
+});
+const hallWallTex = canvasTex(32, 64, (g, w, h) => {
+  noiseFill(g, w, h, '#22123d', 8, 5); g.fillStyle = '#2d1850'; for (let x = 0; x < w; x += 8) g.fillRect(x, 0, 3, h);
+  g.fillStyle = '#170b2b'; g.fillRect(0, h - 10, w, 10);
+});
+const ceilTex = canvasTex(32, 32, (g, w, h) => { noiseFill(g, w, h, '#120922', 6, 2); g.fillStyle = '#26164a'; g.fillRect(0, 15, w, 2); g.fillRect(15, 0, 2, h); });
+const discoSignTex = canvasTex(256, 64, (g, w, h) => {
+  g.fillStyle = '#000'; g.fillRect(0, 0, w, h); g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = 'bold 46px Arial Black, Arial, sans-serif';
+  g.lineJoin = 'round'; g.shadowColor = '#ff3db8'; g.shadowBlur = 10; g.strokeStyle = '#ff3db8'; g.lineWidth = 6; g.strokeText('DISCO', w / 2, h / 2 + 2);
+  g.shadowBlur = 0; g.strokeStyle = '#ffd0f0'; g.lineWidth = 2; g.strokeText('DISCO', w / 2, h / 2 + 2);
+  g.fillStyle = '#3df2ff'; for (const [x, y] of [[18, 14], [238, 50], [30, 52], [226, 12]]) { g.fillRect(x - 6, y, 13, 1); g.fillRect(x, y - 6, 1, 13); }
+}, false);
+// arco-íris de neon com estrelas (paredes do lado)
+const neonArcTex = canvasTex(128, 64, (g, w, h) => {
+  g.fillStyle = '#000'; g.fillRect(0, 0, w, h); g.lineWidth = 3;
+  ['#ff3db8', '#ff8a3d', '#ffe14d', '#4dff9a', '#3df2ff', '#b04dff'].forEach((c, i) => { g.strokeStyle = c; g.shadowColor = c; g.shadowBlur = 6; g.beginPath(); g.arc(w / 2, h + 4, 56 - i * 6, PI, TAU); g.stroke(); });
+  g.shadowBlur = 0; g.fillStyle = '#fff'; for (const [x, y] of [[12, 10], [116, 14], [20, 40], [108, 44]]) { g.fillRect(x - 4, y, 9, 1); g.fillRect(x, y - 4, 1, 9); }
+}, false);
+// faixas do pôr do sol dos anos 70 (parede da frente)
+const neonStripeTex = canvasTex(128, 32, (g, w, h) => {
+  g.fillStyle = '#000'; g.fillRect(0, 0, w, h);
+  ['#ffe14d', '#ff8a3d', '#ff3db8', '#b04dff'].forEach((c, i) => { g.strokeStyle = c; g.lineWidth = 3; g.shadowColor = c; g.shadowBlur = 5; g.beginPath(); for (let x = 0; x <= w; x += 2) { const y = 6 + i * 7 + 3 * Math.sin(x / w * TAU * 2); x ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke(); });
+}, false);
+const crowdDTex = canvasTex(64, 32, (g, w, h) => {
+  const R = mulberry(51); g.clearRect(0, 0, w, h);
+  const tops = ['#ff3db8', '#3df2ff', '#ffe14d', '#b04dff', '#4dff9a', '#ff8a3d', '#ffffff'], skins = ['#f1c7a4', '#c98c63', '#8a5a3c', '#e8b48a'];
+  for (let x = 1; x < w - 4; x += 5 + Math.floor(R() * 2)) {
+    const y0 = 8 + Math.floor(R() * 5), up = R() < .45;
+    g.fillStyle = tops[(R() * tops.length) | 0]; g.fillRect(x, y0 + 5, 4, h - y0 - 5);
+    g.fillStyle = skins[(R() * skins.length) | 0]; g.fillRect(x + 1, y0 + 1, 3, 4);
+    g.fillStyle = R() < .5 ? '#2a1a12' : '#e8c060'; g.fillRect(x, y0, 5, 2);
+    if (up) { g.fillStyle = skins[(R() * skins.length) | 0]; g.fillRect(x + (R() < .5 ? -1 : 4), y0 - 5, 1, 9); }
+  }
+}, false);
+const speakerTex = canvasTex(16, 32, (g, w, h) => {
+  g.fillStyle = '#16101f'; g.fillRect(0, 0, w, h);
+  for (const [cy, r] of [[8, 5], [23, 6]]) { g.fillStyle = '#2c2440'; g.beginPath(); g.arc(8, cy, r, 0, TAU); g.fill(); g.fillStyle = '#0a0612'; g.beginPath(); g.arc(8, cy, r * .45, 0, TAU); g.fill(); }
+});
+const boardDTex = canvasTex(64, 16, (g, w, h) => {
+  g.fillStyle = '#1b0f30'; g.fillRect(0, 0, w, h);
+  const cs = ['#ff3db8', '#3df2ff', '#ffe14d', '#b04dff'];
+  for (let i = 0; i < 8; i++) { g.fillStyle = cs[i % 4]; for (let k = 0; k < 6; k++) g.fillRect(i * 8 + k, 4 + Math.abs(k - 3), 2, 2); }
+  g.fillStyle = '#ff3db8'; g.fillRect(0, 0, w, 2); g.fillStyle = '#3df2ff'; g.fillRect(0, h - 2, w, 2);
+});
+function buildDisco(parent) {
+  const D = { group: new THREE.Group(), t: 0, hype: .6 }, g = D.group; parent.add(g);
+  const add = (m, x = 0, y = 0, z = 0) => { m.position.set(x, y, z); g.add(m); return m; };
+  // salão: quatro paredes e o teto (o chão é feito de placas, sem nada embaixo do gelo, para o reflexo aparecer)
+  const wallM = psxMat({ map: hallWallTex, rep: [10, 2], color: 0xb8a8e0 }), wallM2 = psxMat({ map: hallWallTex, rep: [12, 2], color: 0xb8a8e0 });
+  const ceilM = psxMat({ map: ceilTex, rep: [8, 10], color: 0x9080c0 }), none = psxMat({}); none.visible = false;
+  const box = new THREE.Mesh(new THREE.BoxGeometry(HALL.x * 2, HALL.y, HALL.z * 2), [wallM2, wallM2, ceilM, none, wallM, wallM]); box.material.forEach(m => { m.side = THREE.BackSide; });
+  add(box, 0, HALL.y / 2, 0);
+  const RX = 14, RZ = 8, fm = psxMat({ map: carpetTex, color: 0xa898d0 });
+  const plate = (w, d, x, z) => { const pg = new THREE.PlaneGeometry(w, d, Math.ceil(w / 6), Math.ceil(d / 6)); pg.rotateX(-HP); const uv = pg.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * w / 3, uv.getY(i) * d / 3); add(new THREE.Mesh(pg, fm), x, -.01, z); };
+  plate(HALL.x * 2, HALL.z - RZ, 0, -(HALL.z + RZ) / 2); plate(HALL.x * 2, HALL.z - RZ, 0, (HALL.z + RZ) / 2); plate(HALL.x - RX, RZ * 2, -(HALL.x + RX) / 2, 0); plate(HALL.x - RX, RZ * 2, (HALL.x + RX) / 2, 0);
+  // pista: ladrilhos de gelo iluminados por baixo, 14 x 8, cada um com a sua cor
+  { const NX = 14, NZ = 8, pos = [], uv = [], col = [], nor = [];
+    for (let j = 0; j < NZ; j++) for (let i = 0; i < NX; i++) {
+      const x0 = -RX + i * 2, z0 = -RZ + j * 2, q = [[x0, z0, 0, 1], [x0, z0 + 2, 0, 0], [x0 + 2, z0, 1, 1], [x0 + 2, z0, 1, 1], [x0, z0 + 2, 0, 0], [x0 + 2, z0 + 2, 1, 0]];
+      for (const [x, z, u, v] of q) { pos.push(x, 0, z); uv.push(u, v); col.push(1, 1, 1); nor.push(0, 1, 0); }
+    }
+    const tg = new THREE.BufferGeometry(); tg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); tg.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); tg.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3)); tg.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+    const tm = new THREE.Mesh(tg, psxMat({ map: tileTex, vc: true, opacity: .8, transparent: true, depthWrite: true, emissive: .62 })); tm.renderOrder = 1; add(tm);
+    D.tiles = { geo: tg, NX, NZ, col: tg.attributes.color };
+  }
+  // mureta de neon com tubo luminoso em cima
+  const bm = rx => psxMat({ map: boardDTex, rep: [rx, 1], emissive: .7 });
+  const board = (w, d, x, z, rx) => add(new THREE.Mesh(new THREE.BoxGeometry(w, .55, d), bm(rx)), x, .275, z);
+  board(RX * 2 + .3, .15, 0, -RZ - .07, 14); board(RX * 2 + .3, .15, 0, RZ + .07, 14); board(.15, RZ * 2 + .3, -RX - .07, 0, 8); board(.15, RZ * 2 + .3, RX + .07, 0, 8);
+  D.tubes = [];
+  const tube = (w, d, x, y, z, c) => { const m = add(new THREE.Mesh(new THREE.BoxGeometry(w, .07, d), psxMat({ color: c, emissive: 1 })), x, y, z); D.tubes.push(m); return m; };
+  tube(RX * 2 + .3, .08, 0, .6, -RZ - .07, NEON[0]); tube(RX * 2 + .3, .08, 0, .6, RZ + .07, NEON[1]); tube(.08, RZ * 2 + .3, -RX - .07, .6, 0, NEON[3]); tube(.08, RZ * 2 + .3, RX + .07, .6, 0, NEON[3]);
+  // faixa de neon no alto das paredes, em volta do salão
+  tube(HALL.x * 2 - .4, .1, 0, 11.8, -HALL.z + .2, NEON[0]); tube(HALL.x * 2 - .4, .1, 0, 11.8, HALL.z - .2, NEON[1]); tube(.1, HALL.z * 2 - .4, -HALL.x + .2, 11.8, 0, NEON[2]); tube(.1, HALL.z * 2 - .4, HALL.x - .2, 11.8, 0, NEON[2]);
+  // letreiros de neon
+  const neonPlane = (tex, w, h, x, y, z, ry, op = 1) => { const m = add(new THREE.Mesh(new THREE.PlaneGeometry(w, h), psxMat({ map: tex, additive: true, emissive: 1, fog: false, opacity: op })), x, y, z); m.rotation.y = ry; return m; };
+  D.sign = neonPlane(discoSignTex, 18, 4.5, 0, 9, -HALL.z + .15, 0);
+  for (const sx of [-1, 1]) for (const z of [-14, 0, 14]) neonPlane(neonArcTex, 9, 4.5, sx * (HALL.x - .15), 7.6, z, -sx * HP, .9);
+  neonPlane(neonStripeTex, 30, 5, 0, 8, HALL.z - .15, PI, .9);
+  // palco do DJ no fundo (atrás do público), com caixas de som e um unicórnio DJ
+  const stM = psxMat({ map: boardDTex, rep: [4, 1], emissive: .5 });
+  add(new THREE.Mesh(new THREE.BoxGeometry(10, 2.2, 4.5), stM), 0, 1.1, -16);
+  add(new THREE.Mesh(new THREE.BoxGeometry(3.4, 1.1, 1), psxMat({ color: 0x2a1c48 })), 0, 2.75, -15);
+  for (const sx of [-1, 1]) {
+    add(new THREE.Mesh(new THREE.CylinderGeometry(.42, .42, .06, 10), psxMat({ color: 0x111018 })), sx * .85, 3.33, -15);
+    for (let k = 0; k < 3; k++) add(new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.6, 1.2), psxMat({ map: speakerTex, rep: [1, 1] })), sx * 6.2, 2.2 + .8 + k * 1.6 - .8 + .8, -16.2);
+  }
+  D.eq = []; for (let i = 0; i < 9; i++) { const m = add(new THREE.Mesh(new THREE.BoxGeometry(.24, 1, .05), psxMat({ color: NEON[i % 6], emissive: 1 })), -1.2 + i * .3, 2.4, -14.47); m.geometry.translate(0, .5, 0); D.eq.push(m); }
+  { const dj = new THREE.Group(), coat = psxMat({ color: 0xf2e6ff }), suit = psxMat({ color: 0xff5cc8 });
+    const body = new THREE.Mesh(new THREE.BoxGeometry(.7, .9, .45), suit); body.position.y = .45; dj.add(body);
+    const head = new THREE.Mesh(new THREE.BoxGeometry(.5, .5, .62), coat); head.position.set(0, 1.18, .08); dj.add(head);
+    const horn = new THREE.Mesh(new THREE.ConeGeometry(.07, .4, 5), psxMat({ map: hornTex, emissive: .5 })); horn.position.set(0, 1.55, .2); horn.rotation.x = .35; dj.add(horn);
+    const mane = new THREE.Mesh(new THREE.BoxGeometry(.18, .55, .5), psxMat({ color: NEON[3], emissive: .4 })); mane.position.set(0, 1.25, -.18); dj.add(mane);
+    const phones = new THREE.Mesh(new THREE.TorusGeometry(.32, .05, 4, 10, PI), psxMat({ color: 0x222222 })); phones.position.set(0, 1.3, .05); phones.rotation.y = HP; dj.add(phones);
+    D.djArms = [-1, 1].map(sx => { const a = new THREE.Mesh(new THREE.BoxGeometry(.16, .7, .16), suit); a.geometry.translate(0, -.32, 0); a.position.set(sx * .43, .82, 0); dj.add(a); return a; });
+    dj.position.set(0, 2.2, -16.2); g.add(dj); D.dj = dj; D.djHead = head;
+  }
+  // público dançando, de pé atrás da mureta (lado do palco) e junto às paredes dos lados
+  D.crowd = [];
+  const crowd = (w, x, y0, z, ry, ph) => { const y = y0 + 1.1, m = add(new THREE.Mesh(new THREE.PlaneGeometry(w, 2.2), psxMat({ map: crowdDTex, rep: [w / 4.4, 1], emissive: .35, side: DS })), x, y, z); m.rotation.y = ry; m.userData = { y, ph }; D.crowd.push(m); };
+  add(new THREE.Mesh(new THREE.BoxGeometry(27, .6, 1.4), psxMat({ map: boardDTex, rep: [12, 1], emissive: .4 })), 0, .3, -11.4);
+  crowd(26, 0, 0, -9.8, 0, 0); crowd(26, .9, .6, -11.4, 0, .5);
+  for (const sx of [-1, 1]) crowd(30, sx * 23.4, 0, 0, -sx * HP, sx > 0 ? .25 : .75);
+  // treliça do teto com refletores que balançam (cones de luz) e lasers saindo do palco
+  const trussM = psxMat({ color: 0x3a3060 });
+  for (const z of [-8, 8]) add(new THREE.Mesh(new THREE.BoxGeometry(34, .25, .25), trussM), 0, 12.4, z);
+  for (const x of [-12, 12]) add(new THREE.Mesh(new THREE.BoxGeometry(.25, .25, 22), trussM), x, 12.4, 0);
+  D.spots = [];
+  [[-12, -8], [12, -8], [-12, 8], [12, 8], [0, -8], [0, 8]].forEach(([x, z], i) => {
+    const pivot = new THREE.Group(); pivot.position.set(x, 12.2, z); g.add(pivot);
+    const cg = new THREE.ConeGeometry(2.2, 12, 12, 1, true); cg.translate(0, -6, 0);
+    const cone = new THREE.Mesh(cg, psxMat({ color: NEON[i % 6], additive: true, emissive: 1, opacity: .1, side: DS, fog: false })); cone.renderOrder = 7; pivot.add(cone);
+    const can = new THREE.Mesh(new THREE.CylinderGeometry(.25, .35, .5, 8), psxMat({ color: 0x222233 })); pivot.add(can);
+    D.spots.push({ pivot, cone, ph: i * 1.3, sx: x < 0 ? 1 : -1 });
+  });
+  D.lasers = [];
+  for (let i = 0; i < 8; i++) {
+    const lg = new THREE.BoxGeometry(.07, .07, 40); lg.translate(0, 0, 20);
+    const l = new THREE.Mesh(lg, psxMat({ color: [0x4dff9a, 0x3df2ff, 0xff3db8, 0x4dff9a][i % 4], additive: true, emissive: 1, opacity: .5, fog: false })); l.renderOrder = 7;
+    l.position.set(i < 4 ? -2.2 : 2.2, 3.4, -14.6); g.add(l); D.lasers.push(l);
+  }
+  // globo de espelhos: facetas que brilham, feixes que giram com ele e pontos de luz nas paredes
+  { const ball = new THREE.Group(), ig = new THREE.IcosahedronGeometry(.95, 2), cols = [], R = mulberry(3);
+    for (let i = 0; i < ig.attributes.position.count / 3; i++) { const v = .55 + R() * .45; for (let k = 0; k < 3; k++) cols.push(v, v, v * 1.05); }
+    ig.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
+    const bm = new THREE.Mesh(ig, psxMat({ vc: true, emissive: .55, color: 0xe8f0ff })); ball.add(bm);
+    const cap = new THREE.Mesh(new THREE.CylinderGeometry(.12, .12, .2, 6), psxMat({ color: 0x8888aa })); cap.position.y = 1; ball.add(cap);
+    const rod = new THREE.Mesh(new THREE.CylinderGeometry(.025, .025, 1, 4), psxMat({ color: 0x9a90b8 })); rod.geometry.translate(0, .5, 0); g.add(rod);
+    const beams = new THREE.Group(); ball.add(beams);
+    const dirs = []; for (let i = 0; i < 44; i++) { const y = -.92 + 1.5 * (i + .5) / 44, r = Math.sqrt(1 - y * y), a = i * 2.39996; dirs.push(new THREE.Vector3(Math.cos(a) * r, y, Math.sin(a) * r)); }
+    const bl = dirs.map((d, i) => {
+      const geo = new THREE.BoxGeometry(.05, .05, 1); geo.translate(0, 0, .5);
+      const m = new THREE.Mesh(geo, psxMat({ color: i % 5 === 0 ? NEON[i % 6] : 0xfff6ff, additive: true, emissive: 1, opacity: 0, fog: false })); m.renderOrder = 8;
+      m.lookAt(d); beams.add(m); return m;
+    });
+    const DOTS = makePoints(160); DOTS.pts.renderOrder = 8; g.add(DOTS.pts);
+    const ddirs = []; for (let i = 0; i < DOTS.n; i++) { const y = -.95 + 1.6 * R(), r = Math.sqrt(Math.max(0, 1 - y * y)), a = R() * TAU; ddirs.push(new THREE.Vector3(Math.cos(a) * r, y, Math.sin(a) * r)); const c = R() < .8 ? C_WHITE : NEON_C[(R() * 6) | 0]; DOTS.col[i * 3] = c.r; DOTS.col[i * 3 + 1] = c.g; DOTS.col[i * 3 + 2] = c.b; DOTS.size[i] = .22 + R() * .2; DOTS.alpha[i] = 0; }
+    ball.position.set(0, 11.2, 0); g.add(ball);
+    D.ball = { g: ball, mesh: bm, rod, beams: bl, dirs, DOTS, ddirs, spin: 0, home: new THREE.Vector3(0, 11.2, 0), pos: new THREE.Vector3(0, 11.2, 0), cols: ig.attributes.color, R };
+  }
+  return D;
+}
+// ponto onde um raio que sai do globo bate no salão (paredes, teto ou chão)
+const _rd = new THREE.Vector3();
+function hallHit(o, d) {
+  let t = 1e9;
+  if (d.x > 1e-4) t = Math.min(t, (HALL.x - o.x) / d.x); else if (d.x < -1e-4) t = Math.min(t, (-HALL.x - o.x) / d.x);
+  if (d.z > 1e-4) t = Math.min(t, (HALL.z - o.z) / d.z); else if (d.z < -1e-4) t = Math.min(t, (-HALL.z - o.z) / d.z);
+  if (d.y > 1e-4) t = Math.min(t, (HALL.y - o.y) / d.y); else if (d.y < -1e-4) t = Math.min(t, (0.02 - o.y) / d.y);
+  return t;
+}
+// um quadro da boate: t em segundos no tempo da música (batida = t / BEAT); hype 0..1 (intensidade das luzes);
+// ball 0..1: globo descendo (0 = no alto, girando devagar; 1 = embaixo, com feixes para todos os lados)
+function discoUpdate(D, t, dt, hype, ballW, ballAt) {
+  if (!D) return;
+  const beat = t / BEAT, bp = ((beat % 1) + 1) % 1, pulse = Math.exp(-bp * 6), bi = Math.floor(beat);
+  // ladrilhos: padrões que mudam a cada compasso, acendendo no tempo
+  { const T = D.tiles, c = T.col.array, mode = Math.floor(beat / 4) % 4;
+    for (let j = 0; j < T.NZ; j++) for (let i = 0; i < T.NX; i++) {
+      let h, on;
+      if (mode === 0) { h = ((i + j) % 2 + bi) % 6; on = (i + j + bi) % 2 === 0 ? 1 : .35; }
+      else if (mode === 1) { const r = Math.hypot(i - 6.5, j - 3.5); h = Math.floor(r + beat * 2) % 6; on = .45 + .55 * (Math.floor(r - beat * 2) % 2 === 0 ? 1 : 0); }
+      else if (mode === 2) { h = (i + bi) % 6; on = Math.abs(((i - beat * 4) % 14 + 14) % 14 - 7) < 2.2 ? 1 : .35; }
+      else { const s = mulberryHash(i * 31 + j * 17 + bi * 7); h = Math.floor(s * 6); on = s < .5 ? 1 : .3; }
+      const C = NEON_C[h], k = on > .5 ? (.55 + .45 * pulse) * (.5 + .5 * hype) : .12, o = (j * T.NX + i) * 18;
+      const r = .2 + (C.r - .2) * k, gg = .15 + (C.g - .15) * k, b = .34 + (C.b - .34) * k;
+      for (let v = 0; v < 6; v++) { c[o + v * 3] = r; c[o + v * 3 + 1] = gg; c[o + v * 3 + 2] = b; }
+    }
+    T.col.needsUpdate = true;
+  }
+  for (const m of D.crowd) m.position.y = m.userData.y + .1 * Math.abs(Math.sin((beat + m.userData.ph) * PI));
+  D.eq.forEach((m, i) => { m.scale.y = .15 + (.5 + .5 * Math.sin(t * 7 + i * 1.7)) * (.4 + .6 * pulse) * (.5 + hype); });
+  D.djHead.rotation.x = .18 * pulse; D.djArms[0].rotation.x = -.6 - .2 * Math.sin(t * 4); D.djArms[1].rotation.x = -.9 + .5 * Math.sin(beat * PI); D.dj.rotation.y = .15 * Math.sin(t * .7);
+  for (const s of D.spots) { s.pivot.rotation.set(.45 * Math.sin(t * .6 + s.ph), 0, s.sx * (.35 + .25 * Math.sin(t * .45 + s.ph * 2))); setOpacity(s.cone, (.05 + .07 * hype) * (1 - .6 * ballW)); }
+  D.lasers.forEach((l, i) => { const a = (i % 4 - 1.5) * .35 + .5 * Math.sin(t * 1.3 + (i < 4 ? 0 : PI)); l.rotation.set(-.08 - .12 * Math.sin(t * .9 + i), a, 0); l.visible = hype > .55; setOpacity(l, .35 * (hype - .5) * 2); });
+  D.sign.material.uniforms.uOpacity.value = .82 + .18 * pulse;
+  // globo
+  const B = D.ball; B.spin += dt * (.5 + 1.2 * ballW); B.g.rotation.y = B.spin;
+  if (ballAt) B.pos.copy(ballAt); else B.pos.copy(B.home);
+  B.g.position.copy(B.pos); B.rod.position.set(B.pos.x, B.pos.y + .95, B.pos.z); B.rod.scale.y = Math.max(.05, HALL.y - B.pos.y - .95);
+  { const c = B.cols.array; for (let i = 0; i < 6; i++) { const f = (Math.random() * c.length / 9 | 0) * 9, v = Math.random() < .5 ? 1.25 : .6; for (let k = 0; k < 9; k++) c[f + k] = v; } B.cols.needsUpdate = true; }
+  B.g.updateMatrixWorld(true);
+  D.flash = Math.max(0, (D.flash || 0) - dt * 1.1);
+  const bw = Math.max(sm(.15, 1, ballW), D.flash), dw = Math.max(.25 + .75 * sm(0, .6, ballW), D.flash);
+  B.beams.forEach((m, i) => {
+    m.visible = bw > .01; if (!m.visible) return;
+    _rd.copy(B.dirs[i]).applyAxisAngle(DOWN_Y, B.spin); const L = hallHit(B.pos, _rd); m.scale.z = L;
+    setOpacity(m, bw * (.22 + .14 * Math.sin(t * 9 + i)));
+  });
+  const P = B.DOTS;
+  for (let i = 0; i < P.n; i++) {
+    _rd.copy(B.ddirs[i]).applyAxisAngle(DOWN_Y, B.spin); const L = hallHit(B.pos, _rd);
+    P.pos[i * 3] = B.pos.x + _rd.x * L * .985; P.pos[i * 3 + 1] = B.pos.y + _rd.y * L * .985; P.pos[i * 3 + 2] = B.pos.z + _rd.z * L * .985;
+    P.alpha[i] = dw * (.55 + .45 * Math.sin(t * 5 + i));
+  }
+  P.geo.attributes.position.needsUpdate = true; P.geo.attributes.palpha.needsUpdate = true;
+}
+const DOWN_Y = new THREE.Vector3(0, 1, 0);
+function mulberryHash(n) { let a = n * 2654435761 >>> 0; a ^= a >>> 15; a = Math.imul(a, 2246822519) >>> 0; a ^= a >>> 13; return (a >>> 0) / 4294967296; }
+let WORLD2 = null;
+// mostra o mundo da fase atual (a boate só é montada na primeira vez) e ajusta a névoa
+function applyWorld() {
+  if (PHI && !WORLD2) WORLD2 = buildDisco(scene);
+  WORLD1.visible = !PHI; if (WORLD2) WORLD2.group.visible = !!PHI;
+  FOG.set(PHI ? 0x1c0c36 : 0x2b1f63); U.uFogNear.value = PHI ? 24 : 16; U.uFogFar.value = PHI ? 95 : 125;
+}
+// as cenas separadas (roda e palcos) também têm as duas fases
+function worldIn(o) {
+  if (PHI && !o.disco) o.disco = buildDisco(o.scene);
+  o.world.group.visible = !PHI; if (o.disco) o.disco.group.visible = !!PHI;
+}
+/* --------- globo de espelhos: na dupla, desce sobre o casal na sequência final a dois do último bloco --------- */
+const BALL = { target: 0, w: 0, at: new THREE.Vector3(0, 11.2, 0) };
+function ballUpdate(dt) {
+  if (!WORLD2) return;
+  BALL.w += (BALL.target - BALL.w) * (1 - Math.exp(-dt * (BALL.target > BALL.w ? .8 : 1.5)));
+  const w = BALL.w, h = WORLD2.ball.home, k = sm(0, .45, w);
+  BALL.at.set(lerp(h.x, PAIR.pos.x, k), lerp(h.y, 4.7, easeIO(w)), lerp(h.z, PAIR.pos.z, k));
+}
+// intensidade das luzes da boate em cada parte da música
+function hypeOf(mi) { const s = sectionOf(mi); return s.k === 'block' ? .7 + .15 * s.b + (s.m >= 6 ? .15 : 0) : s.k === 'intro' ? .35 + .1 * s.i : s.k === 'break' ? .5 : s.k === 'outro' ? .8 - .15 * s.i : .5; }
 
 /* ============================== poses e manobras: clipes feitos à mão ============================== */
 // Cada manobra é um clipe de poses-chave em tempos (batidas). A primeira chave de todo clipe é a pose em que
@@ -1236,7 +1624,8 @@ const JP = [
   { tA: .5, tL: 3.4, rot: 12, h: 7.2, cap: 6, air: { ...A(2.9, 0, -.1), lL: [.03, 0, .05], lR: [.25, 2.7, .35], lean: 0, hd: -.3, sq: 1.08 } },
   { tA: .45, tL: 3.5, rot: 6, h: 30, flat: 1, cap: 8, air: { ...A(2.5, .2, -.1), lL: [.55, 0, .1], lR: [.55, 0, .1], lean: -.15, hd: -.4, sq: 1.05, tail: 1 } }
 ];
-const JUMPS = JP.map(j => Object.assign({ t0: j.tA / 4, t1: j.tL / 4 }, j));
+const JUMPS1 = JP.map(j => Object.assign({ t0: j.tA / 4, t1: j.tL / 4 }, j));
+let JUMPS = JUMPS1;
 function jumpClip(J) {
   const air = J.tL - J.tA, K = [];
   const add = (t, o) => { if (!K.length || t > K[K.length - 1][0] + .05) K.push([t, o]); };
@@ -1257,8 +1646,8 @@ function jumpClip(J) {
   });
 }
 const C_JUMP = JUMPS.map(jumpClip);
-const CLIPS = [C_GLIDE, C_SPIN, C_JUMP];
-const MOVE_SPD = [[3.7, 3.9, 3.4, 3.1, 2.6, 2.2], [.7, .5, .6, .5, .3, .25], [4.2, 4.2, 4.3, 4.3, 3.2, 2.6]];
+const CLIPS1 = [C_GLIDE, C_SPIN, C_JUMP]; let CLIPS = CLIPS1;
+const MOVE_SPD1 = [[3.7, 3.9, 3.4, 3.1, 2.6, 2.2], [.7, .5, .6, .5, .3, .25], [4.2, 4.2, 4.3, 4.3, 3.2, 2.6]]; let MOVE_SPD = MOVE_SPD1;
 
 /* --------- poses finais de cada bloco --------- */
 const PED_H = 1.3;
@@ -1310,7 +1699,7 @@ const C_BAIL = clip(1.5, [
 // frente, y = altura, yaw = para onde olha. As coreografias são escritas com A à esquerda; quando os dois terminam
 // trocados de lado (Axel cruzado), tudo passa a ser espelhado.
 const DUO = { on: true };   // no protótipo dá para desligar e comparar com a versão solo
-const DUO_NAMES = {
+const DUO_NAMES1 = {
   pt: [['Ciranda de Purpurina', 'Roda-Gigante de Arco-Íris', 'Coração de Algodão-Doce'],
        ['Tango da Via Láctea', 'Axel Portenho Cruzado', 'Constelação de Bombons'],
        ['Torre Chifre-Broca', 'Lua de Mel de Pantufa', 'Big Bang de Pelúcia']],
@@ -1318,6 +1707,7 @@ const DUO_NAMES = {
        ['Tango de la Vía Láctea', 'Axel Porteño Cruzado', 'Constelación de Bombones'],
        ['Torre Cuerno-Taladro', 'Luna de Miel en Pantuflas', 'Big Bang de Peluche']]
 };
+let DUO_NAMES = DUO_NAMES1;
 const duoNameOf = (b, i) => DUO_NAMES[OPT.lang][b][i];
 const lerpA = (a, b, t) => a + wrapA(b - a) * t;
 const MIR_KEYS = ['side', 'tw', 'hy', 'yaw', 'spin', 'tx'];
@@ -1331,7 +1721,7 @@ function mirrorClip(c) {
 const SIDE = .6;   // lado a lado: distância de cada um até o ponto do casal
 const dslot = (x, z = 0, yaw = 0, y = 0) => ({ x, z, yaw, y });
 const lookTo = (x, z) => Math.atan2(x, z);   // yaw para olhar na direção (x, z)
-const DUO_MOVES = {};   // chave 'tipo.nível' da manobra solo que ela substitui
+const DUO_MOVES1 = {}; let DUO_MOVES = DUO_MOVES1;   // chave 'tipo.nível' da manobra solo que ela substitui
 { // bloco 1 · 5ª: Ciranda de Purpurina (no lugar do Tornado de Purpurina): de mãos dadas, um de frente para o outro, giram e sobem
   const R0 = .72, HOLD = { lean: -.16, hd: -.22, side: 0, tw: 0, hy: 0, ...A(1.42, 1.42, -.08), lL: [.05, 0, .1], lR: [.85, -1.15, .35], tail: .8, sq: 1.04 };
   const c = clip(4, [[.5, { lean: .1, hd: 0, ...A(1.1, 1.2, -.3), lL: [.08, .15, .5], lR: [.08, .15, .5], sq: .92 }], [1, HOLD], [3.3, HOLD], [3.7, { lean: .3, hd: -.2, ...A(1.2, .6, -.2), lL: [.06, .1, .4], lR: [.4, -1.0, .2], sq: .96 }], [4, SPIN_END]]);
@@ -1404,7 +1794,7 @@ const DUO_MOVES = {};   // chave 'tipo.nível' da manobra solo que ela substitui
 const duoRot = (now, P, w) => { const d = Math.max(0, now - P.poseT); return w * (d - .8 * (1 - Math.exp(-d / .8))); };
 const DPREP_A = { lean: .3, hd: -.1, side: 0, tw: 0, hy: 0, ...A(1.1, 1.3, -.7), lL: [.45, HP, .9], lR: [.45, HP, .9], tail: .4, sq: .9 };
 const DPREP_B = { lean: .35, hd: 0, side: 0, tw: 0, hy: 0, ...A(.8, -.6, -.3), lL: [.5, HP, 1.1], lR: [.5, HP, 1.1], tail: .4, sq: .88 };
-const DUO_POSES = [];
+const DUO_POSES1 = []; let DUO_POSES = DUO_POSES1;
 { // bloco 1: Coração de Algodão-Doce: no mesmo pedestal de gelo, de frente um para o outro, os braços em arco formam um coração
   const HEART = { lean: .22, hd: -.3, side: 0, tw: 0, hy: 0, aL: [2.45, 1.05, -1.0], aR: [2.6, .7, -.8], lL: [.03, 0, .05], lR: [1.45, -HP, .15], tail: 1, sq: 1 };
   const fin = clip(4, [[.25, { ...HEART, sq: .9 }], [.6, HEART], [4, HEART]], () => ({ ty: PED_H }));
@@ -1452,9 +1842,401 @@ function duoClip(kind, b, lvl, landed, r) {
   return PAIR.sideA < 0 ? mirrorClip(c) : c;
 }
 
+/* ============================== FASE 2: DISCOTECA ============================== */
+
+// mesmo mapa da fase 1 (6 manobras por bloco, nomes nas duas últimas e na pose), com outra ordem de deslizes, giros e saltos
+const SEQ_D = [
+  [[0, 1], [2, 1], [1, 1], [0, 2], [2, 5], [1, 5]],
+  [[0, 3], [1, 2], [2, 2], [1, 3], [0, 5], [2, 6]],
+  [[0, 4], [2, 3], [1, 4], [2, 4], [1, 6], [0, 6]]
+];
+// notas com mais contratempo (o "e" de cada tempo), como a guitarra da discoteca
+const PATTERNS_D = [
+  ['L...R...', 'L.R.L...', 'L...R.B.', 'L.R...R.', 'L.R.L.R.', 'L..RL.B.', 'L.R.L.R.', 'H.......'],
+  ['L.R.L.R.', 'LR..RL..', 'L.RL.RB.', 'L.R.LRL.', 'LR.RL.R.', 'L.RLR.B.', 'LRL.R.B.', 'H.......'],
+  ['LR.LR.B.', 'L.RLRL.R', 'LRL.RLB.', 'LR.RLRB.', 'LRLRL.B.', 'LRLR.RLB', 'LR.LRLB.', 'H.......']
+];
+const NAMES_D = {
+  pt: [
+    ['Mortal Boogie de Lantejoula', 'Pião Globo de Espelhos', 'Febre de Sábado de Pelúcia'],
+    ['Espiral Neon Purpurinada', 'Salto ao Globo de Espelhos', 'Espacate Boogie de Purpurina'],
+    ['Moinho de Pantufa Cintilante', 'Escorregão Arco-Íris de Neon', 'Apoteose da Discoteca Galáctica']
+  ],
+  es: [
+    ['Mortal Boogie de Lentejuelas', 'Trompo Bola de Espejos', 'Fiebre de Sábado de Peluche'],
+    ['Espiral Neón Brillantinada', 'Salto a la Bola de Espejos', 'Spagat Boogie de Brillantina'],
+    ['Molino de Pantufla Centelleante', 'Patinazo Arcoíris de Neón', 'Apoteosis de la Discoteca Galáctica']
+  ]
+};
+/* --------- remada da discoteca: braços dobrados balançando no tempo, quadril e cabeça junto --------- */
+const SKD = [
+  { lean: .3, side: -.1, tw: -.2, hd: -.05, hy: .18, aL: [.95, 1.35, -1.55], aR: [.75, -.55, -1.25], lL: [.06, .15, .52], lR: [.14, -.5, .42], tail: .35 },
+  { lean: .36, side: .14, tw: .22, hd: -.15, hy: -.18, aL: [.75, -.55, -1.25], aR: [.95, 1.35, -1.55], lL: [.65, -1.1, .08], lR: [.06, .15, .64], tail: .5 },
+  { lean: .3, side: .1, tw: .2, hd: -.05, hy: -.18, aL: [.95, 1.35, -1.55], aR: [.75, -.55, -1.25], lL: [.14, -.5, .42], lR: [.06, .15, .52], tail: .35 },
+  { lean: .36, side: -.14, tw: -.22, hd: -.15, hy: .18, aL: [.75, -.55, -1.25], aR: [.95, 1.35, -1.55], lL: [.06, .15, .64], lR: [.65, -1.1, .08], tail: .5 }
+];
+const C_SKATE_D = clip(4, [[0, SKD[0]], [1, SKD[1]], [2, SKD[2]], [3, SKD[3]], [4, SKD[0]]], null, true);
+// braço apontando para o alto na diagonal (o dedo da discoteca) e a mão na cintura
+const PT_UP = [2.55, .15, -.05], PT_DN = [.55, 2.35, -.05], HIP = [.55, -.35, -1.9];
+/* --------- deslizes --------- */
+const C_GLIDE_D = [
+  // 1 · hustle: quadril de um lado para o outro e as mãos rodando na frente do peito
+  clip(4, [
+    [.5, { lean: .22, side: .2, tw: .15, hd: -.1, aL: [1.15, 1.85, -1.95], aR: [.95, 1.95, -1.55], lL: [.06, .1, .55], lR: [.1, .2, .3] }],
+    [1, { side: -.2, tw: -.15, aL: [.95, 1.95, -1.55], aR: [1.15, 1.85, -1.95], lL: [.1, .2, .3], lR: [.06, .1, .55] }],
+    [1.5, { side: .2, tw: .15, aL: [1.15, 1.85, -1.95], aR: [.95, 1.95, -1.55], lL: [.06, .1, .55], lR: [.1, .2, .3] }],
+    [2, { side: -.2, tw: -.15, aL: [.95, 1.95, -1.55], aR: [1.15, 1.85, -1.95], lL: [.1, .2, .3], lR: [.06, .1, .55] }],
+    [2.5, { side: .22, tw: .2, hy: .3, aL: [2.55, -.1, -.05], aR: HIP, lL: [.06, .1, .55], lR: [.1, .2, .3] }],
+    [3.25, { side: -.22, tw: -.2, hy: -.3, aL: HIP, aR: [2.55, -.1, -.05], lL: [.1, .2, .3], lR: [.06, .1, .55] }],
+    [4, { lean: .32, side: 0, tw: 0, hy: 0, ...A(.85, .6, -1.0), lL: [.06, .15, .42], lR: [.06, .15, .42] }]
+  ]),
+  // 2 · parada de ônibus: chute para a frente e palma, alternando as pernas
+  clip(4, [
+    [.5, { lean: .15, side: .05, hd: -.1, ...A(1.0, 1.0, -1.1), lL: [.06, .1, .5], lR: [1.15, HP, .1] }],
+    [1, { lean: .1, ...A(1.45, 1.72, -.25), lL: [.06, .1, .45], lR: [.2, HP, .4], sq: .95 }],
+    [1.5, { lean: .15, side: -.05, ...A(1.0, 1.0, -1.1), lL: [1.15, HP, .1], lR: [.06, .1, .5], sq: 1 }],
+    [2, { lean: .1, ...A(1.45, 1.72, -.25), lL: [.2, HP, .4], lR: [.06, .1, .45], sq: .95 }],
+    [2.5, { lean: .05, side: .1, aL: [2.6, .2, -.1], aR: [2.6, .2, -.1], lL: [.06, .1, .5], lR: [.7, 0, .15], sq: 1.04 }],
+    [3, { lean: .1, ...A(1.45, 1.72, -.25), lL: [.06, .1, .45], lR: [.06, .1, .45], sq: .95 }],
+    [3.5, { lean: .05, side: -.1, aL: [2.6, .2, -.1], aR: [2.6, .2, -.1], lL: [.7, 0, .15], lR: [.06, .1, .5], sq: 1.04 }],
+    [4, { lean: .3, side: 0, ...A(.9, .5, -.9), lL: [.06, .15, .42], lR: [.06, .15, .42], sq: 1 }]
+  ]),
+  // 3 · pato com o dedo para o alto: agachado num pé, a outra perna esticada para a frente
+  clip(4, [
+    [.6, { lean: .5, hd: 0, ...A(.8, 1.2, -1.3), lL: [.6, HP, 1.0], lR: [.6, HP, .9], sq: .92 }],
+    [1.3, { lean: .45, hd: -.35, side: .1, aL: [1.5, 1.6, -.1], aR: PT_UP, lL: [1.3, HP, 2.35], lR: [1.42, HP, .05], tail: .7, sq: 1 }],
+    [2.2, { aR: [2.75, -.2, -.05], aL: [1.4, 1.5, -.3], side: .15 }],
+    [3.1, { aR: PT_UP, aL: [1.5, 1.6, -.1], side: .1 }],
+    [3.6, { lean: .4, hd: -.15, ...A(1.2, .8, -.6), lL: [.5, HP, .8], lR: [.4, HP, .6], side: 0, sq: .95 }],
+    [4, { lean: .32, hd: -.12, ...A(.9, .4, -.35), lL: [.06, .15, .42], lR: [.06, .15, .42], sq: 1 }]
+  ]),
+  // 4 · robô de costas: patina de costas com braços mecânicos e termina virando de frente
+  clip(4, [
+    [.5, { lean: .1, hd: 0, aL: [HP, HP, -HP], aR: [.3, 0, -HP], lL: [.1, .2, .5], lR: [.1, .2, .5], yaw: PI }],
+    [1, { aL: [.3, 0, -HP], aR: [HP, HP, -HP], hy: .5, tw: .2 }],
+    [1.5, { aL: [HP, 0, -HP], aR: [HP, 0, -HP], hy: -.5, tw: -.2 }],
+    [2, { aL: [HP, HP, -HP], aR: [.3, 0, -HP], hy: .5, tw: .2, side: .15 }],
+    [2.5, { aL: [2.6, 0, -.05], aR: [2.6, 0, -.05], hy: 0, tw: 0, side: -.15, sq: 1.04 }],
+    [3, { lean: .2, aL: [HP, HP, -HP], aR: [HP, HP, -HP], side: 0, sq: 1 }],
+    [3.6, { lean: .3, hd: -.15, ...A(1.2, .3, -.5), yaw: TAU }],
+    [4, { lean: .34, hd: -.12, ...A(.85, .4, -.35), lL: [.06, .15, .42], lR: [.06, .15, .42], yaw: TAU }]
+  ]),
+  // 5 · Espiral Neon Purpurinada: espiral com o dedo para o alto, ondulando pela pista
+  clip(4, [
+    [.5, { lean: .6, hd: -.3, ...A(1.2, .3, -.3), lL: [.05, 0, .2], lR: [1.0, -HP, .35], sq: .94 }],
+    [1.1, { lean: 1.1, hd: -.95, aL: [1.4, 1.4, -.1], aR: [2.4, .3, -.05], lL: [.03, 0, .06], lR: [1.95, -HP, .03], tail: .95, sq: 1.03 }],
+    [2, { aR: [2.7, 1.0, -.05], aL: [1.2, 1.2, -.2], tw: .25, side: -.12 }],
+    [2.8, { aR: [2.4, -.2, -.05], aL: [1.6, 1.5, -.1], tw: -.25, side: .12 }],
+    [3.4, { lean: 1.0, aR: PT_UP, tw: 0, side: 0 }],
+    [4, { lean: .45, hd: -.3, ...A(1.3, .3, -.3), lL: [.06, 0, .3], lR: [.7, -HP, .4], tail: .6, sq: 1 }]
+  ], tb => { const k = sm(.9, 1.4, tb) * (1 - sm(3.4, 3.95, tb)); return { tx: .9 * Math.sin(TAU * (tb - 1) / 2.4) * k, yaw: -.5 * Math.cos(TAU * (tb - 1) / 2.4) * k }; }),
+  // 6 · Escorregão Arco-Íris de Neon: cai num espacate deslizando, braços em V, e levanta num pulo
+  clip(4, [
+    [.5, { lean: .4, hd: -.1, ...A(1.1, .8, -.8), lL: [.4, HP, .9], lR: [.3, -HP, .7], sq: .9 }],
+    [1.05, { lean: .05, hd: -.45, aL: [2.6, .25, -.05], aR: [2.6, .25, -.05], lL: [1.55, HP, .02], lR: [1.55, -HP, .05], tail: 1, sq: 1 }],
+    [2.2, { aL: [2.8, .5, -.05], aR: [2.4, -.1, -.05], hy: .3, side: .08 }],
+    [3.0, { aL: [2.4, -.1, -.05], aR: [2.8, .5, -.05], hy: -.3, side: -.08 }],
+    [3.45, { lean: .5, hd: -.1, ...A(1.4, .6, -.6), lL: [.6, HP, 1.4], lR: [.5, -HP, .9], hy: 0, side: 0, sq: .88 }],
+    [3.75, { lean: .2, hd: -.3, ...A(2.5, .3, -.2), lL: [.1, .1, .2], lR: [.3, -HP, .3], sq: 1.1 }],
+    [4, { lean: .34, hd: -.12, ...A(1.0, .4, -.35), lL: [.06, .15, .42], lR: [.06, .15, .42], sq: 1 }]
+  ], tb => ({ ty: .45 * bump(seg(tb, 3.45, 3.95)) }))
+];
+/* --------- giros --------- */
+const C_SPIN_D = [
+  // 1 · pirueta com o dedo para o alto
+  clip(4, [
+    [.5, SPIN_IN],
+    [1, { lean: .08, tw: 0, side: .08, hd: -.25, aL: HIP, aR: PT_UP, lL: [.03, 0, .05], lR: [.45, 2.2, .9], sq: 1.04 }],
+    [3.2, { aR: [2.7, -.1, -.05] }],
+    [3.6, SPIN_OUT], [4, SPIN_END]
+  ], spinRoot(2)),
+  // 2 · pirueta sentada com mãos de jazz
+  clip(4, [
+    [.5, SPIN_IN],
+    [1.1, { lean: .55, tw: 0, side: 0, hd: .05, aL: [2.0, .9, -.5], aR: [2.0, .9, -.5], lL: [1.15, HP, 2.05], lR: [1.5, HP, .05], sq: .9, tail: .4 }],
+    [1.6, { aL: [1.6, .5, -.3], aR: [1.6, .5, -.3] }],
+    [2.1, { aL: [2.0, .9, -.5], aR: [2.0, .9, -.5] }],
+    [2.6, { aL: [1.6, .5, -.3], aR: [1.6, .5, -.3] }],
+    [3.2, { aL: [2.0, .9, -.5], aR: [2.0, .9, -.5] }],
+    [3.6, SPIN_OUT], [4, SPIN_END]
+  ], spinRoot(3)),
+  // 3 · pirueta inclinada para trás, os braços desenhando círculos
+  clip(4, [
+    [.5, SPIN_IN],
+    [1.1, { lean: -.65, tw: 0, side: 0, hd: -.6, aL: [2.6, 1.2, -.3], aR: [1.8, -.4, -.2], lL: [.03, 0, .06], lR: [.9, -HP, 1.4], tail: .95, sq: 1 }],
+    [1.8, { aL: [1.8, -.4, -.2], aR: [2.6, 1.2, -.3] }],
+    [2.5, { aL: [2.6, 1.2, -.3], aR: [1.8, -.4, -.2] }],
+    [3.2, { aL: [2.3, .4, -.2], aR: [2.3, .4, -.2] }],
+    [3.6, SPIN_OUT], [4, SPIN_END]
+  ], spinRoot(3)),
+  // 4 · camelo de avião: tronco deitado, braços abertos como asas que se inclinam
+  clip(4, [
+    [.5, SPIN_IN],
+    [1.1, { lean: 1.45, tw: 0, side: .3, hd: -1.1, aL: [HP, 0, 0], aR: [HP, 0, 0], lL: [.03, 0, .06], lR: [1.62, -HP, .04], tail: .8, sq: 1 }],
+    [1.9, { side: -.3 }], [2.6, { side: .3 }], [3.2, { side: 0 }],
+    [3.6, SPIN_OUT], [4, SPIN_END]
+  ], spinRoot(3)),
+  // 5 · Pião Globo de Espelhos: pirueta rapidíssima, braços em roda acima da cabeça, subindo no ar
+  clip(4, [
+    [.5, { lean: .4, hd: 0, ...A(.7, -.6, -.3), lL: [.1, .2, .8], lR: [.1, .2, .8], sq: .88 }],
+    [1, { lean: 0, hd: -.15, ...A(2.75, 1.3, -1.05), lL: [.02, 0, .02], lR: [.25, 2.6, .5], sq: 1.08, tail: 1 }],
+    [3.3, { sq: 1.04 }],
+    [3.7, { lean: .3, ...A(1.6, .2, -.1), lR: [.9, -HP, .2], sq: .95 }],
+    [4, SPIN_END]
+  ], tb => ({ spin: TAU * 10 * easeIO(seg(tb, .8, 3.6)), ty: .6 * bump(seg(tb, 1, 3.4)) })),
+  // 6 · Moinho de Pantufa Cintilante: deitada de costas no gelo, gira como hélice com as pernas em V
+  clip(4, [
+    [.35, { lean: .5, hd: 0, ...A(.9, 1.0, -.8), lL: [.8, HP, 1.6], lR: [.8, HP, 1.6], sq: .88 }],
+    [.95, { lean: .1, hd: .4, aL: [2.2, -.6, -.2], aR: [2.2, -.6, -.2], lL: [.7, .9, .05], lR: [.7, .9, .05], tail: .9, sq: 1 }],
+    [1.7, { lL: [.9, .3, .05], lR: [.5, 1.3, .05] }],
+    [2.4, { lL: [.5, 1.3, .05], lR: [.9, .3, .05] }],
+    [3.1, { lL: [.9, .3, .05], lR: [.5, 1.3, .05] }],
+    [3.55, { lean: .45, hd: -.1, ...A(1.2, .6, -.5), lL: [.9, HP, 1.8], lR: [.9, HP, 1.8], sq: .9 }],
+    [4, { lean: .34, hd: -.12, ...A(1.0, .35, -.3), lL: [.06, .15, .42], lR: [.5, -HP, .3], sq: 1 }]
+  ], tb => {
+    // gira em volta do quadril (que fica a uns 0,8 m dos pés, com as pernas erguidas)
+    const down = easeIO(seg(tb, .3, .95)) * (1 - easeIO(seg(tb, 3.35, 3.9))), sp = TAU * 5 * easeIO(seg(tb, .9, 3.4)), c = .8 * down;
+    return { flip: -1.5 * down, spin: sp, ty: .22 * down, tx: c * Math.sin(sp), tz: c * Math.cos(sp) };
+  })
+];
+/* --------- saltos --------- */
+const SPLIT_AIR = { lean: .05, hd: -.3, aL: [2.6, .25, -.05], aR: [2.6, .25, -.05], lL: [1.45, HP, .02], lR: [1.4, -HP, .05], tail: 1, sq: 1.04 };
+const JP_D = [
+  { tA: 1.25, tL: 2.05, rot: .5, h: .75, air: SPLIT_AIR },
+  { tA: 1.15, tL: 2.05, rot: 2, h: .8, air: { lean: .05, hd: -.25, aL: [1.15, 2.1, -1.75], aR: PT_UP, lL: [.03, 0, .05], lR: [.32, 2.6, .5], sq: 1.04, tail: .6 } },
+  { tA: 1.0, tL: 2.15, rot: 1, h: 1.15, air: { lean: -.05, hd: -.35, aL: [2.3, 0, -.05], aR: [2.3, 0, -.05], lL: [.75, 0, .05], lR: [.75, 0, .05], tail: 1, sq: 1.05 } },
+  { tA: .9, tL: 2.25, rot: 1.5, h: 1.3, air: { lean: 1.3, hd: -1.0, aL: [HP, 0, 0], aR: [HP, 0, 0], lL: [1.0, -HP, .15], lR: [1.75, -HP, .05], tail: 1, sq: 1 } },
+  { tA: .75, tL: 2.75, rot: 1, h: 3.2, cap: 4.5, air: { lean: .5, hd: .1, ...A(1.7, 1.7, -1.3), lL: [1.7, HP, 2.4], lR: [1.7, HP, 2.4], tail: .9, sq: .92 } },
+  { tA: .45, tL: 3.5, rot: 3, h: 8.1, flat: 1, cap: 9.5, air: { lean: -.12, hd: -.6, aL: [1.6, .4, -.2], aR: [2.98, .1, 0], lL: [.4, .3, .3], lR: [.9, -HP, 1.2], sq: 1.06, tail: 1 } }
+];
+const JUMPS_D = JP_D.map(j => Object.assign({ t0: j.tA / 4, t1: j.tL / 4 }, j));
+const C_JUMP_D = JUMPS_D.map(jumpClip);
+// 5 · Mortal Boogie de Lantejoula: mortal para trás grupado, com um giro; gira em volta do quadril, não dos pés
+{ const J = JUMPS_D[4], jm = C_JUMP_D[4], CC = .75;
+  C_JUMP_D[4] = { len: jm.len, R: jm.R, loop: false, root: tb => {
+    const o = jm.root(tb), s = easeIO(seg(tb, J.tA + .1, J.tL - .15)), f = -TAU * s;
+    return { ty: o.ty + CC - CC * Math.cos(f), tz: -CC * Math.sin(f), flip: f, spin: TAU * s, yaw: o.yaw };
+  } };
+}
+const CLIPS_D = [C_GLIDE_D, C_SPIN_D, C_JUMP_D];
+const MOVE_SPD_D = [[3.6, 3.3, 3.0, 2.8, 2.6, 2.3], [.6, .5, .5, .5, .3, .2], [4.2, 4.2, 4.3, 4.0, 3.0, 2.4]];
+/* --------- poses finais --------- */
+const C_WIND_D = [
+  // agachado, girando o quadril, os braços cruzados em baixo: vai subir no cubo de luz
+  clip(4, [
+    [1, { lean: .45, hd: .15, side: .1, ...A(.7, 2.0, -.6), lL: [.6, HP, 1.1], lR: [.6, HP, 1.1], sq: .92 }],
+    [2, { side: -.1, tw: .2 }], [3, { side: .1, tw: -.2 }],
+    [4, { lean: .55, hd: .25, side: 0, tw: 0, sq: .84 }]
+  ]),
+  // giro preparando a queda no espacate
+  clip(4, [
+    [1, { lean: .1, hd: .1, aL: [2.6, .3, -.1], aR: [2.6, .3, -.1], lL: [.5, HP, .9], lR: [.35, 2.5, .7], sq: .95 }],
+    [3, { sq: .9 }], [4, { sq: .88 }]
+  ], tb => ({ spin: TAU * 2 * easeOut(seg(tb, 0, 4)) })),
+  // agachado juntando força, os braços para trás
+  clip(4, [
+    [1, { lean: .45, hd: .1, ...A(.8, -1.0, -.3), lL: [.6, HP, 1.1], lR: [.6, HP, 1.1], sq: .92 }],
+    [2.5, { lean: .6, hd: .4, ...A(1.0, -1.4, -.2), lL: [1.1, HP, 1.9], lR: [1.1, HP, 1.9], sq: .8, tail: .2 }],
+    [4, { sq: .78 }]
+  ])
+];
+const FIN_D = [
+  { lean: -.05, hd: -.5, hy: -.35, side: .18, tw: -.1, aL: HIP, aR: [2.55, .05, -.03], lL: [.04, -.1, .05], lR: [.55, .55, 1.0], tail: 1, sq: 1 },
+  { lean: .02, hd: -.55, side: 0, tw: 0, aL: [2.55, .35, -.4], aR: [2.55, .35, -.4], lL: [1.56, HP, .02], lR: [1.56, -HP, .04], tail: 1, sq: 1 },
+  { lean: -.1, hd: -.65, side: 0, tw: 0, aL: [2.45, -.05, -.1], aR: [2.45, -.05, -.1], lL: [HP, HP, HP], lR: [.15, -HP, 1.55], tail: 1, sq: 1 }
+];
+const C_RISE_D = [
+  clip(4, [[.5, { lean: .1, hd: -.3, ...A(2.4, .3, -.2), lL: [.03, 0, .05], lR: [.5, .5, .9], sq: 1.1, tail: .8 }], [2, { ...FIN_D[0], sq: 1 }], [4, {}]],
+    tb => ({ ty: PED_H * easeOut(seg(tb, 0, 2)) })),
+  clip(4, [[.6, { lean: .1, hd: -.2, ...A(2.6, .3, -.3), lL: [.4, HP, .6], lR: [.3, -HP, .4], sq: 1.05 }], [1.6, FIN_D[1]], [4, {}]],
+    tb => ({ spin: TAU * easeOut(seg(tb, 0, 1.4)) })),
+  clip(4, [[.4, { lean: .2, hd: -.2, ...A(1.3, 1.6, -1.2), lL: [.6, HP, 1.2], lR: [.6, HP, 1.2], sq: 1.15, tail: .6 }], [1.4, { ...A(2.6, .2, -.2), lL: [.9, HP, 1.6], lR: [.9, HP, 1.6], sq: 1.05 }], [2, FIN_D[2]], [4, {}]],
+    tb => ({ ty: 1.5 * bump(seg(tb, 0, 1.9)), spin: TAU * 2 * easeIO(seg(tb, 0, 1.8)) }))
+];
+const C_FIN_D = FIN_D.map((f, b) => clip(4, [[.25, Object.assign({}, f, { sq: .9 })], [.6, f], [4, f]], b === 0 ? () => ({ ty: PED_H }) : null));
+const C_LINGER_D = FIN_D.map((f, b) => clip(4, [[1, f], [4, f]], b === 0 ? () => ({ ty: PED_H }) : null));
+/* --------- fase 2: manobras e poses a dois --------- */
+const DUO_NAMES_D = {
+  pt: [['Lançamento Boogie de Lantejoula', 'Rodopio de Mãos Dadas', 'Febre de Sábado a Dois'],
+       ['Trenzinho de Lantejoulas', 'Viagem ao Globo de Mãos Dadas', 'Mergulho de Discoteca'],
+       ['Hélice de Pantufa', 'Barco de Neon nos Ombros', 'Apoteose do Globo de Espelhos']],
+  es: [['Lanzamiento Boogie de Lentejuelas', 'Remolino de la Mano', 'Fiebre de Sábado a Dúo'],
+       ['Trencito de Lentejuelas', 'Viaje a la Bola de la Mano', 'Caída de Discoteca'],
+       ['Hélice de Pantufla', 'Barco de Neón en los Hombros', 'Apoteosis de la Bola de Espejos']]
+};
+const DUO_MOVES_D = {}, DUO_POSES_D = [];
+{ // bloco 1 · 5ª: Lançamento Boogie (no lugar do Mortal Boogie): A agacha e lança B, que dá o mortal grupado no alto e volta ao lado dele
+  const J = JUMPS_D[4];
+  const cA = clip(4, [
+    [.3, { lean: .5, hd: .1, side: 0, tw: -.3, aL: [1.0, 1.6, -1.0], aR: [1.1, .5, -.9], lL: [.7, HP, 1.3], lR: [.7, HP, 1.3], sq: .88 }],
+    [.75, { lean: .2, hd: -.2, tw: -.15, aL: [1.6, 1.0, -.4], aR: [1.8, .2, -.3], lL: [.2, HP, .3], lR: [.2, HP, .3], sq: 1.02 }],
+    [1.2, { lean: -.1, hd: -.6, tw: 0, ...A(2.85, .3, -.05), lL: [.05, 0, .1], lR: [.05, 0, .1], sq: 1.06, tail: .9 }],
+    [2.2, { hd: -.75, ...A(2.75, .1, -.05) }],
+    [2.75, { lean: .25, hd: -.2, aL: [1.4, .8, -.5], aR: [1.3, -.1, -.5], lL: [.3, HP, .7], lR: [.3, HP, .7], sq: .92 }],
+    [3.4, { lean: .2, hd: -.3, aL: PT_UP, aR: HIP, lL: [.04, 0, .1], lR: [.5, .5, .9], sq: 1 }],
+    [4, { lean: .34, hd: -.12, ...A(.9, .4, -.35), lL: [.06, .15, .42], lR: [.06, .15, .42] }]
+  ]);
+  const cB = mirrorClip(C_JUMP_D[4]);
+  DUO_MOVES_D['2.5'] = { nm: [0, 0], clips: [cA, cB], slot(r, tb) {
+    const fl = seg(tb, J.tA, J.tL);
+    return r ? dslot(-SIDE - .55 * bump(fl), -.2 * bump(fl), 0, .7 * bump(fl)) : dslot(SIDE * .75);
+  } };
+}
+{ // bloco 1 · 6ª: Rodopio de Mãos Dadas (no lugar do Pião Globo de Espelhos): B rodopia sem parar por baixo do braço erguido de A
+  const cA = clip(4, [
+    [.5, { lean: .1, hd: -.1, side: -.08, aL: HIP, aR: [2.1, .2, -.4], lL: [.06, .1, .4], lR: [.3, -.3, .6], sq: .96 }],
+    [1, { lean: .02, hd: -.35, side: -.12, aL: HIP, aR: [2.62, .35, -.15], lL: [.04, 0, .1], lR: [.45, .45, .9], hy: -.35, sq: 1 }],
+    [2, { side: -.18, hy: -.45 }], [3, { side: -.1, hy: -.3 }],
+    [3.5, { lean: .25, side: 0, hy: 0, aL: PT_UP, aR: [1.2, .3, -.4], lL: [.04, 0, .1], lR: [.45, .45, .9] }],
+    [4, SPIN_END]
+  ]);
+  const cB = clip(4, [
+    [.5, { lean: .3, hd: 0, ...A(.8, -.5, -.3), lL: [.1, .2, .7], lR: [.1, .2, .7], sq: .9 }],
+    [1, { lean: 0, hd: -.2, aL: [2.75, 1.3, -1.05], aR: [2.9, .2, -.1], lL: [.02, 0, .02], lR: [.25, 2.6, .5], sq: 1.06, tail: 1 }],
+    [3.3, { sq: 1.03 }],
+    [3.7, { lean: .3, ...A(1.6, .2, -.1), lR: [.9, -HP, .2], sq: .95 }],
+    [4, SPIN_END]
+  ], tb => ({ spin: TAU * 8 * easeIO(seg(tb, .8, 3.6)) }));
+  DUO_MOVES_D['1.5'] = { nm: [0, 1], clips: [cA, cB], slot(r, tb) {
+    const k = sm(0, .8, tb) * (1 - sm(3.4, 4, tb));
+    return r ? dslot(lerp(-SIDE, -.42, k), .12 * k, 0, 0) : dslot(lerp(SIDE, .3, k), -.1 * k, -.35 * k, 0);
+  } };
+}
+{ // bloco 2 · 5ª: Trenzinho de Lantejoulas (no lugar da Espiral Neon): B atrás de A, as mãos na cintura dele, chutando no mesmo tempo
+  const kick = (side, up) => side ? { lL: [.06, .1, .45], lR: [up ? 1.1 : .2, HP, up ? .1 : .4] } : { lL: [up ? 1.1 : .2, HP, up ? .1 : .4], lR: [.06, .1, .45] };
+  const cA = clip(4, [
+    [.5, { lean: .1, hd: -.15, aL: [2.6, .2, -.6], aR: [2.6, .2, -.6], ...kick(1, 1) }],
+    [1, { side: .12, aL: [2.4, .5, -.9], aR: [2.75, -.1, -.3], ...kick(1, 0) }],
+    [1.5, { side: -.12, aL: [2.75, -.1, -.3], aR: [2.4, .5, -.9], ...kick(0, 1) }],
+    [2, { side: .12, aL: [2.4, .5, -.9], aR: [2.75, -.1, -.3], ...kick(0, 0) }],
+    [2.5, { side: -.12, aL: [2.75, -.1, -.3], aR: [2.4, .5, -.9], ...kick(1, 1) }],
+    [3, { side: .12, aL: [2.4, .5, -.9], aR: [2.75, -.1, -.3], ...kick(1, 0) }],
+    [3.5, { side: 0, aL: PT_UP, aR: HIP, ...kick(0, 1) }],
+    [4, { lean: .34, hd: -.12, side: 0, ...A(.9, .4, -.35), lL: [.06, .15, .42], lR: [.06, .15, .42] }]
+  ]);
+  const HANDS = { aL: [1.05, 1.95, -.55], aR: [1.05, 1.95, -.55] };
+  const cB = clip(4, [
+    [.5, { lean: .3, hd: -.15, ...HANDS, ...kick(1, 1) }],
+    [1, { side: .12, ...HANDS, ...kick(1, 0) }],
+    [1.5, { side: -.12, ...HANDS, ...kick(0, 1) }],
+    [2, { side: .12, ...HANDS, ...kick(0, 0) }],
+    [2.5, { side: -.12, ...HANDS, ...kick(1, 1) }],
+    [3, { side: .12, ...HANDS, ...kick(1, 0) }],
+    [3.5, { side: 0, aL: HIP, aR: PT_UP, ...kick(0, 1) }],
+    [4, { lean: .34, hd: -.12, side: 0, ...A(.9, .4, -.35), lL: [.06, .15, .42], lR: [.06, .15, .42] }]
+  ]);
+  DUO_MOVES_D['0.5'] = { nm: [1, 0], clips: [cA, cB], slot(r, tb) {
+    const k = sm(0, .9, tb) * (1 - sm(3.3, 4, tb)), sw = .3 * Math.sin(PI * (tb - .5)) * k;
+    return r ? dslot(lerp(-SIDE, 0, k) + sw, -.42 * k, 0, 0) : dslot(lerp(SIDE, 0, k) + sw, .42 * k, 0, 0);
+  } };
+}
+{ // bloco 2 · 6ª: Viagem ao Globo de Mãos Dadas (no lugar do Salto ao Globo): sobem juntos até o teto, girando como um só
+  const J = JUMPS_D[5], jm = jumpClip(Object.assign({}, J, { air: { ...A(2.6, .2, -.1), aR: [1.3, 0, -.15], lL: [.5, .2, .2], lR: [.9, -HP, 1.1], lean: -.15, hd: -.5, sq: 1.05, tail: 1 } }));
+  const c = { len: jm.len, R: jm.R, loop: false, root: tb => { const o = jm.root(tb); return { ty: o.ty, yaw: o.yaw, spin: 0 }; } };
+  DUO_MOVES_D['2.6'] = { nm: [1, 1], clips: [c, mirrorClip(c)], slot(r, tb) {
+    const rho = TAU * J.rot * easeIO(seg(tb, J.tA, J.tL)), d = r ? -.5 : .5;
+    return dslot(d * Math.cos(rho), -d * Math.sin(rho), rho, 0);
+  } };
+}
+{ // bloco 3 · 5ª: Hélice de Pantufa (no lugar do Moinho): A gira segurando as mãos de B, que voa deitada de costas em volta dele
+  const up = tb => easeIO(seg(tb, .45, 1.2)) * (1 - easeIO(seg(tb, 3.15, 3.75))), ang = tb => TAU * 3 * easeIO(seg(tb, .7, 3.6));
+  const cA = clip(4, [
+    [.45, { lean: .3, hd: 0, ...A(1.1, HP, -.6), lL: [.5, HP, .9], lR: [.5, HP, .9], sq: .9 }],
+    [1.1, { lean: -.32, hd: -.15, ...A(1.2, 1.5, -.1), lL: [.3, .2, .35], lR: [.3, .2, .35], tail: .8, sq: 1 }],
+    [3.2, { lean: -.28 }],
+    [3.7, { lean: .3, hd: -.1, ...A(1.2, .6, -.4), lL: [.4, HP, .8], lR: [.4, HP, .8], sq: .92 }],
+    [4, { lean: .34, hd: -.12, ...A(.9, .4, -.35), lL: [.06, .15, .42], lR: [.06, .15, .42], sq: 1 }]
+  ]);
+  const cB = clip(4, [
+    [.45, { lean: .3, hd: 0, ...A(1.4, 1.2, -.5), lL: [.6, HP, 1.2], lR: [.6, HP, 1.2], sq: .88 }],
+    [1.2, { lean: 0, hd: .25, ...A(2.95, 0, -.02), lL: [.03, .2, .04], lR: [.03, .2, .04], tail: 1, sq: 1 }],
+    [2, { lL: [.25, 0, .05], lR: [.03, 0, .04] }], [2.8, { lL: [.03, 0, .04], lR: [.25, 0, .05] }],
+    [3.2, { lL: [.03, .2, .04], lR: [.03, .2, .04] }],
+    [3.75, { lean: .3, hd: -.1, ...A(1.3, .6, -.4), lL: [.4, HP, .8], lR: [.4, HP, .8], sq: .92 }],
+    [4, { lean: .34, hd: -.12, ...A(.9, .4, -.35), lL: [.06, .15, .42], lR: [.06, .15, .42], sq: 1 }]
+  ], tb => ({ flip: -1.52 * up(tb) }));
+  DUO_MOVES_D['1.6'] = { nm: [2, 0], clips: [cA, cB], slot(r, tb, P) {
+    // d: direção de A para B, girando; A vai para o centro e olha para B; B fica com os pés para fora (de costas para A,
+    // deitada, a cabeça e as mãos voltadas para ele), a P.heli dos pés de A
+    const a = ang(tb), u = up(tb), dx = -Math.cos(a), dz = Math.sin(a), yw = lerpA(0, lookTo(dx, dz), u);
+    if (!r) return dslot(-SIDE * (1 - u) * dx, -SIDE * (1 - u) * dz, yw, 0);
+    const rr = lerp(SIDE, P.heli, u);
+    return dslot(rr * dx, rr * dz, yw, .95 * u);
+  } };
+}
+{ // bloco 3 · 6ª: Barco de Neon nos Ombros (no lugar do Escorregão): B sobe e fica sentada nos ombros de A, os braços em V
+  const on = tb => easeIO(seg(tb, .5, 1.15)) * (1 - easeIO(seg(tb, 3.2, 3.7)));
+  const cA = clip(4, [
+    [.45, { lean: .45, hd: .1, ...A(1.2, 1.3, -1.0), lL: [.6, HP, 1.1], lR: [.6, HP, 1.1], sq: .9 }],
+    [1.1, { lean: .05, hd: -.2, aL: [2.0, 1.75, -1.1], aR: [2.0, 1.75, -1.1], lL: [.25, .2, .25], lR: [.25, .2, .25], tail: .8, sq: 1 }],
+    [2, { side: .1 }], [2.8, { side: -.1 }],
+    [3.3, { lean: .3, side: 0, ...A(1.6, .8, -.6), lL: [.5, HP, .9], lR: [.5, HP, .9], sq: .9 }],
+    [4, { lean: .34, hd: -.12, ...A(.9, .4, -.35), lL: [.06, .15, .42], lR: [.06, .15, .42], sq: 1 }]
+  ]);
+  const cB = clip(4, [
+    [.45, { lean: .3, hd: 0, ...A(1.4, .6, -.4), lL: [.7, HP, 1.4], lR: [.7, HP, 1.4], sq: .88 }],
+    [1.1, { lean: -.05, hd: -.4, aL: [2.6, .35, -.05], aR: [2.6, .35, -.05], lL: [1.35, 1.75, 1.45], lR: [1.35, 1.75, 1.45], tail: 1, sq: 1 }],
+    [1.8, { aL: [2.8, .5, -.05], aR: [2.3, -.1, -.05], hy: .35 }],
+    [2.5, { aL: [2.3, -.1, -.05], aR: [2.8, .5, -.05], hy: -.35 }],
+    [3.1, { aL: [2.6, .35, -.05], aR: [2.6, .35, -.05], hy: 0 }],
+    [3.6, { lean: .4, hd: -.1, ...A(1.6, .4, -.3), lL: [.6, HP, 1.2], lR: [.6, HP, 1.2], sq: .9 }],
+    [4, { lean: .34, hd: -.12, ...A(.9, .4, -.35), lL: [.06, .15, .42], lR: [.06, .15, .42], sq: 1 }]
+  ]);
+  DUO_MOVES_D['0.6'] = { nm: [2, 1], clips: [cA, cB], slot(r, tb, P) {
+    if (!r) return dslot(SIDE * (1 - on(tb)));
+    const s = on(tb);
+    return dslot(lerp(-SIDE, 0, s), lerp(0, -.08, s), 0, s * P.seat + .7 * bump(seg(tb, .5, 1.15)) + .4 * bump(seg(tb, 3.2, 3.7)));
+  } };
+}
+// poses a dois
+{ // bloco 1: Febre de Sábado a Dois: os dois no mesmo cubo de luz, cada um apontando para o alto do seu lado
+  const fin = mirrorClip(C_FIN_D[0]), lin = mirrorClip(C_LINGER_D[0]);
+  DUO_POSES_D[0] = { nm: [0, 2], clips: { wind: [mirrorClip(C_WIND_D[0]), C_WIND_D[0]], rise: [mirrorClip(C_RISE_D[0]), C_RISE_D[0]], fin: [fin, C_FIN_D[0]], linger: [lin, C_LINGER_D[0]] }, slot(r, ph, tb) {
+    const k = ph === 'wind' ? sm(0, 2.5, tb) : 1, sg = r ? -1 : 1;
+    return dslot(sg * lerp(SIDE, .58, k), 0, sg * .3 * k, 0);
+  } };
+}
+{ // bloco 2: Mergulho de Discoteca: A em avanço segura B, que cai para trás quase até o gelo com uma perna para o alto
+  const DA = { lean: .35, hd: .2, side: 0, tw: .1, hy: 0, aL: [2.7, .1, -.1], aR: [1.0, 1.4, -.5], lL: [1.0, HP, 1.4], lR: [.6, -HP, .15], tail: .9, sq: 1 };
+  const DB = { lean: -1.15, hd: -.7, side: 0, tw: 0, hy: 0, aL: [2.6, -.3, -.1], aR: [1.6, 1.2, -.6], lL: [.4, HP, .9], lR: [1.75, HP, .05], tail: 1, sq: 1 };
+  const windA = clip(4, [[1, DPREP_A], [4, { ...DPREP_A, sq: .86 }]]), windB = clip(4, [[1, DPREP_B], [4, { ...DPREP_B, sq: .84 }]]);
+  const riseA = clip(4, [[.5, { ...DPREP_A, sq: .9 }], [1.4, DA], [4, DA]]), riseB = clip(4, [[.5, { lean: .1, hd: -.1, ...A(2.3, .3, -.3), lL: [.6, HP, 1.6], lR: [.6, HP, 1.6], sq: 1.05 }], [1.5, DB], [4, DB]], tb => ({ spin: TAU * easeIO(seg(tb, 0, 1.2)) }));
+  const finA = clip(4, [[1, DA], [4, DA]]), finB = clip(4, [[1, DB], [4, DB]]);
+  DUO_POSES_D[1] = { nm: [1, 2], clips: { wind: [windA, windB], rise: [riseA, riseB], fin: [finA, finB], linger: [finA, finB] }, slot(r, ph, tb) {
+    const k = ph === 'wind' ? sm(0, 2.5, tb) : 1;
+    // os dois de frente um para o outro; B cai para trás, para longe de A
+    return r ? dslot(lerp(-SIDE, -.45, k), 0, lerpA(0, lookTo(1, 0), k), 0) : dslot(lerp(SIDE, .45, k), 0, lerpA(0, lookTo(-1, 0), k), 0);
+  } };
+}
+{ // bloco 3: Apoteose do Globo de Espelhos: A ajoelhado; B de pé na coxa dele, apontando para o globo que desceu sobre os dois
+  const KA = { ...FIN_D[2], aL: [2.2, .5, -.3], aR: [2.6, -.2, -.1], hd: -.45 };
+  const SB = { lean: -.05, hd: -.6, side: .1, tw: 0, hy: 0, aL: [1.9, .2, -.3], aR: [2.85, .2, -.03], lL: [.03, 0, .05], lR: [.9, -HP, 1.3], tail: 1, sq: 1 };
+  const windA = clip(4, [[1, DPREP_A], [4, { ...DPREP_A, sq: .86 }]]), windB = clip(4, [[1, DPREP_B], [4, { ...DPREP_B, sq: .84 }]]);
+  const riseA = clip(4, [[.5, { ...DPREP_A, sq: .9 }], [1.2, KA], [4, KA]]), riseB = clip(4, [[.5, { lean: .1, hd: -.1, ...A(2.3, .3, -.3), lL: [.6, HP, 1.6], lR: [.6, HP, 1.6], sq: 1.05 }], [1.6, SB], [4, SB]]);
+  const finA = clip(4, [[1, KA], [4, KA]]), finB = clip(4, [[1, SB], [4, SB]]);
+  const up = tb => easeIO(seg(tb, .5, 1.5));
+  DUO_POSES_D[2] = { nm: [2, 2], clips: { wind: [windA, windB], rise: [riseA, riseB], fin: [finA, finB], linger: [finA, finB] }, slot(r, ph, tb, now, P) {
+    const k = ph === 'wind' ? sm(0, 2.5, tb) : 1;
+    if (!r) return dslot(lerp(SIDE, -.15, k), lerp(0, -.25, k), 0, 0);
+    const s = ph === 'rise' ? up(tb) : ph === 'wind' ? 0 : 1, t = P.thighA;
+    return dslot(lerp(lerp(-SIDE, -.5, k), t.x, s), lerp(0, t.z, s), 0, s * t.y + (ph === 'rise' ? .6 * bump(seg(tb, .5, 1.5)) : 0));
+  } };
+}
+
+/* --------- as fases: cada uma com a sua música, as suas notas e as suas manobras --------- */
+const PHASES = [
+  { key: '', seq: SEQ1, pat: PATTERNS1, names: NAMES1, duoNames: DUO_NAMES1, clips: CLIPS1, jumps: JUMPS1, spd: MOVE_SPD1, skate: C_SKATE, wind: C_WIND, rise: C_RISE, fin: C_FIN, linger: C_LINGER, duoMoves: DUO_MOVES1, duoPoses: DUO_POSES1 },
+  { key: 'n:', seq: SEQ_D, pat: PATTERNS_D, names: NAMES_D, duoNames: DUO_NAMES_D, clips: CLIPS_D, jumps: JUMPS_D, spd: MOVE_SPD_D, skate: C_SKATE_D, wind: C_WIND_D, rise: C_RISE_D, fin: C_FIN_D, linger: C_LINGER_D, duoMoves: DUO_MOVES_D, duoPoses: DUO_POSES_D }
+];
+let PHI = 0, PH = PHASES[0];
+function usePhase(i) {
+  PHI = i ? 1 : 0; PH = PHASES[PHI];
+  SEQ = PH.seq; PATTERNS = PH.pat; NAMES = PH.names; DUO_NAMES = PH.duoNames; CLIPS = PH.clips; JUMPS = PH.jumps; MOVE_SPD = PH.spd; DUO_MOVES = PH.duoMoves; DUO_POSES = PH.duoPoses;
+}
+
 /* --------- o casal: encontro, vagas de cada um e troca suave entre figuras --------- */
 const PAIR = { w: 0, wt: 0, target: 0, th: 0, pos: new THREE.Vector3(), fwd: new THREE.Vector3(0, 0, 1), left: new THREE.Vector3(1, 0, 0), yaw: 0,
-  roleA: 0, sideA: 1, swapT0: -1, reach: [2.5, 2.5], hub: 2.5, lift: 2.6, topA: new THREE.Vector3(), poseT: 0, landed: -1, met: false, fx: new THREE.Group() };
+  roleA: 0, sideA: 1, swapT0: -1, reach: [2.5, 2.5], hub: 2.5, lift: 2.6, topA: new THREE.Vector3(), heli: 3, seat: 1.6, thighA: new THREE.Vector3(), poseT: 0, landed: -1, met: false, fx: new THREE.Group() };
 scene.add(PAIR.fx);
 const PAIR_RX = 5.4, PAIR_RZ = 2.5;   // elipse no meio da pista, dentro da trilha de cada um
 const roleOf = pl => pl.id === PAIR.roleA ? 0 : 1;
@@ -1475,12 +2257,12 @@ function pairBegin() {
     const p = PL[0].base.pos; PAIR.th = Math.atan2(p.z / PAIR_RZ, p.x / PAIR_RX) + HP;
     for (const pl of PL) { pl.pslot = null; pl.base.vyaw = pl.base.yaw; }
   }
-  PAIR.reach = [reachOf(PL[PAIR.roleA]), reachOf(PL[1 - PAIR.roleA])]; PAIR.hub = Math.max(PAIR.reach[0], PAIR.reach[1]); PAIR.lift = PAIR.reach[0] + .15;
+  PAIR.reach = [reachOf(PL[PAIR.roleA]), reachOf(PL[1 - PAIR.roleA])]; PAIR.hub = Math.max(PAIR.reach[0], PAIR.reach[1]); PAIR.lift = PAIR.reach[0] + .15; PAIR.heli = .55 + PAIR.reach[1];
   PAIR.target = 1; PAIR.landed = -1;
 }
 // fim da dupla (separação, erro ou intervalo): quem estava numa figura a dois volta para a versão solo
 function pairEnd() {
-  PAIR.target = 0; PAIR.landed = -1; panoOff();
+  PAIR.target = 0; PAIR.landed = -1; panoOff(); BALL.target = 0;
   for (const pl of PL) {
     const an = pl.anim; if (an.duo === undefined) continue;
     if (an.kind === 'move') setAnim(pl, 'move', { b: an.b, lvl: an.lvl, t0: an.t0 }, state.songT);
@@ -1488,7 +2270,7 @@ function pairEnd() {
     else setAnim(pl, an.kind, { b: an.b, t0: an.t0, landed: an.landed }, state.songT);
   }
 }
-function pairReset() { PAIR.target = 0; PAIR.wt = 0; PAIR.w = 0; PAIR.landed = -1; PAIR.sideA = 1; panoOff(); for (const pl of PL) { pl.base.y = 0; pl.pslot = null; pl.pend = null; } }
+function pairReset() { PAIR.target = 0; PAIR.wt = 0; PAIR.w = 0; PAIR.landed = -1; PAIR.sideA = 1; panoOff(); BALL.target = 0; BALL.w = 0; for (const pl of PL) { pl.base.y = 0; pl.pslot = null; pl.pend = null; } }
 // alguém errou: a dupla se desfaz; o nome que o outro esperava aparece na versão solo e a pose dele volta a ser solo
 function pairBreak(pl) {
   const o = partnerOf(pl);
@@ -1518,7 +2300,8 @@ function pairMeasure(mi) {
   const sec = sectionOf(mi), t0 = mi * MEAS;
   if (sec.k !== 'block') { if (sec.i === 0) for (const pl of PL) setAnim(pl, 'linger', { b: PAIR.landed, duo: roleOf(pl) }, state.songT); return; }
   const a = PL[0].ms[mi];
-  if (sameSide() && !PANO.on && (a.kind !== 'move' || a.level >= 5)) panoOn(undefined, true);   // lado a lado: a tela vira uma só a partir da primeira estrela
+  if (sameSide() && !PANO.on && (a.kind !== 'move' || a.level >= 5)) panoOn(undefined, true);
+  if (PHI && sec.b === 2 && (a.kind !== 'move' || a.level >= 5)) BALL.target = Math.max(BALL.target, a.kind === 'move' ? (a.level >= 6 ? .62 : .42) : a.kind === 'wind' ? .8 : .88);   // lado a lado: a tela vira uma só a partir da primeira estrela
   if (a.kind === 'move' && a.level >= 5) for (const pl of PL) { const ms = pl.ms[mi], [ty, tl] = SEQ[ms.b][ms.level - 1]; ms.duo = true; setAnim(pl, 'move', { b: ty, lvl: tl, t0, duo: roleOf(pl) }, state.songT); }
   else if (a.kind === 'wind') { for (const pl of PL) { pl.ms[mi].duo = true; clearPoseFx(pl, false); setAnim(pl, 'wind', { b: a.b, t0, duo: roleOf(pl) }, state.songT); } startPoseFx(PL[PAIR.roleA], a.b, true); }
   else if (a.kind === 'hold') { PAIR.poseT = t0; for (const pl of PL) { pl.ms[mi].duo = true; setAnim(pl, 'hold', { b: a.b, t0, duo: roleOf(pl) }, state.songT); } }
@@ -1528,7 +2311,7 @@ function duoDone(pl, mi, b, i, tier) {
   pl.pend = { mi, b, i, tier };
   const o = partnerOf(pl); if (!o.pend || o.pend.mi !== mi) return;
   for (const p of PL) { p.pend = null; p.found.add('d' + b + '.' + i); }
-  if (i === 2) { PAIR.landed = b; if (sameSide() && !PANO.on) panoOn(); }
+  if (i === 2) { PAIR.landed = b; if (sameSide() && !PANO.on) panoOn(); if (PHI && b === 2) BALL.target = 1; }
   if (PANO.on) { showNameIn(PANO.names, duoNameOf(b, i), tier, true); if (i === 2) PANO.flash.animate([{ opacity: REDUCED ? .3 : .85 }, { opacity: 0 }], { duration: 700, easing: 'ease-out' }); return; }
   for (const p of PL) showName(p, duoNameOf(b, i), tier, true);
 }
@@ -1551,6 +2334,13 @@ function pairUpdate(dt) {
   if (PAIR.target && !snap) { const spd = (PL[0].base.spd + PL[1].base.spd) / 2; PAIR.th += dt * spd * .5 / Math.max(.5, Math.hypot(PAIR_RX * Math.sin(PAIR.th), PAIR_RZ * Math.cos(PAIR.th))); }
   pairAnchor();
   { const W_ = PL[PAIR.roleA].W; _pd.copy(W_.fL).sub(PAIR.pos); PAIR.topA.set(_pd.dot(PAIR.left) * PAIR.sideA, _pd.y, _pd.dot(PAIR.fwd)); }
+  if (PHI) {   // fase 2: altura dos ombros de A (B senta neles) e o meio da coxa da frente de A (B sobe nela)
+    const pa = PL[PAIR.roleA], pb = PL[1 - PAIR.roleA], RA = pa.uni, RB = pb.uni;
+    RA.shL.getWorldPosition(_pq); RA.shR.getWorldPosition(_pd); const shA = (_pq.y + _pd.y) / 2 - (pa.base.y || 0);
+    RB.hpL.getWorldPosition(_pq); PAIR.seat = shA - (_pq.y - (pb.base.y || 0)) + .1;
+    RA.hpL.getWorldPosition(_pq); RA.knL.getWorldPosition(_pd); _pq.add(_pd).multiplyScalar(.5).sub(PAIR.pos);
+    PAIR.thighA.set(_pq.dot(PAIR.left) * PAIR.sideA, _pq.y + .06, _pq.dot(PAIR.fwd));
+  }
   if (!PAIR.met && PAIR.w > .97 && PAIR.target) { PAIR.met = true; SFX.duo(); }
   const k = snap ? 0 : Math.exp(-dt * 5), w = PAIR.w;
   for (const pl of PL) {
@@ -1615,7 +2405,7 @@ function panoLayout() {
 function panoCamera(dt) {
   const a = PL[0].W, b = PL[1].W;
   _mid.copy(a.chest).add(b.chest).multiplyScalar(.5);
-  const top = Math.max(a.horn.y, b.horn.y, a.chest.y, b.chest.y, a.fL.y, b.fL.y) + .5, span = Math.hypot(a.chest.x - b.chest.x, a.chest.z - b.chest.z) + (PANO.live ? 2.6 : 3.4);
+  const top = Math.max(a.horn.y, b.horn.y, a.chest.y, b.chest.y, a.fL.y, b.fL.y, PHI && BALL.w > .3 ? BALL.at.y + .4 : 0) + .5, span = Math.hypot(a.chest.x - b.chest.x, a.chest.z - b.chest.z) + (PANO.live ? 2.6 : 3.4);
   const low = Math.min(a.chest.y, b.chest.y) - 1.5, air = low > .6;   // no alto (saltos): enquadra só o casal, sem o gelo
   // ao vivo, o casal fica na faixa do meio (as pistas de cada um ocupam as pontas); no fim, ocupa quase toda a largura
   const cam = PANO.cam, tn = Math.tan(cam.fov * PI / 360), hw = (span / 2 + .3) / (PANO.live ? .38 : .9);
@@ -1631,12 +2421,13 @@ function panoCamera(dt) {
 }
 function renderPano() {
   const cam = PANO.cam, mp = PANO.mp || (PANO.mp = {});
-  mp.anim = PL[0].anim; mp.W = PL[0].W; mp.cam = cam; updMoon(mp);   // a lua do pulo lunar atrás do casal
+  mp.anim = PL[0].anim; mp.W = PL[0].W; mp.cam = cam; updMoon(mp); const bn = ballNear(mp);   // a lua do pulo lunar atrás do casal
   U.uLightDir.value.copy(LIGHT_WORLD).transformDirection(cam.matrixWorldInverse);
-  U.uScale.value = PANO.RH / (2 * Math.tan(cam.fov * PI / 360)); U.uRes.value.set(PANO.RTW / 2, PANO.RH / 2); U.uAmb.value.copy(AMB_GAME);
+  U.uScale.value = PANO.RH / (2 * Math.tan(cam.fov * PI / 360)); U.uRes.value.set(PANO.RTW / 2, PANO.RH / 2); U.uAmb.value.copy(PHI ? AMB_DISCO : AMB_GAME);
   renderer.setRenderTarget(PANO.rt); renderer.clear();
   MIR.scale.y = -1; MIR.updateMatrixWorld(true); cam.layers.set(1); renderer.render(scene, cam);
   MIR.scale.y = 1; MIR.updateMatrixWorld(true); cam.layers.enableAll(); renderer.render(scene, cam);
+  if (bn) ballBack();
 }
 SFX.duo = function () { if (!AC) return; const t = AC.currentTime; [81, 88, 93, 100, 105].forEach((n, k) => I.bell(t + k * .06, n, .55, .7, sfxBus)); };
 PANO.el = $('#pano'); PANO.names = $('#pano .names'); PANO.box = $('#pano .tbox'); PANO.flash = $('#pano .flash'); PANO.sync = $('#pano .sync');
@@ -1789,7 +2580,8 @@ function moonBoing(pl) {
 // efeitos que acompanham uma manobra
 function spawnAnimFx(pl, an) {
   const U_ = pl.uni;
-  if (an.duo !== undefined) { if (an.duo === 0) spawnDuoFx(an); return; }
+  if (an.duo !== undefined) { if (an.duo === 0) (PHI ? spawnDuoFxD : spawnDuoFx)(an); return; }
+  if (PHI && an.kind === 'move') { spawnAnimFxD(pl, an); return; }
   if (an.kind === 'move' && an.b === 0 && an.lvl === 5) {
     const m = new THREE.Mesh(rainbowGeo(new THREE.TorusGeometry(1.6, .12, 4, 40)), psxMat({ vc: true, additive: true, emissive: 1, opacity: 0, side: DS }));
     m.rotation.y = HP; m.position.set(0, 1.6, 0);
@@ -1819,6 +2611,7 @@ function clearPoseFx(pl, melt) {
 }
 function startPoseFx(pl, b, duo) {
   clearPoseFx(pl, false);
+  if (PHI) { startPoseFxD(pl, b, duo); return; }
   const pf = pl.poseFx = { b, items: [], k: duo ? 1.75 : 1, hk: duo ? 1.9 : 1 }, U_ = pl.uni, par = duo ? PAIR.fx : null;
   if (b === 0) {
     const g = new THREE.Group(), mat = psxMat({ map: iceTex, rep: [1, 2], color: 0xc4f0ff, emissive: .6, opacity: .88, transparent: true, side: DS });
@@ -1836,6 +2629,7 @@ function startPoseFx(pl, b, duo) {
   }
 }
 function updPoseFx(pl, dt, now) {
+  if (PHI) { updPoseFxD(pl, dt, now); return; }
   const pf = pl.poseFx; if (!pf) return;
   const an = pl.anim, b = pf.b, k = an.kind, p = (k === 'wind' || k === 'hold') ? clamp((now - an.t0) / MEAS, 0, 1) : 1;
   const landed = (k === 'hold' && an.landed) || k === 'linger';
@@ -1855,6 +2649,7 @@ function updPoseFx(pl, dt, now) {
   }
 }
 function landFx(pl, b) {
+  if (PHI) { landFxD(pl, b); return; }
   const U_ = pl.uni, c = U_.chest.getWorldPosition(new THREE.Vector3());
   burst(c, 110, 10, 1.2, .11, () => hueCol(Math.random()), 1.5);
   ringFx(U_.root.position.x, U_.root.position.z, 7, 1.0);
@@ -1866,8 +2661,138 @@ function landFx(pl, b) {
     ringFx(U_.root.position.x, U_.root.position.z, 12, 1.4, .1);
   }
 }
+/* --------- efeitos da fase 2 (neon, espelhos, confete) --------- */
+const neonCol = (k) => NEON_C[((k % 6) + 6) % 6];
+const C_CYAN = new THREE.Color(.25, .95, 1);
+// efeitos presos a uma manobra solo
+function spawnAnimFxD(pl, an) {
+  const U_ = pl.uni;
+  if (an.b === 1 && an.lvl === 5) {   // pião globo de espelhos: uma bola facetada transparente em volta do unicórnio
+    const g = rainbowGeo(new THREE.WireframeGeometry(new THREE.IcosahedronGeometry(1.35, 1)), 'y');
+    const m = new THREE.LineSegments(g, psxMat({ vc: true, additive: true, emissive: 1, opacity: 0 })); m.position.y = 1.45;
+    an.fx.push(addFx(m, U_.root, MEAS * 1.05, (k, a, dt, al) => { m.rotation.y -= dt * 5; m.rotation.x = .3; m.position.y = 1.45 + (pl.curPose ? pl.curPose.ty : 0); setOpacity(m, .9 * bump(seg(k, .12, .92)) * al); }));
+  }
+  if (an.b === 1 && an.lvl === 6) {   // moinho: anel de neon no gelo
+    const m = new THREE.Mesh(rainbowGeo(new THREE.TorusGeometry(1.7, .09, 4, 40)), psxMat({ vc: true, additive: true, emissive: 1, opacity: 0, side: DS }));
+    m.rotation.x = HP; m.position.y = .06;
+    an.fx.push(addFx(m, U_.root, MEAS * 1.05, (k, a, dt, al) => { m.rotation.z += dt * 6; const s = .6 + .5 * sm(.2, .4, k); m.scale.set(s, s, s); setOpacity(m, .8 * bump(seg(k, .2, .9)) * al); }));
+  }
+}
+// efeitos que pertencem ao casal: aro de neon do rodopio e o rastro da hélice
+function spawnDuoFxD(an) {
+  if (an.kind !== 'move') return;
+  const key = an.b + '.' + an.lvl;
+  if (key === '1.5') {
+    const m = new THREE.Mesh(rainbowGeo(new THREE.TorusGeometry(.9, .06, 4, 36)), psxMat({ vc: true, additive: true, emissive: 1, opacity: 0, side: DS }));
+    m.rotation.x = HP; m.position.set(-.42, 2.9, .1);
+    an.fx.push(addFx(m, PAIR.fx, MEAS * 1.05, (k, a, dt, al) => { m.rotation.z += dt * 9; setOpacity(m, .8 * bump(seg(k, .2, .9)) * al); }));
+  }
+  if (key === '1.6') {
+    const m = new THREE.Mesh(rainbowGeo(new THREE.TorusGeometry(PAIR.heli, .1, 4, 56)), psxMat({ vc: true, additive: true, emissive: 1, opacity: 0, side: DS }));
+    m.rotation.x = HP; m.position.y = 1.0;
+    an.fx.push(addFx(m, PAIR.fx, MEAS * 1.05, (k, a, dt, al) => { m.rotation.z -= dt * 4; setOpacity(m, .55 * sm(.2, .35, k) * (1 - sm(.8, .92, k)) * al); }));
+  }
+}
+// efeitos de pose: cubo de luz (bloco 1), barras de neon em órbita (bloco 2), estrela de neon (bloco 3)
+const STAR_GEO = (() => { const sh = new THREE.Shape(), hole = new THREE.Path(); for (let i = 0; i <= 10; i++) { const a = HP + i * PI / 5, r = i % 2 ? .45 : 1; (i ? sh.lineTo : sh.moveTo).call(sh, Math.cos(a) * r, Math.sin(a) * r); const rh = (i % 2 ? .45 : 1) * .8; (i ? hole.lineTo : hole.moveTo).call(hole, Math.cos(a) * rh, Math.sin(a) * rh); } sh.holes.push(hole); return new THREE.ShapeGeometry(sh); })();
+function startPoseFxD(pl, b, duo) {
+  const pf = pl.poseFx = { b, items: [], k: duo ? 1.75 : 1, hk: duo ? 1.9 : 1, d: true }, U_ = pl.uni, par = duo ? PAIR.fx : null;
+  if (b === 0) {
+    const w = duo ? 2.3 : .95, d = duo ? 1.3 : .95, g = new THREE.Group();
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, PED_H, d), psxMat({ map: tileTex, rep: [duo ? 3 : 1, 1], color: NEON[0], emissive: .85, opacity: .92, transparent: true })); m.position.y = PED_H / 2; g.add(m);
+    const top = new THREE.Mesh(new THREE.BoxGeometry(w + .08, .06, d + .08), psxMat({ color: NEON[1], emissive: 1 })); top.position.y = PED_H; g.add(top);
+    g.scale.y = .01; pf.ped = g; pf.cube = m; pf.items.push(addFx(g, par || U_.root, 999, null));
+  } else if (b === 1) {
+    const g = new THREE.Group();
+    for (let i = 0; i < 8; i++) { const s = new THREE.Mesh(new THREE.BoxGeometry(.07, .55, .07), psxMat({ color: NEON[i % 6], emissive: 1 })); g.add(s); }
+    g.position.y = 1.1; pf.cand = g; pf.ang = 0; pf.items.push(addFx(g, par || U_.root, 999, null));
+  } else {
+    const m = new THREE.Mesh(STAR_GEO, psxMat({ color: NEON[2], additive: true, emissive: 1, opacity: 0, side: DS, fog: false }));
+    m.position.set(0, 1.5, -.7); m.scale.setScalar(.2); pf.orb = m; pf.items.push(addFx(m, par || U_.root, 999, null));
+  }
+}
+function updPoseFxD(pl, dt, now) {
+  const pf = pl.poseFx; if (!pf) return;
+  const an = pl.anim, b = pf.b, k = an.kind, p = (k === 'wind' || k === 'hold') ? clamp((now - an.t0) / MEAS, 0, 1) : 1;
+  const landed = (k === 'hold' && an.landed) || k === 'linger';
+  if (b === 0 && pf.ped) {
+    const gr = k === 'hold' ? easeOut(p / .5) : (landed ? 1 : .01);
+    pf.ped.scale.y = Math.max(.01, landed ? 1 : gr);
+    pf.cube.material.uniforms.uColor.value.copy(neonCol(Math.floor(now / BEAT)));
+  }
+  if (b === 1 && pf.cand) {
+    const spd = k === 'wind' ? 2 + 4 * p : (k === 'hold' && !landed) ? 7 : .8; pf.ang += dt * spd;
+    const kids = pf.cand.children, r = (landed ? 1.5 + .08 * Math.sin(now * 6) : 1.25 + .3 * p) * pf.k;
+    kids.forEach((s, i) => { const a = pf.ang + i * TAU / kids.length; s.position.set(Math.cos(a) * r, (landed ? .2 : .45 * Math.sin(a * 2)) + (landed ? .6 * pf.hk : 0), Math.sin(a) * r); s.rotation.set(0, -a, landed ? .5 * Math.sin(now * 4 + i) : a * 2); });
+  }
+  if (b === 2 && pf.orb) {
+    const sc = k === 'wind' ? .3 + .6 * p : k === 'hold' && !landed ? .9 + .7 * clamp(p / .5, 0, 1) : 1.6;
+    pf.orb.scale.setScalar(sc * pf.k * (1 + .05 * Math.sin(now * 20))); pf.orb.rotation.z += dt * (landed ? .4 : 3);
+    pf.orb.material.uniforms.uColor.value.copy(neonCol(Math.floor(now * 4)));
+    setOpacity(pf.orb, k === 'wind' ? .5 * sm(0, .3, p) : .75);
+  }
+}
+function landFxD(pl, b) {
+  const U_ = pl.uni, c = U_.chest.getWorldPosition(new THREE.Vector3());
+  burst(c, 120, 10, 1.2, .11, i => neonCol(i), 1.5);
+  ringFx(U_.root.position.x, U_.root.position.z, 7, 1.0);
+  flash(pl, .25); shake(pl, .8);
+  if (b === 2 && WORLD2) WORLD2.flash = 1;
+}
+// salto ao globo: no alto, o globo pisca, solta os feixes e uma chuva de brilho
+function ballFlash(pl) {
+  if (WORLD2) WORLD2.flash = Math.max(WORLD2.flash || 0, .65);
+  burst(pl.W.horn, 40, 8, 1.3, .16, () => Math.random() < .6 ? C_WHITE : neonCol((Math.random() * 6) | 0), 0);
+}
+function fxTickD(pl, dt, now) {
+  if (dt <= 0) return;
+  const an = pl.anim, W = pl.W, U_ = pl.uni, k = an.kind, b = an.b, l = an.lvl, p = clamp((now - an.t0) / MEAS, 0, 1.2);
+  let glow = 0;
+  const spray = (src, n, spd, col) => { for (let i = 0; i < n; i++) emit(src.x, src.y + .05, src.z, rnd(-spd, spd), rnd(.3, 1.2), rnd(-spd, spd), rnd(.25, .55), rnd(.05, .09), col || C_ICE, 4, 2); };
+  if (k === 'move') {
+    if (b === 0) {
+      if (l <= 4) spray(Math.random() < .5 ? W.fL : W.fR, cnt(dt * (8 + l * 3)), .8, Math.random() < .3 ? neonCol((now * 3) | 0) : C_ICE);
+      if (l === 5) { glow = .7; for (let i = cnt(dt * 120); i > 0; i--) { const s = Math.random() < .3 ? W.fL : W.fR; emit(s.x, s.y + .1, s.z, rnd(-.2, .2), rnd(0, .3), rnd(-.2, .2), rnd(.7, 1.2), rnd(.1, .15), neonCol(Math.floor(now * 6)), 0, .5); } }
+      if (l === 6) { glow = .9; for (let i = cnt(dt * 140); i > 0; i--) { const s = Math.random() < .5 ? W.fL : W.fR; emit(s.x, .08, s.z, rnd(-1.5, 1.5), rnd(.4, 2), rnd(-1.5, 1.5), rnd(.3, .7), rnd(.07, .11), Math.random() < .5 ? C_GOLD : neonCol(i), 5, 1); } }
+    } else if (b === 1) {
+      if (l <= 4) spray(Math.random() < .5 ? W.fL : W.fR, cnt(dt * (10 + l * 9)), 1.4);
+      if (l === 5) { glow = 1; for (let i = cnt(dt * 150); i > 0; i--) { const a = Math.random() * TAU, e = rnd(-1, 1), r = 1.35, rx = U_.root.position.x, rz = U_.root.position.z, cy = 1.45 + (pl.curPose ? pl.curPose.ty : 0); emit(rx + Math.cos(a) * r * Math.sqrt(1 - e * e), cy + e * r, rz + Math.sin(a) * r * Math.sqrt(1 - e * e), -Math.sin(a) * 2.5, 0, Math.cos(a) * 2.5, rnd(.15, .35), rnd(.08, .13), Math.random() < .6 ? C_WHITE : neonCol(i), 0, 0); } }
+      if (l === 6) { glow = 1; if (p > .22 && p < .85) for (let i = cnt(dt * 110); i > 0; i--) { const a = Math.random() * TAU; emit(W.chest.x, .15, W.chest.z, Math.cos(a) * rnd(2, 3.5), rnd(.2, 1), Math.sin(a) * rnd(2, 3.5), rnd(.3, .6), rnd(.06, .1), Math.random() < .5 ? C_CYAN : C_PINK, 3, 1); } }
+    } else {
+      const J = JUMPS[l - 1];
+      if (!an.flags.to && p >= J.t0) { an.flags.to = 1; spray(W.fL, 12, 1.2); }
+      if (!an.flags.ld && p >= J.t1) { an.flags.ld = 1; spray(W.fL, 18 + l * 6, 1.6); spray(W.fR, 10, 1.4); if (l >= 4) ringFx(U_.root.position.x, U_.root.position.z, l >= 5 ? 8 : 4, .8); if (l >= 5) { shake(pl, l === 6 ? 1 : .7); flash(pl, .25); } }
+      if (p > J.t0 && p < J.t1) {
+        glow = l >= 5 ? 1 : .3;
+        if (l === 5) for (let i = cnt(dt * 150); i > 0; i--) emit(W.chest.x + rnd(-.2, .2), W.chest.y + rnd(-.3, .3), W.chest.z + rnd(-.2, .2), 0, 0, 0, rnd(.5, .9), rnd(.12, .18), neonCol(Math.floor(now * 8) + i % 2), 0, 0);
+        if (l === 6) { for (let i = cnt(dt * 120); i > 0; i--) emit(W.fL.x + rnd(-.2, .2), W.fL.y, W.fL.z + rnd(-.2, .2), rnd(-.4, .4), rnd(-.5, .5), rnd(-.4, .4), rnd(.6, 1.2), rnd(.1, .16), Math.random() < .6 ? C_WHITE : neonCol(i), 0, .2); if (!an.flags.ball && seg(p, J.t0, J.t1) >= .5) { an.flags.ball = 1; ballFlash(pl); } }
+      }
+    }
+  } else if (k === 'wind' || (k === 'hold' && !an.landed)) {
+    glow = k === 'hold' ? 1 : p;
+    const rate = k === 'hold' ? 140 : 70, cc = [C_PINK, C_CYAN, C_GOLD][b];
+    for (let i = cnt(dt * rate); i > 0; i--) { const a = Math.random() * TAU, e = rnd(-.6, .9), r = rnd(1.4, 2.2), ox = Math.cos(a) * Math.cos(e) * r, oy = Math.sin(e) * r, oz = Math.sin(a) * Math.cos(e) * r; emit(W.chest.x + ox, W.chest.y + oy, W.chest.z + oz, -ox * 1.6, -oy * 1.6, -oz * 1.6, .55, rnd(.07, .12), Math.random() < .5 ? cc : C_WHITE, 0, 0); }
+  } else if (k === 'linger' || (k === 'hold' && an.landed)) {
+    glow = .55;
+    for (let i = cnt(dt * 28); i > 0; i--) emit(W.chest.x + rnd(-1.2, 1.2), W.chest.y + rnd(-1, 1.4), W.chest.z + rnd(-1.2, 1.2), 0, rnd(.1, .4), 0, rnd(.7, 1.3), rnd(.06, .1), neonCol(i), 0, 0);
+    if (b === 2) for (let i = cnt(dt * 50); i > 0; i--) emit(U_.root.position.x + rnd(-6, 6), rnd(6, 9), U_.root.position.z + rnd(-4, 3), rnd(-.3, .3), rnd(-3, -2), 0, 3, rnd(.1, .16), neonCol(i), .3, 0);
+  }
+  U_.hornMat.uniforms.uEmissive.value = .25 + .75 * glow * (.75 + .25 * Math.sin(now * 24));
+}
+// no salto ao globo, o globo vem para perto do unicórnio (como a lua da fase 1), só na imagem de quem salta
+function ballNear(pl) {
+  if (!PHI || !WORLD2 || !isMoonJump(pl)) return false;
+  const J = JUMPS[5], s = seg((simT - pl.anim.t0) / MEAS, J.t0, J.t1), w = sm(.1, .35, s) * (1 - sm(.8, .97, s));
+  if (w < .002) return false;
+  const B = WORLD2.ball; _md.copy(pl.W.chest).sub(pl.cam.position); _md.y = 0; _md.normalize();
+  _mt.copy(pl.W.chest).addScaledVector(_md, 2.2); _mt.y = Math.min(HALL.y - 1.4, pl.W.horn.y + 1.6);
+  B.g.position.lerpVectors(B.pos, _mt, w); B.g.updateMatrixWorld(true); B.rod.position.set(B.g.position.x, B.g.position.y + .95, B.g.position.z); B.rod.scale.y = Math.max(.05, HALL.y - B.g.position.y - .95);
+  return true;
+}
+function ballBack() { const B = WORLD2.ball; B.g.position.copy(B.pos); B.g.updateMatrixWorld(true); B.rod.position.set(B.pos.x, B.pos.y + .95, B.pos.z); B.rod.scale.y = Math.max(.05, HALL.y - B.pos.y - .95); }
 function updW(pl) { const U_ = pl.uni, W = pl.W; U_.chest.getWorldPosition(W.chest); U_.hornTip.getWorldPosition(W.horn); U_.feet[0].getWorldPosition(W.fL); U_.feet[2].getWorldPosition(W.fR); }
 function fxTick(pl, dt, now) {
+  if (PHI) { fxTickD(pl, dt, now); return; }
   if (dt <= 0) return;
   const an = pl.anim, W = pl.W, U_ = pl.uni, k = an.kind, b = an.b, l = an.lvl, p = clamp((now - an.t0) / MEAS, 0, 1.2);
   let glow = 0;
@@ -1920,11 +2845,11 @@ view.addEventListener('webglcontextrestored', () => diag('contexto restaurado'),
 function clipFor(kind, b, lvl, landed) {
   switch (kind) {
     case 'move': return CLIPS[b][lvl - 1];
-    case 'wind': return C_WIND[b];
-    case 'hold': return landed ? C_FIN[b] : C_RISE[b];
-    case 'linger': return C_LINGER[b];
+    case 'wind': return PH.wind[b];
+    case 'hold': return landed ? PH.fin[b] : PH.rise[b];
+    case 'linger': return PH.linger[b];
     case 'bail': return C_BAIL;
-    default: return C_SKATE;
+    default: return PH.skate;
   }
 }
 function setAnim(pl, kind, o, now) {
@@ -2043,11 +2968,12 @@ function updateCamera(pl, dt) {
   _aim.set(W.chest.x + B.fwd.x * lead, Math.min(W.chest.y + .2, 1.05 + cap), W.chest.z + B.fwd.z * lead);
   if (PAIR.w > 0 && ACTIVE.length > 1) { const oc = partnerOf(pl).W.chest; _mid.set((W.chest.x + oc.x) / 2, (W.chest.y + oc.y) / 2 + .2, (W.chest.z + oc.z) / 2); _aim.lerp(_mid, PAIR.w); }
   const posing = an.kind === 'wind' || an.kind === 'hold' || an.kind === 'linger';
+  const bw = PHI && posing ? sm(.3, 1, BALL.w) : 0; if (bw > 0) _aim.y += (BALL.at.y - .6 - _aim.y) * .45 * bw;
   let fovT;
   if (OPT.cam === 'tv') {
     if (tv.cur < 0) _cp.copy(poseCam(pl, tv.poseB));
     else { const c = CAMS[tv.cur]; _cp.copy(c.p); if (c.rail) _cp.x = clamp(B.pos.x * .7, -12, 12); }
-    fovT = clamp(2 * Math.atan(tv.visH * (1 + .35 * PAIR.w) / 2 / _cp.distanceTo(_aim)) * 180 / PI, 14, 66);
+    fovT = clamp(2 * Math.atan(tv.visH * (1 + .35 * PAIR.w + .35 * bw) / 2 / _cp.distanceTo(_aim)) * 180 / PI, 14, 66);
     if (tv.cur >= 0 && CAMS[tv.cur].low) fovT = clamp(fovT * 1.12, 14, 66);
   } else {
     if (posing) _cp.copy(poseCam(pl, an.b));
@@ -2106,16 +3032,17 @@ function updMoon(pl) {
 const MIR = new THREE.Group(); scene.add(MIR);
 function renderView(pl) {
   const cam = pl.cam;
-  updMoon(pl);
+  updMoon(pl); const bn = ballNear(pl);
   U.uLightDir.value.copy(LIGHT_WORLD).transformDirection(cam.matrixWorldInverse);
   U.uScale.value = pl.RH / (2 * Math.tan(cam.fov * PI / 360));
-  U.uRes.value.set(pl.RTW / 2, pl.RH / 2); U.uAmb.value.copy(AMB_GAME);
+  U.uRes.value.set(pl.RTW / 2, pl.RH / 2); U.uAmb.value.copy(PHI ? AMB_DISCO : AMB_GAME);
   renderer.setRenderTarget(pl.rt); renderer.clear();
   // reflexo no gelo: os unicórnios espelhados pelo plano do gelo, desenhados antes do gelo translúcido
   MIR.scale.y = -1; MIR.updateMatrixWorld(true);
   cam.layers.set(1); renderer.render(scene, cam);
   MIR.scale.y = 1; MIR.updateMatrixWorld(true);
   cam.layers.enableAll(); renderer.render(scene, cam);
+  if (bn) ballBack();
 }
 function render3D() {
   if (PANO.on) { renderPano(); postRender(); return; }
@@ -2694,7 +3621,7 @@ function setupStage(st, charId) {
     st.ribbons = PARTS.map(p => makeRibbons(st.R, p)); st.fx = st.ribbons.flat();
   } else setAllForms(st.R, 'h');
   for (const f of st.fx) f.m.visible = false;
-  st.R.SIL.uSil.value = 0;
+  st.R.SIL.uSil.value = 0; worldIn(st);
   st.t = 0; st.rate = 1; st.done = false; st.active = true; st.hold = false; st.ev = {};
   st.b2x.setAttribute('aria-pressed', 'false'); st.waitEl.hidden = true;
   for (let i = 0; i < st.ps.n; i++) st.ps.life[i] = 0;
@@ -2942,7 +3869,7 @@ function renderStage(o, rb) {
   const cam = o.cam;
   U.uLightDir.value.copy(LIGHT_WORLD).transformDirection(cam.matrixWorldInverse);
   U.uScale.value = o.RH / (2 * Math.tan(cam.fov * PI / 360)); U.uRes.value.set(o.RTW / 2, o.RH / 2);
-  U.uAmb.value.copy(o === LINE ? AMB_LINE : AMB_NIGHT).lerp(AMB_BRIGHT, rb || 0);
+  U.uAmb.value.copy(o === LINE ? (PHI ? AMB_DISCO_LINE : AMB_LINE) : AMB_NIGHT).lerp(AMB_BRIGHT, rb || 0);
   renderer.setRenderTarget(o.rt); renderer.clear();
   if (!rb || rb < .999) { o.MIR.scale.y = -1; o.MIR.updateMatrixWorld(true); cam.layers.set(1); renderer.render(o.scene, cam); o.MIR.scale.y = 1; o.MIR.updateMatrixWorld(true); }
   cam.layers.enableAll(); renderer.render(o.scene, cam);
@@ -2961,11 +3888,11 @@ function bindStage(st, pl, dt) {
   if (st.off > 0) st.cam.setViewOffset(st.RTW, st.RH, 0, Math.round(st.RH * st.off), st.RTW, st.RH); else st.cam.clearViewOffset();
   st.cam.updateProjectionMatrix();
 }
-function selFrame(now, dt) { bindLine(); lineupUpdate(now, dt); renderStage(LINE, 0); drawLanes(PL[0], 0); postRender(); }
+function selFrame(now, dt) { bindLine(); lineupUpdate(now, dt); if (PHI) discoUpdate(LINE.disco, now, dt, .6, 0, null); renderStage(LINE, 0); drawLanes(PL[0], 0); postRender(); }
 function tfFrame(now, dt) {
   for (const pl of ACTIVE) {
     const st = pl.stage; if (!st || !st.active) continue;
-    bindStage(st, pl, dt); stageUpdate(st, dt, now);
+    bindStage(st, pl, dt); stageUpdate(st, dt, now); if (PHI) discoUpdate(st.disco, now, dt, .55, 0, null);
     renderStage(st, st.t < T_FINAL ? st.C.rainbow(st.t) : 0); drawLanes(pl, 0);
   }
   postRender();
@@ -3008,10 +3935,24 @@ function applySides() {
   [0, 1].forEach(j => { const top = halfOf(j) === 1; $('#pick' + j + ' .mini').className = 'mini ' + (top ? 'top' : 'bot'); $('#pick' + j + ' .side').textContent = '· ' + t(top ? 'sideTop' : 'sideBot'); });
 }
 function swapSides() { OPT.swap = !OPT.swap; store.set('swap2', OPT.swap); renderChips(); for (const m of $$('#select .mini')) m.animate([{ scale: '1.5' }, { scale: '1' }], { duration: 300, easing: 'ease-out' }); }
+/* --------- escolha da fase (depois do modo, antes dos personagens) --------- */
+function setPhase(i) { usePhase(i); store.set('phase', PHI); applyWorld(); }
+const bestKey = () => PHI ? 'best_n' : 'best';
+function openPhase(two) {
+  initAudio(); AC.resume().catch(() => {});
+  if (state.screen === 'title') goFull();
+  endTransformUI(); SEL.two = !!two;
+  $('#phMode').textContent = t(two ? 'p2' : 'p1');
+  for (const b of $$('.phc')) {
+    const i = +b.dataset.ph, best = store.get(i ? 'best_n' : 'best', 0) || 0;
+    b.setAttribute('aria-pressed', String(i === PHI)); b.querySelector('.phb').textContent = best ? `${t('best')}: ${fmt(best)}` : '';
+  }
+  openScreen('phase');
+}
 function openSelect(two, keep) {
   initAudio(); AC.resume().catch(() => {});
   if (state.screen === 'title') goFull();
-  ensureLineup(); endTransformUI();
+  ensureLineup(); worldIn(LINE); endTransformUI();
   if (!keep) { SEL.picks = [null, null]; SEL.focus = 0; }
   SEL.two = !!two;
   LINE.cs = null; LINE.focus = -1; LINE.idle = 0; LINE.spin = 0; LINE.drag = false; LDRAG.id = null; LINE.wave = { i: -1, t0: -9 };
@@ -3057,7 +3998,7 @@ function tfSet(i, tm) {
 /* ============================== jogadores ============================== */
 const WIN_P = .065, WIN_G = .14, WIN_X = .22;
 const state = { screen: 'title', paused: false, demo: false, two: false, songT: 0, clockInit: false, mi: -1, bi: -1, ended: false, manual: false, offset: store.get('offset', 0) / 1000 };
-const album = new Set((store.get('album', []) || []).filter(x => /^d?[0-2]\.[0-2]$/.test(x)));
+const album = new Set((store.get('album', []) || []).filter(x => /^(n:)?d?[0-2]\.[0-2]$/.test(x)));
 const PL = [];
 let ACTIVE = [];
 let preview = null;
@@ -3354,7 +4295,7 @@ function rotateSide(i, d) {
 }
 
 /* ============================== telas e fluxo ============================== */
-const screens = { title: $('#title'), select: $('#select'), ready2: $('#ready2'), options: $('#options'), album: $('#albumS'), calib: $('#calib'), pause: $('#pauseS'), results: $('#results'), results2: $('#results2') };
+const screens = { title: $('#title'), phase: $('#phaseS'), select: $('#select'), ready2: $('#ready2'), options: $('#options'), album: $('#albumS'), calib: $('#calib'), pause: $('#pauseS'), results: $('#results'), results2: $('#results2') };
 function show(id) { for (const k in screens) screens[k].hidden = k !== id; }
 function setHud(on) { for (const pl of PL) { pl.hud.hidden = !on; pl.padsEl.hidden = !on; } }
 // botão voltar do Android: uma entrada no histórico enquanto o jogo está fora da tela inicial
@@ -3368,6 +4309,7 @@ addEventListener('popstate', () => {
   if (state.screen === 'play') { if (!state.paused) pause(0); pushNav(); return; }
   if (state.screen === 'calib') { cal.running = false; openOptions(); pushNav(); return; }
   if (state.screen === 'ready2') { openSelect(true, true); pushNav(); return; }
+  if (state.screen === 'select') { openPhase(SEL.two); pushNav(); return; }
   toMenu(true);
 });
 let wake = null;
@@ -3434,7 +4376,7 @@ const pctOf = pl => clamp((pl.score - pl.syncPts) / pl.max, 0, 1);
 function endGame() {
   state.ended = true; setHud(false); pairReset();
   const real = !ACTIVE.some(pl => pl.auto);
-  if (real) { for (const pl of ACTIVE) for (const id of pl.found) album.add(id); store.set('album', [...album]); }
+  if (real) { for (const pl of ACTIVE) for (const id of pl.found) album.add(PH.key + id); store.set('album', [...album]); }
   if (state.two) showResults2(); else showResults1(real);
   releaseWake();
 }
@@ -3444,7 +4386,7 @@ function showResults1(real) {
   $('#rScore').textContent = fmt(pl.score); $('#rPct').textContent = t('ptsOf', { p: Math.round(pct * 100) + '%' });
   $('#rP').textContent = pl.stats.p; $('#rG').textContent = pl.stats.g; $('#rM').textContent = pl.stats.m; $('#rPo').textContent = pl.stats.poses + '/3';
   let bt = '';
-  if (real) { const best = store.get('best', 0) || 0; if (pl.score > best) { store.set('best', pl.score); bt = t('newBest'); } else bt = `${t('best')}: ${fmt(best)}`; }
+  if (real) { const best = store.get(bestKey(), 0) || 0; if (pl.score > best) { store.set(bestKey(), pl.score); bt = t('newBest'); } else bt = `${t('best')}: ${fmt(best)}`; }
   $('#rBest').textContent = bt;
   fillAlbum($('#rNames'), false);
   state.screen = 'results'; show('results');
@@ -3461,26 +4403,24 @@ function showResults2() {
   });
   state.screen = 'results2'; show('results2');
 }
-const kindOf = (b, i) => i === 2 ? 3 : SEQ[b][4 + i][0];
+const kindOf = (b, i, P = PH) => i === 2 ? 3 : P.seq[b][4 + i][0];
+// lista de nomes de uma fase: os 9 solo e, no álbum, os 9 a dois
+function albumRows(ol, P, withKinds) {
+  const rows = (duo) => { for (let b = 0; b < 3; b++) for (let i = 0; i < 3; i++) {
+    const li = document.createElement('li'), em = document.createElement('em'), sp = document.createElement('span');
+    em.textContent = i === 0 ? t('blocks')[b].toUpperCase() : '';
+    const got = album.has(P.key + (duo ? 'd' : '') + b + '.' + i); sp.textContent = got ? (duo ? P.duoNames : P.names)[OPT.lang][b][i] : '? ? ?'; if (!got) sp.className = 'lock';
+    if (withKinds) { const k = document.createElement('small'); k.textContent = t('kinds')[kindOf(b, i, P)]; sp.appendChild(k); }
+    li.append(em, sp); ol.appendChild(li);
+  } };
+  rows(false); if (!withKinds) return;
+  // manobras a dois: só na dupla, quando os dois chegam juntos às manobras com nome
+  const hd = document.createElement('li'); hd.className = 'sep'; hd.textContent = t('albumDuo'); ol.appendChild(hd); rows(true);
+}
 function fillAlbum(ol, withKinds) {
   ol.innerHTML = '';
-  for (let b = 0; b < 3; b++) for (let i = 0; i < 3; i++) {
-    const li = document.createElement('li'), em = document.createElement('em'), sp = document.createElement('span');
-    em.textContent = i === 0 ? t('blocks')[b].toUpperCase() : '';
-    const got = album.has(b + '.' + i); sp.textContent = got ? nameOf(b, i) : '? ? ?'; if (!got) sp.className = 'lock';
-    if (withKinds) { const k = document.createElement('small'); k.textContent = t('kinds')[kindOf(b, i)]; sp.appendChild(k); }
-    li.append(em, sp); ol.appendChild(li);
-  }
-  if (!withKinds) return;
-  // manobras a dois: só na dupla, quando os dois chegam juntos às manobras com nome
-  const hd = document.createElement('li'); hd.className = 'sep'; hd.textContent = t('albumDuo'); ol.appendChild(hd);
-  for (let b = 0; b < 3; b++) for (let i = 0; i < 3; i++) {
-    const li = document.createElement('li'), em = document.createElement('em'), sp = document.createElement('span');
-    em.textContent = i === 0 ? t('blocks')[b].toUpperCase() : '';
-    const got = album.has('d' + b + '.' + i); sp.textContent = got ? duoNameOf(b, i) : '? ? ?'; if (!got) sp.className = 'lock';
-    const k = document.createElement('small'); k.textContent = t('kinds')[kindOf(b, i)]; sp.appendChild(k);
-    li.append(em, sp); ol.appendChild(li);
-  }
+  if (!withKinds) { albumRows(ol, PH, false); return; }
+  PHASES.forEach((P, i) => { const hd = document.createElement('li'); hd.className = 'phsep'; hd.textContent = `${t('phase')} ${i + 1} · ${t(i ? 'ph2' : 'ph1')}`; ol.appendChild(hd); albumRows(ol, P, true); });
 }
 function openAlbum() { fillAlbum($('#aList'), true); $('#aCount').textContent = t('albumCount', { n: album.size }); openScreen('album'); }
 function offText() { const ms = Math.round(state.offset * 1000); return `${ms > 0 ? '+' : ''}${ms} ms`; }
@@ -3589,10 +4529,12 @@ addEventListener('keyup', e => { const k = KEYS[e.code]; const pl = k && ACTIVE[
 document.addEventListener('visibilitychange', () => { if (document.hidden) pause(0); else if (state.screen === 'play') requestWake(); });
 
 $$('.flag').forEach(b => { b.innerHTML = FLAGS[b.dataset.lang]; b.setAttribute('aria-label', b.dataset.lang === 'es' ? 'Español' : 'Português'); b.onclick = () => setLang(b.dataset.lang); });
-$('#b1p').onclick = () => openSelect(false);
-$('#b2p').onclick = () => openSelect(true);
+$('#b1p').onclick = () => openPhase(false);
+$('#b2p').onclick = () => openPhase(true);
+$$('.phc').forEach(b => b.onclick = () => { setPhase(+b.dataset.ph); openSelect(SEL.two); });
+$('#phBack').onclick = () => toMenu();
 $('#goT').onclick = confirmSelect;
-$('#sBack').onclick = () => toMenu();
+$('#sBack').onclick = () => openPhase(SEL.two);
 $('#swapS').onclick = swapSides;
 $('#bDemo').onclick = () => startRun({ demo: true });
 $('#bOpt').onclick = openOptions;
@@ -3618,7 +4560,7 @@ $('#oReset').onclick = () => {
 };
 $('#oNo').onclick = () => { $('#oConfirm').hidden = true; $('#oReset').hidden = false; };
 $('#oYes').onclick = () => {
-  album.clear(); store.del('album'); store.del('best'); store.del('offset'); state.offset = 0;
+  album.clear(); store.del('album'); store.del('best'); store.del('best_n'); store.del('offset'); state.offset = 0;
   $('#oConfirm').hidden = true; $('#oReset').hidden = false; $('#oNote').textContent = t('resetDone'); updOffInfo();
 };
 $('#cStart').onclick = startCalib;
@@ -3683,6 +4625,7 @@ function tick(nowMs, forceDt) {
   for (const pl of ACTIVE) animate(pl, tt, dt);
   updFx(dt); updParticles(dt);
   if (STARS) { const ts = nowMs / 1000; for (let i = 0; i < STARS.n; i++) STARS.alpha[i] = .55 + .45 * Math.sin(ts * 1.7 + STARS.phase[i]); STARS.geo.attributes.palpha.needsUpdate = true; }
+  if (PHI && WORLD2) { ballUpdate(dt); const play = state.screen === 'play'; discoUpdate(WORLD2, play ? state.songT : nowMs / 1000, dt, play ? hypeOf(state.mi) : .55, BALL.w, BALL.w > .001 ? BALL.at : null); }
   if (BULBS) { const ts = nowMs / 1000; for (let i = 0; i < BULBS.n; i++) BULBS.alpha[i] = .75 + .25 * Math.sin(ts * 3 + i * 1.3); BULBS.geo.attributes.palpha.needsUpdate = true; }
   for (const pl of ACTIVE) { if (preview) pl.tv.snap = true; updateCamera(pl, dt); }
   if (PANO.on) panoCamera(dt);
@@ -3692,6 +4635,7 @@ function tick(nowMs, forceDt) {
 
 /* --------- início --------- */
 buildWorld();
+usePhase(store.get('phase', 0) === 1 ? 1 : 0); applyWorld();
 const WORLD_MESHES = []; scene.traverse(o => { if (o.isMesh && o.geometry && o.geometry.type !== 'SphereGeometry') WORLD_MESHES.push(o); });
 PL.push(makePlayer(0), makePlayer(1));
 setTwo(false);
@@ -3766,6 +4710,7 @@ window.UG = {
   selState: () => ({ screen: state.screen, two: SEL.two, picks: SEL.picks.slice(), focus: LINE.focus, go: !$('#goT').disabled, chars: PL.map(p => p.charId) }),
   tf: () => ({ screen: state.screen, two: state.two, st: ACTIVE.map(pl => { const s = pl.stage; return s && { t: +s.t.toFixed(2), rate: s.rate, done: s.done, active: s.active, hold: s.hold, forms: s.R && Object.assign({}, s.R.state) }; }) }),
   tfSet, tfRate: (i, r) => setRate(PL[i].stage, r), tfSkip: i => skipStage(PL[i].stage),
+  phase: i => { setPhase(i); return PHI; }, ball: () => ({ target: BALL.target, w: +BALL.w.toFixed(3), at: BALL.at.toArray().map(v => +v.toFixed(2)) }),
   gap: () => +((((PL[1].base.s - PL[0].base.s) % PATH_L) + PATH_L) % PATH_L / PATH_L).toFixed(3)
 };
 })();
