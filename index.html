@@ -165,7 +165,8 @@ body{height:100%;margin:0;background:var(--deep);color:var(--ink);font-family:va
 .logo .l2{font-family:var(--f-display);font-size:clamp(28px,9.6cqw,42px);color:var(--ice);filter:drop-shadow(3px 0 0 var(--blue-dk)) drop-shadow(-3px 0 0 var(--blue-dk)) drop-shadow(0 3px 0 var(--blue-dk)) drop-shadow(0 -3px 0 var(--blue-dk)) drop-shadow(0 6px 0 var(--outline))}
 .sub{font-family:var(--f-pixel);font-size:10px;letter-spacing:.14em;color:var(--muted);margin:12px 0 0;text-transform:uppercase}
 .menu{display:flex;flex-direction:column;gap:12px;width:min(100%,300px)}
-.menu.row{flex-direction:row}
+.menu.row{flex-direction:row;flex-wrap:wrap}
+#bReplay{flex:1 1 100%}
 .menu.row .btn{flex:1;font-size:17px;white-space:nowrap;padding-inline:12px}
 .btn{font-family:var(--f-display);font-size:19px;color:#fff;border:0;border-radius:999px;padding:13px 18px;background:var(--pink);box-shadow:0 5px 0 var(--pink-dk),0 10px 20px rgba(0,0,0,.35);cursor:pointer}
 .btn:active{translate:0 3px;box-shadow:0 2px 0 var(--pink-dk)}
@@ -212,6 +213,8 @@ h2{font-family:var(--f-display);font-weight:400;font-size:30px;margin:0;filter:d
 /* Pose final a dois numa imagem só (os dois do mesmo lado da tela) */
 #pano{position:absolute;inset:0;container-type:size;pointer-events:none;z-index:2}
 #pano .tbox{--cx:.5;--nw:86%;--sx:.5;--sy:.78}
+#pano.rp .tbox{--sy:.6}
+#pano.rp .tbox.q3{--sy:.52}
 #pano .names{top:11%}
 #pano .nmw{top:0;bottom:auto}
 #pano .card.title{top:22%}
@@ -1251,11 +1254,9 @@ function buildWorld() {
   const standM = psxMat({ map: crowdTex, rep: [16, 1], emissive: .25, color: 0xc8c0e8 });
   for (const sz of [-1]) for (let k = 0; k < 3; k++) { const m = new THREE.Mesh(new THREE.BoxGeometry(RX * 2 - 2, .7 + k * .7, 1.1), standM); m.position.set(0, (.7 + k * .7) / 2, sz * (RZ + 1.9 + k * 1.1)); W1.add(m); }
   // postes e cordões de luz atravessando a pista
-  const poleM = psxMat({ color: 0x8b80b8 });
   const lines = [-4.5, 0, 4.5]; BULBS = makePoints(lines.length * 34);
   let bi = 0; const bcols = [C_PINK, C_GOLD, C_MINT, C_VIO, C_BLUE];
   for (const z of lines) {
-    for (const x of [-RX - .5, RX + .5]) { const p = new THREE.Mesh(new THREE.CylinderGeometry(.07, .09, 6, 5), poleM); p.position.set(x, 3, z); W1.add(p); }
     for (let i = 0; i < 34; i++) {
       const x = -RX - .5 + (RX * 2 + 1) * i / 33, y = 5.9 - 1.1 * (1 - Math.pow(x / (RX + .5), 2));
       BULBS.pos[bi * 3] = x; BULBS.pos[bi * 3 + 1] = y; BULBS.pos[bi * 3 + 2] = z;
@@ -1383,7 +1384,7 @@ function buildDisco(parent) {
   add(new THREE.Mesh(new THREE.BoxGeometry(3.4, 1.1, 1), psxMat({ color: 0x2a1c48 })), 0, 2.75, -15);
   for (const sx of [-1, 1]) {
     add(new THREE.Mesh(new THREE.CylinderGeometry(.42, .42, .06, 10), psxMat({ color: 0x111018 })), sx * .85, 3.33, -15);
-    for (let k = 0; k < 3; k++) add(new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.6, 1.2), psxMat({ map: speakerTex, rep: [1, 1] })), sx * 6.2, 2.2 + .8 + k * 1.6 - .8 + .8, -16.2);
+    for (let k = 0; k < 2; k++) add(new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.6, 1.2), psxMat({ map: speakerTex, rep: [1, 1] })), sx * 8.4, 3.0 + k * 1.6, -16.2);
   }
   D.eq = []; for (let i = 0; i < 9; i++) { const m = add(new THREE.Mesh(new THREE.BoxGeometry(.24, 1, .05), psxMat({ color: NEON[i % 6], emissive: 1 })), -1.2 + i * .3, 2.4, -14.47); m.geometry.translate(0, .5, 0); D.eq.push(m); }
   { const dj = new THREE.Group(), coat = psxMat({ color: 0xf2e6ff }), suit = psxMat({ color: 0xff5cc8 });
@@ -2442,7 +2443,7 @@ PANO.quad = postQuad(PANO.rt.texture); PANO.quad.visible = false;
 function panoOn(q, live, force) {
   if (!PANO.el || (state.replay && !force)) return;
   PANO.on = true; PANO.live = !!live; PANO.q = q !== undefined ? q : OPT.rot[0]; PANO.t0 = performance.now() / 1000; PANO.snap = true;
-  PANO.el.hidden = false; PANO.names.innerHTML = ''; PANO.pads.hidden = !state.replay; if (!live) for (const pl of PL) pl.el.hidden = true; $('#divider').hidden = true; layout();
+  PANO.el.hidden = false; PANO.names.innerHTML = ''; PANO.pads.hidden = !state.replay; PANO.el.classList.toggle('rp', !!state.replay); if (!live) for (const pl of PL) pl.el.hidden = true; $('#divider').hidden = true; layout();
   PANO.flash.animate([{ opacity: REDUCED ? .25 : .7 }, { opacity: 0 }], { duration: 600, easing: 'ease-out' });
 }
 function panoOff(force) {
@@ -3030,12 +3031,17 @@ function direct(pl, sec, ms) {
   if (sec.k === 'outro' && sec.i === 1 && pl.anim.kind !== 'linger') cutTo(pl, 0);
 }
 const isMoonJump = pl => pl.anim.kind === 'move' && pl.anim.b === 2 && pl.anim.lvl === 6;
+// até que altura a mira acompanha o unicórnio: no pulo lunar vai até o alto; nos outros saltos, o teto de cada um
+function camCap(pl) {
+  const an = pl.anim;
+  if (isMoonJump(pl)) return 40;
+  if (an.kind === 'move' && an.b === 2) return JUMPS[an.lvl - 1].cap || 2.5;
+  if (an.kind === 'move' && an.b === 0 && an.lvl >= 5) return 3.4;
+  return 3;
+}
 function updateCamera(pl, dt) {
   const tv = pl.tv, B = pl.base, an = pl.anim, W = pl.W, cam = pl.cam;
-  let cap = 3; const moonJ = isMoonJump(pl);
-  if (moonJ) cap = 40;   // no pulo lunar a câmera acompanha o unicórnio até o alto
-  else if (an.kind === 'move' && an.b === 2) cap = JUMPS[an.lvl - 1].cap || 2.5;
-  else if (an.kind === 'move' && an.b === 0 && an.lvl >= 5) cap = 3.4;
+  const moonJ = isMoonJump(pl), cap = camCap(pl);
   const lead = B.spd * .2 * (1 - PAIR.w);
   _aim.set(W.chest.x + B.fwd.x * lead, Math.min(W.chest.y + .2, 1.05 + cap), W.chest.z + B.fwd.z * lead);
   if (PAIR.w > 0 && ACTIVE.length > 1) { const oc = partnerOf(pl).W.chest; _mid.set((W.chest.x + oc.x) / 2, (W.chest.y + oc.y) / 2 + .2, (W.chest.z + oc.z) / 2); _aim.lerp(_mid, PAIR.w); }
@@ -3256,9 +3262,8 @@ function buildWorldIn(scene) {
   const crowdTex = canvasTex(64, 16, (g, w, h) => { const R = mulberry(31); g.fillStyle = '#1e1640'; g.fillRect(0, 0, w, h); const cs = ['#ff6ab8', '#ffd66b', '#7fe6ff', '#b88cff', '#e9e2ff', '#7dffc8', '#ff9a5a']; for (let y = 1; y < h; y += 3) for (let x = (y % 2 ? 0 : 1); x < w; x += 3) if (R() < .7) { g.fillStyle = cs[(R() * cs.length) | 0]; g.fillRect(x, y, 1, 1); } });
   const standM = psxMat({ map: crowdTex, rep: [16, 1], emissive: .25, color: 0xc8c0e8 });
   for (let k = 0; k < 3; k++) { const m = new THREE.Mesh(new THREE.BoxGeometry(RX * 2 - 2, .7 + k * .7, 1.1), standM); m.position.set(0, (.7 + k * .7) / 2, -(RZ + 1.9 + k * 1.1)); W.add(m); }
-  const poleM = psxMat({ color: 0x8b80b8 }), lines = [-4.5, 0, 4.5], BULBS = makePoints(lines.length * 34), bcols = [C_PINK, C_GOLD, C_MINT, C_VIO, C_BLUE]; let bi = 0;
+  const lines = [-4.5, 0, 4.5], BULBS = makePoints(lines.length * 34), bcols = [C_PINK, C_GOLD, C_MINT, C_VIO, C_BLUE]; let bi = 0;
   for (const z of lines) {
-    for (const x of [-RX - .5, RX + .5]) { const p = new THREE.Mesh(new THREE.CylinderGeometry(.07, .09, 6, 5), poleM); p.position.set(x, 3, z); W.add(p); }
     for (let i = 0; i < 34; i++) { const x = -RX - .5 + (RX * 2 + 1) * i / 33, y = 5.9 - 1.1 * (1 - Math.pow(x / (RX + .5), 2)); BULBS.pos[bi * 3] = x; BULBS.pos[bi * 3 + 1] = y; BULBS.pos[bi * 3 + 2] = z; const cc = bcols[(i + lines.indexOf(z)) % 5]; BULBS.col[bi * 3] = cc.r; BULBS.col[bi * 3 + 1] = cc.g; BULBS.col[bi * 3 + 2] = cc.b; BULBS.size[bi] = .16; BULBS.alpha[bi] = 1; bi++; }
   }
   BULBS.pts.renderOrder = 6; W.add(BULBS.pts);
@@ -4695,7 +4700,7 @@ function attractTick(now) {
 // e sem pistas nem cascos. Só a última partida jogada fica guardada; a próxima partida a substitui.
 // Exportar: a partida é desenhada de novo quadro a quadro (mais rápido que o tempo real quando o aparelho deixa),
 // codificada em H.264 pelo próprio Chrome (WebCodecs) e salva em MP4, com a música refeita fora do tempo real.
-const RP = { data: null, seg: 0, orient: store.get('rpOrient', 'v') === 'h' ? 'h' : 'v', mode: 'pl', fp: 0, both: false, t0: 0, t1: 0, exp: null, caps: [], cards: [], syncs: [], press: [], alt: null, angOff: 0, angT: 0, occT0: -1 };
+const RP = { data: null, seg: 0, orient: store.get('rpOrient', 'v') === 'h' ? 'h' : 'v', mode: 'pl', fp: 0, both: false, t0: 0, t1: 0, exp: null, caps: [], cards: [], syncs: [], press: [], alt: null, angOff: 0, angT: 0, occT0: -1, aim: new THREE.Vector3() };
 { const d = store.get('replay', null); if (d && d.v === 1 && Array.isArray(d.p) && d.p.length) RP.data = d; }
 // partes: a partida inteira e cada bloco (com a contagem/cartão antes e a pose parada depois)
 const RP_SEGS = [{ mi0: 0, mi1: 36, T0: -.4 }, { mi0: 3, mi1: 13 }, { mi0: 13, mi1: 23 }, { mi0: 23, mi1: 34 }];
@@ -4790,13 +4795,18 @@ function directorCam(dt) {
     }
     return;
   }
-  const pl = PL[RP.fp], tv = pl.tv, visK = RP.orient === 'h' ? .62 : 1;
+  const pl = PL[RP.fp], tv = pl.tv, B = pl.base, visK = RP.orient === 'h' ? .62 : 1;
   let pos = tv.pos;
-  if (RP.alt && RP.alt.fp === RP.fp && (now < RP.alt.until || blocked(tv.pos, occTargets([pl])))) pos = RP.alt.pos; else RP.alt = null;
+  // o ângulo alternativo acompanha o patinador (fica na mesma posição em relação a ele) até a câmera de TV ficar livre
+  if (RP.alt && RP.alt.fp === RP.fp) { const A_ = RP.alt; A_.pos.set(B.pos.x + A_.off.x, A_.off.y, B.pos.z + A_.off.z); keepOutOfStands(A_.pos); if (now < A_.until || blocked(tv.pos, occTargets([pl]))) pos = A_.pos; else RP.alt = null; }
+  else RP.alt = null;
   const o = occCheck([pl], pos);
-  if (o.hit) { const q = pickClearCam(pl, o.pts, pos); if (q) { RP.alt = { pos: q, until: now + 2.5, fp: RP.fp }; pos = q; } RP.occT0 = -1; }
-  const f = RP.alt ? clamp(2 * Math.atan(tv.visH * (1 + .35 * PAIR.w) / 2 / Math.max(1, pos.distanceTo(tv.aim))) * 180 / PI, 14, 66) * visK : clamp(tv.fov * visK, 12, 70);
-  cam.position.copy(pos); cam.lookAt(tv.aim);
+  if (o.hit) { const q = pickClearCam(pl, o.pts, pos); if (q) { RP.alt = { pos: q, off: new THREE.Vector3(q.x - B.pos.x, q.y, q.z - B.pos.z), until: now + 2.5, fp: RP.fp }; pos = q; } RP.occT0 = -1; }
+  const W = pl.W, lead = B.spd * .2;
+  _aim.set(W.chest.x + B.fwd.x * lead, Math.min(W.chest.y + .2, 1.05 + camCap(pl)), W.chest.z + B.fwd.z * lead);
+  if (PANO.snap || !(dt > 0) || isMoonJump(pl)) RP.aim.copy(_aim); else RP.aim.lerp(_aim, 1 - Math.exp(-dt * 5));
+  const f = RP.alt ? clamp(2 * Math.atan(tv.visH * (1 + .35 * PAIR.w) / 2 / Math.max(1, pos.distanceTo(RP.aim))) * 180 / PI, 14, 66) * visK : clamp(tv.fov * visK, 12, 70);
+  cam.position.copy(pos); cam.lookAt(RP.aim); PANO.snap = false;
   if (Math.abs(cam.fov - f) > .01) { cam.fov = f; cam.updateProjectionMatrix(); }
   cam.updateMatrixWorld();
 }
@@ -4814,18 +4824,29 @@ function rpPress(pl, n, j) {
   RP.press.push({ p: pl.id, lane: n.lane, t: state.songT, end, j });
 }
 const PAD_COL = [['#ff4fa8', '#a8226c', '#ffb1db'], ['#4f86ff', '#2443a8', '#b4c8ff']];
+function starAt(cx, x, y, R) { cx.beginPath(); for (let i = 0; i < 10; i++) { const a = -HP + i * PI / 5, r = i % 2 ? R * .48 : R; cx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r); } cx.closePath(); }
 function drawPads(cx, W, H, T, k, bottom = 0) {
   if (!RP.data) return;
   const two = ACTIVE.length > 1, pw = 64 * k, ph = 44 * k, gap = 10 * k, y = H - ph - (RP.exp ? 30 * k : bottom);
   const groups = two ? [[0, 20 * k + 10 * k], [1, W - 20 * k - 10 * k - (pw * 2 + gap)]] : [[0, W / 2 - pw - gap / 2]];
+  // pistas: as estrelas descem durante AP segundos até o centro do casco, como no jogo
+  const AP = 1.25, laneH = Math.min(170 * k, H * .26), hit = y + ph / 2, top = hit - laneH, R = 11 * k, yOf = t => hit - (t - T) / AP * laneH;
   cx.save(); cx.textAlign = 'center'; cx.textBaseline = 'middle';
   for (const [pi, x0] of groups) {
     const pl = PL[pi]; if (!pl) continue;
-    // nome do personagem em cima dos cascos de cada um
+    const lx = l => x0 + l * (pw + gap) + pw / 2;
+    // nome do personagem acima da pista de cada um
     if (two) {
       cx.font = `${Math.round(15 * k)}px "Silkscreen"`; cx.lineWidth = 3.5 * k; cx.strokeStyle = '#2a0b4d'; cx.fillStyle = '#ffffff'; cx.globalAlpha = .9;
-      const nm = (CHAR_BY_ID[pl.charId] || { name: '' }).name.toUpperCase(); cx.strokeText(nm, x0 + pw + gap / 2, y - 14 * k); cx.fillText(nm, x0 + pw + gap / 2, y - 14 * k);
+      const nm = (CHAR_BY_ID[pl.charId] || { name: '' }).name.toUpperCase(); cx.strokeText(nm, x0 + pw + gap / 2, top - 12 * k); cx.fillText(nm, x0 + pw + gap / 2, top - 12 * k);
     }
+    cx.globalAlpha = 1;
+    for (let l = 0; l < 2; l++) { const gr = cx.createLinearGradient(0, top, 0, hit); gr.addColorStop(0, `rgba(${LANE_COL[l]},0)`); gr.addColorStop(1, `rgba(${LANE_COL[l]},.3)`); cx.fillStyle = gr; rrPath(cx, lx(l) - pw / 2, top, pw, laneH, 10 * k); cx.fill(); }
+    for (let b = Math.ceil(T / BEAT), b1 = Math.floor((T + AP) / BEAT); b <= b1; b++) {
+      const yb = yOf(b * BEAT), a = clamp((yb - top) / (laneH * .3), 0, 1); cx.strokeStyle = `rgba(255,255,255,${(b % 4 === 0 ? .4 : .14) * a})`; cx.lineWidth = (b % 4 === 0 ? 2 : 1) * k;
+      for (let l = 0; l < 2; l++) { cx.beginPath(); cx.moveTo(lx(l) - pw / 2 + 5 * k, yb); cx.lineTo(lx(l) + pw / 2 - 5 * k, yb); cx.stroke(); }
+    }
+    // cascos (apertam no tempo gravado; anel no acerto, X no erro)
     for (let lane = 0; lane < 2; lane++) {
       const x = x0 + lane * (pw + gap), C = PAD_COL[lane];
       let down = 0, ring = null, miss = 0;
@@ -4835,17 +4856,36 @@ function drawPads(cx, W, H, T, k, bottom = 0) {
         if (T <= e.end + .06) down = 1;
         if (T - e.t < .35) ring = e;
       }
-      const s = down ? .9 : 1, cxp = x + pw / 2, cyp = y + ph / 2, w = pw * s, h = ph * s;
-      cx.globalAlpha = down ? 1 : .78;
+      const sc = down ? .9 : 1, cxp = x + pw / 2, cyp = y + ph / 2, w = pw * sc, h = ph * sc;
+      cx.globalAlpha = down ? 1 : .82;
       if (down) { cx.shadowColor = C[2]; cx.shadowBlur = 16 * k; }
       cx.fillStyle = C[1]; rrPath(cx, cxp - w / 2, cyp - h / 2 + 4 * k, w, h, 12 * k); cx.fill();
       cx.fillStyle = down ? C[2] : C[0]; rrPath(cx, cxp - w / 2, cyp - h / 2 + (down ? 3 * k : 0), w, h, 12 * k); cx.fill();
       cx.shadowBlur = 0;
-      // ferradura
       cx.strokeStyle = 'rgba(255,255,255,.92)'; cx.lineWidth = 4.5 * k; cx.lineCap = 'round';
       const r = 8 * k, hy = cyp + (down ? 3 * k : 0) - 2 * k; cx.beginPath(); cx.moveTo(cxp - r, hy + 8 * k); cx.lineTo(cxp - r, hy); cx.arc(cxp, hy, r, PI, 0); cx.lineTo(cxp + r, hy + 8 * k); cx.stroke();
       if (ring) { const a = (T - ring.t) / .35; cx.globalAlpha = 1 - a; cx.strokeStyle = ring.j === 'p' ? '#ffd660' : '#ffffff'; cx.lineWidth = 3 * k; rrPath(cx, cxp - w / 2 - 6 * k * (1 + a * 2), cyp - h / 2 - 6 * k * (1 + a * 2), w + 12 * k * (1 + a * 2), h + 12 * k * (1 + a * 2), 16 * k); cx.stroke(); }
       if (miss > 0) { cx.globalAlpha = miss; cx.strokeStyle = '#ff3355'; cx.lineWidth = 5 * k; const m = 12 * k; cx.beginPath(); cx.moveTo(cxp - m, cyp - m); cx.lineTo(cxp + m, cyp + m); cx.moveTo(cxp + m, cyp - m); cx.lineTo(cxp - m, cyp + m); cx.stroke(); }
+    }
+    // estrelas (as já tocadas somem; a estrela longa fica como barra enquanto é segurada)
+    cx.lineJoin = 'round';
+    for (const n of pl.notes) {
+      if (n.t > T + AP) break;
+      const tailLive = n.hold && n.j !== 'm' && n.tail !== 'm' && n.end > T - .05 && n.tail !== 'ok';
+      if (n.j && !tailLive) continue;
+      if (!n.hold && n.t < T - .2) continue;
+      const x = lx(n.lane), yn = yOf(n.t); cx.globalAlpha = clamp((yn - top) / (30 * k), 0, 1);
+      if (n.hold) {
+        const yE = Math.max(top, yOf(n.end)), yH = n.j ? hit : yn, tw = 12 * k;
+        cx.fillStyle = `rgba(${LANE_COL[n.lane]},${n.j ? .95 : .6})`; rrPath(cx, x - tw / 2, yE, tw, Math.max(0, yH - yE), 6 * k); cx.fill(); cx.strokeStyle = 'rgba(255,255,255,.85)'; cx.lineWidth = 1.5 * k; cx.stroke();
+        starAt(cx, x, yE, R * .7); cx.fillStyle = '#fff'; cx.fill();
+        if (!n.j) { starAt(cx, x, yn, R * 1.15); cx.fillStyle = LANE_HEX[n.lane]; cx.fill(); cx.lineWidth = 2 * k; cx.strokeStyle = '#fff'; cx.stroke(); }
+      } else {
+        if (n.pair && n.lane === 0) { cx.strokeStyle = 'rgba(255,255,255,.75)'; cx.lineWidth = 3 * k; cx.beginPath(); cx.moveTo(lx(0) + R, yn); cx.lineTo(lx(1) - R, yn); cx.stroke(); }
+        starAt(cx, x, yn, R); cx.fillStyle = LANE_HEX[n.lane]; cx.fill(); cx.lineWidth = 2 * k; cx.strokeStyle = '#fff'; cx.stroke();
+        starAt(cx, x - R * .12, yn - R * .15, R * .35); cx.fillStyle = 'rgba(255,255,255,.55)'; cx.fill();
+      }
+      cx.globalAlpha = 1;
     }
   }
   cx.restore();
@@ -4858,7 +4898,7 @@ function drawRpOverlay() {
   if (!w || !h) return;
   if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
   const cx = c.getContext('2d'); cx.clearRect(0, 0, w, h);
-  drawPads(cx, w, h, state.songT, Math.min(w, h) / 720 * 1.6, 66 * dpr);   // acima da barra de pausa e progresso
+  drawPads(cx, w, h, state.songT, Math.min(w, h) / 720 * (w > h ? 1.3 : 1.6), 66 * dpr);   // acima da barra de pausa e progresso
   if (RP.press.length > 80) RP.press = RP.press.filter(e => state.songT - e.end < 1);
 }
 
@@ -4994,7 +5034,7 @@ function drawCaptions(cx, W, H, T) {
       text(ln, cx0, y0 + i * size * 1.08, size, fill);
     });
   }
-  for (const s of RP.syncs) { const a = T - s.t; if (a < 0 || a > 1.5) continue; cx.globalAlpha = fade(a, 1.5); text(s.text, cx0, H * .8 - 14 * k * a, 40 * k, '#7dffc8'); }
+  for (const s of RP.syncs) { const a = T - s.t; if (a < 0 || a > 1.5) continue; cx.globalAlpha = fade(a, 1.5); text(s.text, cx0, H - 52 * k - Math.min(170 * k, H * .26) - 30 * k - 14 * k * a, 40 * k, '#7dffc8'); }
   cx.globalAlpha = .7; cx.textAlign = 'left'; text(t('logo1').toUpperCase() + ' ' + t('logo2').toUpperCase(), 20 * k, 24 * k, 16 * k, '#ffffff', '#2a0b4d', 'Silkscreen');
   cx.globalAlpha = 1; cx.textAlign = 'center';
   drawPads(cx, W, H, T, k);
@@ -5195,6 +5235,7 @@ window.UG = {
   tf: () => ({ screen: state.screen, two: state.two, st: ACTIVE.map(pl => { const s = pl.stage; return s && { t: +s.t.toFixed(2), rate: s.rate, done: s.done, active: s.active, hold: s.hold, forms: s.R && Object.assign({}, s.R.state) }; }) }),
   tfSet, tfRate: (i, r) => setRate(PL[i].stage, r), tfSkip: i => skipStage(PL[i].stage),
   phase: i => { setPhase(i); return PHI; },
+  ndc: () => ACTIVE.map(pl => { const q = pl.W.chest.clone().project(PANO.cam); return [+q.x.toFixed(2), +q.y.toFixed(2)]; }),
   occWhat() { const pls = state.two && PAIR.w > .5 ? PL : [PL[RP.fp]], out = []; for (const pt of occTargets(pls)) { _ocd.copy(pt).sub(PANO.cam.position); const d = _ocd.length(); _ocd.divideScalar(d); occRay.set(PANO.cam.position, _ocd); occRay.far = d - .35; for (const h of occRay.intersectObjects(occList(), false)) { const o = h.object, w = new THREE.Vector3(); o.getWorldPosition(w); out.push([o.geometry.type, w.toArray().map(v => +v.toFixed(1)), +h.distance.toFixed(1), pt.toArray().map(v => +v.toFixed(1))]); } } const pl0 = PL[RP.fp], pk = pickClearCam(pl0, occTargets([pl0]), PANO.cam.position); return { pick: pk && pk.toArray().map(v => +v.toFixed(1)), occT0: RP.occT0, cam: PANO.cam.position.toArray().map(v => +v.toFixed(1)), fp: RP.fp, tvcur: PL[RP.fp].tv.cur, virt: PL[RP.fp].tv.virt, hits: out }; },
   replayData: () => RP.data && { ph: RP.data.ph, two: RP.data.two, chars: RP.data.chars, n: RP.data.p.map(x => x.length), miss: RP.data.p.map(x => x.filter(r => r[0] === 2 || r[2] === 2).length) },
   replay: (seg, o) => { if (o) RP.orient = o; playReplay(seg || 0); }, replayStop: () => replayStop(), rp: () => ({ on: !!state.replay, seg: RP.seg, fp: RP.fp, both: RP.both, mode: RP.mode, songT: state.songT, caps: RP.caps.length, score: ACTIVE.map(pl => pl.score), alt: !!RP.alt, angOff: +RP.angOff.toFixed(2), occ: blocked(PANO.cam.position, occTargets(state.two && PAIR.w > .5 ? PL : [PL[RP.fp]])), press: RP.press.length }),
