@@ -2516,9 +2516,30 @@ function trackVel(pl, pose, dt) {
   }
   pl.prevPose = cloneP(pose);
 }
-function instKeys(pl, c, tb0, snap) {
-  const k0 = { t: tb0, p: snap, v: cloneP(pl.vel) };
-  return [k0].concat(c.R.filter(k => k.t > tb0 + .22));
+const FLUID = { on: true, minIn: .5, look: true, spd: true, cont: true };   // estudo de fluidez (ligado): emenda mínima, antecipação e velocidade contínua
+function instKeys(pl, c, tb0, snap, next) {
+  const k0 = { t: tb0, p: snap, v: cloneP(pl.vel) }, K = [k0].concat(c.R.filter(k => k.t > tb0 + .22));
+  if (FLUID.on && FLUID.minIn > 0 && !c.loop && K.length > 1 && K[1].t < FLUID.minIn) {
+    const lim = K.length > 2 ? K[2].t - .5 : FLUID.minIn, t = Math.min(FLUID.minIn, lim);   // sem encurtar o trecho seguinte (saltos rápidos)
+    if (t > K[1].t) K[1] = { t, p: K[1].p };
+  }
+  // A. antecipação: a última chave (a volta ao neutro) vira a primeira pose da manobra seguinte, um pouco além do fim do
+  // clipe; assim o último tempo já prepara a próxima figura e o clipe seguinte continua o mesmo arco a partir dela
+  if (FLUID.on && FLUID.look && next && !c.loop && K.length > 1 && next.R.length) {
+    const last = K.pop(), tail = next.R.filter((k, i) => i === 0 || k.t <= FLUID.minIn + .001);   // as chaves de entrada da próxima (até meio tempo)
+    for (const nx of tail) {
+      const p = cloneP(last.p); for (const ch of BODY) p[ch] = nx.p[ch]; for (const ch of LIMBS) p[ch] = nx.p[ch].slice();
+      if (c.len + nx.t > K[K.length - 1].t + .05) K.push({ t: c.len + nx.t, p });
+    }
+  }
+  return K;
+}
+// a manobra seguinte, se o jogador acertar este compasso (só nas figuras solo)
+function nextSolo(pl, ms) {
+  if (ms.kind !== 'move' || ms.m >= 7) return null;
+  if (ms.m === 5 && ms.level === 6) return { clip: PH.wind[ms.b], spd: .8 };
+  const nl = Math.min(ms.level + 1, 6), [ty, tl] = SEQ[ms.b][nl - 1];
+  return { clip: CLIPS[ty][tl - 1], spd: MOVE_SPD[ty][tl - 1] };
 }
 const kv = (k, c, j) => j === undefined ? k.p[c] : k.p[c][j];
 function tangent(K, i, c, j) {
@@ -2543,8 +2564,11 @@ function evalClip(pl, inst, tb, beatPh) {
   const c = inst.clip; let K = inst.K, t = tb;
   if (c.loop && tb >= c.len) { K = loopKeys(c); t = tb % c.len; }
   const o = P({});
-  for (const ch of BODY) o[ch] = hermite(K, ch, undefined, t - (DELAY[ch] || 0));
-  for (const ch of LIMBS) o[ch] = [0, 1, 2].map(j => hermite(K, ch, j, t - (DELAY[ch] || 0)));
+  // canais atrasados (cabeça, braços, rabo): o atraso entra aos poucos no primeiro trecho, em vez de congelar na troca
+  const ramp = FLUID.on && FLUID.cont && K === inst.K && K.length > 1 && t < K[1].t ? clamp((t - K[0].t) / (K[1].t - K[0].t), 0, 1) : 1;
+  const tt = ch => t - (DELAY[ch] || 0) * ramp;
+  for (const ch of BODY) o[ch] = hermite(K, ch, undefined, tt(ch));
+  for (const ch of LIMBS) o[ch] = [0, 1, 2].map(j => hermite(K, ch, j, tt(ch)));
   for (const ch of ROOTK) o[ch] = hermite(K, ch, undefined, t);
   if (c.root) { const r = c.root(tb), w = c.loop ? 1 : sm(K[0].t, K[0].t + .35, t); for (const ch in r) o[ch] = lerp(o[ch], r[ch], w); }
   pl.lastRaw = cloneP(o);   // pose crua: é dela que o próximo clipe parte
@@ -2577,7 +2601,11 @@ const _t1 = new THREE.Vector3(), _t2 = new THREE.Vector3();
 function targetSpeed(pl) {
   if (preview) return 0;
   const an = pl.anim;
-  switch (an.kind) { case 'wind': return .8; case 'hold': case 'linger': return 0; case 'bail': return 1.4; case 'move': return MOVE_SPD[an.b][an.lvl - 1]; default: return 3.3; }
+  switch (an.kind) {
+    case 'wind': return .8; case 'hold': case 'linger': return 0; case 'bail': return 1.4;
+    case 'move': { const v = MOVE_SPD[an.b][an.lvl - 1]; if (FLUID.on && FLUID.spd && an.spdNext !== undefined) { const tb = (simT - an.t0) / BEAT; return lerp(v, an.spdNext, sm(3.3, 4.1, tb)); } return v; }
+    default: return 3.3;
+  }
 }
 function updBase(pl, dt, mult) {
   const B = pl.base;
@@ -2936,7 +2964,8 @@ function setAnim(pl, kind, o, now) {
   if (kind === 'skate') t0 = Math.floor(now / BEAT) * BEAT;      // remadas alinhadas com a batida
   if ((kind === 'hold' && landed) || kind === 'linger' || kind === 'bail') t0 = now;
   const snap = cloneP(pl.lastRaw && finiteP(pl.lastRaw) ? pl.lastRaw : pl.lastBase); snap.yaw = wrapA(snap.yaw); snap.spin = wrapA(snap.spin); snap.flip = wrapA(snap.flip);
-  pl.anim = { kind, b, lvl, t0, landed, duo, flags: {}, fx: [], inst: { clip: c, K: instKeys(pl, c, (now - t0) / BEAT, snap) } };
+  const tb0 = ((FLUID.on && FLUID.cont && pl.lastT !== undefined && now - pl.lastT < .25 ? pl.lastT : now) - t0) / BEAT;   // a pose guardada é a do último quadro desenhado
+  pl.anim = { kind, b, lvl, t0, landed, duo, flags: {}, fx: [], spdNext: o.spdNext, inst: { clip: c, K: instKeys(pl, c, tb0, snap, duo === undefined ? o.next : null) } };
   spawnAnimFx(pl, pl.anim);
 }
 function targetPose(pl, now) {
@@ -2946,6 +2975,7 @@ function targetPose(pl, now) {
   return o;
 }
 function animate(pl, t, dt) {
+  pl.lastT = t;
   pl.lastBase = targetPose(pl, t);
   if (!finiteP(pl.lastBase)) {
     const an = pl.anim; diag('pose ' + an.kind + ' ' + an.b + '.' + an.lvl + ' ' + badKey(pl.lastBase));
@@ -4174,7 +4204,7 @@ function onMeasureStart(pl, mi) {
 }
 function startMeasureAnim(pl, ms) {
   const t0 = ms.mi * MEAS;
-  if (ms.kind === 'move') { const [ty, tl] = SEQ[ms.b][ms.level - 1]; setAnim(pl, 'move', { b: ty, lvl: tl, t0 }, state.songT); }
+  if (ms.kind === 'move') { const [ty, tl] = SEQ[ms.b][ms.level - 1], nx = nextSolo(pl, ms); setAnim(pl, 'move', { b: ty, lvl: tl, t0, next: nx && nx.clip, spdNext: nx ? nx.spd : undefined }, state.songT); }
   else if (ms.kind === 'wind') setAnim(pl, 'wind', { b: ms.b, t0 }, state.songT);
   else setAnim(pl, 'hold', { b: ms.b, t0 }, state.songT);
 }
@@ -5272,6 +5302,8 @@ window.UG = {
   tf: () => ({ screen: state.screen, two: state.two, st: ACTIVE.map(pl => { const s = pl.stage; return s && { t: +s.t.toFixed(2), rate: s.rate, done: s.done, active: s.active, hold: s.hold, forms: s.R && Object.assign({}, s.R.state) }; }) }),
   tfSet, tfRate: (i, r) => setRate(PL[i].stage, r), tfSkip: i => skipStage(PL[i].stage),
   phase: i => { setPhase(i); return PHI; },
+  fluid: o => { Object.assign(FLUID, o || {}); return Object.assign({}, FLUID); },
+  poseOf: (i = 0) => { const pl = PL[i], o = pl.lastBase; return { t: state.songT, spd: +pl.base.spd.toFixed(3), kind: pl.anim.kind, b: pl.anim.b, l: pl.anim.lvl, ch: [o.lean, o.side, o.tw, o.hd, o.hy, ...o.aL, ...o.aR, ...o.lL, ...o.lR, o.sq, o.ty].map(v => +v.toFixed(4)) }; },
   ndc: () => ACTIVE.map(pl => { const q = pl.W.chest.clone().project(PANO.cam); return [+q.x.toFixed(2), +q.y.toFixed(2)]; }),
   occWhat() { const pls = state.two && PAIR.w > .5 ? PL : [PL[RP.fp]], out = []; for (const pt of occTargets(pls)) { _ocd.copy(pt).sub(PANO.cam.position); const d = _ocd.length(); _ocd.divideScalar(d); occRay.set(PANO.cam.position, _ocd); occRay.far = d - .35; for (const h of occRay.intersectObjects(occList(), false)) { const o = h.object, w = new THREE.Vector3(); o.getWorldPosition(w); out.push([o.geometry.type, w.toArray().map(v => +v.toFixed(1)), +h.distance.toFixed(1), pt.toArray().map(v => +v.toFixed(1))]); } } const pl0 = PL[RP.fp], pk = pickClearCam(pl0, occTargets([pl0]), PANO.cam.position); return { pick: pk && pk.toArray().map(v => +v.toFixed(1)), occT0: RP.occT0, cam: PANO.cam.position.toArray().map(v => +v.toFixed(1)), fp: RP.fp, tvcur: PL[RP.fp].tv.cur, virt: PL[RP.fp].tv.virt, hits: out }; },
   replayData: () => RP.data && { ph: RP.data.ph, two: RP.data.two, chars: RP.data.chars, n: RP.data.p.map(x => x.length), miss: RP.data.p.map(x => x.filter(r => r[0] === 2 || r[2] === 2).length) },
