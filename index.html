@@ -3569,52 +3569,55 @@ function track(keys) {
     return keys[keys.length - 1][1];
   };
 }
-const T_FLASH = 37.0, T_FINAL = 37.45, T_END = 40;
-// o roteiro é escrito em segundos de 0 a 40; a reprodução base corre 2,5x até as fitas e 2x depois delas (cerca de 18 s no total)
-const T_RIBBONS = 21.5, baseRate = t => t < T_RIBBONS ? 2.5 : 2;
+const T_FLASH = 16.45, T_FINAL = 16.9, T_END = 18.1;
+// O roteiro é escrito em segundos reais e reproduzido a 1x (o botão 2x dobra). Etapas: 0-1,9 tira o chifre do bolso;
+// 1,9-3,3 ergue com as duas mãos; 3,3-5 a ponta brilha; 5-6,4 fundo multicor e silhueta; 6,4-9,4 braços abertos e a
+// câmera dá a volta; 9,4-14,8 fitas (tronco, braços, pernas); 15,1-16,3 o chifre desce até a testa; 16,45 flash.
 const PARTS = [   // fitas: começa a enrolar, troca a peça, terminam de sair
-  { parts: ['torso'], a: 21.5, sw: 22.85, z: 24.1 },
-  { parts: ['armL', 'armR'], a: 25.4, sw: 26.75, z: 28.0 },
-  { parts: ['legL', 'legR'], a: 29.4, sw: 30.75, z: 32.0 }
+  { parts: ['torso'], a: 9.4, sw: 10.2, z: 11.0 },
+  { parts: ['armL', 'armR'], a: 11.3, sw: 12.1, z: 12.9 },
+  { parts: ['legL', 'legR'], a: 13.2, sw: 14.0, z: 14.8 }
 ];
+// marcos usados fora das trilhas: chifre sai do bolso, chega às mãos erguidas, braços abrem, mãos abertas
+const TF_HORN = .85, TF_UP = 3.3, TF_OPEN = 6.4, TF_OPENED = 7.3;
 // valores em frações da altura (y) ou metros (x, z), no espaço do personagem (frente = +z, esquerda dele = +x)
 function makeChoreo(R) {
   const H = R.H, L = R.L, B = R.D.b, span = B.shX + L.upper + L.fore + L.palm;
   const rest = s => [s * (B.shX + .05), .43 * H, .02];
   const pocket = [-(B.hipX + B.leg * .9), .5 * H, .07];
   const C = {};
-  C.float = track([[0, 0], [14.2, 0], [16.4, .3], [36.9, .34]]);
-  C.lean = track([[0, 0], [3.2, .02], [5.4, -.1], [11, -.1], [14.2, 0], [37, 0]]);
-  C.hd = track([[0, .03], [1.0, .22], [1.9, .28], [2.7, .2], [3.4, 0], [5.4, -.42], [11, -.38], [14.2, -.08], [18, -.22], [33, -.22], [36.9, -.32]]);
-  C.hy = track([[0, 0], [.9, -.3], [1.9, -.15], [2.8, 0]]);
-  // chifre: base e eixo; segura de 1,6 s a 14 s, depois flutua e desce até a testa
-  C.hornVis = t => t >= 1.6;
-  C.hornB = track([[1.6, [pocket[0] + .02, pocket[1] + .05, pocket[2] + .03]], [2.7, [-.02, .69 * H, .3]], [3.3, [0, .7 * H, .3]], [5.6, [0, H + .13, .09]], [11, [0, H + .15, .09]], [14.2, [0, H + .2, .06]], [15.8, [0, H + .44, .04]], [18, [0, H + .44, .04]], [36.9, [0, .985 * H, .07]]]);
-  C.hornA = track([[1.6, [.25, .8, .55]], [2.7, [0, 1, .18]], [3.3, [0, 1, .05]], [5.6, [0, 1, 0]], [33, [0, 1, 0]], [36.9, [0, .94, .34]]]);
-  C.held = t => t >= 1.6 && t < 14.2;
-  C.handR = track([[0, rest(-1)], [.8, rest(-1)], [1.45, pocket], [1.7, pocket], [14.2, pocket], [15.6, [-span * .93, .86 * H, .1]], [37, [-span * .92, .88 * H, .1]]]);
-  C.handL = track([[0, rest(1)], [2.5, rest(1)], [14.2, rest(1)], [15.6, [span * .93, .86 * H, .1]], [37, [span * .92, .88 * H, .1]]]);
-  C.poleR = track([[0, [-.3, -.2, -1]], [1.6, [-.6, -.3, -.8]], [2.7, [-1, -.5, -.4]], [5.2, [-1, .15, -.3]], [14.2, [-1, .15, -.3]], [15.6, [0, -.5, -1]]]);
-  C.poleL = track([[0, [.3, -.2, -1]], [2.5, [.3, -.2, -1]], [3.2, [1, -.5, -.4]], [5.2, [1, .15, -.3]], [14.2, [1, .15, -.3]], [15.6, [0, -.5, -1]]]);
-  C.handLJoin = t => seg(t, 2.6, 3.3);   // mão esquerda vai ao chifre
-  // pernas: em pé → flutuando com as pontas dos pés esticadas e um joelho dobrado
-  C.legL = track([[0, [0, .02, .02, 0]], [14.2, [0, .02, .02, 0]], [16, [-.06, -.05, .1, .65]], [29.0, [-.06, -.05, .1, .65]], [29.7, [-.04, .16, .06, .7]], [32.3, [-.04, .16, .06, .7]], [33.2, [-.06, -.05, .1, .65]]]);
-  C.legR = track([[0, [0, -.02, .02, 0]], [14.2, [0, -.02, .02, 0]], [16, [.18, .05, .55, .75]], [29.0, [.18, .05, .55, .75]], [29.7, [.1, -.18, .35, .75]], [32.3, [.1, -.18, .35, .75]], [33.2, [.18, .05, .55, .75]]]);
-  C.sil = track([[0, 0], [11.15, 0], [12.5, 1]]);
-  C.silY = t => lerp(H + .7, -.3, seg(t, 11.15, 12.6));
-  C.rainbow = track([[0, 0], [10.9, 0], [12.3, 1]]);
-  C.glow = track([[0, 0], [5.8, 0], [7.2, .45], [10.3, 1], [10.75, 1.7], [11.6, .7], [14.2, .55], [36.9, .9]]);
-  C.flash = t => t < 36.88 ? 0 : t < 37.08 ? seg(t, 36.88, 37.08) : t < 37.55 ? 1 : 1 - seg(t, 37.55, 38.35);
+  C.float = track([[0, 0], [6.4, 0], [7.6, .3], [16.3, .34]]);
+  C.lean = track([[0, 0], [1.9, .02], [3.2, -.1], [5.1, -.1], [6.4, 0], [16.4, 0]]);
+  C.hd = track([[0, .03], [.45, .22], [.95, .28], [1.45, .2], [1.9, 0], [3.2, -.42], [5.1, -.38], [6.4, -.08], [8.2, -.22], [15.0, -.22], [16.3, -.32]]);
+  C.hy = track([[0, 0], [.45, -.3], [.95, -.15], [1.5, 0]]);
+  // chifre: base e eixo; segura de 0,85 s a 6,4 s, depois flutua e desce até a testa
+  C.hornVis = t => t >= TF_HORN;
+  C.hornB = track([[TF_HORN, [pocket[0] + .02, pocket[1] + .05, pocket[2] + .03]], [1.5, [-.02, .69 * H, .3]], [1.9, [0, .7 * H, .3]], [TF_UP, [0, H + .13, .09]], [6.2, [0, H + .15, .09]], [TF_OPEN, [0, H + .2, .06]], [7.4, [0, H + .44, .04]], [8.6, [0, H + .44, .04]], [16.3, [0, .985 * H, .07]]]);
+  C.hornA = track([[TF_HORN, [.25, .8, .55]], [1.5, [0, 1, .18]], [1.9, [0, 1, .05]], [TF_UP, [0, 1, 0]], [15.0, [0, 1, 0]], [16.3, [0, .94, .34]]]);
+  C.held = t => t >= TF_HORN && t < TF_OPEN;
+  C.handR = track([[0, rest(-1)], [.15, rest(-1)], [.75, pocket], [.9, pocket], [TF_OPEN, pocket], [TF_OPENED, [-span * .93, .86 * H, .1]], [16.4, [-span * .92, .88 * H, .1]]]);
+  C.handL = track([[0, rest(1)], [1.35, rest(1)], [TF_OPEN, rest(1)], [TF_OPENED, [span * .93, .86 * H, .1]], [16.4, [span * .92, .88 * H, .1]]]);
+  C.poleR = track([[0, [-.3, -.2, -1]], [TF_HORN, [-.6, -.3, -.8]], [1.5, [-1, -.5, -.4]], [3.0, [-1, .15, -.3]], [TF_OPEN, [-1, .15, -.3]], [TF_OPENED, [0, -.5, -1]]]);
+  C.poleL = track([[0, [.3, -.2, -1]], [1.35, [.3, -.2, -1]], [1.9, [1, -.5, -.4]], [3.0, [1, .15, -.3]], [TF_OPEN, [1, .15, -.3]], [TF_OPENED, [0, -.5, -1]]]);
+  C.handLJoin = t => seg(t, 1.4, 1.9);   // mão esquerda vai ao chifre
+  // pernas: em pé → flutuando com as pontas dos pés esticadas e um joelho dobrado; nas fitas das pernas, um chute
+  C.legL = track([[0, [0, .02, .02, 0]], [TF_OPEN, [0, .02, .02, 0]], [7.5, [-.06, -.05, .1, .65]], [13.0, [-.06, -.05, .1, .65]], [13.5, [-.04, .16, .06, .7]], [14.8, [-.04, .16, .06, .7]], [15.3, [-.06, -.05, .1, .65]]]);
+  C.legR = track([[0, [0, -.02, .02, 0]], [TF_OPEN, [0, -.02, .02, 0]], [7.5, [.18, .05, .55, .75]], [13.0, [.18, .05, .55, .75]], [13.5, [.1, -.18, .35, .75]], [14.8, [.1, -.18, .35, .75]], [15.3, [.18, .05, .55, .75]]]);
+  C.sil = track([[0, 0], [5.15, 0], [5.85, 1]]);
+  C.silY = t => lerp(H + .7, -.3, seg(t, 5.15, 5.95));
+  C.rainbow = track([[0, 0], [5.0, 0], [5.75, 1]]);
+  C.glow = track([[0, 0], [3.4, 0], [4.1, .45], [4.9, 1], [5.05, 1.7], [5.4, .7], [TF_OPEN, .55], [16.3, .9]]);
+  C.flash = t => t < 16.33 ? 0 : t < 16.53 ? seg(t, 16.33, 16.53) : t < 17.0 ? 1 : 1 - seg(t, 17.0, 17.8);
   return C;
 }
 // câmera: [t, alvo (x, y em frações de H, z), azimute°, elevação°, meia largura, meia altura] para caber em qualquer formato de tela
 const CAMK = [
-  [0, [0, .52, 0], 20, 6, .62, 1.12], [1.0, [0, .5, 0], 22, 4, .6, 1.05], [2.0, [-.06, .55, .1], 18, 2, .44, .66], [3.2, [0, .66, .15], 10, 0, .4, .58],
-  [5.0, [0, .9, .05], 6, -10, .5, .84], [6.6, [0, 1.05, .08], 2, -16, .3, .4], [8.0, [0, 1.08, .08], 0, -20, .21, .28], [10.6, [0, 1.09, .08], 0, -22, .17, .23],
-  [11.4, [0, 1.09, .08], 0, -22, .19, .25], [12.6, [0, 1.0, .05], 0, -14, .34, .44], [14.6, [0, .68, 0], 0, 0, .86, 1.2],
-  [21.5, [0, .7, 0], 14, 2, .36, .42], [24.4, [0, .7, 0], 24, 2, .36, .42],
-  [25.3, [0, .8, 0], -4, 2, .9, .48], [28.4, [0, .8, 0], 8, 2, .9, .48], [29.3, [0, .3, .02], 6, 6, .5, .64], [32.4, [0, .3, .02], 18, 8, .5, .64],
-  [33.3, [0, .97, .02], 6, -4, .3, .36], [36.9, [0, .97, .03], 0, -3, .23, .28]
+  [0, [0, .52, 0], 20, 6, .62, 1.12], [.6, [0, .5, 0], 22, 4, .6, 1.05], [1.2, [-.06, .55, .1], 18, 2, .44, .66], [1.9, [0, .66, .15], 10, 0, .4, .58],
+  [3.0, [0, .9, .05], 6, -10, .5, .84], [3.9, [0, 1.05, .08], 2, -16, .3, .4], [4.5, [0, 1.08, .08], 0, -20, .21, .28], [4.95, [0, 1.09, .08], 0, -22, .17, .23],
+  [5.3, [0, 1.09, .08], 0, -22, .19, .25], [5.9, [0, 1.0, .05], 0, -14, .34, .44], [6.6, [0, .68, 0], 0, 0, .86, 1.2],
+  [9.4, [0, .7, 0], 14, 2, .36, .42], [10.9, [0, .7, 0], 24, 2, .36, .42],
+  [11.3, [0, .8, 0], -4, 2, .9, .48], [12.8, [0, .8, 0], 8, 2, .9, .48], [13.2, [0, .3, .02], 6, 6, .5, .64], [14.7, [0, .3, .02], 18, 8, .5, .64],
+  [15.1, [0, .97, .02], 6, -4, .3, .36], [16.3, [0, .97, .03], 0, -3, .23, .28]
 ];
 const CAMF = [[T_FINAL, [0, .5, 0], 34, 7, .95, 1.22], [T_END, [0, .5, 0], 56, 9, .95, 1.22], [T_END + 30, [0, .5, 0], 200, 9, .95, 1.22]];
 function camAt(keys, t) {
@@ -3708,16 +3711,16 @@ function setupStage(st, charId) {
 const _hb = V3(), _ha = V3(), _side = V3(), _tf1 = V3(), _tf2 = V3(), _tcp = V3(), _tct = V3();
 function stageUpdate(st, dt, now) {
   const R = st.R, C = st.C, H = R.H, L = R.L;
-  if (st.active && !st.done && !st.hold) { st.t += dt * st.rate * baseRate(st.t); if (st.t >= T_END) { st.done = true; onStageDone(st); } }
+  if (st.active && !st.done && !st.hold) { st.t += dt * st.rate; if (st.t >= T_END) { st.done = true; onStageDone(st); } }
   const t = st.t, final = t >= T_FINAL;
   tfEvents(st, t);
   if (!final) {
     // ---- transformação: corpo flutua, braços por IK seguindo o chifre ----
-    const fl = C.float(t) + (t > 14.2 ? .025 * Math.sin(now * 2.2) * sm(14.2, 16.5, t) : 0);
+    const fl = C.float(t) + (t > TF_OPEN ? .025 * Math.sin(now * 2.2) * sm(TF_OPEN, 7.6, t) : 0);
     R.root.position.set(0, fl, 0); R.root.rotation.set(0, 0, 0);
     R.body.position.y = L.bodyY; R.spinner.rotation.set(0, 0, 0);
     const breath = Math.sin(now * 2.4) * .015;
-    R.torso.rotation.set(C.lean(t) + breath, 0, t < 3 ? .03 * Math.sin(now * 1.3) : 0); R.neck.rotation.set(C.hd(t), C.hy(t), 0); R.head.rotation.set(0, 0, 0);
+    R.torso.rotation.set(C.lean(t) + breath, 0, t < 1.9 ? .03 * Math.sin(now * 1.3) : 0); R.neck.rotation.set(C.hd(t), C.hy(t), 0); R.head.rotation.set(0, 0, 0);
     const [lp, lr, lk, lf] = C.legL(t), [rp, rr, rk, rf] = C.legR(t);
     R.hpL.rotation.set(lp, 0, lr); R.knL.rotation.set(lk, 0, 0); R.skL.rotation.set(lf, 0, 0);
     R.hpR.rotation.set(rp, 0, rr); R.knR.rotation.set(rk, 0, 0); R.skR.rotation.set(rf, 0, 0);
@@ -3725,20 +3728,20 @@ function stageUpdate(st, dt, now) {
     // chifre
     const hornOn = C.hornVis(t);
     _hb.fromArray(C.hornB(t)); _ha.fromArray(C.hornA(t)).normalize();
-    if (t > 14.2) _hb.x += .02 * Math.sin(now * 1.7);
-    if (t > 5.6 && t < 14.2) { _hb.x += .004 * Math.sin(now * 37); _hb.y += .003 * Math.sin(now * 41); }
+    if (t > TF_OPEN) _hb.x += .02 * Math.sin(now * 1.7);
+    if (t > TF_UP && t < TF_OPEN) { _hb.x += .004 * Math.sin(now * 37); _hb.y += .003 * Math.sin(now * 41); }
     st.horn.visible = hornOn && R.state.head === 'h';
     st.horn.position.copy(_hb); R.root.localToWorld(st.horn.position);
-    st.horn.quaternion.setFromUnitVectors(V3(0, 1, 0), _ha); st.horn.rotateY(t > 14.2 ? now * 1.4 : 0);
+    st.horn.quaternion.setFromUnitVectors(V3(0, 1, 0), _ha); st.horn.rotateY(t > TF_OPEN ? now * 1.4 : 0);
     // mãos
     const held = C.held(t);
     _side.set(1, 0, 0);
     const gripR = _tf1.copy(_hb).addScaledVector(_ha, .03).addScaledVector(_side, -.035).toArray();
     const gripL = _tf2.copy(_hb).addScaledVector(_ha, .075).addScaledVector(_side, .035).toArray();
     let hR = C.handR(t), hL = C.handL(t);
-    if (t >= 1.6 && t < 14.2) hR = gripR;
-    if (t < 14.2) { const j = C.handLJoin(t); if (j > 0) hL = C.handL(2.5).map((v, i) => lerp(v, gripL[i], easeIO(j))); }
-    if (t >= 14.2 && t < 15.6) { const s = easeIO(seg(t, 14.2, 15.6)), oR = C.handR(15.6), oL = C.handL(15.6); hR = gripR.map((v, i) => lerp(v, oR[i], s)); hL = gripL.map((v, i) => lerp(v, oL[i], s)); }
+    if (t >= TF_HORN && t < TF_OPEN) hR = gripR;
+    if (t < TF_OPEN) { const j = C.handLJoin(t); if (j > 0) hL = C.handL(1.35).map((v, i) => lerp(v, gripL[i], easeIO(j))); }
+    if (t >= TF_OPEN && t < TF_OPENED) { const s = easeIO(seg(t, TF_OPEN, TF_OPENED)), oR = C.handR(TF_OPENED), oL = C.handL(TF_OPENED); hR = gripR.map((v, i) => lerp(v, oR[i], s)); hL = gripL.map((v, i) => lerp(v, oL[i], s)); }
     solveArm(R, -1, _tf1.fromArray(hR), _tf2.fromArray(C.poleR(t)));
     solveArm(R, 1, _tf1.fromArray(hL), _tf2.fromArray(C.poleL(t)));
     if (R.tail) { const tw = Math.sin(now * 5) * .2; R.tail[0].rotation.x = -1.4 + tw; R.tail[1].rotation.x = .3 + tw * 1.3; R.tail[2].rotation.x = .3 + tw * 1.6; }
@@ -3790,21 +3793,21 @@ function ribbonsAt(st, list, p, t, now) {
 function tfEvents(st, t) {
   const R = st.R, ev = st.ev, P = st.ps;
   const at = (k, time, fn) => { if (!ev[k] && t >= time) { ev[k] = 1; fn(); } };
-  const rate = st.rate * baseRate(t);
-  at('horn', 1.6, () => { SND.ting(); R.handR.getWorldPosition(_tf1); pBurst(P, _tf1, 14, 1.2, .5, .05, () => C_GOLD, 0, .3); });
-  at('rise', 7.0, () => SND.rise(3.6 / rate));
-  at('burst', 10.75, () => { SND.bling(); st.glow.getWorldPosition(_tf1); pBurst(P, _tf1, 90, 4, 1.1, .08, () => hueCol(Math.random()), 0, 0); });
-  at('bg', 11.0, () => SND.sweep(1.2 / rate));
-  at('open', 14.2, () => SND.chord());
+  const rate = st.rate;
+  at('horn', TF_HORN, () => { SND.ting(); R.handR.getWorldPosition(_tf1); pBurst(P, _tf1, 14, 1.2, .5, .05, () => C_GOLD, 0, .3); });
+  at('rise', 3.0, () => SND.rise(1.4 / rate));
+  at('burst', 5.05, () => { SND.bling(); st.glow.getWorldPosition(_tf1); pBurst(P, _tf1, 90, 4, 1.1, .08, () => hueCol(Math.random()), 0, 0); });
+  at('bg', 5.0, () => SND.sweep(.5 / rate));
+  at('open', TF_OPEN, () => SND.chord());
   PARTS.forEach((p, i) => {
-    at('w' + i, p.a, () => SND.wrap(1.3 / rate));
+    at('w' + i, p.a, () => SND.wrap(.55 / rate));
     at('s' + i, p.sw, () => { for (const part of p.parts) setForm(R, part, 'u'); SND.pop(); for (const part of p.parts) { const j = part === 'torso' ? R.chest : part === 'armL' ? R.elL : part === 'armR' ? R.elR : part === 'legL' ? R.knL : R.knR; j.getWorldPosition(_tf1); pBurst(P, _tf1, 50, 2.4, .9, .07, () => Math.random() < .5 ? C_PINK : C_VIO, 0, .2); } });
   });
   at('touch', T_FLASH + .05, () => { setForm(R, 'head', 'u'); SND.flash(); });
   at('final', T_FINAL, () => { for (const p in R.state) setForm(R, p, 'u'); applyFK(R, POSE_SPIRAL, 0); R.chest.getWorldPosition(_tf1); pBurst(P, _tf1, 120, 5, 1.3, .09, () => hueCol(Math.random()), 1, .5); SND.fanfare(); });
 }
 // braços abertos: a câmera dá uma volta completa em torno do personagem e fecha no peito quando as fitas começam
-const ORB0 = 14.6, ORB1 = 21.5;
+const ORB0 = 6.6, ORB1 = 9.4;
 function stageCamera(st, now) {
   const R = st.R, t = st.t, final = t >= T_FINAL, H = R.H;
   let k;
@@ -3828,7 +3831,7 @@ function skipStage(st) { if (!st || st.done || !st.active || st.hold) return; fo
 const MUS = { on: false, next: 0, t0: 0, iv: null, lvl: 0, end: false, tok: 0 };
 const TF_PROG = [{ r: 40, t: [64, 68, 71] }, { r: 37, t: [61, 64, 68] }, { r: 45, t: [61, 64, 69] }, { r: 47, t: [63, 66, 71] }];
 const TF_MEL = [76, 80, 83, 88, 87, 83, 80, 83];
-function musLevel() { const ts = ACTIVE.map(pl => pl.stage).filter(s => s && s.active).map(s => s.t); const m = ts.length ? Math.max(...ts) : 0; return m < 7 ? 0 : m < 11 ? 1 : m < 14.2 ? 2 : m < 21.4 ? 3 : m < T_FINAL ? 4 : 5; }
+function musLevel() { const ts = ACTIVE.map(pl => pl.stage).filter(s => s && s.active).map(s => s.t); const m = ts.length ? Math.max(...ts) : 0; return m < 3 ? 0 : m < 5 ? 1 : m < TF_OPEN ? 2 : m < 9.4 ? 3 : m < T_FINAL ? 4 : 5; }
 function musicStep(k, t) {
   const bar = Math.floor(k / 16) % 4, s = k % 16, ch = TF_PROG[bar], L = MUS.lvl;
   if (s === 0) I.pad(t, ch.t, 2.0, L >= 2 ? 1 : .75);
@@ -4067,7 +4070,7 @@ function endTransformUI() {
 }
 // para os testes: pula para um instante do roteiro, com as peças já trocadas até ali
 function tfSet(i, tm) {
-  const st = PL[i].stage, EVT = [['horn', 1.6], ['rise', 7], ['burst', 10.75], ['bg', 11], ['open', 14.2], ['w0', 21.5], ['s0', 22.85], ['w1', 25.4], ['s1', 26.75], ['w2', 29.4], ['s2', 30.75], ['touch', T_FLASH + .05], ['final', T_FINAL]];
+  const st = PL[i].stage, EVT = [['horn', TF_HORN], ['rise', 3], ['burst', 5.05], ['bg', 5], ['open', TF_OPEN], ['w0', 9.4], ['s0', 10.2], ['w1', 11.3], ['s1', 12.1], ['w2', 13.2], ['s2', 14], ['touch', T_FLASH + .05], ['final', T_FINAL]];
   st.t = tm; st.done = tm >= T_END; st.ev = {}; for (const [k, at] of EVT) if (at <= tm) st.ev[k] = 1;
   setAllForms(st.R, 'h'); for (const g of PARTS) if (tm >= g.sw) for (const p of g.parts) setForm(st.R, p, 'u'); if (tm >= T_FLASH + .05) setForm(st.R, 'head', 'u');
 }
