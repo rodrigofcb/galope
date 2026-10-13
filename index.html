@@ -3019,15 +3019,10 @@ function inertiaPose(pl, o, dt) {
   return finiteP(out) ? out : o;
 }
 // rastros: guarda as últimas poses; quando o corpo gira depressa, as cópias aparecem nas poses de 45 e 90 ms atrás
-// estilos: dt = intervalo entre cópias (s), op = opacidade de cada cópia, min/full = voltas/s em que o rastro começa e fica inteiro,
-// flat = cópias viram silhueta numa cor só (a cor do personagem puxada para o branco)
-const GHOST_STYLES = {
-  atual: { dt: .045, op: [.26, .13], min: 2.2, full: 3.5, flat: 0 },
-  leve: { dt: .03, op: [.15, .07], min: 2.2, full: 4.5, flat: 0 },
-  esteira: { dt: .025, op: [.12, .09, .06, .04], min: 2.2, full: 4.5, flat: 0 },
-  silhueta: { dt: .03, op: [.15, .09, .04], min: 2.2, full: 4.5, flat: 1 }
-};
-const NGHOST = 4; let GHOST = GHOST_STYLES.silhueta;
+// rastro: dt = intervalo entre cópias (s), op = opacidade de cada cópia, min/full = voltas/s em que o rastro começa e fica inteiro,
+// flat = cópias viram silhueta numa cor só (a cor do personagem puxada para o branco); estilo escolhido: leve
+const GHOST = { dt: .03, op: [.15, .07], min: 2.2, full: 4.5, flat: 0 };
+const NGHOST = GHOST.op.length;
 function ghostStyle(pl) {
   const D = CHAR_BY_ID[pl.charId] || CHARS[0], col = new THREE.Color(D.dot || '#ffffff').lerp(new THREE.Color('#ffffff'), .35);
   for (const G of pl.ghosts) G.root.traverse(c => { const u = c.material && c.material.uniforms; if (u && u.uFlat) u.uFlat.value.set(col.r, col.g, col.b, GHOST.flat ? 1 : 0); });
@@ -3603,7 +3598,7 @@ function setPlayerChar(pl, id) {
   const old = pl.uni;
   if (old) { clearPoseFx(pl, false); for (const f of pl.anim.fx) killFx(f, .01); MIR.remove(old.root); disposeRig(old.root); }
   pl.charId = id; pl.uni = rigForGame(id); MIR.add(pl.uni.root);
-  // rastros: duas cópias translúcidas do boneco, desenhadas nas poses de instantes anteriores nos movimentos rápidos
+  // rastros: cópias translúcidas do boneco, desenhadas nas poses de instantes anteriores nos movimentos rápidos
   if (pl.ghosts) for (const G of pl.ghosts) { MIR.remove(G.root); disposeRig(G.root); }
   pl.ghosts = Array.from({ length: NGHOST }, () => { const G = rigForGame(id); G.root.traverse(c => { if (c.material && c.material.uniforms) { c.material.transparent = true; c.material.depthWrite = false; } }); G.root.visible = false; MIR.add(G.root); return G; });
   pl.hist = []; pl.rotRate = 0; pl.gStyle = null;
@@ -5363,7 +5358,7 @@ window.UG = {
   tfSet, tfRate: (i, r) => setRate(PL[i].stage, r), tfSkip: i => skipStage(PL[i].stage),
   phase: i => { setPhase(i); return PHI; },
   rotRate: (i = 0) => +(PL[i].rotRate / TAU).toFixed(2), ghostsOn: (i = 0) => PL[i].ghosts.map(G => G.root.visible),
-  ghostStyle: n => { if (n && GHOST_STYLES[n]) GHOST = GHOST_STYLES[n]; return Object.keys(GHOST_STYLES).find(k => GHOST_STYLES[k] === GHOST); },
+  ghost: o => { Object.assign(GHOST, o || {}); for (const pl of PL) pl.gStyle = null; return Object.assign({}, GHOST); },
   fluid: o => { Object.assign(FLUID, o || {}); return Object.assign({}, FLUID); },
   poseOf: (i = 0) => { const pl = PL[i], o = pl.lastBase; return { t: state.songT, spd: +pl.base.spd.toFixed(3), kind: pl.anim.kind, b: pl.anim.b, l: pl.anim.lvl, ch: [o.lean, o.side, o.tw, o.hd, o.hy, ...o.aL, ...o.aR, ...o.lL, ...o.lR, o.sq, o.ty].map(v => +v.toFixed(4)) }; },
   ndc: () => ACTIVE.map(pl => { const q = pl.W.chest.clone().project(PANO.cam); return [+q.x.toFixed(2), +q.y.toFixed(2)]; }),

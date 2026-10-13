@@ -37,6 +37,7 @@ Abra o link no Chrome (não no navegador interno de outro app), menu ⋮ > Insta
 ## Técnica
 - `index.html` único (HTML, CSS e JS), sem build; Three.js r128 em `vendor/`; fontes em `fonts/` (SIL OFL, ver `fonts/LICENSE.txt`).
 - Áudio sintetizado com Web Audio; o relógio da música é o do áudio, com calibração de atraso nas Opções.
+- Animação por poses-chave com interpolação Hermite; emendas entre figuras com antecipação da próxima pose e velocidade contínua; inércia por mola amortecida em cada parte do corpo; giros limitados a cerca de 4 voltas/s, com rastros translúcidos nos movimentos rápidos.
 - PWA com `sw.js` (funciona offline) e publicação pelo GitHub Actions (`.github/workflows/pages.yml`).
 - Vídeo do replay: WebCodecs (H.264 e AAC quando o aparelho tem; senão VP9 e Opus) e `vendor/mp4-muxer.min.js` (MIT, ver `vendor/mp4-muxer.LICENSE.txt`) para montar o MP4.
 - Progresso salvo no aparelho, em `localStorage` com prefixo `galope.`.
