@@ -312,6 +312,8 @@ div.opt{cursor:default}
 /* Replay */
 #rpUI{position:absolute;inset:0;z-index:5;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:max(10px,env(safe-area-inset-top)) 12px max(14px,env(safe-area-inset-bottom))}
 #rpUI button{pointer-events:auto}
+#rpUI.q3{inset:auto;left:50%;top:50%;width:100cqh;height:100cqw;translate:-50% -50%;rotate:-90deg}
+#pano .rpPads{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .rpTop,.rpBot{display:flex;align-items:center;gap:10px}
 .rpTag{font-family:var(--f-pixel);font-size:10px;letter-spacing:.12em;color:#fff;background:#e2335f;border-radius:4px;padding:3px 6px}
 #rpLbl{flex:1;font-family:var(--f-pixel);font-size:10px;letter-spacing:.06em;color:#fff;text-shadow:0 1px 0 var(--outline)}
@@ -369,7 +371,7 @@ div.opt{cursor:default}
 <div id="app">
   <canvas id="view"></canvas>
   <div id="divider" hidden></div>
-  <div id="pano" hidden><div class="flash"></div><div class="tbox"><div class="names" aria-live="polite"></div><div class="card"></div><div class="sync"></div></div></div>
+  <div id="pano" hidden><div class="flash"></div><div class="tbox"><canvas class="rpPads" hidden></canvas><div class="names" aria-live="polite"></div><div class="card"></div><div class="sync"></div></div></div>
   <div id="rpUI" hidden>
     <div class="rpTop"><span class="rpTag">REPLAY</span><span id="rpLbl"></span><button class="icon" id="rpClose" data-i18n-aria="close">✕</button></div>
     <div class="rpBot"><button class="icon" id="rpPlay" aria-label="">❚❚</button><div class="rpTrack"><i id="rpProg"></i></div></div>
@@ -1395,7 +1397,7 @@ function buildDisco(parent) {
   }
   // público dançando, de pé atrás da mureta (lado do palco) e junto às paredes dos lados
   D.crowd = [];
-  const crowd = (w, x, y0, z, ry, ph) => { const y = y0 + 1.1, m = add(new THREE.Mesh(new THREE.PlaneGeometry(w, 2.2), psxMat({ map: crowdDTex, rep: [w / 4.4, 1], emissive: .35, side: DS })), x, y, z); m.rotation.y = ry; m.userData = { y, ph }; D.crowd.push(m); };
+  const crowd = (w, x, y0, z, ry, ph) => { const y = y0 + 1.1, m = add(new THREE.Mesh(new THREE.PlaneGeometry(w, 2.2), psxMat({ map: crowdDTex, rep: [w / 4.4, 1], emissive: .35, side: DS })), x, y, z); m.rotation.y = ry; m.userData = { y, ph, occ: true }; D.crowd.push(m); };
   add(new THREE.Mesh(new THREE.BoxGeometry(27, .6, 1.4), psxMat({ map: boardDTex, rep: [12, 1], emissive: .4 })), 0, .3, -11.4);
   crowd(26, 0, 0, -9.8, 0, 0); crowd(26, .9, .6, -11.4, 0, .5);
   for (const sx of [-1, 1]) crowd(30, sx * 23.4, 0, 0, -sx * HP, sx > 0 ? .25 : .75);
@@ -2440,30 +2442,28 @@ PANO.quad = postQuad(PANO.rt.texture); PANO.quad.visible = false;
 function panoOn(q, live, force) {
   if (!PANO.el || (state.replay && !force)) return;
   PANO.on = true; PANO.live = !!live; PANO.q = q !== undefined ? q : OPT.rot[0]; PANO.t0 = performance.now() / 1000; PANO.snap = true;
-  PANO.el.hidden = false; PANO.names.innerHTML = ''; if (!live) for (const pl of PL) pl.el.hidden = true; $('#divider').hidden = true; layout();
+  PANO.el.hidden = false; PANO.names.innerHTML = ''; PANO.pads.hidden = !state.replay; if (!live) for (const pl of PL) pl.el.hidden = true; $('#divider').hidden = true; layout();
   PANO.flash.animate([{ opacity: REDUCED ? .25 : .7 }, { opacity: 0 }], { duration: 600, easing: 'ease-out' });
 }
 function panoOff(force) {
   if (!PANO.on || (state.replay && !force)) return;
-  PANO.on = false; PANO.el.hidden = true; PANO.names.innerHTML = ''; PANO.card.className = 'card'; for (const k of ['translate', 'left', 'top', 'width', 'height']) PANO.box.style[k] = '';
+  PANO.on = false; PANO.el.hidden = true; PANO.names.innerHTML = ''; PANO.card.className = 'card'; PANO.pads.hidden = true;
   for (const pl of PL) pl.el.hidden = !(pl.id === 0 || state.two); $('#divider').hidden = !state.two; layout();
 }
 function panoLayout() {
   PANO.quad.visible = PANO.on; if (!PANO.on) return;
   if (state.replay) {   // replay: imagem em pé (tela inteira) ou deitada (16:9, com faixas); no vídeo, o tamanho do vídeo
     const land = RP.orient === 'h', E = RP.exp;
+    const rot = !E && land ? 3 : 0;   // deitado: a imagem ocupa a tela toda, girada para quem vira o celular de lado
     if (E) { renderer.setSize(E.W0, E.H0, false); PANO.RTW = E.W0; PANO.RH = E.H0; }
-    else if (land) { renderer.setSize(426, Math.max(240, Math.round(426 * APPH / APPW)), false); PANO.RTW = 426; PANO.RH = 240; }
+    else if (rot) { PANO.RTW = Math.round(RW * APPH / APPW); PANO.RH = RW; }
     else { PANO.RTW = RW; PANO.RH = RHT; }
     PANO.rt.setSize(PANO.RTW, PANO.RH); PANO.cam.aspect = PANO.RTW / PANO.RH; PANO.cam.updateProjectionMatrix();
-    const hh = !E && land ? Math.min(1, (APPW * 9 / 16) / APPH) : 1, u = PANO.quad.material.uniforms; u.uRect.value.set(-1, -hh, 1, hh); u.uRot.value = 0;
+    const u = PANO.quad.material.uniforms; u.uRect.value.set(-1, -1, 1, 1); u.uRot.value = rot;
     for (const pl of PL) pl.quad.visible = false;
-    PANO.box.className = 'tbox q0';
-    if (hh < 1) { PANO.box.style.translate = '0 0'; PANO.box.style.left = '0'; PANO.box.style.top = ((1 - hh) * 50).toFixed(2) + '%'; PANO.box.style.width = '100%'; PANO.box.style.height = (hh * 100).toFixed(2) + '%'; }
-    else for (const k of ['translate', 'left', 'top', 'width', 'height']) PANO.box.style[k] = '';
+    PANO.box.className = 'tbox q' + rot; $('#rpUI').className = rot ? 'q3' : '';
     return;
   }
-  for (const k of ['translate', 'left', 'top', 'width', 'height']) PANO.box.style[k] = '';
   const q = PANO.q, odd = q % 2 === 1, Wi = odd ? APPH : APPW, Hi = odd ? APPW : APPH;
   PANO.RTW = Math.round(RW * Wi / APPW); PANO.RH = Math.round(RW * Hi / APPW); PANO.rt.setSize(PANO.RTW, PANO.RH);
   PANO.cam.aspect = PANO.RTW / PANO.RH; PANO.cam.updateProjectionMatrix();
@@ -2475,20 +2475,22 @@ function panoLayout() {
 function panoCamera(dt) {
   const a = PL[0].W, b = PL[1].W, tall = PANO.cam.aspect < 1;   // imagem em pé (replay): o casal ocupa a largura
   _mid.copy(a.chest).add(b.chest).multiplyScalar(.5);
-  const top = Math.max(a.horn.y, b.horn.y, a.chest.y, b.chest.y, a.fL.y, b.fL.y, PHI && BALL.w > .3 ? BALL.at.y + .4 : 0) + .5, span = Math.hypot(a.chest.x - b.chest.x, a.chest.z - b.chest.z) + (PANO.live ? 2.6 : tall ? 1.6 : 3.4);
+  const top = Math.max(a.horn.y, b.horn.y, a.chest.y, b.chest.y, a.fL.y, b.fL.y, PHI && BALL.w > .85 ? BALL.at.y + .4 : 0) + .5, span = Math.hypot(a.chest.x - b.chest.x, a.chest.z - b.chest.z) + (PANO.live ? 2.6 : tall ? 1.6 : 3.4);
   const low = Math.min(a.chest.y, b.chest.y) - 1.5, air = low > .6;   // no alto (saltos): enquadra só o casal, sem o gelo
   // ao vivo, o casal fica na faixa do meio (as pistas de cada um ocupam as pontas); no fim, ocupa quase toda a largura
   const cam = PANO.cam, tn = Math.tan(cam.fov * PI / 360), hw = (span / 2 + (tall ? .25 : .3)) / (PANO.live ? .38 : tall ? .95 : .9);
   const hh = air ? Math.max(1.6, (top - low) / 2 + .7) : Math.max(1.6, (top + .25) / 1.4);
-  const d = Math.max(hh / tn, hw / (tn * cam.aspect)), H = d * tn, t = (state.replay ? simT : performance.now() / 1000) - PANO.t0, ang = PAIR.yaw + .22 + .25 * Math.sin(t * .35);
+  const d = Math.max(hh / tn, hw / (tn * cam.aspect)), H = d * tn, t = (state.replay ? simT : performance.now() / 1000) - PANO.t0, ang = PAIR.yaw + .22 + .25 * Math.sin(t * .35) + (state.replay ? RP.angOff : 0);
   // no gelo: o gelo um pouco abaixo da borda de baixo e o alto do casal longe do nome, em cima
   const ay = air ? (top + low) / 2 : tall ? Math.max(.64 * H, top - .9 * H) : Math.max(hh - .25, H * .82 - .35);
   _pq.set(_mid.x + Math.sin(ang) * d, ay + .5, _mid.z + Math.cos(ang) * d); keepOutOfStands(_pq);
+  PANO.last = { x: _mid.x, z: _mid.z, y: ay + .5, d, ang };
   _pd.set(_mid.x, ay, _mid.z);
   if (PANO.snap || !(dt > 0)) { PANO.pos.copy(_pq); PANO.aim.copy(_pd); PANO.snap = false; }
   else { const k = 1 - Math.exp(-dt * (air ? 6 : 2)); PANO.pos.lerp(_pq, k); PANO.aim.lerp(_pd, k); }
   cam.position.copy(PANO.pos); cam.lookAt(PANO.aim); cam.updateMatrixWorld();
 }
+function panoPosAt(off) { const L = PANO.last; if (!L) return null; return keepOutOfStands(new THREE.Vector3(L.x + Math.sin(L.ang + off) * L.d, L.y, L.z + Math.cos(L.ang + off) * L.d)); }
 function renderPano() {
   const cam = PANO.cam, mp = PANO.mp || (PANO.mp = {}), src = state.replay ? PL[RP.fp] : PL[0];
   mp.anim = src.anim; mp.W = src.W; mp.cam = cam; updMoon(mp); const bn = ballNear(mp);   // a lua do pulo lunar atrás do casal
@@ -2500,7 +2502,7 @@ function renderPano() {
   if (bn) ballBack();
 }
 SFX.duo = function (at) { if (state.exporting && at === undefined) { RP.exp.sfx.push(['duo', 0, state.songT]); return; } if (!AC) return; const t = at !== undefined ? at : AC.currentTime; [81, 88, 93, 100, 105].forEach((n, k) => I.bell(t + k * .06, n, .55, .7, sfxBus)); };
-PANO.el = $('#pano'); PANO.names = $('#pano .names'); PANO.box = $('#pano .tbox'); PANO.flash = $('#pano .flash'); PANO.sync = $('#pano .sync'); PANO.card = $('#pano .card');
+PANO.el = $('#pano'); PANO.names = $('#pano .names'); PANO.box = $('#pano .tbox'); PANO.flash = $('#pano .flash'); PANO.sync = $('#pano .sync'); PANO.card = $('#pano .card'); PANO.pads = $('#pano .rpPads');
 
 /* --------- avaliação dos clipes --------- */
 const TENSION = .1;
@@ -4173,7 +4175,7 @@ function onBeat(pl, bi) {
   if (sec.k === 'intro' && sec.i === 3 && !state.replay) showCard(pl, '', t('count')[k], .5, 'count');
 }
 function judge(pl, n, j, d) {
-  n.j = j; n.dt = d;
+  n.j = j; n.dt = d; if (state.replay) rpPress(pl, n, j);
   pl.fx2d.push({ lane: n.lane, j, t0: fx2dNow() });
   const ms = pl.ms[n.mi];
   if (j === 'm') { pl.stats.m++; onMiss(pl, n); return; }
@@ -4254,7 +4256,7 @@ function processNotes(pl, T) {
       else if (T > n.t + WIN_G) judge(pl, n, 'm', T - n.t);
     } else if (n.hold && n.j !== 'm' && n.tail === null) {
       const held = pl.auto || pl.down[n.lane] > 0 || (state.replay && !(n.rtail === 2 && T >= n.t + n.rtt));
-      if (!held && T < n.end - .18) { n.tail = 'm'; n.tt = T; pl.stats.m++; onMiss(pl, n); }
+      if (!held && T < n.end - .18) { n.tail = 'm'; n.tt = T; pl.stats.m++; if (state.replay) RP.press.push({ p: pl.id, lane: n.lane, t: T, end: T, m: 1 }); onMiss(pl, n); }
       else if (T >= n.end - .02) { n.tail = 'ok'; pl.score += 100 * mult(pl, n); checkMeasure(pl, n.mi); }
     }
   }
@@ -4693,7 +4695,7 @@ function attractTick(now) {
 // e sem pistas nem cascos. Só a última partida jogada fica guardada; a próxima partida a substitui.
 // Exportar: a partida é desenhada de novo quadro a quadro (mais rápido que o tempo real quando o aparelho deixa),
 // codificada em H.264 pelo próprio Chrome (WebCodecs) e salva em MP4, com a música refeita fora do tempo real.
-const RP = { data: null, seg: 0, orient: store.get('rpOrient', 'v') === 'h' ? 'h' : 'v', mode: 'pl', fp: 0, both: false, t0: 0, t1: 0, exp: null, caps: [], cards: [], syncs: [] };
+const RP = { data: null, seg: 0, orient: store.get('rpOrient', 'v') === 'h' ? 'h' : 'v', mode: 'pl', fp: 0, both: false, t0: 0, t1: 0, exp: null, caps: [], cards: [], syncs: [], press: [], alt: null, angOff: 0, angT: 0, occT0: -1 };
 { const d = store.get('replay', null); if (d && d.v === 1 && Array.isArray(d.p) && d.p.length) RP.data = d; }
 // partes: a partida inteira e cada bloco (com a contagem/cartão antes e a pose parada depois)
 const RP_SEGS = [{ mi0: 0, mi1: 36, T0: -.4 }, { mi0: 3, mi1: 13 }, { mi0: 13, mi1: 23 }, { mi0: 23, mi1: 34 }];
@@ -4713,7 +4715,7 @@ function replayPrepare(sgI) {
   if (D.ph !== PHI) setPhase(D.ph);
   D.chars.forEach((id, i) => { if (PL[i].charId !== id) setPlayerChar(PL[i], id); });
   endTransformUI(); setTwo(!!D.two);
-  RP.seg = sgI; RP.t0 = T0; RP.t1 = sg.mi1 * MEAS; RP.mode = 'pl'; RP.fp = 0; RP.both = false; RP.caps = []; RP.cards = []; RP.syncs = [];
+  RP.seg = sgI; RP.t0 = T0; RP.t1 = sg.mi1 * MEAS; RP.mode = 'pl'; RP.fp = 0; RP.both = false; RP.caps = []; RP.cards = []; RP.syncs = []; RP.press = []; RP.alt = null; RP.angOff = 0; RP.angT = 0; RP.occT0 = -1;
   Object.assign(state, { screen: 'play', replay: true, paused: false, demo: false, songT: T0, clockInit: false, mi: sg.mi0 - 1, bi: Math.floor(T0 / BEAT), ended: false });
   const JN = ['p', 'g', 'm'];
   ACTIVE.forEach((pl, k) => {
@@ -4775,11 +4777,26 @@ function replayDirect(mi) {
   RP.fp = fp;
 }
 function directorCam(dt) {
-  const both = state.two && PAIR.w > .5, cam = PANO.cam;
-  if (both !== RP.both) { RP.both = both; PANO.snap = true; }
-  if (both) { if (cam.fov !== 36) { cam.fov = 36; cam.updateProjectionMatrix(); } panoCamera(dt); return; }
-  const tv = PL[RP.fp].tv, f = clamp(tv.fov * (RP.orient === 'h' ? .62 : 1), 12, 70);
-  cam.position.copy(tv.pos); cam.lookAt(tv.aim);
+  const both = state.two && PAIR.w > .5, cam = PANO.cam, now = state.songT;
+  if (both !== RP.both) { RP.both = both; PANO.snap = true; RP.alt = null; RP.angOff = 0; RP.occT0 = -1; }
+  if (both) {
+    if (cam.fov !== 36) { cam.fov = 36; cam.updateProjectionMatrix(); }
+    panoCamera(dt);
+    // algo do cenário na frente do casal: gira o ângulo da câmera até achar um caminho livre
+    const o = occCheck(PL, cam.position);
+    if (o.hit && now > RP.angT) {
+      for (const off of [.6, -.6, 1.2, -1.2, 1.9, -1.9, PI]) { const q = panoPosAt(off); if (q && !blocked(q, o.pts)) { RP.angOff += off; break; } }
+      RP.angT = now + 1.5; RP.occT0 = -1; PANO.snap = true;
+    }
+    return;
+  }
+  const pl = PL[RP.fp], tv = pl.tv, visK = RP.orient === 'h' ? .62 : 1;
+  let pos = tv.pos;
+  if (RP.alt && RP.alt.fp === RP.fp && (now < RP.alt.until || blocked(tv.pos, occTargets([pl])))) pos = RP.alt.pos; else RP.alt = null;
+  const o = occCheck([pl], pos);
+  if (o.hit) { const q = pickClearCam(pl, o.pts, pos); if (q) { RP.alt = { pos: q, until: now + 2.5, fp: RP.fp }; pos = q; } RP.occT0 = -1; }
+  const f = RP.alt ? clamp(2 * Math.atan(tv.visH * (1 + .35 * PAIR.w) / 2 / Math.max(1, pos.distanceTo(tv.aim))) * 180 / PI, 14, 66) * visK : clamp(tv.fov * visK, 12, 70);
+  cam.position.copy(pos); cam.lookAt(tv.aim);
   if (Math.abs(cam.fov - f) > .01) { cam.fov = f; cam.updateProjectionMatrix(); }
   cam.updateMatrixWorld();
 }
@@ -4787,6 +4804,113 @@ function directorCam(dt) {
 function rpCaption(text, tier, duo) { RP.caps.push({ text, tier, duo, t: state.songT }); }
 function rpCard(small, big, dur) { RP.cards.push({ small, big, dur, t: state.songT }); }
 function rpSync(text) { RP.syncs.push({ text, t: state.songT }); }
+
+/* --------- replay: cascos pequenos mostrando o ritmo de cada jogador --------- */
+// cada toque gravado vira um "aperto" no casco daquele lado (segurado até o fim da estrela longa), com um anel
+// dourado no PERFEITO, branco no BOM e um X vermelho no erro
+function rpPress(pl, n, j) {
+  if (j === 'm') { RP.press.push({ p: pl.id, lane: n.lane, t: state.songT, end: state.songT, m: 1 }); return; }
+  const end = n.hold ? (n.rtail === 2 ? n.t + n.rtt : n.end) : state.songT + .12;
+  RP.press.push({ p: pl.id, lane: n.lane, t: state.songT, end, j });
+}
+const PAD_COL = [['#ff4fa8', '#a8226c', '#ffb1db'], ['#4f86ff', '#2443a8', '#b4c8ff']];
+function drawPads(cx, W, H, T, k, bottom = 0) {
+  if (!RP.data) return;
+  const two = ACTIVE.length > 1, pw = 64 * k, ph = 44 * k, gap = 10 * k, y = H - ph - (RP.exp ? 30 * k : bottom);
+  const groups = two ? [[0, 20 * k + 10 * k], [1, W - 20 * k - 10 * k - (pw * 2 + gap)]] : [[0, W / 2 - pw - gap / 2]];
+  cx.save(); cx.textAlign = 'center'; cx.textBaseline = 'middle';
+  for (const [pi, x0] of groups) {
+    const pl = PL[pi]; if (!pl) continue;
+    // nome do personagem em cima dos cascos de cada um
+    if (two) {
+      cx.font = `${Math.round(15 * k)}px "Silkscreen"`; cx.lineWidth = 3.5 * k; cx.strokeStyle = '#2a0b4d'; cx.fillStyle = '#ffffff'; cx.globalAlpha = .9;
+      const nm = (CHAR_BY_ID[pl.charId] || { name: '' }).name.toUpperCase(); cx.strokeText(nm, x0 + pw + gap / 2, y - 14 * k); cx.fillText(nm, x0 + pw + gap / 2, y - 14 * k);
+    }
+    for (let lane = 0; lane < 2; lane++) {
+      const x = x0 + lane * (pw + gap), C = PAD_COL[lane];
+      let down = 0, ring = null, miss = 0;
+      for (const e of RP.press) {
+        if (e.p !== pi || e.lane !== lane || e.t > T) continue;
+        if (e.m) { if (T - e.t < .45) miss = 1 - (T - e.t) / .45; continue; }
+        if (T <= e.end + .06) down = 1;
+        if (T - e.t < .35) ring = e;
+      }
+      const s = down ? .9 : 1, cxp = x + pw / 2, cyp = y + ph / 2, w = pw * s, h = ph * s;
+      cx.globalAlpha = down ? 1 : .78;
+      if (down) { cx.shadowColor = C[2]; cx.shadowBlur = 16 * k; }
+      cx.fillStyle = C[1]; rrPath(cx, cxp - w / 2, cyp - h / 2 + 4 * k, w, h, 12 * k); cx.fill();
+      cx.fillStyle = down ? C[2] : C[0]; rrPath(cx, cxp - w / 2, cyp - h / 2 + (down ? 3 * k : 0), w, h, 12 * k); cx.fill();
+      cx.shadowBlur = 0;
+      // ferradura
+      cx.strokeStyle = 'rgba(255,255,255,.92)'; cx.lineWidth = 4.5 * k; cx.lineCap = 'round';
+      const r = 8 * k, hy = cyp + (down ? 3 * k : 0) - 2 * k; cx.beginPath(); cx.moveTo(cxp - r, hy + 8 * k); cx.lineTo(cxp - r, hy); cx.arc(cxp, hy, r, PI, 0); cx.lineTo(cxp + r, hy + 8 * k); cx.stroke();
+      if (ring) { const a = (T - ring.t) / .35; cx.globalAlpha = 1 - a; cx.strokeStyle = ring.j === 'p' ? '#ffd660' : '#ffffff'; cx.lineWidth = 3 * k; rrPath(cx, cxp - w / 2 - 6 * k * (1 + a * 2), cyp - h / 2 - 6 * k * (1 + a * 2), w + 12 * k * (1 + a * 2), h + 12 * k * (1 + a * 2), 16 * k); cx.stroke(); }
+      if (miss > 0) { cx.globalAlpha = miss; cx.strokeStyle = '#ff3355'; cx.lineWidth = 5 * k; const m = 12 * k; cx.beginPath(); cx.moveTo(cxp - m, cyp - m); cx.lineTo(cxp + m, cyp + m); cx.moveTo(cxp + m, cyp - m); cx.lineTo(cxp - m, cyp + m); cx.stroke(); }
+    }
+  }
+  cx.restore();
+}
+function rrPath(cx, x, y, w, h, r) { cx.beginPath(); cx.moveTo(x + r, y); cx.arcTo(x + w, y, x + w, y + h, r); cx.arcTo(x + w, y + h, x, y + h, r); cx.arcTo(x, y + h, x, y, r); cx.arcTo(x, y, x + w, y, r); cx.closePath(); }
+// camada dos cascos sobre a imagem do replay (gira junto quando a imagem está deitada)
+function drawRpOverlay() {
+  const c = PANO.pads; if (!c) return;
+  const dpr = Math.min(2, window.devicePixelRatio || 1), w = Math.round(c.clientWidth * dpr), h = Math.round(c.clientHeight * dpr);
+  if (!w || !h) return;
+  if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
+  const cx = c.getContext('2d'); cx.clearRect(0, 0, w, h);
+  drawPads(cx, w, h, state.songT, Math.min(w, h) / 720 * 1.6, 66 * dpr);   // acima da barra de pausa e progresso
+  if (RP.press.length > 80) RP.press = RP.press.filter(e => state.songT - e.end < 1);
+}
+
+/* --------- replay: a câmera desvia quando algum objeto do cenário fica na frente dos personagens --------- */
+const occRay = new THREE.Raycaster(), _oc1 = new THREE.Vector3(), _oc2 = new THREE.Vector3(), _ocd = new THREE.Vector3();
+const OCC = [[], []];
+// objetos sólidos e altos do cenário de cada fase (arquibancada, postes, prédios, Obelisco; palco, caixas de som, público)
+function collectOcc(group, list) {
+  list.length = 0; group.updateMatrixWorld(true);
+  const sz = new THREE.Vector3(), sc = new THREE.Vector3();
+  group.traverse(o => {
+    if (!o.isMesh || !o.geometry || Array.isArray(o.material) || (o.material && o.material.blending === THREE.AdditiveBlending)) return;
+    const ty = o.geometry.type; if (!(o.userData.occ || ty === 'BoxGeometry' || ty === 'CylinderGeometry' || ty === 'ConeGeometry')) return;
+    o.geometry.computeBoundingBox(); o.geometry.boundingBox.getSize(sz); o.getWorldScale(sc); sz.multiply(sc);
+    if (sz.y > .75 && Math.max(sz.x, sz.z) < 45) list.push(o);
+  });
+}
+function occList() { const L = OCC[PHI]; if (!L.length) collectOcc(PHI ? WORLD2.group : WORLD1, L); return L; }
+// pontos que precisam aparecer: peito e pés de quem está em cena
+function occTargets(pls) { const pts = []; for (const pl of pls) { pts.push(pl.W.chest); _oc2.copy(pl.W.fL).add(pl.W.fR).multiplyScalar(.5); _oc2.y += .25; pts.push(_oc2.clone()); } return pts; }
+function blocked(from, pts) {
+  const L = occList();
+  for (const p of pts) {
+    _ocd.copy(p).sub(from); const dist = _ocd.length(); if (dist < .5) continue; _ocd.divideScalar(dist);
+    occRay.set(from, _ocd); occRay.far = dist - .35;
+    if (occRay.intersectObjects(L, false).length) return true;
+  }
+  return false;
+}
+const inHall = v => v.z >= CAM_ZMIN && Math.abs(v.x) <= CAM_XMAX && v.z <= 26 && v.y < 11;
+// câmera alternativa em volta de quem está em cena, de frente se der, sem nada no caminho
+function pickClearCam(pl, pts, cur) {
+  const B = pl.base, aim = pl.tv.aim; let best = null, bs = -1e9;
+  const cand = [];
+  for (const c of CAMS) { const p = c.p.clone(); if (c.rail) p.x = clamp(B.pos.x * .7, -12, 12); cand.push(p); }
+  for (let i = 0; i < 16; i++) { const a = i * TAU / 16; for (const [r, y] of [[7.5, 1.9], [9.5, 3.2], [6, 1.6]]) cand.push(new THREE.Vector3(B.pos.x + Math.sin(a) * r, y, B.pos.z + Math.cos(a) * r)); }
+  for (const p of cand) {
+    if (!inHall(p)) continue;
+    const d = p.distanceTo(aim); if (d < 4 || d > 32) continue;
+    if (blocked(p, pts)) continue;
+    const front = ((p.x - B.pos.x) * B.fwd.x + (p.z - B.pos.z) * B.fwd.z) / Math.max(.1, Math.hypot(p.x - B.pos.x, p.z - B.pos.z));
+    const sc = front * 1.2 - Math.abs(d - 8.5) * .12 - (cur ? p.distanceTo(cur) * .03 : 0);
+    if (sc > bs) { bs = sc; best = p; }
+  }
+  return best;
+}
+// a cada quadro do replay: se o cenário cobre os personagens por um instante, corta para um ângulo livre
+function occCheck(pls, from) {
+  const now = state.songT, pts = occTargets(pls), hit = blocked(from, pts);
+  if (hit) { if (RP.occT0 < 0) RP.occT0 = now; } else RP.occT0 = -1;
+  return { hit: hit && now - RP.occT0 > .2, pts };
+}
 
 /* --------- tela do replay --------- */
 const fmtDur = s => { s = Math.round(s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
@@ -4871,8 +4995,9 @@ function drawCaptions(cx, W, H, T) {
     });
   }
   for (const s of RP.syncs) { const a = T - s.t; if (a < 0 || a > 1.5) continue; cx.globalAlpha = fade(a, 1.5); text(s.text, cx0, H * .8 - 14 * k * a, 40 * k, '#7dffc8'); }
-  cx.globalAlpha = .75; cx.textAlign = 'left'; text(t('logo1').toUpperCase() + ' ' + t('logo2').toUpperCase(), 22 * k, H - 26 * k, 18 * k, '#ffffff', '#2a0b4d', 'Silkscreen');
-  cx.globalAlpha = 1;
+  cx.globalAlpha = .7; cx.textAlign = 'left'; text(t('logo1').toUpperCase() + ' ' + t('logo2').toUpperCase(), 20 * k, 24 * k, 16 * k, '#ffffff', '#2a0b4d', 'Silkscreen');
+  cx.globalAlpha = 1; cx.textAlign = 'center';
+  drawPads(cx, W, H, T, k);
 }
 function expUI(st, p) {
   $('#expBar').style.width = Math.round(p * 100) + '%';
@@ -4988,7 +5113,7 @@ function tick(nowMs, forceDt) {
   for (const pl of ACTIVE) { if (preview) pl.tv.snap = true; updateCamera(pl, dt); }
   if (state.replay) directorCam(dt); else if (PANO.on) panoCamera(dt);
   render3D();
-  if (state.replay) { if (!RP.exp) $('#rpProg').style.width = (clamp((state.songT - RP.t0) / (RP.t1 - RP.t0), 0, 1) * 100).toFixed(1) + '%'; }
+  if (state.replay) { if (!RP.exp) { $('#rpProg').style.width = (clamp((state.songT - RP.t0) / (RP.t1 - RP.t0), 0, 1) * 100).toFixed(1) + '%'; drawRpOverlay(); } }
   else for (const pl of ACTIVE) { drawLanes(pl, tt); placeNames(pl); }
 }
 
@@ -5070,8 +5195,9 @@ window.UG = {
   tf: () => ({ screen: state.screen, two: state.two, st: ACTIVE.map(pl => { const s = pl.stage; return s && { t: +s.t.toFixed(2), rate: s.rate, done: s.done, active: s.active, hold: s.hold, forms: s.R && Object.assign({}, s.R.state) }; }) }),
   tfSet, tfRate: (i, r) => setRate(PL[i].stage, r), tfSkip: i => skipStage(PL[i].stage),
   phase: i => { setPhase(i); return PHI; },
+  occWhat() { const pls = state.two && PAIR.w > .5 ? PL : [PL[RP.fp]], out = []; for (const pt of occTargets(pls)) { _ocd.copy(pt).sub(PANO.cam.position); const d = _ocd.length(); _ocd.divideScalar(d); occRay.set(PANO.cam.position, _ocd); occRay.far = d - .35; for (const h of occRay.intersectObjects(occList(), false)) { const o = h.object, w = new THREE.Vector3(); o.getWorldPosition(w); out.push([o.geometry.type, w.toArray().map(v => +v.toFixed(1)), +h.distance.toFixed(1), pt.toArray().map(v => +v.toFixed(1))]); } } const pl0 = PL[RP.fp], pk = pickClearCam(pl0, occTargets([pl0]), PANO.cam.position); return { pick: pk && pk.toArray().map(v => +v.toFixed(1)), occT0: RP.occT0, cam: PANO.cam.position.toArray().map(v => +v.toFixed(1)), fp: RP.fp, tvcur: PL[RP.fp].tv.cur, virt: PL[RP.fp].tv.virt, hits: out }; },
   replayData: () => RP.data && { ph: RP.data.ph, two: RP.data.two, chars: RP.data.chars, n: RP.data.p.map(x => x.length), miss: RP.data.p.map(x => x.filter(r => r[0] === 2 || r[2] === 2).length) },
-  replay: (seg, o) => { if (o) RP.orient = o; playReplay(seg || 0); }, replayStop: () => replayStop(), rp: () => ({ on: !!state.replay, seg: RP.seg, fp: RP.fp, both: RP.both, mode: RP.mode, songT: state.songT, caps: RP.caps.length, score: ACTIVE.map(pl => pl.score) }),
+  replay: (seg, o) => { if (o) RP.orient = o; playReplay(seg || 0); }, replayStop: () => replayStop(), rp: () => ({ on: !!state.replay, seg: RP.seg, fp: RP.fp, both: RP.both, mode: RP.mode, songT: state.songT, caps: RP.caps.length, score: ACTIVE.map(pl => pl.score), alt: !!RP.alt, angOff: +RP.angOff.toFixed(2), occ: blocked(PANO.cam.position, occTargets(state.two && PAIR.w > .5 ? PL : [PL[RP.fp]])), press: RP.press.length }),
   exportReplay: async (seg, o) => { if (o) RP.orient = o; await exportReplay(seg || 0); const E = RP.exp; return E && { ok: !!E.blob, size: E.blob ? E.blob.size : 0, codec: E.codec, error: E.error, name: E.name }; },
   exportBlob: async () => { const E = RP.exp; if (!E || !E.blob) return null; const b = new Uint8Array(await E.blob.arrayBuffer()); let s = ''; for (let i = 0; i < b.length; i += 32768) s += String.fromCharCode.apply(null, b.subarray(i, i + 32768)); return btoa(s); }, ball: () => ({ target: BALL.target, w: +BALL.w.toFixed(3), at: BALL.at.toArray().map(v => +v.toFixed(2)) }),
   gap: () => +((((PL[1].base.s - PL[0].base.s) % PATH_L) + PATH_L) % PATH_L / PATH_L).toFixed(3)
