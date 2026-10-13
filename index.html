@@ -1618,7 +1618,12 @@ const C_GLIDE = [
 const SPIN_IN = { lean: .45, side: .1, tw: -.3, aL: [1.3, 1.2, -.5], aR: [1.1, -.8, -.2], lL: [.08, .15, .6], lR: [.3, -1.0, .3], sq: .93, hd: -.1 };
 const SPIN_OUT = { lean: .3, tw: 0, side: 0, hd: -.25, ...A(1.5, .2, -.1), lL: [.06, .1, .4], lR: [1.0, -HP, .1], sq: 1.04, tail: .7 };
 const SPIN_END = { lean: .34, hd: -.12, ...A(1.1, .35, -.25), lL: [.06, .15, .42], lR: [.5, -HP, .3], sq: 1, tail: .45 };
-const spinRoot = (n, a = .9, b = 3.5) => tb => ({ spin: TAU * n * easeIO(seg(tb, a, b)) });
+// perfil de giro: acelera no primeiro quarto, velocidade constante no meio, freia no último quarto (pico de 1,33x a média)
+const spinProf = u => u < .25 ? 2 * u * u / .75 : u < .75 ? (u - .125) / .75 : (.75 - 2 * (1 - u) * (1 - u)) / .75;
+const spinEase = u => FLUID.on && FLUID.rot ? spinProf(u) : easeIO(u);
+// voltas: n na versão original, nf com a rotação limitada a cerca de 4 voltas por segundo
+const spinOf = (n, nf, u) => TAU * (FLUID.on && FLUID.rot ? nf : n) * spinEase(u);
+const spinRoot = (n, a = .9, b = 3.5, nf = n) => tb => ({ spin: spinOf(n, nf, seg(tb, a, b)) });
 const C_SPIN = [
   // 1 · pirueta em pé
   clip(4, [
@@ -1651,7 +1656,7 @@ const C_SPIN = [
     [1.6, { lean: -.25, hd: -.55, ...A(2.9, -.9, .45), lR: [2.75, -HP + .15, 1.5], tail: 1, sq: 1 }],
     [3.3, { ...A(2.95, -.85, .4) }],
     [3.65, SPIN_OUT], [4, SPIN_END]
-  ], spinRoot(5)),
+  ], spinRoot(5, .9, 3.5, 4)),
   // 5 · Tornado de Purpurina
   clip(4, [
     [.5, { lean: .4, hd: 0, ...A(.7, -.6, -.3), lL: [.1, .2, .8], lR: [.1, .2, .8], sq: .88 }],
@@ -1659,7 +1664,7 @@ const C_SPIN = [
     [3.3, { sq: 1.04 }],
     [3.7, { lean: .3, ...A(1.6, .2, -.1), lR: [.9, -HP, .2], sq: .95 }],
     [4, SPIN_END]
-  ], tb => ({ spin: TAU * 12 * easeIO(seg(tb, .8, 3.6)), ty: .9 * bump(seg(tb, 1, 3.4)) })),
+  ], tb => ({ spin: spinOf(12, 5, seg(tb, .7, 3.7)), ty: .9 * bump(seg(tb, 1, 3.4)) })),
   // 6 · Pirueta Chifre-Broca: plantada de cabeça no chifre
   clip(4, [
     [.3, { lean: .3, hd: 0, ...A(.8, -.4, -.3), lL: [.1, .2, .7], lR: [.1, .2, .7], sq: .9 }],
@@ -1670,7 +1675,7 @@ const C_SPIN = [
     [4, { sq: 1 }]
   ], tb => {
     const f1 = easeIO(seg(tb, .3, 1)), f2 = easeIO(seg(tb, 3.2, 3.9)), flip = PI * (f1 + f2);
-    return { flip, hs: (1 - Math.cos(flip)) / 2, ty: .7 * Math.sin(PI * f1) * (1 - f2) + .7 * Math.sin(PI * f2), spin: TAU * 6 * easeIO(seg(tb, 1, 3.2)) };
+    return { flip, hs: (1 - Math.cos(flip)) / 2, ty: .7 * Math.sin(PI * f1) * (1 - f2) + .7 * Math.sin(PI * f2), spin: spinOf(6, 4, seg(tb, .9, 3.4)) };
   })
 ];
 
@@ -1681,7 +1686,7 @@ const JP = [
   { tA: 1.15, tL: 2.05, rot: 2, h: .75 },
   { tA: 1.0, tL: 2.1, rot: 3, h: .95 },
   { tA: .85, tL: 2.25, rot: 4, h: 1.35 },
-  { tA: .5, tL: 3.4, rot: 12, h: 7.2, cap: 6, air: { ...A(2.9, 0, -.1), lL: [.03, 0, .05], lR: [.25, 2.7, .35], lean: 0, hd: -.3, sq: 1.08 } },
+  { tA: .5, tL: 3.4, rot: 12, rotF: 6, h: 7.2, cap: 6, air: { ...A(2.9, 0, -.1), lL: [.03, 0, .05], lR: [.25, 2.7, .35], lean: 0, hd: -.3, sq: 1.08 } },
   { tA: .45, tL: 3.5, rot: 6, h: 30, flat: 1, cap: 8, air: { ...A(2.5, .2, -.1), lL: [.55, 0, .1], lR: [.55, 0, .1], lean: -.15, hd: -.4, sq: 1.05, tail: 1 } }
 ];
 const JUMPS1 = JP.map(j => Object.assign({ t0: j.tA / 4, t1: j.tL / 4 }, j));
@@ -1702,7 +1707,7 @@ function jumpClip(J) {
   return clip(4, K, tb => {
     const s = seg(tb, J.tA, J.tL), inAir = tb > J.tA && tb < J.tL;
     const ty = inAir ? (J.flat ? J.h * (1 - Math.pow(2 * s - 1, 4)) : J.h * 4 * s * (1 - s)) : 0;
-    return { ty, spin: TAU * J.rot * s, yaw: tb < J.tA ? -.35 * sm(.3, J.tA, tb) : -.35 * (1 - s) };
+    return { ty, spin: TAU * (FLUID.on && FLUID.rot && J.rotF ? J.rotF : J.rot) * s, yaw: tb < J.tA ? -.35 * sm(.3, J.tA, tb) : -.35 * (1 - s) };
   });
 }
 const C_JUMP = JUMPS.map(jumpClip);
@@ -1786,7 +1791,7 @@ const DUO_MOVES1 = {}; let DUO_MOVES = DUO_MOVES1;   // chave 'tipo.nível' da m
   const R0 = .72, HOLD = { lean: -.16, hd: -.22, side: 0, tw: 0, hy: 0, ...A(1.42, 1.42, -.08), lL: [.05, 0, .1], lR: [.85, -1.15, .35], tail: .8, sq: 1.04 };
   const c = clip(4, [[.5, { lean: .1, hd: 0, ...A(1.1, 1.2, -.3), lL: [.08, .15, .5], lR: [.08, .15, .5], sq: .92 }], [1, HOLD], [3.3, HOLD], [3.7, { lean: .3, hd: -.2, ...A(1.2, .6, -.2), lL: [.06, .1, .4], lR: [.4, -1.0, .2], sq: .96 }], [4, SPIN_END]]);
   DUO_MOVES['1.5'] = { nm: [0, 0], clips: [c, mirrorClip(c)], slot(r, tb) {
-    const sg = r ? -1 : 1, k = sm(0, .8, tb) * (1 - sm(3.3, 4, tb)), a = TAU * 3 * easeIO(seg(tb, .7, 3.5)) + (r ? PI : 0);
+    const sg = r ? -1 : 1, k = sm(0, .8, tb) * (1 - sm(3.3, 4, tb)), a = TAU * 3 * spinEase(seg(tb, .7, 3.5)) + (r ? PI : 0);
     const fx = R0 * Math.cos(a), fz = -R0 * Math.sin(a);
     return dslot(lerp(sg * SIDE, fx, k), lerp(0, fz, k), lerpA(0, lookTo(-fx, -fz), k), .55 * bump(seg(tb, 1, 3.4)));
   } };
@@ -1832,7 +1837,7 @@ const DUO_MOVES1 = {}; let DUO_MOVES = DUO_MOVES1;   // chave 'tipo.nível' da m
 }
 { // bloco 3 · 5ª: Torre Chifre-Broca (no lugar da Pirueta Chifre-Broca): A gira plantado no chifre e B fica de pé num
   // patim dele, em arabesque, girando junto
-  const spinA = tb => TAU * 6 * easeIO(seg(tb, 1, 3.2)), on = tb => easeIO(seg(tb, .55, 1.05)) * (1 - easeIO(seg(tb, 3.0, 3.45)));
+  const spinA = tb => spinOf(6, 4, seg(tb, .9, 3.4)), on = tb => easeIO(seg(tb, .55, 1.05)) * (1 - easeIO(seg(tb, 3.0, 3.45)));
   const ARAB = { lean: .95, hd: -.5, side: 0, tw: 0, hy: 0, aL: [1.7, -.2, -.1], aR: [2.5, .8, -.3], lL: [.03, 0, .05], lR: [1.65, -HP, .05], tail: .9, sq: 1 };
   const TUCK = { lean: .1, hd: -.1, ...A(2.2, .3, -.4), lL: [.6, HP, 1.6], lR: [.6, HP, 1.6], sq: 1.05 };
   const cB = clip(4, [[.35, { lean: .3, hd: 0, ...A(.8, -.6, -.3), lL: [.5, HP, 1.1], lR: [.5, HP, 1.1], sq: .88 }], [.75, TUCK], [1.1, ARAB], [2.95, ARAB], [3.2, TUCK], [3.6, { lean: .4, hd: -.1, ...A(1.2, .4, -.2), lL: [.4, HP, .8], lR: [.4, HP, .8], sq: .9 }], [4, { sq: 1 }]]);
@@ -2043,7 +2048,7 @@ const C_SPIN_D = [
     [3.3, { sq: 1.04 }],
     [3.7, { lean: .3, ...A(1.6, .2, -.1), lR: [.9, -HP, .2], sq: .95 }],
     [4, SPIN_END]
-  ], tb => ({ spin: TAU * 10 * easeIO(seg(tb, .8, 3.6)), ty: .6 * bump(seg(tb, 1, 3.4)) })),
+  ], tb => ({ spin: spinOf(10, 5, seg(tb, .7, 3.7)), ty: .6 * bump(seg(tb, 1, 3.4)) })),
   // 6 · Moinho de Pantufa Cintilante: deitada de costas no gelo, gira como hélice com as pernas em V
   clip(4, [
     [.35, { lean: .5, hd: 0, ...A(.9, 1.0, -.8), lL: [.8, HP, 1.6], lR: [.8, HP, 1.6], sq: .88 }],
@@ -2055,7 +2060,7 @@ const C_SPIN_D = [
     [4, { lean: .34, hd: -.12, ...A(1.0, .35, -.3), lL: [.06, .15, .42], lR: [.5, -HP, .3], sq: 1 }]
   ], tb => {
     // gira em volta do quadril (que fica a uns 0,8 m dos pés, com as pernas erguidas)
-    const down = easeIO(seg(tb, .3, .95)) * (1 - easeIO(seg(tb, 3.35, 3.9))), sp = TAU * 5 * easeIO(seg(tb, .9, 3.4)), c = .8 * down;
+    const down = easeIO(seg(tb, .3, .95)) * (1 - easeIO(seg(tb, 3.35, 3.9))), sp = spinOf(5, 4, seg(tb, .9, 3.4)), c = .8 * down;
     return { flip: -1.5 * down, spin: sp, ty: .22 * down, tx: c * Math.sin(sp), tz: c * Math.cos(sp) };
   })
 ];
@@ -2156,7 +2161,7 @@ const DUO_MOVES_D = {}, DUO_POSES_D = [];
     [3.3, { sq: 1.03 }],
     [3.7, { lean: .3, ...A(1.6, .2, -.1), lR: [.9, -HP, .2], sq: .95 }],
     [4, SPIN_END]
-  ], tb => ({ spin: TAU * 8 * easeIO(seg(tb, .8, 3.6)) }));
+  ], tb => ({ spin: spinOf(8, 5, seg(tb, .7, 3.7)) }));
   DUO_MOVES_D['1.5'] = { nm: [0, 1], clips: [cA, cB], slot(r, tb) {
     const k = sm(0, .8, tb) * (1 - sm(3.4, 4, tb));
     return r ? dslot(lerp(-SIDE, -.42, k), .12 * k, 0, 0) : dslot(lerp(SIDE, .3, k), -.1 * k, -.35 * k, 0);
@@ -2199,7 +2204,7 @@ const DUO_MOVES_D = {}, DUO_POSES_D = [];
   } };
 }
 { // bloco 3 · 5ª: Hélice de Pantufa (no lugar do Moinho): A gira segurando as mãos de B, que voa deitada de costas em volta dele
-  const up = tb => easeIO(seg(tb, .45, 1.2)) * (1 - easeIO(seg(tb, 3.15, 3.75))), ang = tb => TAU * 3 * easeIO(seg(tb, .7, 3.6));
+  const up = tb => easeIO(seg(tb, .45, 1.2)) * (1 - easeIO(seg(tb, 3.15, 3.75))), ang = tb => TAU * 3 * spinEase(seg(tb, .7, 3.6));
   const cA = clip(4, [
     [.45, { lean: .3, hd: 0, ...A(1.1, HP, -.6), lL: [.5, HP, .9], lR: [.5, HP, .9], sq: .9 }],
     [1.1, { lean: -.32, hd: -.15, ...A(1.2, 1.5, -.1), lL: [.3, .2, .35], lR: [.3, .2, .35], tail: .8, sq: 1 }],
@@ -2516,7 +2521,7 @@ function trackVel(pl, pose, dt) {
   }
   pl.prevPose = cloneP(pose);
 }
-const FLUID = { on: true, minIn: .5, look: true, spd: true, cont: true };   // estudo de fluidez (ligado): emenda mínima, antecipação e velocidade contínua
+const FLUID = { on: true, minIn: .5, look: true, spd: true, cont: true, rot: true, ghosts: true, inertia: true, w: 5.5, z: .6 };   // estudo de fluidez (ligado): emenda mínima, antecipação e velocidade contínua
 function instKeys(pl, c, tb0, snap, next) {
   const k0 = { t: tb0, p: snap, v: cloneP(pl.vel) }, K = [k0].concat(c.R.filter(k => k.t > tb0 + .22));
   if (FLUID.on && FLUID.minIn > 0 && !c.loop && K.length > 1 && K[1].t < FLUID.minIn) {
@@ -2629,8 +2634,7 @@ function updBases(dt) {
 /* --------- aplicar a pose ao boneco --------- */
 const _v = new THREE.Vector3(), _dir = new THREE.Vector3(), DOWN = new THREE.Vector3(0, -1, 0);
 function setLimb(g, side, e, a) { e = clamp(e, 0, 3.06); const s = Math.sin(e); _dir.set(side * s * Math.cos(a), -Math.cos(e), s * Math.sin(a)).normalize(); g.quaternion.setFromUnitVectors(DOWN, _dir); }
-function applyPose(pl, o, now) {
-  const R = pl.uni, B = pl.base;
+function applyPose(pl, o, now, R = pl.uni, B = pl.base) {
   R.root.position.set(B.pos.x, B.y || 0, B.pos.z); R.root.rotation.set(0, B.yaw + o.yaw, B.bank);
   R.spinner.position.set(o.tx, o.ty, o.tz); R.spinner.rotation.set(o.flip, o.spin, 0);
   { const sq = clamp(isFinite(o.sq) ? o.sq : 1, .5, 1.6), sx = 1 / Math.sqrt(sq); R.spinner.scale.set(sx, sq, sx); }
@@ -2982,6 +2986,7 @@ function animate(pl, t, dt) {
     pl.lastBase = cloneP(pl.goodPose); for (const k in pl.vel) pl.vel[k] = Array.isArray(pl.vel[k]) ? [0, 0, 0] : 0; pl.prevPose = null;
   } else pl.goodPose = pl.lastBase;
   trackVel(pl, pl.lastRaw && finiteP(pl.lastRaw) ? pl.lastRaw : pl.lastBase, dt);
+  if (FLUID.on && FLUID.inertia && dt > 0) pl.lastBase = inertiaPose(pl, pl.lastBase, dt);
   pl.curPose = applyAccent(pl, cloneP(pl.lastBase), dt);
   if (!finiteP(pl.curPose)) { diag('acento'); for (const k in pl.ACC) { pl.ACC[k].x = 0; pl.ACC[k].v = 0; } pl.curPose = cloneP(pl.lastBase); }
   applyPose(pl, pl.curPose, t); updW(pl);
@@ -2990,6 +2995,42 @@ function animate(pl, t, dt) {
   pl.shadow.position.x = W.chest.x; pl.shadow.position.z = W.chest.z;
   { const h = Math.max(0, pl.curPose.ty + (pl.base.y || 0)), s = 1 / (1 + h * .6); pl.shadow.scale.set(s, s, s); pl.shadow.material.uniforms.uOpacity.value = .4 * s; }
   fxTick(pl, dt, t); updPoseFx(pl, dt, t);
+  ghostTick(pl, t, dt);
+}
+// inércia: cada canal do corpo segue a pose alvo por uma mola amortecida (peso, pequeno ultrapassar e assentar)
+// os membros são filtrados pela direção (vetor), não pelos ângulos: perto do braço caído o azimute muda muito sem mexer nada
+const INR_CH = BODY.concat(LIMBS);
+const limbVec = (e, a) => { const s = Math.sin(e); return [s * Math.cos(a), -Math.cos(e), s * Math.sin(a)]; };
+function inertiaPose(pl, o, dt) {
+  const S = pl.INR || (pl.INR = { x: {}, v: {} });
+  const w = TAU * FLUID.w, K = w * w, C = 2 * FLUID.z * w, n = Math.max(1, Math.ceil(dt / .008)), h = dt / n, out = cloneP(o);
+  const step = (x, v, tgt, j) => { for (let i = 0; i < n; i++) { v[j] += (K * (tgt[j] - x[j]) - C * v[j]) * h; x[j] += v[j] * h; } };
+  for (const ch of INR_CH) {
+    const raw = o[ch], arr = Array.isArray(raw), tgt = arr ? limbVec(raw[0], raw[1]).concat([raw[2]]) : [raw];
+    let x = S.x[ch], v = S.v[ch];
+    if (!x || x.some((q, j) => !isFinite(q) || Math.abs(q - tgt[j]) > 2.5)) { x = S.x[ch] = tgt.slice(); v = S.v[ch] = tgt.map(() => 0); }
+    for (let j = 0; j < tgt.length; j++) step(x, v, tgt, j);
+    if (!arr) { out[ch] = x[0]; continue; }
+    const L = Math.hypot(x[0], x[1], x[2]);
+    if (L > .2) { out[ch][0] = Math.acos(clamp(-x[1] / L, -1, 1)); out[ch][1] = raw[1] + wrapA(Math.atan2(x[2], x[0]) - raw[1]); }
+    out[ch][2] = x[3];
+  }
+  return finiteP(out) ? out : o;
+}
+// rastros: guarda as últimas poses; quando o corpo gira depressa, as cópias aparecem nas poses de 45 e 90 ms atrás
+const GHOST = { dt: .045, min: 2.2 * TAU, full: 3.5 * TAU };
+function ghostTick(pl, t, dt) {
+  const H = pl.hist, B = pl.base, o = pl.curPose;
+  if (!H || !pl.ghosts) return;
+  const ang = o.spin + o.yaw + B.yaw, flip = o.flip;
+  if (dt > 0 && H.length) { const L = H[H.length - 1]; pl.rotRate = lerp(pl.rotRate, (Math.abs(wrapA(ang - L.ang)) + Math.abs(wrapA(flip - L.flip))) / dt, .5); }
+  H.push({ t, ang, flip, pose: cloneP(o), pos: B.pos.clone(), y: B.y || 0, yaw: B.yaw, bank: B.bank }); while (H.length > 2 && H[0].t < t - .25) H.shift();
+  const on = FLUID.on && FLUID.ghosts && !preview && pl.rotRate > GHOST.min, k = on ? sm(GHOST.min, GHOST.full, pl.rotRate) : 0;
+  pl.ghosts.forEach((G, i) => {
+    let e = null; const tt = t - GHOST.dt * (i + 1); for (let q = H.length - 1; q >= 0; q--) if (H[q].t <= tt) { e = H[q]; break; }
+    if (!on || !e || !pl.uni.root.visible) { G.root.visible = false; return; }
+    G.root.visible = true; applyPose(pl, e.pose, t, G, { pos: e.pos, y: e.y, yaw: e.yaw, bank: e.bank }); setOpacity(G.root, (i ? .13 : .26) * k);
+  });
 }
 
 /* ============================== câmera ============================== */
@@ -3547,6 +3588,10 @@ function setPlayerChar(pl, id) {
   const old = pl.uni;
   if (old) { clearPoseFx(pl, false); for (const f of pl.anim.fx) killFx(f, .01); MIR.remove(old.root); disposeRig(old.root); }
   pl.charId = id; pl.uni = rigForGame(id); MIR.add(pl.uni.root);
+  // rastros: duas cópias translúcidas do boneco, desenhadas nas poses de instantes anteriores nos movimentos rápidos
+  if (pl.ghosts) for (const G of pl.ghosts) { MIR.remove(G.root); disposeRig(G.root); }
+  pl.ghosts = [0, 1].map(() => { const G = rigForGame(id); G.root.traverse(c => { if (c.material && c.material.uniforms) { c.material.transparent = true; c.material.depthWrite = false; } }); G.root.visible = false; MIR.add(G.root); return G; });
+  pl.hist = []; pl.rotRate = 0;
   if (old) { pl.uni.root.visible = old.root.visible; applyPose(pl, pl.curPose, simT); updW(pl); }
 }
 /* ============================== pose: braços por IK, pernas e corpo por ângulos ============================== */
@@ -4138,7 +4183,7 @@ function makePlayer(id) {
   pl.RTW = RW; pl.RH = 200; pl.quad = postQuad(pl.rt.texture);
   pl.tv = { cur: 0, virt: false, poseB: 0, cutAt: 0, snap: true, pos: new THREE.Vector3(0, 7.5, 25), aim: new THREE.Vector3(), fov: 30, shake: 0, visH: 9, offY: .12, chaseK: 1 };
   pl.ACC = {}; ACC_CH.forEach(k => pl.ACC[k] = { x: 0, v: 0 });
-  pl.vel = {}; pl.prevPose = null; pl.lastRaw = null; pl.curPose = cloneP(N); pl.lastBase = cloneP(N); pl.goodPose = cloneP(N);
+  pl.vel = {}; pl.prevPose = null; pl.lastRaw = null; pl.INR = null; pl.curPose = cloneP(N); pl.lastBase = cloneP(N); pl.goodPose = cloneP(N);
   pl.anim = { kind: 'skate', b: 0, lvl: 0, t0: 0, landed: false, flags: {}, fx: [], inst: { clip: C_SKATE, K: instKeys(pl, C_SKATE, 0, cloneP(N)) } };
   pl.poseFx = null; pl.moonW = 0; pl.auto = false; pl.att = null;
   pl.W = { chest: new THREE.Vector3(), horn: new THREE.Vector3(), fL: new THREE.Vector3(), fR: new THREE.Vector3() };
@@ -4150,7 +4195,7 @@ function makePlayer(id) {
 }
 function resetPlayer(pl, auto) {
   Object.assign(pl, buildChart(), { auto, score: 0, shownScore: 0, chain: 0, posing: false, ms: {}, down: [0, 0], padFlash: [0, 0], lastHit: [-9, -9], stats: { p: 0, g: 0, m: 0, poses: 0, sync: 0 }, syncPts: 0, found: new Set(), lastPoseBlock: -1, blkB: 0 });
-  clearPoseFx(pl, false); pl.names.innerHTML = ''; pl.fx2d.length = 0;
+  clearPoseFx(pl, false); pl.names.innerHTML = ''; pl.fx2d.length = 0; pl.INR = null; if (pl.hist) pl.hist.length = 0; pl.rotRate = 0;
   buildPips(pl); updBlk(pl); pl.scoreEl.textContent = '0'; pl.demoTag.hidden = !auto; updMult(pl);
 }
 function setTwo(on) {
@@ -5302,6 +5347,7 @@ window.UG = {
   tf: () => ({ screen: state.screen, two: state.two, st: ACTIVE.map(pl => { const s = pl.stage; return s && { t: +s.t.toFixed(2), rate: s.rate, done: s.done, active: s.active, hold: s.hold, forms: s.R && Object.assign({}, s.R.state) }; }) }),
   tfSet, tfRate: (i, r) => setRate(PL[i].stage, r), tfSkip: i => skipStage(PL[i].stage),
   phase: i => { setPhase(i); return PHI; },
+  rotRate: (i = 0) => +(PL[i].rotRate / TAU).toFixed(2), ghostsOn: (i = 0) => PL[i].ghosts.map(G => G.root.visible),
   fluid: o => { Object.assign(FLUID, o || {}); return Object.assign({}, FLUID); },
   poseOf: (i = 0) => { const pl = PL[i], o = pl.lastBase; return { t: state.songT, spd: +pl.base.spd.toFixed(3), kind: pl.anim.kind, b: pl.anim.b, l: pl.anim.lvl, ch: [o.lean, o.side, o.tw, o.hd, o.hy, ...o.aL, ...o.aR, ...o.lL, ...o.lR, o.sq, o.ty].map(v => +v.toFixed(4)) }; },
   ndc: () => ACTIVE.map(pl => { const q = pl.W.chest.clone().project(PANO.cam); return [+q.x.toFixed(2), +q.y.toFixed(2)]; }),
