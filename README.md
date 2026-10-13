@@ -27,6 +27,10 @@ Celular deitado na mesa. A tela se divide ao meio e cada um usa os dois cascos d
 ## Manobras a dois
 Na dupla, se os dois chegam juntos e sem erro às manobras com nome, eles se encontram no meio da pista e cada uma vira uma manobra nova a dois, com nome próprio (na fase 1: levantamentos, roda-gigante, tango, torre no chifre e mais; na fase 2: lançamento com mortal, rodopio de mãos dadas, trenzinho, hélice, sentada nos ombros e mais). Se um erra, o outro termina sozinho e a dupla se desfaz até o próximo bloco. Se os dois estão sentados lado a lado vendo a tela do mesmo lado, a tela dividida vira uma imagem panorâmica única desde a primeira manobra a dois e continua assim pelas estrelas e pela coroa; as pistas, os cascos e o placar de cada um seguem por cima, e a tela volta a se dividir se alguém errar. Na discoteca, quando a dupla faz junta a sequência final do último bloco, o globo de espelhos desce sobre os dois e, na pose final, gira jogando feixes de luz para todos os lados. Os nomes a dois ficam numa seção própria do **Álbum**.
 
+## Replay
+Depois de cada partida (não vale a demonstração), **Ver replay** mostra de novo tudo o que foi jogado, numa imagem só, com câmeras de transmissão e sem pistas nem cascos; na dupla, a câmera alterna entre os dois e mostra o casal junto nas manobras a dois. Dá para ver a partida inteira ou cada bloco, com o vídeo em pé ou deitado. **Exportar vídeo** gera um MP4 com a música e os nomes das manobras e abre o compartilhar do Android (salvar na galeria, mandar por mensagem).
+Só a última partida fica guardada: ao começar outra, o replay anterior é substituído. Durante a partida nada é gravado em vídeo; o jogo anota o resultado de cada nota e refaz a partida a partir disso.
+
 ## Instalar no Android
 Abra o link no Chrome (não no navegador interno de outro app), menu ⋮ > Instalar app. Depois de cada atualização, feche o app e abra de novo.
 
@@ -34,4 +38,5 @@ Abra o link no Chrome (não no navegador interno de outro app), menu ⋮ > Insta
 - `index.html` único (HTML, CSS e JS), sem build; Three.js r128 em `vendor/`; fontes em `fonts/` (SIL OFL, ver `fonts/LICENSE.txt`).
 - Áudio sintetizado com Web Audio; o relógio da música é o do áudio, com calibração de atraso nas Opções.
 - PWA com `sw.js` (funciona offline) e publicação pelo GitHub Actions (`.github/workflows/pages.yml`).
+- Vídeo do replay: WebCodecs (H.264 e AAC quando o aparelho tem; senão VP9 e Opus) e `vendor/mp4-muxer.min.js` (MIT, ver `vendor/mp4-muxer.LICENSE.txt`) para montar o MP4.
 - Progresso salvo no aparelho, em `localStorage` com prefixo `galope.`.

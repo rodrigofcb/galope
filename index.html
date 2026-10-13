@@ -214,6 +214,7 @@ h2{font-family:var(--f-display);font-weight:400;font-size:30px;margin:0;filter:d
 #pano .tbox{--cx:.5;--nw:86%;--sx:.5;--sy:.78}
 #pano .names{top:11%}
 #pano .nmw{top:0;bottom:auto}
+#pano .card.title{top:22%}
 .nmw.duo{flex-direction:column;align-items:center;gap:3px}
 .duoTag{font-family:var(--f-pixel);font-size:10px;letter-spacing:.16em;color:var(--mint);text-transform:uppercase;white-space:nowrap;filter:drop-shadow(0 2px 0 var(--outline))}
 
@@ -308,6 +309,25 @@ div.opt{cursor:default}
 .pht .phb{font-style:normal;font-family:var(--f-pixel);font-size:9px;letter-spacing:.06em;color:var(--mint)}
 .phc.neon .pht b{color:#ffd0f0;text-shadow:0 0 8px rgba(255,61,184,.8)}
 
+/* Replay */
+#rpUI{position:absolute;inset:0;z-index:5;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:max(10px,env(safe-area-inset-top)) 12px max(14px,env(safe-area-inset-bottom))}
+#rpUI button{pointer-events:auto}
+.rpTop,.rpBot{display:flex;align-items:center;gap:10px}
+.rpTag{font-family:var(--f-pixel);font-size:10px;letter-spacing:.12em;color:#fff;background:#e2335f;border-radius:4px;padding:3px 6px}
+#rpLbl{flex:1;font-family:var(--f-pixel);font-size:10px;letter-spacing:.06em;color:#fff;text-shadow:0 1px 0 var(--outline)}
+.rpTrack,.expTrack{flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.2);overflow:hidden}
+.rpTrack i,.expTrack i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--gold))}
+.expTrack{flex:none;width:min(100%,300px)}
+.rpSegs{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:min(100%,330px)}
+.rpSeg{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px;border-radius:12px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:var(--ink);font:800 13px var(--f-body);text-align:left;cursor:pointer}
+.rpSeg:first-child{grid-column:1/-1}
+.rpSeg small{font-family:var(--f-pixel);font-size:9px;font-weight:400;color:var(--muted)}
+.rpSeg[aria-pressed=true]{border-color:var(--gold);background:rgba(255,214,96,.12)}
+.rpSeg:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.rpOr{width:min(100%,330px)}
+#expCanvas{max-width:min(100%,240px);max-height:42cqh;width:auto;height:auto;border-radius:10px;image-rendering:pixelated;background:#000}
+#expCanvas.land{max-width:min(100%,330px)}
+
 /* Resultado */
 #pauseS.r1,#pauseS.r3{inset:auto;left:50%;top:50%;width:100cqh;height:100cqw;translate:-50% -50%}
 #pauseS.r1{rotate:90deg}
@@ -349,7 +369,11 @@ div.opt{cursor:default}
 <div id="app">
   <canvas id="view"></canvas>
   <div id="divider" hidden></div>
-  <div id="pano" hidden><div class="flash"></div><div class="tbox"><div class="names" aria-live="polite"></div><div class="sync"></div></div></div>
+  <div id="pano" hidden><div class="flash"></div><div class="tbox"><div class="names" aria-live="polite"></div><div class="card"></div><div class="sync"></div></div></div>
+  <div id="rpUI" hidden>
+    <div class="rpTop"><span class="rpTag">REPLAY</span><span id="rpLbl"></span><button class="icon" id="rpClose" data-i18n-aria="close">✕</button></div>
+    <div class="rpBot"><button class="icon" id="rpPlay" aria-label="">❚❚</button><div class="rpTrack"><i id="rpProg"></i></div></div>
+  </div>
   <p id="diag" hidden></p>
 
   <section id="title" class="screen">
@@ -362,7 +386,7 @@ div.opt{cursor:default}
       <button class="btn" id="b1p" data-i18n="p1"></button>
       <button class="btn alt" id="b2p" data-i18n="p2"></button>
       <button class="btn ghost" id="bDemo" data-i18n="demo"></button>
-      <div class="menu row"><button class="btn ghost sm" id="bOpt" data-i18n="options"></button><button class="btn ghost sm" id="bAlbum" data-i18n="album"></button></div>
+      <div class="menu row"><button class="btn ghost sm" id="bOpt" data-i18n="options"></button><button class="btn ghost sm" id="bAlbum" data-i18n="album"></button><button class="btn ghost sm rpBtn" id="bReplay" data-i18n="replay" hidden></button></div>
       <p class="hint" data-i18n-html="hint"></p>
     </div>
   </section>
@@ -475,12 +499,37 @@ div.opt{cursor:default}
       <div><dt data-i18n="sPo"></dt><dd id="rPo">0/3</dd></div>
     </dl>
     <div class="album"><p class="eyebrow" data-i18n="found"></p><ol id="rNames"></ol></div>
+    <button class="btn alt rpBtn" id="rReplay" data-i18n="seeReplay" hidden></button>
     <div class="menu row"><button class="btn" id="bAgain" data-i18n="again"></button><button class="btn ghost" id="bMenu" data-i18n="menu"></button></div>
   </section>
 
+  <section id="replayS" class="screen panelS" hidden>
+    <header><p class="eyebrow" id="rpInfo"></p><h2 data-i18n="replay"></h2></header>
+    <div class="rpSegs" id="rpSegs"></div>
+    <div class="opt rpOr"><span data-i18n="rpOrient"></span><div class="seg"><button id="rpV" data-i18n="rpV"></button><button id="rpH" data-i18n="rpH"></button></div></div>
+    <div class="menu">
+      <button class="btn" id="rpWatch" data-i18n="rpWatch"></button>
+      <button class="btn alt" id="rpExport" data-i18n="rpExport"></button>
+      <button class="btn ghost" id="rpBack" data-i18n="back"></button>
+    </div>
+    <p class="hint" data-i18n="rpHint"></p>
+  </section>
+
+  <section id="exportS" class="screen panelS" hidden>
+    <h2 data-i18n="rpExport"></h2>
+    <canvas id="expCanvas" width="720" height="1278"></canvas>
+    <div class="expTrack"><i id="expBar"></i></div>
+    <p class="res" id="expMsg"></p>
+    <div class="menu">
+      <button class="btn" id="expSave" data-i18n="rpSave" hidden></button>
+      <button class="btn ghost" id="expCancel" data-i18n="cancel"></button>
+      <button class="btn ghost" id="expClose" data-i18n="rpClose" hidden></button>
+    </div>
+  </section>
+
   <section id="results2" class="screen split" hidden>
-    <div class="half flip"><div class="hin" data-p="1"><div class="rc" id="rc1"></div><div class="menu row"><button class="btn sm r2again" data-i18n="again"></button><button class="btn ghost sm r2menu" data-i18n="menu"></button></div></div></div>
-    <div class="half"><div class="hin" data-p="0"><div class="rc" id="rc0"></div><div class="menu row"><button class="btn sm r2again" data-i18n="again"></button><button class="btn ghost sm r2menu" data-i18n="menu"></button></div></div></div>
+    <div class="half flip"><div class="hin" data-p="1"><div class="rc" id="rc1"></div><button class="btn alt sm rpBtn r2replay" data-i18n="seeReplay" hidden></button><div class="menu row"><button class="btn sm r2again" data-i18n="again"></button><button class="btn ghost sm r2menu" data-i18n="menu"></button></div></div></div>
+    <div class="half"><div class="hin" data-p="0"><div class="rc" id="rc0"></div><button class="btn alt sm rpBtn r2replay" data-i18n="seeReplay" hidden></button><div class="menu row"><button class="btn sm r2again" data-i18n="again"></button><button class="btn ghost sm r2menu" data-i18n="menu"></button></div></div></div>
   </section>
 </div>
 
@@ -566,7 +615,10 @@ const STR = {
     selHint1: 'Arraste para girar a roda. Toque no personagem ou no nome para escolher e toque de novo para desfazer. Na transformação, 2× acelera e Pular vai direto para a pista.',
     selHint2: 'Arraste para girar a roda. Primeiro escolhe o jogador 1, depois o 2; toque de novo para desfazer. O celular desenhado mostra a metade da tela de cada um e Inverter troca os lados.',
     sideBot: 'embaixo', sideTop: 'em cima', swap: 'Inverter', swapL: 'Inverter os lados da tela', duoTag: '✦ a dois ✦',
-    phTitle: 'Onde vamos patinar?', phase: 'Fase', ph1: 'Pista de Buenos Aires', ph1s: 'Gelo ao ar livre, ao pé do Obelisco.', ph2: 'Discoteca Neon', ph2s: 'Boate dos anos 70: pista iluminada, neon e globo de espelhos.'
+    phTitle: 'Onde vamos patinar?', phase: 'Fase', ph1: 'Pista de Buenos Aires', ph1s: 'Gelo ao ar livre, ao pé do Obelisco.', ph2: 'Discoteca Neon', ph2s: 'Boate dos anos 70: pista iluminada, neon e globo de espelhos.',
+    replay: 'Replay', seeReplay: 'Ver replay', rpWhole: 'Partida inteira', rpOrient: 'Vídeo', rpV: 'Em pé', rpH: 'Deitado', rpWatch: 'Assistir', rpExport: 'Exportar vídeo',
+    rpHint: 'Só a última partida fica guardada: ao começar outra, este replay é substituído. Exporte antes os vídeos que quiser guardar.',
+    rpMaking: 'Gerando o vídeo… {p}%', rpAudio: 'Gravando o som…', rpDone: 'Vídeo pronto!', rpSave: 'Salvar ou compartilhar', rpClose: 'Fechar', rpFail: 'Não deu para gerar o vídeo neste aparelho.', close: 'Fechar'
   },
   es: {
     logo1: 'Galope', logo2: 'en el Hielo', sub: 'Ritmo · patines · brillantina',
@@ -596,7 +648,10 @@ const STR = {
     selHint1: 'Arrastrá para girar la ronda. Tocá el personaje o el nombre para elegir y tocá de nuevo para deshacer. En la transformación, 2× acelera y Saltar va directo a la pista.',
     selHint2: 'Arrastrá para girar la ronda. Primero elige el jugador 1, después el 2; tocá de nuevo para deshacer. El celular dibujado muestra la mitad de la pantalla de cada uno e Invertir cambia los lados.',
     sideBot: 'abajo', sideTop: 'arriba', swap: 'Invertir', swapL: 'Invertir los lados de la pantalla', duoTag: '✦ a dúo ✦',
-    phTitle: '¿Dónde vamos a patinar?', phase: 'Fase', ph1: 'Pista de Buenos Aires', ph1s: 'Hielo al aire libre, al pie del Obelisco.', ph2: 'Discoteca Neón', ph2s: 'Boliche de los años 70: pista iluminada, neón y bola de espejos.'
+    phTitle: '¿Dónde vamos a patinar?', phase: 'Fase', ph1: 'Pista de Buenos Aires', ph1s: 'Hielo al aire libre, al pie del Obelisco.', ph2: 'Discoteca Neón', ph2s: 'Boliche de los años 70: pista iluminada, neón y bola de espejos.',
+    replay: 'Repetición', seeReplay: 'Ver repetición', rpWhole: 'Partida entera', rpOrient: 'Video', rpV: 'Vertical', rpH: 'Horizontal', rpWatch: 'Mirar', rpExport: 'Exportar video',
+    rpHint: 'Solo se guarda la última partida: al empezar otra, esta repetición se reemplaza. Exportá antes los videos que quieras guardar.',
+    rpMaking: 'Generando el video… {p}%', rpAudio: 'Grabando el sonido…', rpDone: '¡Video listo!', rpSave: 'Guardar o compartir', rpClose: 'Cerrar', rpFail: 'No se pudo generar el video en este dispositivo.', close: 'Cerrar'
   }
 };
 // nomes whimsical: [bloco][0 = 5ª manobra, 1 = 6ª manobra, 2 = pose final]
@@ -917,7 +972,7 @@ function playStepD(s, t) {
 }
 let songT0 = 0, nextStep = 0, schedIv = null;
 function schedTick() {
-  if (!AC || state.screen !== 'play' || state.paused) return;
+  if (!AC || state.screen !== 'play' || state.paused || state.exporting) return;
   const ahead = AC.currentTime + .25;
   while (nextStep < TOTAL_MEAS * 16) {
     const t = songT0 + nextStep * S16;
@@ -937,16 +992,17 @@ function heardAt(perfMs) {
 }
 function evPerf(e) { const ts = e.timeStamp, now = performance.now(); return (ts > 0 && ts <= now + 5 && ts > now - 2000) ? ts : now; }
 const SFX = {
-  hit(p) { if (!AC) return; const t = AC.currentTime; noise(t, .05, sfxBus, .12, 'highpass', 3500, .7); if (p) osc('sine', mtof(98), t, .12, sfxBus, .045); },
-  miss() { if (!AC) return; const t = AC.currentTime, o = AC.createOscillator(), g = AC.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(420, t); o.frequency.exponentialRampToValueAtTime(130, t + .3); env(g, t, .004, .15, .3); o.connect(g); g.connect(sfxBus); o.start(t); o.stop(t + .4); },
-  name(tier) {
-    if (!AC) return; const t = AC.currentTime, base = [74, 78, 81, 86, 90, 93, 98, 102];
+  hit(p) { if (!AC || state.exporting) return; const t = AC.currentTime; noise(t, .05, sfxBus, .12, 'highpass', 3500, .7); if (p) osc('sine', mtof(98), t, .12, sfxBus, .045); },
+  miss() { if (!AC || state.exporting) return; const t = AC.currentTime, o = AC.createOscillator(), g = AC.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(420, t); o.frequency.exponentialRampToValueAtTime(130, t + .3); env(g, t, .004, .15, .3); o.connect(g); g.connect(sfxBus); o.start(t); o.stop(t + .4); },
+  name(tier, at) {
+    if (state.exporting && at === undefined) { RP.exp.sfx.push(['name', tier, state.songT]); return; }
+    if (!AC) return; const t = at !== undefined ? at : AC.currentTime, base = [74, 78, 81, 86, 90, 93, 98, 102];
     if (tier === 1) [0, 2, 3].forEach((i, k) => I.bell(t + k * .06, base[i], .7, .5, sfxBus));
     else if (tier === 2) { for (let k = 0; k < 6; k++) I.bell(t + k * .045, base[k], .6, .6, sfxBus); noise(t, .6, sfxBus, .05, 'highpass', 6000, .5, .2); }
     else { for (const n of [74, 78, 81, 86]) I.bell(t, n, .7, 1.6, sfxBus); for (let k = 0; k < 8; k++) I.bell(t + .06 + k * .05, base[k] + 12, .45, .7, sfxBus); noise(t, 1.2, sfxBus, .1, 'bandpass', 3000, .6, .05); osc('sine', 55, t, .7, sfxBus, .4); }
   }
 };
-SFX.sync = function () { if (!AC) return; const t = AC.currentTime; [74, 81, 86, 90, 93].forEach((n, k) => I.bell(t + k * .05, n + 12, .55, .5, sfxBus)); };
+SFX.sync = function (at) { if (state.exporting && at === undefined) { RP.exp.sfx.push(['sync', 0, state.songT]); return; } if (!AC) return; const t = at !== undefined ? at : AC.currentTime; [74, 81, 86, 90, 93].forEach((n, k) => I.bell(t + k * .05, n + 12, .55, .5, sfxBus)); };
 function applyVolumes() {
   if (!AC) return;
   try { musicBus.gain.setTargetAtTime(OPT.music ? .6 : 0, AC.currentTime, .02); sfxBus.gain.setTargetAtTime(OPT.sfx ? .75 : 0, AC.currentTime, .02); } catch (e) {}
@@ -2381,19 +2437,33 @@ const PANO = { on: false, q: 1, cam: new THREE.PerspectiveCamera(36, 2, .1, 260)
 PANO.rt = new THREE.WebGLRenderTarget(RW, 120, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, depthBuffer: true, stencilBuffer: false });
 PANO.quad = postQuad(PANO.rt.texture); PANO.quad.visible = false;
 // ao vivo (durante as manobras a dois): só a imagem 3D vira uma; pistas, cascos e placar de cada um continuam por cima
-function panoOn(q, live) {
-  if (!PANO.el) return;
+function panoOn(q, live, force) {
+  if (!PANO.el || (state.replay && !force)) return;
   PANO.on = true; PANO.live = !!live; PANO.q = q !== undefined ? q : OPT.rot[0]; PANO.t0 = performance.now() / 1000; PANO.snap = true;
   PANO.el.hidden = false; PANO.names.innerHTML = ''; if (!live) for (const pl of PL) pl.el.hidden = true; $('#divider').hidden = true; layout();
   PANO.flash.animate([{ opacity: REDUCED ? .25 : .7 }, { opacity: 0 }], { duration: 600, easing: 'ease-out' });
 }
-function panoOff() {
-  if (!PANO.on) return;
-  PANO.on = false; PANO.el.hidden = true; PANO.names.innerHTML = '';
+function panoOff(force) {
+  if (!PANO.on || (state.replay && !force)) return;
+  PANO.on = false; PANO.el.hidden = true; PANO.names.innerHTML = ''; PANO.card.className = 'card'; for (const k of ['translate', 'left', 'top', 'width', 'height']) PANO.box.style[k] = '';
   for (const pl of PL) pl.el.hidden = !(pl.id === 0 || state.two); $('#divider').hidden = !state.two; layout();
 }
 function panoLayout() {
   PANO.quad.visible = PANO.on; if (!PANO.on) return;
+  if (state.replay) {   // replay: imagem em pé (tela inteira) ou deitada (16:9, com faixas); no vídeo, o tamanho do vídeo
+    const land = RP.orient === 'h', E = RP.exp;
+    if (E) { renderer.setSize(E.W0, E.H0, false); PANO.RTW = E.W0; PANO.RH = E.H0; }
+    else if (land) { renderer.setSize(426, Math.max(240, Math.round(426 * APPH / APPW)), false); PANO.RTW = 426; PANO.RH = 240; }
+    else { PANO.RTW = RW; PANO.RH = RHT; }
+    PANO.rt.setSize(PANO.RTW, PANO.RH); PANO.cam.aspect = PANO.RTW / PANO.RH; PANO.cam.updateProjectionMatrix();
+    const hh = !E && land ? Math.min(1, (APPW * 9 / 16) / APPH) : 1, u = PANO.quad.material.uniforms; u.uRect.value.set(-1, -hh, 1, hh); u.uRot.value = 0;
+    for (const pl of PL) pl.quad.visible = false;
+    PANO.box.className = 'tbox q0';
+    if (hh < 1) { PANO.box.style.translate = '0 0'; PANO.box.style.left = '0'; PANO.box.style.top = ((1 - hh) * 50).toFixed(2) + '%'; PANO.box.style.width = '100%'; PANO.box.style.height = (hh * 100).toFixed(2) + '%'; }
+    else for (const k of ['translate', 'left', 'top', 'width', 'height']) PANO.box.style[k] = '';
+    return;
+  }
+  for (const k of ['translate', 'left', 'top', 'width', 'height']) PANO.box.style[k] = '';
   const q = PANO.q, odd = q % 2 === 1, Wi = odd ? APPH : APPW, Hi = odd ? APPW : APPH;
   PANO.RTW = Math.round(RW * Wi / APPW); PANO.RH = Math.round(RW * Hi / APPW); PANO.rt.setSize(PANO.RTW, PANO.RH);
   PANO.cam.aspect = PANO.RTW / PANO.RH; PANO.cam.updateProjectionMatrix();
@@ -2403,16 +2473,16 @@ function panoLayout() {
 }
 // câmera de transmissão: de frente para o casal, um pouco de lado, enquadrando os dois de corpo inteiro e balançando devagar
 function panoCamera(dt) {
-  const a = PL[0].W, b = PL[1].W;
+  const a = PL[0].W, b = PL[1].W, tall = PANO.cam.aspect < 1;   // imagem em pé (replay): o casal ocupa a largura
   _mid.copy(a.chest).add(b.chest).multiplyScalar(.5);
-  const top = Math.max(a.horn.y, b.horn.y, a.chest.y, b.chest.y, a.fL.y, b.fL.y, PHI && BALL.w > .3 ? BALL.at.y + .4 : 0) + .5, span = Math.hypot(a.chest.x - b.chest.x, a.chest.z - b.chest.z) + (PANO.live ? 2.6 : 3.4);
+  const top = Math.max(a.horn.y, b.horn.y, a.chest.y, b.chest.y, a.fL.y, b.fL.y, PHI && BALL.w > .3 ? BALL.at.y + .4 : 0) + .5, span = Math.hypot(a.chest.x - b.chest.x, a.chest.z - b.chest.z) + (PANO.live ? 2.6 : tall ? 1.6 : 3.4);
   const low = Math.min(a.chest.y, b.chest.y) - 1.5, air = low > .6;   // no alto (saltos): enquadra só o casal, sem o gelo
   // ao vivo, o casal fica na faixa do meio (as pistas de cada um ocupam as pontas); no fim, ocupa quase toda a largura
-  const cam = PANO.cam, tn = Math.tan(cam.fov * PI / 360), hw = (span / 2 + .3) / (PANO.live ? .38 : .9);
+  const cam = PANO.cam, tn = Math.tan(cam.fov * PI / 360), hw = (span / 2 + (tall ? .25 : .3)) / (PANO.live ? .38 : tall ? .95 : .9);
   const hh = air ? Math.max(1.6, (top - low) / 2 + .7) : Math.max(1.6, (top + .25) / 1.4);
-  const d = Math.max(hh / tn, hw / (tn * cam.aspect)), H = d * tn, t = performance.now() / 1000 - PANO.t0, ang = PAIR.yaw + .22 + .25 * Math.sin(t * .35);
+  const d = Math.max(hh / tn, hw / (tn * cam.aspect)), H = d * tn, t = (state.replay ? simT : performance.now() / 1000) - PANO.t0, ang = PAIR.yaw + .22 + .25 * Math.sin(t * .35);
   // no gelo: o gelo um pouco abaixo da borda de baixo e o alto do casal longe do nome, em cima
-  const ay = air ? (top + low) / 2 : Math.max(hh - .25, H * .82 - .35);
+  const ay = air ? (top + low) / 2 : tall ? Math.max(.64 * H, top - .9 * H) : Math.max(hh - .25, H * .82 - .35);
   _pq.set(_mid.x + Math.sin(ang) * d, ay + .5, _mid.z + Math.cos(ang) * d); keepOutOfStands(_pq);
   _pd.set(_mid.x, ay, _mid.z);
   if (PANO.snap || !(dt > 0)) { PANO.pos.copy(_pq); PANO.aim.copy(_pd); PANO.snap = false; }
@@ -2420,8 +2490,8 @@ function panoCamera(dt) {
   cam.position.copy(PANO.pos); cam.lookAt(PANO.aim); cam.updateMatrixWorld();
 }
 function renderPano() {
-  const cam = PANO.cam, mp = PANO.mp || (PANO.mp = {});
-  mp.anim = PL[0].anim; mp.W = PL[0].W; mp.cam = cam; updMoon(mp); const bn = ballNear(mp);   // a lua do pulo lunar atrás do casal
+  const cam = PANO.cam, mp = PANO.mp || (PANO.mp = {}), src = state.replay ? PL[RP.fp] : PL[0];
+  mp.anim = src.anim; mp.W = src.W; mp.cam = cam; updMoon(mp); const bn = ballNear(mp);   // a lua do pulo lunar atrás do casal
   U.uLightDir.value.copy(LIGHT_WORLD).transformDirection(cam.matrixWorldInverse);
   U.uScale.value = PANO.RH / (2 * Math.tan(cam.fov * PI / 360)); U.uRes.value.set(PANO.RTW / 2, PANO.RH / 2); U.uAmb.value.copy(PHI ? AMB_DISCO : AMB_GAME);
   renderer.setRenderTarget(PANO.rt); renderer.clear();
@@ -2429,8 +2499,8 @@ function renderPano() {
   MIR.scale.y = 1; MIR.updateMatrixWorld(true); cam.layers.enableAll(); renderer.render(scene, cam);
   if (bn) ballBack();
 }
-SFX.duo = function () { if (!AC) return; const t = AC.currentTime; [81, 88, 93, 100, 105].forEach((n, k) => I.bell(t + k * .06, n, .55, .7, sfxBus)); };
-PANO.el = $('#pano'); PANO.names = $('#pano .names'); PANO.box = $('#pano .tbox'); PANO.flash = $('#pano .flash'); PANO.sync = $('#pano .sync');
+SFX.duo = function (at) { if (state.exporting && at === undefined) { RP.exp.sfx.push(['duo', 0, state.songT]); return; } if (!AC) return; const t = at !== undefined ? at : AC.currentTime; [81, 88, 93, 100, 105].forEach((n, k) => I.bell(t + k * .06, n, .55, .7, sfxBus)); };
+PANO.el = $('#pano'); PANO.names = $('#pano .names'); PANO.box = $('#pano .tbox'); PANO.flash = $('#pano .flash'); PANO.sync = $('#pano .sync'); PANO.card = $('#pano .card');
 
 /* --------- avaliação dos clipes --------- */
 const TENSION = .1;
@@ -4100,7 +4170,7 @@ function startMeasureAnim(pl, ms) {
 function onBeat(pl, bi) {
   if (bi % 2 === 0) reframe(pl);
   const mi = Math.floor(bi / 4), sec = sectionOf(mi), k = bi % 4;
-  if (sec.k === 'intro' && sec.i === 3) showCard(pl, '', t('count')[k], .5, 'count');
+  if (sec.k === 'intro' && sec.i === 3 && !state.replay) showCard(pl, '', t('count')[k], .5, 'count');
 }
 function judge(pl, n, j, d) {
   n.j = j; n.dt = d;
@@ -4111,13 +4181,13 @@ function judge(pl, n, j, d) {
   if (ms && j === 'g') ms.allP = false;
   if (ms && ms.kind === 'move' && !ms.started && ms.ok) { ms.started = true; startMeasureAnim(pl, ms); }
   pl.score += (j === 'p' ? 100 : 50) * mult(pl, n);
-  SFX.hit(j === 'p'); pl.lastHit[n.lane] = state.songT; hitKick(pl, n.lane, n.slot === 0);
-  if (!pl.auto && !state.two) buzz(9);
+  if (!state.replay) SFX.hit(j === 'p'); pl.lastHit[n.lane] = state.songT; hitKick(pl, n.lane, n.slot === 0);
+  if (!pl.auto && !state.two && !state.replay) buzz(9);
   const f = n.lane ? pl.W.fR : pl.W.fL; for (let i = 0; i < (j === 'p' ? 8 : 4); i++) emit(f.x, f.y + .1, f.z, rnd(-1, 1), rnd(.5, 1.5), rnd(-1, 1), .4, .08, n.lane ? C_BLUE : C_PINK, 2, 1);
   checkMeasure(pl, n.mi); updMult(pl);
 }
 function onMiss(pl, n) {
-  SFX.miss(); if (!pl.auto) buzz(35);
+  if (!state.replay) { SFX.miss(); if (!pl.auto) buzz(35); }
   const ms = pl.ms[n.mi];
   if (ms && ms.ok) {
     ms.ok = false; ms.allP = false; pl.chain = 0;
@@ -4159,6 +4229,7 @@ function trySync(mi) {
     if (PANO.on && pl !== PL[0]) continue;
     const el = PANO.on ? PANO.sync : pl.syncEl;
     el.textContent = `${t('sync')} +${fmt(pts)}`; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+    if (state.replay) rpSync(el.textContent);
   }
   SFX.sync(); buzz(15);
   $('#divider').animate([{ filter: 'brightness(2.6)', scale: '1 3' }, { filter: 'brightness(1)', scale: '1 1' }], { duration: 650, easing: 'ease-out' });
@@ -4178,11 +4249,12 @@ function processNotes(pl, T) {
   for (const n of pl.notes) {
     if (n.t > T + .3) break;
     if (!n.j) {
-      if (pl.auto && T >= n.t) { pl.padFlash[n.lane] = n.hold ? (n.end - n.t) : .1; judge(pl, n, 'p', 0); }
+      if (state.replay && n.rj) { if (n.rj !== 'm' ? T >= n.t + n.rdt : T > n.t + WIN_G) judge(pl, n, n.rj, n.rj === 'm' ? T - n.t : n.rdt); }
+      else if (pl.auto && T >= n.t) { pl.padFlash[n.lane] = n.hold ? (n.end - n.t) : .1; judge(pl, n, 'p', 0); }
       else if (T > n.t + WIN_G) judge(pl, n, 'm', T - n.t);
     } else if (n.hold && n.j !== 'm' && n.tail === null) {
-      const held = pl.auto || pl.down[n.lane] > 0;
-      if (!held && T < n.end - .18) { n.tail = 'm'; pl.stats.m++; onMiss(pl, n); }
+      const held = pl.auto || pl.down[n.lane] > 0 || (state.replay && !(n.rtail === 2 && T >= n.t + n.rtt));
+      if (!held && T < n.end - .18) { n.tail = 'm'; n.tt = T; pl.stats.m++; onMiss(pl, n); }
       else if (T >= n.end - .02) { n.tail = 'ok'; pl.score += 100 * mult(pl, n); checkMeasure(pl, n.mi); }
     }
   }
@@ -4197,6 +4269,7 @@ function gameUpdate(dt) {
     state.mi++;
     for (const pl of ACTIVE) onMeasureStart(pl, state.mi);
     pairMeasure(state.mi);
+    if (state.replay) replayDirect(state.mi);
   }
   for (const pl of ACTIVE) processNotes(pl, T);
   const bi = Math.floor(T / BEAT); if (bi !== state.bi) { state.bi = bi; for (const pl of ACTIVE) onBeat(pl, bi); }
@@ -4205,13 +4278,18 @@ function gameUpdate(dt) {
     pl.shownScore += (pl.score - pl.shownScore) * (1 - Math.exp(-dt * 10));
     pl.scoreEl.textContent = fmt(pl.shownScore);
   }
-  if (T > TOTAL_MEAS * MEAS + .4 && !state.ended) endGame();
+  if (state.replay) { if (T >= RP.t1 + (RP.exp ? 1 : .6) && !RP.exp) replayStop(); }
+  else if (T > TOTAL_MEAS * MEAS + .4 && !state.ended) endGame();
 }
 
 /* ============================== nomes e cartões ============================== */
 let lastNameSfx = 0;
-function showName(pl, text, tier, duo) { showNameIn(pl.names, text, tier, duo); if (tier === 2) flash(pl, .12); }
+function showName(pl, text, tier, duo) {
+  if (state.replay) { if (state.two && pl !== PL[RP.fp] && !duo) return; showNameIn(PANO.names, text, tier, duo); return; }
+  showNameIn(pl.names, text, tier, duo); if (tier === 2) flash(pl, .12);
+}
 function showNameIn(box, text, tier, duo) {
+  if (state.replay) rpCaption(text, tier, duo);
   for (const el of [...box.children]) { el.classList.add('old'); setTimeout(() => el.remove(), 320); }
   const wrap = document.createElement('div'); wrap.className = 'nmw t' + tier + (duo ? ' duo' : '');
   if (duo) { const tg = document.createElement('span'); tg.className = 'duoTag'; tg.textContent = t('duoTag'); wrap.appendChild(tg); }
@@ -4227,7 +4305,8 @@ function showNameIn(box, text, tier, duo) {
   const now = performance.now(); if (now - lastNameSfx > 150) { SFX.name(tier); lastNameSfx = now; }   // na dupla, o mesmo nome toca uma vez só
 }
 function showCard(pl, small, big, dur, kind) {
-  const c = pl.card; c.className = 'card ' + kind; c.innerHTML = '';
+  if (state.replay) { if (pl !== PL[0]) return; rpCard(small, big, dur); }
+  const c = state.replay ? PANO.card : pl.card; c.className = 'card ' + kind; c.innerHTML = '';
   if (small) { const a = document.createElement('span'); a.className = 'c1'; a.textContent = small; c.appendChild(a); }
   const b = document.createElement('span'); b.className = 'c2'; b.textContent = big; c.appendChild(b);
   c.style.setProperty('--hold', Math.max(.1, dur - .35) + 's');
@@ -4295,7 +4374,7 @@ function rotateSide(i, d) {
 }
 
 /* ============================== telas e fluxo ============================== */
-const screens = { title: $('#title'), phase: $('#phaseS'), select: $('#select'), ready2: $('#ready2'), options: $('#options'), album: $('#albumS'), calib: $('#calib'), pause: $('#pauseS'), results: $('#results'), results2: $('#results2') };
+const screens = { title: $('#title'), replay: $('#replayS'), export: $('#exportS'), phase: $('#phaseS'), select: $('#select'), ready2: $('#ready2'), options: $('#options'), album: $('#albumS'), calib: $('#calib'), pause: $('#pauseS'), results: $('#results'), results2: $('#results2') };
 function show(id) { for (const k in screens) screens[k].hidden = k !== id; }
 function setHud(on) { for (const pl of PL) { pl.hud.hidden = !on; pl.padsEl.hidden = !on; } }
 // botão voltar do Android: uma entrada no histórico enquanto o jogo está fora da tela inicial
@@ -4306,6 +4385,8 @@ addEventListener('popstate', () => {
   if (ignorePop) { ignorePop = false; return; }
   navPushed = false;
   if (state.screen === 'title') return;
+  if (state.replay && !RP.exp) { replayStop(); pushNav(); return; }
+  if (state.screen === 'export') { if (RP.exp && !RP.exp.blob && !RP.exp.error) RP.exp.cancel = true; else closeExport(); pushNav(); return; }
   if (state.screen === 'play') { if (!state.paused) pause(0); pushNav(); return; }
   if (state.screen === 'calib') { cal.running = false; openOptions(); pushNav(); return; }
   if (state.screen === 'ready2') { openSelect(true, true); pushNav(); return; }
@@ -4329,7 +4410,8 @@ function startRun(opts) {
   const go = () => {
     newMusicBus(); applyVolumes();
     setTwo(!!opts.two);
-    Object.assign(state, { screen: 'play', paused: false, demo: !!opts.demo, songT: -.4, clockInit: false, mi: -1, bi: -99, ended: false });
+    if (!opts.demo) clearReplay();
+    Object.assign(state, { screen: 'play', replay: false, paused: false, demo: !!opts.demo, songT: -.4, clockInit: false, mi: -1, bi: -99, ended: false });
     for (const pl of ACTIVE) resetPlayer(pl, !!opts.demo);
     for (const f of fxL) killFx(f, .1);
     pairReset();
@@ -4354,6 +4436,7 @@ function toMenu(fromPop) {
 }
 let resuming = false;
 function pause(by) {
+  if (state.replay) { if (!state.paused && !RP.exp) rpTogglePause(); return; }
   if (state.screen !== 'play' || state.paused || state.ended || resuming) return;
   state.paused = true; if (AC) AC.suspend().catch(() => {});
   screens.pause.className = 'screen panelS r' + (state.two ? ((by === 1 ? 2 : 0) + OPT.rot[by]) % 4 : 0); show('pause');
@@ -4376,7 +4459,7 @@ const pctOf = pl => clamp((pl.score - pl.syncPts) / pl.max, 0, 1);
 function endGame() {
   state.ended = true; setHud(false); pairReset();
   const real = !ACTIVE.some(pl => pl.auto);
-  if (real) { for (const pl of ACTIVE) for (const id of pl.found) album.add(PH.key + id); store.set('album', [...album]); }
+  if (real) { for (const pl of ACTIVE) for (const id of pl.found) album.add(PH.key + id); store.set('album', [...album]); saveReplay(); }
   if (state.two) showResults2(); else showResults1(real);
   releaseWake();
 }
@@ -4447,8 +4530,9 @@ function applyI18n() {
   for (const pl of PL) updBlk(pl);
   updCamBtn(); updOffInfo();
   for (const b of $$('.rdy')) b.textContent = ready2[+b.dataset.p] ? t('waiting') : t('ready');
-  updOrientUI(); applySides();
+  updOrientUI(); applySides(); updReplayBtns();
   if (state.screen === 'select') renderChips();
+  if (state.screen === 'replay') openReplayScreen();
 }
 
 /* --------- dupla: os dois confirmam que estão em posição (cada um vê o seu personagem na sua metade) --------- */
@@ -4508,6 +4592,7 @@ function locate(e) {
   return ly < h * .38 ? null : { pl: PL[1], lane: lx < W / 2 ? 0 : 1 };
 }
 app.addEventListener('pointerdown', e => {
+  if (state.replay) { if (!RP.exp && !e.target.closest('button')) rpTogglePause(); return; }
   if (AC && AC.state === 'suspended' && !state.paused) AC.resume().catch(() => {});
   if (state.screen === 'calib') { if (!e.target.closest('button')) { calibTap(evPerf(e)); e.preventDefault(); } return; }
   if (state.screen !== 'play' || state.paused || state.ended) return;
@@ -4518,6 +4603,7 @@ app.addEventListener('pointerdown', e => {
 const ptrUp = e => { const L = ptrs.get(e.pointerId); if (!L) return; ptrs.delete(e.pointerId); release(L.pl, L.lane); };
 app.addEventListener('pointerup', ptrUp); app.addEventListener('pointercancel', ptrUp); app.addEventListener('lostpointercapture', ptrUp);
 addEventListener('keydown', e => {
+  if (state.replay) { if (e.code === 'Escape' || e.code === 'Space') { e.preventDefault(); rpTogglePause(); } return; }
   if (e.code === 'Escape' && state.screen === 'play') { state.paused ? resume() : pause(0); return; }
   const k = KEYS[e.code]; if (!k) return;
   e.preventDefault(); if (e.repeat) return;
@@ -4539,6 +4625,16 @@ $('#swapS').onclick = swapSides;
 $('#bDemo').onclick = () => startRun({ demo: true });
 $('#bOpt').onclick = openOptions;
 $('#bAlbum').onclick = openAlbum;
+for (const b of [$('#bReplay'), $('#rReplay'), ...$$('.r2replay')]) b.onclick = () => { initAudio(); openReplayScreen(); };
+$('#rpBack').onclick = () => toMenu();
+$('#rpV').onclick = () => setRpOrient('v'); $('#rpH').onclick = () => setRpOrient('h');
+$('#rpWatch').onclick = () => playReplay(RP.seg);
+$('#rpExport').onclick = () => exportReplay(RP.seg);
+$('#rpClose').onclick = () => replayStop();
+$('#rpPlay').onclick = () => rpTogglePause();
+$('#expCancel').onclick = () => { if (RP.exp) RP.exp.cancel = true; };
+$('#expSave').onclick = () => saveExport();
+$('#expClose').onclick = () => closeExport();
 $$('.rdy').forEach(b => b.onclick = () => {
   const i = +b.dataset.p; ready2[i] = !ready2[i]; b.classList.toggle('on', ready2[i]); b.textContent = ready2[i] ? t('waiting') : t('ready');
   if (ready2[0] && ready2[1]) setTimeout(() => { if (state.screen === 'ready2' && ready2[0] && ready2[1]) startTransform(true); }, 350);
@@ -4591,6 +4687,268 @@ function attractTick(now) {
   });
 }
 
+/* ============================== replay da última partida ============================== */
+// Durante a partida nada é gravado em vídeo: só o resultado de cada nota de cada jogador (acerto, tempo do toque,
+// fim da estrela longa). O replay roda a partida de novo a partir disso, numa imagem só, com câmeras de transmissão
+// e sem pistas nem cascos. Só a última partida jogada fica guardada; a próxima partida a substitui.
+// Exportar: a partida é desenhada de novo quadro a quadro (mais rápido que o tempo real quando o aparelho deixa),
+// codificada em H.264 pelo próprio Chrome (WebCodecs) e salva em MP4, com a música refeita fora do tempo real.
+const RP = { data: null, seg: 0, orient: store.get('rpOrient', 'v') === 'h' ? 'h' : 'v', mode: 'pl', fp: 0, both: false, t0: 0, t1: 0, exp: null, caps: [], cards: [], syncs: [] };
+{ const d = store.get('replay', null); if (d && d.v === 1 && Array.isArray(d.p) && d.p.length) RP.data = d; }
+// partes: a partida inteira e cada bloco (com a contagem/cartão antes e a pose parada depois)
+const RP_SEGS = [{ mi0: 0, mi1: 36, T0: -.4 }, { mi0: 3, mi1: 13 }, { mi0: 13, mi1: 23 }, { mi0: 23, mi1: 34 }];
+const segT0 = sg => sg.T0 !== undefined ? sg.T0 : sg.mi0 * MEAS - .02;
+const segLen = sg => sg.mi1 * MEAS - segT0(sg);
+function saveReplay() {
+  const J = { p: 0, g: 1, m: 2 };
+  RP.data = { v: 1, ph: PHI, two: state.two, chars: PL.map(p => p.charId), at: Date.now(),
+    p: ACTIVE.map(pl => pl.notes.map(n => [J[n.j] !== undefined ? J[n.j] : 2, Math.round((n.dt || 0) * 1000), n.hold ? (n.tail === 'ok' ? 1 : n.tail === 'm' ? 2 : 0) : 0, n.tt !== undefined ? Math.round((n.tt - n.t) * 1000) : 0])) };
+  store.set('replay', RP.data); updReplayBtns();
+}
+function clearReplay() { RP.data = null; store.del('replay'); updReplayBtns(); }
+function updReplayBtns() { for (const b of $$('.rpBtn')) b.hidden = !RP.data; }
+// prepara a partida para o replay a partir de T0 (as notas anteriores ficam com o resultado gravado, sem efeito)
+function replayPrepare(sgI) {
+  const D = RP.data, sg = RP_SEGS[sgI], T0 = segT0(sg);
+  if (D.ph !== PHI) setPhase(D.ph);
+  D.chars.forEach((id, i) => { if (PL[i].charId !== id) setPlayerChar(PL[i], id); });
+  endTransformUI(); setTwo(!!D.two);
+  RP.seg = sgI; RP.t0 = T0; RP.t1 = sg.mi1 * MEAS; RP.mode = 'pl'; RP.fp = 0; RP.both = false; RP.caps = []; RP.cards = []; RP.syncs = [];
+  Object.assign(state, { screen: 'play', replay: true, paused: false, demo: false, songT: T0, clockInit: false, mi: sg.mi0 - 1, bi: Math.floor(T0 / BEAT), ended: false });
+  const JN = ['p', 'g', 'm'];
+  ACTIVE.forEach((pl, k) => {
+    resetPlayer(pl, false); pl.demoTag.hidden = true;
+    const log = D.p[k] || [];
+    pl.notes.forEach((n, i) => {
+      const r = log[i] || [2, 0, 0, 0]; n.rj = JN[r[0]] || 'm'; n.rdt = r[1] / 1000; n.rtail = r[2]; n.rtt = r[3] / 1000;
+      if (n.t < T0 + .3) { n.j = n.rj; n.dt = n.rdt; if (n.hold) n.tail = n.rtail === 2 ? 'm' : 'ok'; }
+    });
+    pl.chain = 0; pl.posing = false; clearPoseFx(pl, false); pl.names.innerHTML = '';
+  });
+  for (const f of fxL) killFx(f, .05);
+  pairReset(); BALL.target = BALL.w = 0;
+  show(null); setHud(false); ptrs.clear();
+  for (const pl of ACTIVE) { setAnim(pl, 'skate', {}, T0); pl.tv.virt = false; pl.tv.cur = 0; pl.tv.snap = true; }
+  panoOn(0, false, true); PANO.t0 = T0;
+}
+function replayStartAudio() {
+  initAudio(); newMusicBus(); applyVolumes();
+  const T0 = RP.t0; songT0 = AC.currentTime + .25 - T0; nextStep = Math.max(0, Math.ceil((T0 + .12) / S16)); state.clockInit = false;
+  if (!schedIv) schedIv = setInterval(schedTick, 25);
+  schedTick();
+}
+function rpLabel() { const i = RP.seg; $('#rpLbl').textContent = i ? `${t('block')} ${i} · ${t('blocks')[i - 1]}` : t('rpWhole'); }
+function playReplay(sgI) {
+  if (!RP.data) return;
+  initAudio();
+  const go = () => { replayPrepare(sgI); replayStartAudio(); rpLabel(); $('#rpUI').hidden = false; rpPauseUI(); requestWake(); };
+  AC.resume().then(go, go);
+}
+// fim da parte ou saída: volta para a tela do replay
+function replayStop() {
+  if (!state.replay) return;
+  state.replay = false; state.paused = false; state.ended = false; $('#rpUI').hidden = true;
+  if (AC) { newMusicBus(); if (AC.state === 'suspended') AC.resume().catch(() => {}); }
+  pairReset(); panoOff(true); BALL.target = BALL.w = 0;
+  for (const pl of PL) { clearPoseFx(pl, false); pl.names.innerHTML = ''; }
+  for (const f of fxL) killFx(f, .05);
+  setTwo(false); setAnim(PL[0], 'skate', {}, performance.now() / 1000);
+  openReplayScreen(); releaseWake();
+}
+function rpTogglePause() {
+  if (!state.replay || RP.exp) return;
+  state.paused = !state.paused;
+  if (state.paused) { if (AC) AC.suspend().catch(() => {}); } else { state.clockInit = false; if (AC) AC.resume().catch(() => {}); }
+  rpPauseUI();
+}
+function rpPauseUI() { const b = $('#rpPlay'); b.textContent = state.paused ? '▶' : '❚❚'; b.setAttribute('aria-label', t(state.paused ? 'cont' : 'pauseL')); }
+// diretor do replay: a cada compasso escolhe quem a câmera mostra; o casal junto aparece sempre os dois
+function replayDirect(mi) {
+  if (!state.two) { RP.mode = 'pl'; RP.fp = 0; return; }
+  const sec = sectionOf(mi); let fp = RP.fp;
+  if (sec.k === 'block') fp = sec.m >= 6 ? (sec.m === 6 ? 1 : 0) : sec.m >= 4 ? sec.m - 4 : (sec.m >> 1) % 2;
+  else if (sec.k === 'break') fp = sec.i === 0 ? 1 : 0;
+  else if (sec.k === 'intro') fp = 0;
+  else if (sec.k === 'outro') fp = sec.i % 2;
+  fp = fp === 1 ? 1 : 0;
+  if (fp !== RP.fp) PANO.snap = true;
+  RP.fp = fp;
+}
+function directorCam(dt) {
+  const both = state.two && PAIR.w > .5, cam = PANO.cam;
+  if (both !== RP.both) { RP.both = both; PANO.snap = true; }
+  if (both) { if (cam.fov !== 36) { cam.fov = 36; cam.updateProjectionMatrix(); } panoCamera(dt); return; }
+  const tv = PL[RP.fp].tv, f = clamp(tv.fov * (RP.orient === 'h' ? .62 : 1), 12, 70);
+  cam.position.copy(tv.pos); cam.lookAt(tv.aim);
+  if (Math.abs(cam.fov - f) > .01) { cam.fov = f; cam.updateProjectionMatrix(); }
+  cam.updateMatrixWorld();
+}
+// legendas do replay (para o vídeo exportado, que não leva o HTML da tela)
+function rpCaption(text, tier, duo) { RP.caps.push({ text, tier, duo, t: state.songT }); }
+function rpCard(small, big, dur) { RP.cards.push({ small, big, dur, t: state.songT }); }
+function rpSync(text) { RP.syncs.push({ text, t: state.songT }); }
+
+/* --------- tela do replay --------- */
+const fmtDur = s => { s = Math.round(s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+function openReplayScreen() {
+  if (!RP.data) { toMenu(); return; }
+  const D = RP.data;
+  $('#rpInfo').textContent = `${t('phase')} ${D.ph + 1} · ${t(D.ph ? 'ph2' : 'ph1')} · ${t(D.two ? 'p2' : 'p1')}`;
+  const segs = $('#rpSegs'); segs.innerHTML = '';
+  RP_SEGS.forEach((sg, i) => {
+    const b = document.createElement('button'); b.className = 'rpSeg'; b.setAttribute('aria-pressed', String(i === RP.seg));
+    b.innerHTML = '<b></b><small></small>';
+    b.querySelector('b').textContent = i ? `${t('block')} ${i} · ${t('blocks')[i - 1]}` : t('rpWhole');
+    b.querySelector('small').textContent = fmtDur(segLen(sg));
+    b.onclick = () => { RP.seg = i; openReplayScreen(); }; segs.appendChild(b);
+  });
+  $('#rpV').setAttribute('aria-pressed', String(RP.orient === 'v')); $('#rpH').setAttribute('aria-pressed', String(RP.orient === 'h'));
+  if (state.screen === 'title') pushNav();
+  state.screen = 'replay'; show('replay');
+}
+function setRpOrient(o) { RP.orient = o; store.set('rpOrient', o); openReplayScreen(); }
+
+/* --------- exportar em MP4 --------- */
+const EXP_FPS = 30;
+let muxerP = null;
+function loadMuxer() {
+  if (window.Mp4Muxer) return Promise.resolve();
+  return muxerP || (muxerP = new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'vendor/mp4-muxer.min.js'; s.onload = res; s.onerror = () => { muxerP = null; rej(new Error('muxer')); }; document.head.appendChild(s); }));
+}
+async function pickVideo(W, H) {
+  if (typeof VideoEncoder === 'undefined') return null;
+  for (const [codec, mux] of [['avc1.42001f', 'avc'], ['avc1.4d401f', 'avc'], ['avc1.42002a', 'avc'], ['avc1.640028', 'avc'], ['vp09.00.31.08', 'vp9']]) {
+    const cfg = { codec, width: W, height: H, bitrate: 3000000, framerate: EXP_FPS };
+    if (mux === 'avc') cfg.avc = { format: 'avc' };
+    try { if ((await VideoEncoder.isConfigSupported(cfg)).supported) return { cfg, mux }; } catch (e) {}
+  }
+  return null;
+}
+async function pickAudio() {
+  if (typeof AudioEncoder === 'undefined') return null;
+  for (const [codec, mux] of [['mp4a.40.2', 'aac'], ['opus', 'opus']]) {
+    const cfg = { codec, sampleRate: 48000, numberOfChannels: 2, bitrate: 160000 };
+    try { if ((await AudioEncoder.isConfigSupported(cfg)).supported) return { cfg, mux }; } catch (e) {}
+  }
+  return null;
+}
+// a música da parte, refeita fora do tempo real, com os sinos dos nomes e da sincronia nos instantes certos
+async function renderAudio(T0, dur, sfx) {
+  const SR = 48000, oac = new OfflineAudioContext(2, Math.ceil(dur * SR), SR);
+  const comp = oac.createDynamicsCompressor(); comp.threshold.value = -12; comp.knee.value = 10; comp.ratio.value = 3.5; comp.attack.value = .004; comp.release.value = .18; comp.connect(oac.destination);
+  const mst = oac.createGain(); mst.gain.value = .85; mst.connect(comp);
+  const saved = [AC, musicBus, sfxBus];
+  try {
+    AC = oac; musicBus = oac.createGain(); musicBus.gain.value = OPT.music ? .6 : 0; musicBus.connect(mst); sfxBus = oac.createGain(); sfxBus.gain.value = OPT.sfx ? .75 : 0; sfxBus.connect(mst);
+    const s0 = Math.max(0, Math.ceil((T0 - 1e-6) / S16)), s1 = Math.min(TOTAL_MEAS * 16, Math.ceil((T0 + dur) / S16));
+    for (let s = s0; s < s1; s++) playStep(s, s * S16 - T0);
+    for (const [k, a, ts] of sfx) { const at = ts - T0; if (at < 0 || at > dur) continue; if (k === 'name') SFX.name(a, at); else if (k === 'sync') SFX.sync(at); else if (k === 'duo') SFX.duo(at); }
+  } finally { [AC, musicBus, sfxBus] = saved; }
+  return oac.startRendering();
+}
+// legendas desenhadas no vídeo: nome da manobra (com a marca "a dois"), cartões dos blocos, sincronia e a assinatura
+function drawCaptions(cx, W, H, T) {
+  const k = Math.min(W, H) / 720, land = W > H, cx0 = W / 2;
+  const life = tier => tier === 1 ? 2.0 : tier === 2 ? 2.4 : 3.6;
+  const fade = (a, d) => clamp(a / .15, 0, 1) * clamp((d - a) / .3, 0, 1);
+  const text = (s, x, y, size, fill, stroke = '#2a0b4d', font = 'Titan One') => {
+    cx.font = `${Math.round(size)}px "${font}"`; cx.lineJoin = 'round'; cx.lineWidth = Math.max(2, size * .2); cx.strokeStyle = stroke; cx.strokeText(s, x, y); cx.fillStyle = fill; cx.fillText(s, x, y);
+  };
+  const wrap = (s, size, maxW) => { cx.font = `${Math.round(size)}px "Titan One"`; const out = []; let line = ''; for (const w of s.split(' ')) { const tryL = line ? line + ' ' + w : w; if (cx.measureText(tryL).width > maxW && line) { out.push(line); line = w; } else line = tryL; } if (line) out.push(line); return out; };
+  cx.textAlign = 'center'; cx.textBaseline = 'middle';
+  // cartão do bloco
+  for (const c of RP.cards) { const a = T - c.t; if (a < 0 || a > c.dur) continue; cx.globalAlpha = fade(a, c.dur); if (c.small) text(c.small, cx0, H * (land ? .3 : .3), 30 * k, '#ffd660', '#2a0b4d', 'Silkscreen'); text(c.big, cx0, H * (land ? .3 : .3) + 56 * k, 62 * k, '#ffffff'); }
+  // só o nome mais recente
+  let c = null; for (const e of RP.caps) if (T >= e.t && T - e.t < life(e.tier)) c = e;
+  if (c) {
+    const a = T - c.t, size = (c.tier === 3 ? 58 : c.tier === 2 ? 50 : 44) * k, lines = wrap(c.text, size, W * .86), y0 = H * (land ? .14 : .13) + (c.duo ? 30 * k : 0);
+    cx.globalAlpha = fade(a, life(c.tier));
+    if (c.duo) text(t('duoTag'), cx0, y0 - 34 * k - (lines.length > 1 ? 0 : 0), 24 * k, '#ffd660');
+    lines.forEach((ln, i) => {
+      let fill = c.tier === 1 ? '#ffffff' : '#ffe4f4';
+      if (c.tier === 3) { const g = cx.createLinearGradient(cx0 - W * .4, 0, cx0 + W * .4, 0); ['#ff6ab8', '#ffd66b', '#8dffb5', '#7fd7ff', '#b88cff'].forEach((col, j) => g.addColorStop(j / 4, col)); fill = g; }
+      text(ln, cx0, y0 + i * size * 1.08, size, fill);
+    });
+  }
+  for (const s of RP.syncs) { const a = T - s.t; if (a < 0 || a > 1.5) continue; cx.globalAlpha = fade(a, 1.5); text(s.text, cx0, H * .8 - 14 * k * a, 40 * k, '#7dffc8'); }
+  cx.globalAlpha = .75; cx.textAlign = 'left'; text(t('logo1').toUpperCase() + ' ' + t('logo2').toUpperCase(), 22 * k, H - 26 * k, 18 * k, '#ffffff', '#2a0b4d', 'Silkscreen');
+  cx.globalAlpha = 1;
+}
+function expUI(st, p) {
+  $('#expBar').style.width = Math.round(p * 100) + '%';
+  $('#expMsg').textContent = st === 'audio' ? t('rpAudio') : st === 'done' ? t('rpDone') : st === 'fail' ? t('rpFail') : t('rpMaking', { p: Math.round(p * 100) });
+  $('#expSave').hidden = st !== 'done'; $('#expCancel').hidden = st === 'done' || st === 'fail'; $('#expClose').hidden = !(st === 'done' || st === 'fail');
+}
+const sleep0 = () => new Promise(r => setTimeout(r, 0));
+async function exportReplay(sgI) {
+  if (!RP.data || RP.exp) return;
+  const land = RP.orient === 'h', W0 = land ? 426 : 240, H0 = land ? 240 : 426, S = 3, W = W0 * S, H = H0 * S;
+  const ex = $('#expCanvas'); ex.width = W; ex.height = H; ex.className = land ? 'land' : '';
+  const cx = ex.getContext('2d', { alpha: false }); cx.imageSmoothingEnabled = false;
+  RP.exp = { W0, H0, sfx: [], cancel: false, blob: null, name: '' };
+  state.screen = 'export'; show('export'); expUI('video', 0);
+  let ok = false;
+  try {
+    initAudio(); await AC.resume().catch(() => {});
+    await loadMuxer(); try { await document.fonts.load('40px "Titan One"'); await document.fonts.load('20px "Silkscreen"'); } catch (e) {}
+    const V = await pickVideo(W, H), A = await pickAudio();
+    if (!V) throw new Error('video');
+    const muxer = new Mp4Muxer.Muxer({ target: new Mp4Muxer.ArrayBufferTarget(), video: { codec: V.mux, width: W, height: H, frameRate: EXP_FPS }, audio: A ? { codec: A.mux, numberOfChannels: 2, sampleRate: 48000 } : undefined, fastStart: 'in-memory', firstTimestampBehavior: 'offset' });
+    let err = null;
+    const venc = new VideoEncoder({ output: (ch, meta) => muxer.addVideoChunk(ch, meta), error: e => { err = e; } });
+    venc.configure(V.cfg);
+    // a partida roda em passos fixos, sem relógio de áudio; cada quadro vai para o codificador
+    state.manual = true; state.exporting = true; replayPrepare(sgI); show('export'); layout();
+    const dur = segLen(RP_SEGS[sgI]) + 1, N = Math.ceil(dur * EXP_FPS), dt = 1 / EXP_FPS, T0 = RP.t0;
+    for (let i = 0; i < N; i++) {
+      if (RP.exp.cancel) throw new Error('cancel');
+      if (err) throw err;
+      tick(i * 1000 / EXP_FPS, i ? dt : 0);
+      cx.drawImage(view, 0, 0, W0, H0, 0, 0, W, H);
+      drawCaptions(cx, W, H, state.songT);
+      const fr = new VideoFrame(ex, { timestamp: Math.round(i * 1e6 / EXP_FPS), duration: Math.round(1e6 / EXP_FPS) });
+      venc.encode(fr, { keyFrame: i % (EXP_FPS * 3) === 0 }); fr.close();
+      while (venc.encodeQueueSize > 3) await sleep0();
+      if (i % 6 === 0) { expUI('video', i / N * .9); await sleep0(); }
+    }
+    await venc.flush(); venc.close(); if (err) throw err;
+    if (A) {
+      expUI('audio', .92); await sleep0();
+      const buf = await renderAudio(T0, dur, RP.exp.sfx);
+      const aenc = new AudioEncoder({ output: (ch, meta) => muxer.addAudioChunk(ch, meta), error: e => { err = e; } });
+      aenc.configure(A.cfg);
+      const L = buf.getChannelData(0), R = buf.getChannelData(1), CH = 4800;
+      for (let i = 0; i < buf.length; i += CH) {
+        const n = Math.min(CH, buf.length - i), data = new Float32Array(n * 2); data.set(L.subarray(i, i + n), 0); data.set(R.subarray(i, i + n), n);
+        const ad = new AudioData({ format: 'f32-planar', sampleRate: 48000, numberOfFrames: n, numberOfChannels: 2, timestamp: Math.round(i / 48000 * 1e6), data });
+        aenc.encode(ad); ad.close();
+      }
+      await aenc.flush(); aenc.close(); if (err) throw err;
+    }
+    muxer.finalize();
+    const D = RP.data, part = sgI ? 'bloco' + sgI : 'partida';
+    RP.exp.name = `galope-${D.ph ? 'discoteca' : 'buenos-aires'}-${part}-${land ? 'deitado' : 'em-pe'}.mp4`;
+    RP.exp.blob = new Blob([muxer.target.buffer], { type: 'video/mp4' }); RP.exp.codec = V.cfg.codec + (A ? ' + ' + A.cfg.codec : '');
+    ok = true;
+  } catch (e) {
+    if (!(e && e.message === 'cancel')) { console.warn('exportar', e); RP.exp.error = String(e && e.message || e); }
+  } finally {
+    state.exporting = false; state.manual = false;
+    if (state.screen === 'play') state.screen = 'export';
+    if (state.replay) { state.replay = false; pairReset(); panoOff(true); BALL.target = BALL.w = 0; for (const pl of PL) { clearPoseFx(pl, false); pl.names.innerHTML = ''; } for (const f of fxL) killFx(f, .05); setTwo(false); setAnim(PL[0], 'skate', {}, performance.now() / 1000); }
+    layout();
+  }
+  if (RP.exp.cancel) { RP.exp = null; openReplayScreen(); return; }
+  expUI(ok ? 'done' : 'fail', 1);
+}
+async function saveExport() {
+  const E = RP.exp; if (!E || !E.blob) return;
+  const file = new File([E.blob], E.name, { type: 'video/mp4' });
+  try { if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: t('logo1') + ' ' + t('logo2') }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+  const a = document.createElement('a'), url = URL.createObjectURL(E.blob); a.href = url; a.download = E.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+function closeExport() { RP.exp = null; openReplayScreen(); }
+
 /* ============================== laço principal ============================== */
 let last = performance.now();
 function frame(nowMs) { requestAnimationFrame(frame); if (!state.manual) tick(nowMs, null); }
@@ -4628,9 +4986,10 @@ function tick(nowMs, forceDt) {
   if (PHI && WORLD2) { ballUpdate(dt); const play = state.screen === 'play'; discoUpdate(WORLD2, play ? state.songT : nowMs / 1000, dt, play ? hypeOf(state.mi) : .55, BALL.w, BALL.w > .001 ? BALL.at : null); }
   if (BULBS) { const ts = nowMs / 1000; for (let i = 0; i < BULBS.n; i++) BULBS.alpha[i] = .75 + .25 * Math.sin(ts * 3 + i * 1.3); BULBS.geo.attributes.palpha.needsUpdate = true; }
   for (const pl of ACTIVE) { if (preview) pl.tv.snap = true; updateCamera(pl, dt); }
-  if (PANO.on) panoCamera(dt);
+  if (state.replay) directorCam(dt); else if (PANO.on) panoCamera(dt);
   render3D();
-  for (const pl of ACTIVE) { drawLanes(pl, tt); placeNames(pl); }
+  if (state.replay) { if (!RP.exp) $('#rpProg').style.width = (clamp((state.songT - RP.t0) / (RP.t1 - RP.t0), 0, 1) * 100).toFixed(1) + '%'; }
+  else for (const pl of ACTIVE) { drawLanes(pl, tt); placeNames(pl); }
 }
 
 /* --------- início --------- */
@@ -4638,7 +4997,7 @@ buildWorld();
 usePhase(store.get('phase', 0) === 1 ? 1 : 0); applyWorld();
 const WORLD_MESHES = []; scene.traverse(o => { if (o.isMesh && o.geometry && o.geometry.type !== 'SphereGeometry') WORLD_MESHES.push(o); });
 PL.push(makePlayer(0), makePlayer(1));
-setTwo(false);
+setTwo(false); updReplayBtns();
 applyI18n(); syncOptUI();
 addEventListener('resize', layout); if (window.ResizeObserver) new ResizeObserver(layout).observe(app);
 if (document.fonts && document.fonts.load) document.fonts.load('11px Silkscreen').catch(() => {});
@@ -4710,7 +5069,11 @@ window.UG = {
   selState: () => ({ screen: state.screen, two: SEL.two, picks: SEL.picks.slice(), focus: LINE.focus, go: !$('#goT').disabled, chars: PL.map(p => p.charId) }),
   tf: () => ({ screen: state.screen, two: state.two, st: ACTIVE.map(pl => { const s = pl.stage; return s && { t: +s.t.toFixed(2), rate: s.rate, done: s.done, active: s.active, hold: s.hold, forms: s.R && Object.assign({}, s.R.state) }; }) }),
   tfSet, tfRate: (i, r) => setRate(PL[i].stage, r), tfSkip: i => skipStage(PL[i].stage),
-  phase: i => { setPhase(i); return PHI; }, ball: () => ({ target: BALL.target, w: +BALL.w.toFixed(3), at: BALL.at.toArray().map(v => +v.toFixed(2)) }),
+  phase: i => { setPhase(i); return PHI; },
+  replayData: () => RP.data && { ph: RP.data.ph, two: RP.data.two, chars: RP.data.chars, n: RP.data.p.map(x => x.length), miss: RP.data.p.map(x => x.filter(r => r[0] === 2 || r[2] === 2).length) },
+  replay: (seg, o) => { if (o) RP.orient = o; playReplay(seg || 0); }, replayStop: () => replayStop(), rp: () => ({ on: !!state.replay, seg: RP.seg, fp: RP.fp, both: RP.both, mode: RP.mode, songT: state.songT, caps: RP.caps.length, score: ACTIVE.map(pl => pl.score) }),
+  exportReplay: async (seg, o) => { if (o) RP.orient = o; await exportReplay(seg || 0); const E = RP.exp; return E && { ok: !!E.blob, size: E.blob ? E.blob.size : 0, codec: E.codec, error: E.error, name: E.name }; },
+  exportBlob: async () => { const E = RP.exp; if (!E || !E.blob) return null; const b = new Uint8Array(await E.blob.arrayBuffer()); let s = ''; for (let i = 0; i < b.length; i += 32768) s += String.fromCharCode.apply(null, b.subarray(i, i + 32768)); return btoa(s); }, ball: () => ({ target: BALL.target, w: +BALL.w.toFixed(3), at: BALL.at.toArray().map(v => +v.toFixed(2)) }),
   gap: () => +((((PL[1].base.s - PL[0].base.s) % PATH_L) + PATH_L) % PATH_L / PATH_L).toFixed(3)
 };
 })();
