@@ -182,6 +182,10 @@ body{height:100%;margin:0;background:var(--deep);color:var(--ink);font-family:va
 h2{font-family:var(--f-display);font-weight:400;font-size:30px;margin:0;filter:drop-shadow(0 3px 0 var(--outline))}
 .flags{display:flex;gap:8px}
 #title .flags{position:absolute;top:max(14px,env(safe-area-inset-top));right:14px}
+#title .ver{position:absolute;left:14px;bottom:max(10px,env(safe-area-inset-bottom));font-family:var(--f-pixel);font-size:9px;letter-spacing:.12em;color:var(--muted);opacity:.55;text-transform:uppercase}
+#aboutS .hint{max-width:40ch}
+#aboutS .ver2{font-family:var(--f-pixel);font-size:10px;letter-spacing:.14em;color:var(--muted);margin:-6px 0 0;text-transform:uppercase}
+#aboutS a{color:var(--mint);text-decoration:underline;text-underline-offset:3px}
 .flag{width:46px;height:34px;padding:4px;border-radius:9px;border:2px solid transparent;background:rgba(20,10,50,.55);cursor:pointer;display:grid}
 .flag[aria-pressed=true]{border-color:var(--gold);background:rgba(255,214,96,.18)}
 .flag svg{width:100%;height:100%;display:block;border-radius:3px}
@@ -400,6 +404,7 @@ div.opt{cursor:default}
       <div class="menu row"><button class="btn ghost sm" id="bOpt" data-i18n="options"></button><button class="btn ghost sm" id="bAlbum" data-i18n="album"></button><button class="btn ghost sm rpBtn" id="bReplay" data-i18n="replay" hidden></button></div>
       <p class="hint" data-i18n-html="hint"></p>
     </div>
+    <span class="ver" id="verTag"></span>
   </section>
 
   <section id="phaseS" class="screen panelS" hidden>
@@ -460,13 +465,22 @@ div.opt{cursor:default}
       <div class="opt"><span data-i18n="optCam"></span><div class="seg"><button id="oCamTv" data-i18n="camTvL"></button><button id="oCamCh" data-i18n="camChL"></button></div></div>
       <button class="opt" id="oCal"><span data-i18n="calib"></span><em id="oOff">0 ms</em></button>
     </div>
-    <button class="btn ghost sm" id="oReset" data-i18n="reset"></button>
+    <div class="menu row"><button class="btn ghost sm" id="oReset" data-i18n="reset"></button><button class="btn ghost sm" id="oAbout" data-i18n="about"></button></div>
     <div class="confirm" id="oConfirm" hidden>
       <p data-i18n="resetQ"></p>
       <div class="menu row"><button class="btn ghost sm" id="oNo" data-i18n="cancel"></button><button class="btn sm danger" id="oYes" data-i18n="resetYes"></button></div>
     </div>
     <p class="note" id="oNote"></p>
     <button class="btn ghost" id="oBack" data-i18n="back"></button>
+  </section>
+
+  <section id="aboutS" class="screen panelS" hidden>
+    <p class="eyebrow" data-i18n="about"></p>
+    <h2><span data-i18n="logo1"></span> <span data-i18n="logo2"></span></h2>
+    <p class="ver2" id="abVer"></p>
+    <p class="hint" data-i18n-html="aboutText"></p>
+    <p class="hint" data-i18n-html="aboutCredits"></p>
+    <button class="btn ghost" id="abBack" data-i18n="back"></button>
   </section>
 
   <section id="albumS" class="screen panelS" hidden>
@@ -615,6 +629,9 @@ const STR = {
     calListen: 'Escute os 4 primeiros cliques e toque junto com os 8 seguintes.', calFew: 'Poucos toques registrados. Tente de novo, tocando junto com cada clique.',
     calRes: 'Atraso medido: <b>{m} ms</b> (já aplicado).<br>Variação: <b>±{s} ms</b>, {q}.', calQ: ['ótima para jogo de ritmo', 'boa', 'alta; o atraso deste aparelho oscila'],
     back: 'Voltar', optLang: 'Idioma', optMusic: 'Música', optSfx: 'Efeitos sonoros', optVib: 'Vibração', optCam: 'Câmera', camTvL: 'TV', camChL: 'SEGUE',
+    about: 'Sobre', aboutVer: 'Versão {v}',
+    aboutText: 'Jogo de ritmo de patinação artística com unicórnios, para jogar no celular, sozinho ou a dois. Duas fases, cada uma com o seu álbum de nomes de manobras, e replay da última partida com exportação em vídeo. Funciona no navegador, sem instalar nada, e pode ser adicionado à tela inicial.',
+    aboutCredits: 'Código aberto: <a href="https://github.com/rodrigofcb/galope" target="_blank" rel="noopener">github.com/rodrigofcb/galope</a><br>Three.js e mp4-muxer (MIT); fontes Titan One, Silkscreen e M PLUS Rounded 1c (SIL OFL). Música e efeitos sonoros sintetizados no próprio jogo.',
     reset: 'Apagar progresso', resetQ: 'Apagar o álbum de nomes, o recorde e a calibração? Não dá para desfazer.', resetYes: 'Apagar', cancel: 'Cancelar', resetDone: 'Progresso apagado.',
     albumTitle: 'Álbum de nomes', albumCount: '{n} de 36 nomes descobertos', albumHint: 'Faça a sequência inteira sem errar para descobrir o nome de cada manobra. Os nomes a dois aparecem quando os dois jogadores chegam juntos, sem erro, às manobras com nome.', albumDuo: 'A dois',
     kinds: ['deslize', 'giro', 'salto', 'pose final'],
@@ -648,6 +665,9 @@ const STR = {
     calListen: 'Escuchá los 4 primeros clics y tocá junto con los 8 siguientes.', calFew: 'Se registraron pocos toques. Probá de nuevo, tocando junto con cada clic.',
     calRes: 'Retraso medido: <b>{m} ms</b> (ya aplicado).<br>Variación: <b>±{s} ms</b>, {q}.', calQ: ['excelente para un juego de ritmo', 'buena', 'alta; el retraso de este dispositivo oscila'],
     back: 'Volver', optLang: 'Idioma', optMusic: 'Música', optSfx: 'Efectos de sonido', optVib: 'Vibración', optCam: 'Cámara', camTvL: 'TV', camChL: 'SIGUE',
+    about: 'Acerca de', aboutVer: 'Versión {v}',
+    aboutText: 'Juego de ritmo de patinaje artístico con unicornios, para jugar en el celular, solo o de a dos. Dos fases, cada una con su álbum de nombres de figuras, y repetición de la última partida con exportación en video. Funciona en el navegador, sin instalar nada, y se puede agregar a la pantalla de inicio.',
+    aboutCredits: 'Código abierto: <a href="https://github.com/rodrigofcb/galope" target="_blank" rel="noopener">github.com/rodrigofcb/galope</a><br>Three.js y mp4-muxer (MIT); fuentes Titan One, Silkscreen y M PLUS Rounded 1c (SIL OFL). Música y efectos de sonido sintetizados en el propio juego.',
     reset: 'Borrar progreso', resetQ: '¿Borrar el álbum de nombres, el récord y la calibración? No se puede deshacer.', resetYes: 'Borrar', cancel: 'Cancelar', resetDone: 'Progreso borrado.',
     albumTitle: 'Álbum de nombres', albumCount: '{n} de 36 nombres descubiertos', albumHint: 'Hacé la secuencia entera sin errores para descubrir el nombre de cada figura. Los nombres a dúo aparecen cuando los dos jugadores llegan juntos, sin errores, a las figuras con nombre.', albumDuo: 'A dúo',
     kinds: ['deslizamiento', 'giro', 'salto', 'pose final'],
@@ -703,6 +723,7 @@ const nameOf = (b, i) => NAMES[OPT.lang][b][i];
 const fmt = n => Math.round(n).toLocaleString(OPT.lang === 'es' ? 'es-AR' : 'pt-BR');
 
 /* ============================== mapa da música ============================== */
+const APP_VERSION = '15';   // subir junto com VERSION em sw.js a cada publicação
 const BPM = 120, BEAT = 60 / BPM, MEAS = BEAT * 4, S8 = BEAT / 2, S16 = BEAT / 4;
 const BLOCK_START = [4, 14, 24], TOTAL_MEAS = 36;
 // manobra de cada etapa do bloco: [tipo (0 deslize, 1 giro, 2 salto), nível dentro do tipo]
@@ -4488,7 +4509,7 @@ function rotateSide(i, d) {
 }
 
 /* ============================== telas e fluxo ============================== */
-const screens = { title: $('#title'), replay: $('#replayS'), export: $('#exportS'), phase: $('#phaseS'), select: $('#select'), ready2: $('#ready2'), options: $('#options'), album: $('#albumS'), calib: $('#calib'), pause: $('#pauseS'), results: $('#results'), results2: $('#results2') };
+const screens = { title: $('#title'), replay: $('#replayS'), export: $('#exportS'), phase: $('#phaseS'), select: $('#select'), ready2: $('#ready2'), options: $('#options'), about: $('#aboutS'), album: $('#albumS'), calib: $('#calib'), pause: $('#pauseS'), results: $('#results'), results2: $('#results2') };
 function show(id) { for (const k in screens) screens[k].hidden = k !== id; }
 function setHud(on) { for (const pl of PL) { pl.hud.hidden = !on; pl.padsEl.hidden = !on; } }
 // botão voltar do Android: uma entrada no histórico enquanto o jogo está fora da tela inicial
@@ -4640,6 +4661,7 @@ function applyI18n() {
   $$('[data-i18n-aria]').forEach(el => el.setAttribute('aria-label', t(el.dataset.i18nAria)));
   $$('.flag').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === OPT.lang)));
   view.setAttribute('aria-label', t('viewL'));
+  $('#verTag').textContent = 'v' + APP_VERSION; $('#abVer').textContent = t('aboutVer', { v: APP_VERSION });
   if (!cal.running) { $('#cRes').textContent = t('calUse'); }
   for (const pl of PL) updBlk(pl);
   updCamBtn(); updOffInfo();
@@ -4774,6 +4796,7 @@ $('#rBack').onclick = () => openSelect(true, true);
 $$('.rotb').forEach(b => b.onclick = () => rotateSide(+b.dataset.p, +b.dataset.d));
 $('#aBack').onclick = () => toMenu();
 $('#oBack').onclick = () => toMenu();
+$('#oAbout').onclick = () => openScreen('about'); $('#abBack').onclick = () => openOptions();
 $('#oMusic').onclick = () => { OPT.music = !OPT.music; store.set('music', OPT.music); applyVolumes(); syncOptUI(); };
 $('#oSfx').onclick = () => { OPT.sfx = !OPT.sfx; store.set('sfx', OPT.sfx); applyVolumes(); syncOptUI(); };
 $('#oVib').onclick = () => { OPT.vib = !OPT.vib; store.set('vib', OPT.vib); syncOptUI(); buzz(20); };
