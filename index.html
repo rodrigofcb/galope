@@ -214,7 +214,7 @@ h2{font-family:var(--f-display);font-weight:400;font-size:30px;margin:0;filter:d
 #pano{position:absolute;inset:0;container-type:size;pointer-events:none;z-index:2}
 #pano .tbox{--cx:.5;--nw:86%;--sx:.5;--sy:.78}
 #pano.rp .tbox{--sy:.6}
-#pano.rp .tbox.q3{--sy:.52}
+#pano.rp .tbox.q3,#pano.rp .tbox.q1{--sy:.52}
 #pano .names{top:11%}
 #pano .nmw{top:0;bottom:auto}
 #pano .card.title{top:22%}
@@ -315,13 +315,19 @@ div.opt{cursor:default}
 /* Replay */
 #rpUI{position:absolute;inset:0;z-index:5;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:max(10px,env(safe-area-inset-top)) 12px max(14px,env(safe-area-inset-bottom))}
 #rpUI button{pointer-events:auto}
-#rpUI.q3{inset:auto;left:50%;top:50%;width:100cqh;height:100cqw;translate:-50% -50%;rotate:-90deg}
+#rpUI.q3,#rpUI.q1{inset:auto;left:50%;top:50%;width:100cqh;height:100cqw;translate:-50% -50%;rotate:-90deg}
+#rpUI.q1{rotate:90deg}
 #pano .rpPads{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .rpTop,.rpBot{display:flex;align-items:center;gap:10px}
 .rpTag{font-family:var(--f-pixel);font-size:10px;letter-spacing:.12em;color:#fff;background:#e2335f;border-radius:4px;padding:3px 6px}
 #rpLbl{flex:1;font-family:var(--f-pixel);font-size:10px;letter-spacing:.06em;color:#fff;text-shadow:0 1px 0 var(--outline)}
 .rpTrack,.expTrack{flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.2);overflow:hidden}
 .rpTrack i,.expTrack i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--gold))}
+.rpTrack{position:relative;overflow:visible;pointer-events:auto;touch-action:none;cursor:pointer}
+.rpTrack::before{content:'';position:absolute;inset:-16px 0}
+.rpTrack i{border-radius:3px}
+#rpKnob{position:absolute;top:50%;left:0;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.25),0 2px 6px rgba(0,0,0,.4);translate:-50% -50%;scale:0;opacity:0;transition:scale .15s,opacity .15s;pointer-events:none}
+#rpKnob.on{scale:1;opacity:1}
 .expTrack{flex:none;width:min(100%,300px)}
 .rpSegs{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:min(100%,330px)}
 .rpSeg{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px;border-radius:12px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:var(--ink);font:800 13px var(--f-body);text-align:left;cursor:pointer}
@@ -377,7 +383,7 @@ div.opt{cursor:default}
   <div id="pano" hidden><div class="flash"></div><div class="tbox"><canvas class="rpPads" hidden></canvas><div class="names" aria-live="polite"></div><div class="card"></div><div class="sync"></div></div></div>
   <div id="rpUI" hidden>
     <div class="rpTop"><span class="rpTag">REPLAY</span><span id="rpLbl"></span><button class="icon" id="rpClose" data-i18n-aria="close">✕</button></div>
-    <div class="rpBot"><button class="icon" id="rpPlay" aria-label="">❚❚</button><div class="rpTrack"><i id="rpProg"></i></div></div>
+    <div class="rpBot"><button class="icon" id="rpPlay" aria-label="">❚❚</button><div class="rpTrack"><i id="rpProg"></i><b id="rpKnob"></b></div></div>
   </div>
   <p id="diag" hidden></p>
 
@@ -998,17 +1004,17 @@ function heardAt(perfMs) {
 }
 function evPerf(e) { const ts = e.timeStamp, now = performance.now(); return (ts > 0 && ts <= now + 5 && ts > now - 2000) ? ts : now; }
 const SFX = {
-  hit(p) { if (!AC || state.exporting) return; const t = AC.currentTime; noise(t, .05, sfxBus, .12, 'highpass', 3500, .7); if (p) osc('sine', mtof(98), t, .12, sfxBus, .045); },
-  miss() { if (!AC || state.exporting) return; const t = AC.currentTime, o = AC.createOscillator(), g = AC.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(420, t); o.frequency.exponentialRampToValueAtTime(130, t + .3); env(g, t, .004, .15, .3); o.connect(g); g.connect(sfxBus); o.start(t); o.stop(t + .4); },
+  hit(p) { if (!AC || state.exporting || RP.seek) return; const t = AC.currentTime; noise(t, .05, sfxBus, .12, 'highpass', 3500, .7); if (p) osc('sine', mtof(98), t, .12, sfxBus, .045); },
+  miss() { if (!AC || state.exporting || RP.seek) return; const t = AC.currentTime, o = AC.createOscillator(), g = AC.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(420, t); o.frequency.exponentialRampToValueAtTime(130, t + .3); env(g, t, .004, .15, .3); o.connect(g); g.connect(sfxBus); o.start(t); o.stop(t + .4); },
   name(tier, at) {
     if (state.exporting && at === undefined) { RP.exp.sfx.push(['name', tier, state.songT]); return; }
-    if (!AC) return; const t = at !== undefined ? at : AC.currentTime, base = [74, 78, 81, 86, 90, 93, 98, 102];
+    if (!AC || RP.seek) return; const t = at !== undefined ? at : AC.currentTime, base = [74, 78, 81, 86, 90, 93, 98, 102];
     if (tier === 1) [0, 2, 3].forEach((i, k) => I.bell(t + k * .06, base[i], .7, .5, sfxBus));
     else if (tier === 2) { for (let k = 0; k < 6; k++) I.bell(t + k * .045, base[k], .6, .6, sfxBus); noise(t, .6, sfxBus, .05, 'highpass', 6000, .5, .2); }
     else { for (const n of [74, 78, 81, 86]) I.bell(t, n, .7, 1.6, sfxBus); for (let k = 0; k < 8; k++) I.bell(t + .06 + k * .05, base[k] + 12, .45, .7, sfxBus); noise(t, 1.2, sfxBus, .1, 'bandpass', 3000, .6, .05); osc('sine', 55, t, .7, sfxBus, .4); }
   }
 };
-SFX.sync = function (at) { if (state.exporting && at === undefined) { RP.exp.sfx.push(['sync', 0, state.songT]); return; } if (!AC) return; const t = at !== undefined ? at : AC.currentTime; [74, 81, 86, 90, 93].forEach((n, k) => I.bell(t + k * .05, n + 12, .55, .5, sfxBus)); };
+SFX.sync = function (at) { if (state.exporting && at === undefined) { RP.exp.sfx.push(['sync', 0, state.songT]); return; } if (!AC || RP.seek) return; const t = at !== undefined ? at : AC.currentTime; [74, 81, 86, 90, 93].forEach((n, k) => I.bell(t + k * .05, n + 12, .55, .5, sfxBus)); };
 function applyVolumes() {
   if (!AC) return;
   try { musicBus.gain.setTargetAtTime(OPT.music ? .6 : 0, AC.currentTime, .02); sfxBus.gain.setTargetAtTime(OPT.sfx ? .75 : 0, AC.currentTime, .02); } catch (e) {}
@@ -2462,14 +2468,14 @@ function panoLayout() {
   PANO.quad.visible = PANO.on; if (!PANO.on) return;
   if (state.replay) {   // replay: imagem em pé (tela inteira) ou deitada (16:9, com faixas); no vídeo, o tamanho do vídeo
     const land = RP.orient === 'h', E = RP.exp;
-    const rot = !E && land ? 3 : 0;   // deitado: a imagem ocupa a tela toda, girada para quem vira o celular de lado
+    const rot = !E && land ? TILT.q : 0;   // deitado: a imagem ocupa a tela toda, girada para o lado para o qual o celular foi virado
     if (E) { renderer.setSize(E.W0, E.H0, false); PANO.RTW = E.W0; PANO.RH = E.H0; }
     else if (rot) { PANO.RTW = Math.round(RW * APPH / APPW); PANO.RH = RW; }
     else { PANO.RTW = RW; PANO.RH = RHT; }
     PANO.rt.setSize(PANO.RTW, PANO.RH); PANO.cam.aspect = PANO.RTW / PANO.RH; PANO.cam.updateProjectionMatrix();
     const u = PANO.quad.material.uniforms; u.uRect.value.set(-1, -1, 1, 1); u.uRot.value = rot;
     for (const pl of PL) pl.quad.visible = false;
-    PANO.box.className = 'tbox q' + rot; $('#rpUI').className = rot ? 'q3' : '';
+    PANO.box.className = 'tbox q' + rot; $('#rpUI').className = rot ? 'q' + rot : ''; PANO.rotQ = rot;
     return;
   }
   const q = PANO.q, odd = q % 2 === 1, Wi = odd ? APPH : APPW, Hi = odd ? APPW : APPH;
@@ -2477,7 +2483,19 @@ function panoLayout() {
   PANO.cam.aspect = PANO.RTW / PANO.RH; PANO.cam.updateProjectionMatrix();
   const u = PANO.quad.material.uniforms; u.uRect.value.set(-1, -1, 1, 1); u.uRot.value = q;
   for (const pl of PL) pl.quad.visible = false;
-  PANO.box.className = 'tbox q' + q;
+  PANO.box.className = 'tbox q' + q; PANO.rotQ = q;
+}
+// inclinação do aparelho: para que lado o celular está deitado (1 = topo para a direita, 3 = topo para a esquerda)
+const TILT = { q: 3, on: false };
+function tiltStart() {
+  if (TILT.on) return; TILT.on = true;
+  const on = e => {
+    if (e.beta === null || e.gamma === null) return;
+    const b = e.beta * PI / 180, g = e.gamma * PI / 180, xUp = -Math.cos(b) * Math.sin(g), yUp = Math.sin(b);   // eixo que aponta para cima, no aparelho
+    if (Math.abs(xUp) > .7 && Math.abs(xUp) > Math.abs(yUp)) TILT.q = xUp > 0 ? 1 : 3;
+  };
+  const go = () => addEventListener('deviceorientation', on);
+  try { if (typeof DeviceOrientationEvent !== 'undefined' && DeviceOrientationEvent.requestPermission) DeviceOrientationEvent.requestPermission().then(r => { if (r === 'granted') go(); }).catch(() => {}); else go(); } catch (e) {}
 }
 // câmera de transmissão: de frente para o casal, um pouco de lado, enquadrando os dois de corpo inteiro e balançando devagar
 function panoCamera(dt) {
@@ -2509,7 +2527,7 @@ function renderPano() {
   MIR.scale.y = 1; MIR.updateMatrixWorld(true); cam.layers.enableAll(); renderer.render(scene, cam);
   if (bn) ballBack();
 }
-SFX.duo = function (at) { if (state.exporting && at === undefined) { RP.exp.sfx.push(['duo', 0, state.songT]); return; } if (!AC) return; const t = at !== undefined ? at : AC.currentTime; [81, 88, 93, 100, 105].forEach((n, k) => I.bell(t + k * .06, n, .55, .7, sfxBus)); };
+SFX.duo = function (at) { if (state.exporting && at === undefined) { RP.exp.sfx.push(['duo', 0, state.songT]); return; } if (!AC || RP.seek) return; const t = at !== undefined ? at : AC.currentTime; [81, 88, 93, 100, 105].forEach((n, k) => I.bell(t + k * .06, n, .55, .7, sfxBus)); };
 PANO.el = $('#pano'); PANO.names = $('#pano .names'); PANO.box = $('#pano .tbox'); PANO.flash = $('#pano .flash'); PANO.sync = $('#pano .sync'); PANO.card = $('#pano .card'); PANO.pads = $('#pano .rpPads');
 
 /* --------- avaliação dos clipes --------- */
@@ -3030,7 +3048,7 @@ function ghostStyle(pl) {
 }
 function ghostTick(pl, t, dt) {
   const H = pl.hist, B = pl.base, o = pl.curPose;
-  if (!H || !pl.ghosts) return;
+  if (!H || !pl.ghosts || RP.seek) return;
   if (pl.gStyle !== GHOST) ghostStyle(pl);
   const ang = o.spin + o.yaw + B.yaw, flip = o.flip;
   if (dt > 0 && H.length) { const L = H[H.length - 1]; pl.rotRate = lerp(pl.rotRate, (Math.abs(wrapA(ang - L.ang)) + Math.abs(wrapA(flip - L.flip))) / dt, .5); }
@@ -3963,8 +3981,8 @@ function ensureLineup() {
     const R = buildCharacter(D), a = i * TAU / CHARS.length;   // cada um virado para fora da roda
     R.ang = a; R.root.position.set(Math.sin(a) * LINE.rad, 0, Math.cos(a) * LINE.rad); R.root.rotation.y = a;
     R.phase = i * 1.7; LINE.MIR.add(R.root); LINE.Rs.push(R);
-    const tag = document.createElement('div'); tag.className = 'ntag'; tag.innerHTML = '<i class="own" hidden></i><b></b><span></span>';
-    tag.querySelector('b').textContent = D.name; tag.querySelector('span').textContent = D.h.toFixed(2).replace('.', ',') + ' m';
+    const tag = document.createElement('div'); tag.className = 'ntag'; tag.innerHTML = '<i class="own" hidden></i><b></b>';
+    tag.querySelector('b').textContent = D.name;
     $('#ltags').appendChild(tag); R.tag = tag; R.own = tag.querySelector('.own');
   });
 }
@@ -4385,7 +4403,7 @@ function showName(pl, text, tier, duo) {
   showNameIn(pl.names, text, tier, duo); if (tier === 2) flash(pl, .12);
 }
 function showNameIn(box, text, tier, duo) {
-  if (state.replay) rpCaption(text, tier, duo);
+  if (state.replay) { rpCaption(text, tier, duo); if (RP.seek) return; }
   for (const el of [...box.children]) { el.classList.add('old'); setTimeout(() => el.remove(), 320); }
   const wrap = document.createElement('div'); wrap.className = 'nmw t' + tier + (duo ? ' duo' : '');
   if (duo) { const tg = document.createElement('span'); tg.className = 'duoTag'; tg.textContent = t('duoTag'); wrap.appendChild(tg); }
@@ -4401,7 +4419,7 @@ function showNameIn(box, text, tier, duo) {
   const now = performance.now(); if (now - lastNameSfx > 150) { SFX.name(tier); lastNameSfx = now; }   // na dupla, o mesmo nome toca uma vez só
 }
 function showCard(pl, small, big, dur, kind) {
-  if (state.replay) { if (pl !== PL[0]) return; rpCard(small, big, dur); }
+  if (state.replay) { if (pl !== PL[0]) return; rpCard(small, big, dur); if (RP.seek) return; }
   const c = state.replay ? PANO.card : pl.card; c.className = 'card ' + kind; c.innerHTML = '';
   if (small) { const a = document.createElement('span'); a.className = 'c1'; a.textContent = small; c.appendChild(a); }
   const b = document.createElement('span'); b.className = 'c2'; b.textContent = big; c.appendChild(b);
@@ -4688,7 +4706,7 @@ function locate(e) {
   return ly < h * .38 ? null : { pl: PL[1], lane: lx < W / 2 ? 0 : 1 };
 }
 app.addEventListener('pointerdown', e => {
-  if (state.replay) { if (!RP.exp && !e.target.closest('button')) rpTogglePause(); return; }
+  if (state.replay) { if (!RP.exp && !e.target.closest('button, .rpTrack')) rpTogglePause(); return; }
   if (AC && AC.state === 'suspended' && !state.paused) AC.resume().catch(() => {});
   if (state.screen === 'calib') { if (!e.target.closest('button')) { calibTap(evPerf(e)); e.preventDefault(); } return; }
   if (state.screen !== 'play' || state.paused || state.ended) return;
@@ -4729,6 +4747,22 @@ $('#rpWatch').onclick = () => playReplay(RP.seg);
 $('#rpExport').onclick = () => exportReplay(RP.seg);
 $('#rpClose').onclick = () => replayStop();
 $('#rpPlay').onclick = () => rpTogglePause();
+{ // arrastar na barra do replay: bolinha branca segue o dedo; ao soltar, a repetição pula para ali
+  const tr = $('#rpUI .rpTrack'), knob = $('#rpKnob'), prog = $('#rpProg'); let hideT = 0;
+  const frac = e => { const r = tr.getBoundingClientRect(), q = PANO.rotQ || 0; return clamp(q === 0 ? (e.clientX - r.left) / r.width : q === 3 ? (r.bottom - e.clientY) / r.height : (e.clientY - r.top) / r.height, 0, 1); };
+  const put = f => { const pc = (f * 100).toFixed(1) + '%'; prog.style.width = pc; knob.style.left = pc; };
+  tr.onpointerdown = e => {
+    if (!state.replay || RP.exp) return; e.preventDefault(); tr.setPointerCapture(e.pointerId);
+    RP.drag = { id: e.pointerId, resume: !state.paused }; if (RP.drag.resume) rpTogglePause();
+    clearTimeout(hideT); knob.classList.add('on'); put(frac(e));
+  };
+  tr.onpointermove = e => { if (RP.drag && e.pointerId === RP.drag.id) put(frac(e)); };
+  tr.onpointerup = tr.onpointercancel = e => {
+    if (!RP.drag || e.pointerId !== RP.drag.id) return;
+    const d = RP.drag, f = frac(e); RP.drag = null; put(f); rpSeek(f); if (d.resume) rpTogglePause();
+    hideT = setTimeout(() => knob.classList.remove('on'), 700);
+  };
+}
 $('#expCancel').onclick = () => { if (RP.exp) RP.exp.cancel = true; };
 $('#expSave').onclick = () => saveExport();
 $('#expClose').onclick = () => closeExport();
@@ -4790,7 +4824,7 @@ function attractTick(now) {
 // e sem pistas nem cascos. Só a última partida jogada fica guardada; a próxima partida a substitui.
 // Exportar: a partida é desenhada de novo quadro a quadro (mais rápido que o tempo real quando o aparelho deixa),
 // codificada em H.264 pelo próprio Chrome (WebCodecs) e salva em MP4, com a música refeita fora do tempo real.
-const RP = { data: null, seg: 0, orient: store.get('rpOrient', 'v') === 'h' ? 'h' : 'v', cam: ['tv', 'chase', 'fixed'].includes(store.get('rpCam', 'tv')) ? store.get('rpCam', 'tv') : 'tv', fov: 40, mode: 'pl', fp: 0, both: false, t0: 0, t1: 0, exp: null, caps: [], cards: [], syncs: [], press: [], alt: null, angOff: 0, angT: 0, occT0: -1, aim: new THREE.Vector3(), cpos: new THREE.Vector3() };
+const RP = { seek: false, drag: null, data: null, seg: 0, orient: store.get('rpOrient', 'v') === 'h' ? 'h' : 'v', cam: ['tv', 'chase', 'fixed'].includes(store.get('rpCam', 'tv')) ? store.get('rpCam', 'tv') : 'tv', fov: 40, mode: 'pl', fp: 0, both: false, t0: 0, t1: 0, exp: null, caps: [], cards: [], syncs: [], press: [], alt: null, angOff: 0, angT: 0, occT0: -1, aim: new THREE.Vector3(), cpos: new THREE.Vector3() };
 { const d = store.get('replay', null); if (d && d.v === 1 && Array.isArray(d.p) && d.p.length) RP.data = d; }
 // partes: a partida inteira e cada bloco (com a contagem/cartão antes e a pose parada depois)
 const RP_SEGS = [{ mi0: 0, mi1: 36, T0: -.4 }, { mi0: 3, mi1: 13 }, { mi0: 13, mi1: 23 }, { mi0: 23, mi1: 34 }];
@@ -4829,9 +4863,9 @@ function replayPrepare(sgI) {
   for (const pl of ACTIVE) { setAnim(pl, 'skate', {}, T0); pl.tv.virt = false; pl.tv.cur = 0; pl.tv.snap = true; }
   panoOn(0, false, true); PANO.t0 = T0;
 }
-function replayStartAudio() {
+function replayStartAudio(T0 = RP.t0, from = T0 + .12) {
   initAudio(); newMusicBus(); applyVolumes();
-  const T0 = RP.t0; songT0 = AC.currentTime + .25 - T0; nextStep = Math.max(0, Math.ceil((T0 + .12) / S16)); state.clockInit = false;
+  songT0 = AC.currentTime + .25 - T0; nextStep = Math.max(0, Math.ceil(from / S16)); state.clockInit = false;
   if (!schedIv) schedIv = setInterval(schedTick, 25);
   schedTick();
 }
@@ -4859,6 +4893,18 @@ function rpTogglePause() {
   state.paused = !state.paused;
   if (state.paused) { if (AC) AC.suspend().catch(() => {}); } else { state.clockInit = false; if (AC) AC.resume().catch(() => {}); }
   rpPauseUI();
+}
+// busca: volta ao início da parte e avança a simulação sem desenhar nem tocar até o instante pedido (passos de 1/30 s)
+function rpSeek(frac) {
+  if (!state.replay || RP.exp) return;
+  const Ts = clamp(RP.t0 + frac * (RP.t1 - RP.t0), RP.t0, RP.t1 - .6), Tq = Math.max(RP.t0, Ts - .25), paused = state.paused;
+  if (AC) AC.suspend().catch(() => {});
+  if (Tq < state.songT) replayPrepare(RP.seg);   // para trás: recomeça a parte; para a frente: segue do ponto atual
+  state.paused = false; RP.seek = true;
+  let n = 0; while (state.songT < Tq - 1e-4 && n++ < 6000) tick(performance.now(), Math.min(1 / 30, Tq - state.songT));
+  RP.seek = false;
+  replayStartAudio(Tq + .25, Tq + .25);   // o que se ouve agora é o instante Tq; a música entra um quarto de segundo depois
+  state.paused = paused; if (!paused && AC) AC.resume().catch(() => {});
 }
 function rpPauseUI() { const b = $('#rpPlay'); b.textContent = state.paused ? '▶' : '❚❚'; b.setAttribute('aria-label', t(state.paused ? 'cont' : 'pauseL')); }
 // diretor do replay: a cada compasso escolhe quem a câmera mostra; o casal junto aparece sempre os dois
@@ -5066,6 +5112,7 @@ function pickClearCam(pl, pts, cur) {
 }
 // a cada quadro do replay: se o cenário cobre os personagens por um instante, corta para um ângulo livre
 function occCheck(pls, from) {
+  if (RP.seek) return { hit: false, pts: null };
   const now = state.songT, pts = occTargets(pls), hit = blocked(from, pts);
   if (hit) { if (RP.occT0 < 0) RP.occT0 = now; } else RP.occT0 = -1;
   return { hit: hit && now - RP.occT0 > .2, pts };
@@ -5075,6 +5122,7 @@ function occCheck(pls, from) {
 const fmtDur = s => { s = Math.round(s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
 function openReplayScreen() {
   if (!RP.data) { toMenu(); return; }
+  tiltStart();
   const D = RP.data;
   $('#rpInfo').textContent = `${t('phase')} ${D.ph + 1} · ${t(D.ph ? 'ph2' : 'ph1')} · ${t(D.two ? 'p2' : 'p1')}`;
   const segs = $('#rpSegs'); segs.innerHTML = '';
@@ -5268,14 +5316,16 @@ function tick(nowMs, forceDt) {
   simT = tt;
   if (dt > 0) updBases(dt); else if (preview && PAIR.target) pairUpdate(0);
   for (const pl of ACTIVE) animate(pl, tt, dt);
+  if (RP.seek) { for (const pl of ACTIVE) updateCamera(pl, dt); directorCam(dt); return; }   // busca no replay: só o estado do jogo e das câmeras
   updFx(dt); updParticles(dt);
   if (STARS) { const ts = nowMs / 1000; for (let i = 0; i < STARS.n; i++) STARS.alpha[i] = .55 + .45 * Math.sin(ts * 1.7 + STARS.phase[i]); STARS.geo.attributes.palpha.needsUpdate = true; }
   if (PHI && WORLD2) { ballUpdate(dt); const play = state.screen === 'play'; discoUpdate(WORLD2, play ? state.songT : nowMs / 1000, dt, play ? hypeOf(state.mi) : .55, BALL.w, BALL.w > .001 ? BALL.at : null); }
   if (BULBS) { const ts = nowMs / 1000; for (let i = 0; i < BULBS.n; i++) BULBS.alpha[i] = .75 + .25 * Math.sin(ts * 3 + i * 1.3); BULBS.geo.attributes.palpha.needsUpdate = true; }
   for (const pl of ACTIVE) { if (preview) pl.tv.snap = true; updateCamera(pl, dt); }
   if (state.replay) directorCam(dt); else if (PANO.on) panoCamera(dt);
+  if (RP.seek) return;
   render3D();
-  if (state.replay) { if (!RP.exp) { $('#rpProg').style.width = (clamp((state.songT - RP.t0) / (RP.t1 - RP.t0), 0, 1) * 100).toFixed(1) + '%'; drawRpOverlay(); } }
+  if (state.replay) { if (RP.seek) return; if (!RP.exp) { if (!RP.drag) $('#rpProg').style.width = (clamp((state.songT - RP.t0) / (RP.t1 - RP.t0), 0, 1) * 100).toFixed(1) + '%'; drawRpOverlay(); if (RP.orient === 'h' && PANO.rotQ !== TILT.q) panoLayout(); } }
   else for (const pl of ACTIVE) { drawLanes(pl, tt); placeNames(pl); }
 }
 
@@ -5364,7 +5414,7 @@ window.UG = {
   ndc: () => ACTIVE.map(pl => { const q = pl.W.chest.clone().project(PANO.cam); return [+q.x.toFixed(2), +q.y.toFixed(2)]; }),
   occWhat() { const pls = state.two && PAIR.w > .5 ? PL : [PL[RP.fp]], out = []; for (const pt of occTargets(pls)) { _ocd.copy(pt).sub(PANO.cam.position); const d = _ocd.length(); _ocd.divideScalar(d); occRay.set(PANO.cam.position, _ocd); occRay.far = d - .35; for (const h of occRay.intersectObjects(occList(), false)) { const o = h.object, w = new THREE.Vector3(); o.getWorldPosition(w); out.push([o.geometry.type, w.toArray().map(v => +v.toFixed(1)), +h.distance.toFixed(1), pt.toArray().map(v => +v.toFixed(1))]); } } const pl0 = PL[RP.fp], pk = pickClearCam(pl0, occTargets([pl0]), PANO.cam.position); return { pick: pk && pk.toArray().map(v => +v.toFixed(1)), occT0: RP.occT0, cam: PANO.cam.position.toArray().map(v => +v.toFixed(1)), fp: RP.fp, tvcur: PL[RP.fp].tv.cur, virt: PL[RP.fp].tv.virt, hits: out }; },
   replayData: () => RP.data && { ph: RP.data.ph, two: RP.data.two, chars: RP.data.chars, n: RP.data.p.map(x => x.length), miss: RP.data.p.map(x => x.filter(r => r[0] === 2 || r[2] === 2).length) },
-  replay: (seg, o, c) => { if (o) RP.orient = o; if (c) RP.cam = c; playReplay(seg || 0); }, replayStop: () => replayStop(), rp: () => ({ on: !!state.replay, seg: RP.seg, fp: RP.fp, both: RP.both, mode: RP.mode, songT: state.songT, caps: RP.caps.length, score: ACTIVE.map(pl => pl.score), alt: !!RP.alt, angOff: +RP.angOff.toFixed(2), occ: blocked(PANO.cam.position, occTargets(state.two && PAIR.w > .5 ? PL : [PL[RP.fp]])), press: RP.press.length }),
+  replay: (seg, o, c) => { if (o) RP.orient = o; if (c) RP.cam = c; playReplay(seg || 0); }, replayStop: () => replayStop(), rpx: () => ({ t0: RP.t0, t1: RP.t1, paused: state.paused, drag: !!RP.drag, seek: RP.seek, tilt: TILT.q, rotQ: PANO.rotQ }), rpSeek: f => rpSeek(f), rp: () => ({ on: !!state.replay, seg: RP.seg, fp: RP.fp, both: RP.both, mode: RP.mode, songT: state.songT, caps: RP.caps.length, score: ACTIVE.map(pl => pl.score), alt: !!RP.alt, angOff: +RP.angOff.toFixed(2), occ: blocked(PANO.cam.position, occTargets(state.two && PAIR.w > .5 ? PL : [PL[RP.fp]])), press: RP.press.length }),
   exportReplay: async (seg, o, c) => { if (o) RP.orient = o; if (c) RP.cam = c; await exportReplay(seg || 0); const E = RP.exp; return E && { ok: !!E.blob, size: E.blob ? E.blob.size : 0, codec: E.codec, error: E.error, name: E.name }; },
   exportBlob: async () => { const E = RP.exp; if (!E || !E.blob) return null; const b = new Uint8Array(await E.blob.arrayBuffer()); let s = ''; for (let i = 0; i < b.length; i += 32768) s += String.fromCharCode.apply(null, b.subarray(i, i + 32768)); return btoa(s); }, ball: () => ({ target: BALL.target, w: +BALL.w.toFixed(3), at: BALL.at.toArray().map(v => +v.toFixed(2)) }),
   gap: () => +((((PL[1].base.s - PL[0].base.s) % PATH_L) + PATH_L) % PATH_L / PATH_L).toFixed(3)
