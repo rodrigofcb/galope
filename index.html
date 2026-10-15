@@ -46,6 +46,10 @@ html{height:100%;box-sizing:border-box;background:var(--deep)}
 *,*::before,*::after{box-sizing:inherit}
 body{height:100%;margin:0;background:var(--deep);color:var(--ink);font-family:var(--f-body);overflow:hidden;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
 #app{position:relative;height:100%;width:100%;max-width:calc(100dvh * .58);margin:0 auto;overflow:hidden;background:var(--night);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;container-type:size}
+/* janela deitada (TV por DeX ou espelhamento) no modo lado a lado: o app inteiro gira, desfazendo o giro interno das metades */
+#app.turn1,#app.turn3{position:absolute;max-width:none;margin:0;width:min(100dvh,58dvw);height:100dvw;left:calc((100dvw - min(100dvh,58dvw)) / 2);top:calc((100dvh - 100dvw) / 2)}
+#app.turn1{rotate:90deg}
+#app.turn3{rotate:-90deg}
 [hidden]{display:none!important}
 #view{position:absolute;inset:0;width:100%;height:100%;display:block;image-rendering:crisp-edges;image-rendering:pixelated}
 
@@ -723,7 +727,7 @@ const nameOf = (b, i) => NAMES[OPT.lang][b][i];
 const fmt = n => Math.round(n).toLocaleString(OPT.lang === 'es' ? 'es-AR' : 'pt-BR');
 
 /* ============================== mapa da música ============================== */
-const APP_VERSION = '15';   // subir junto com VERSION em sw.js a cada publicação
+const APP_VERSION = '16';   // subir junto com VERSION em sw.js a cada publicação
 const BPM = 120, BEAT = 60 / BPM, MEAS = BEAT * 4, S8 = BEAT / 2, S16 = BEAT / 4;
 const BLOCK_START = [4, 14, 24], TOTAL_MEAS = 36;
 // manobra de cada etapa do bloco: [tipo (0 deslize, 1 giro, 2 salto), nível dentro do tipo]
@@ -4172,7 +4176,7 @@ function confirmSelect() {
 function startTransform(two) {
   initAudio(); AC.resume().catch(() => {});
   clearTimeout(TFX.end);
-  setTwo(two); show(null); state.screen = 'tf';
+  setTwo(two); show(null); state.screen = 'tf'; lockOrient(two);
   for (const pl of ACTIVE) setupStage(stageOf(pl), pl.charId);
   for (const pl of PL) pl.tfx.hidden = !ACTIVE.includes(pl);
   musicStart(); requestWake();
@@ -4462,7 +4466,7 @@ function placeNames(pl) {
 /* ============================== layout ============================== */
 let APPW = 360, APPH = 720;
 function layout() {
-  const r = app.getBoundingClientRect(); APPW = Math.max(1, r.width); APPH = Math.max(1, r.height);
+  APPW = Math.max(1, app.clientWidth); APPH = Math.max(1, app.clientHeight);
   const two = state.two, DPR = Math.min(2, window.devicePixelRatio || 1);
   RHT = Math.max(200, Math.round(RW * APPH / APPW));
   renderer.setSize(RW, RHT, false);
@@ -4531,16 +4535,28 @@ addEventListener('popstate', () => {
 let wake = null;
 async function requestWake() { try { if (navigator.wakeLock && !wake) { wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => { wake = null; }); } } catch (e) {} }
 function releaseWake() { try { if (wake) { wake.release(); wake = null; } } catch (e) {} }
-// tela cheia e retrato travado (a trava de orientação exige tela cheia); só em telas de toque
-function goFull() {
+// orientação do aparelho: retrato, exceto na dupla lado a lado, em que a tela vai para paisagem (do lado escolhido) para que
+// o espelhamento na TV mostre a imagem em pé; a imagem no próprio celular fica igual, porque o app gira inteiro de volta (TURN)
+function wantedOrient(two = state.two) { return two && sameSide() && !state.replay ? (OPT.rot[0] === 1 ? 'landscape-primary' : 'landscape-secondary') : 'portrait-primary'; }
+function lockOrient(two) { try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock(wantedOrient(two)).catch(() => {}); } catch (e) {} }   // só funciona em tela cheia ou no app instalado; senão, nada muda
+// janela deitada (DeX, espelhamento ou a trava acima) com as metades giradas: o app inteiro gira no sentido contrário
+const TURN_SCREENS = ['ready2', 'tf', 'play', 'pause', 'results2'];
+let TURN = 0;
+function updTurn() {
+  const t = state.two && !state.replay && sameSide() && TURN_SCREENS.includes(state.screen) && innerWidth > innerHeight ? (4 - OPT.rot[0]) % 4 : 0;
+  if (t === TURN) return;
+  TURN = t; app.classList.toggle('turn1', t === 1); app.classList.toggle('turn3', t === 3); layout();
+}
+// tela cheia e orientação travada (a trava exige tela cheia); só em telas de toque
+function goFull(two) {
   try {
     if (!matchMedia('(pointer: coarse)').matches || document.fullscreenElement || !document.documentElement.requestFullscreen) return;
-    document.documentElement.requestFullscreen({ navigationUI: 'hide' }).then(() => { try { screen.orientation.lock('portrait-primary').catch(() => {}); } catch (e) {} }).catch(() => {});
+    document.documentElement.requestFullscreen({ navigationUI: 'hide' }).then(() => lockOrient(two)).catch(() => {});
   } catch (e) {}
 }
 function startRun(opts) {
   opts = opts || {};
-  goFull(); pushNav();
+  goFull(opts.two); lockOrient(opts.two); pushNav();
   initAudio();
   const go = () => {
     newMusicBus(); applyVolumes();
@@ -4563,7 +4579,7 @@ function toMenu(fromPop) {
   if (AC) newMusicBus();
   for (const pl of PL) { pl.auto = false; clearPoseFx(pl, false); pl.names.innerHTML = ''; }
   state.screen = 'title'; state.paused = false; state.ended = false; setHud(false);
-  setTwo(false); show('title'); screens.pause.className = 'screen panelS';
+  setTwo(false); show('title'); lockOrient(false); screens.pause.className = 'screen panelS';
   if (AC && AC.state === 'suspended') AC.resume().catch(() => {});
   setAnim(PL[0], 'skate', {}, performance.now() / 1000); updOffInfo();
   releaseWake();
@@ -4719,8 +4735,15 @@ function openCalib() { cal.running = false; $('#cStart').disabled = false; $('#c
 const ptrs = new Map();
 const KEYS = { KeyF: [0, 0], KeyD: [0, 0], ArrowLeft: [0, 0], KeyJ: [0, 1], KeyK: [0, 1], ArrowRight: [0, 1], KeyQ: [1, 0], KeyP: [1, 1] };
 // cada metade da tela é de um jogador; a de cima está girada, então a esquerda dele é a direita da tela
-function locate(e) {
-  const r = app.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, W = r.width, H = r.height;
+// ponto do toque em coordenadas do app (que pode estar girado inteiro na janela deitada)
+function appPt(e) {
+  const r = app.getBoundingClientRect(), W = app.clientWidth, H = app.clientHeight;
+  if (TURN === 1) return { x: e.clientY - r.top, y: r.right - e.clientX, W, H };
+  if (TURN === 3) return { x: r.bottom - e.clientY, y: e.clientX - r.left, W, H };
+  return { x: e.clientX - r.left, y: e.clientY - r.top, W, H };
+}
+function locate(e) { const p = appPt(e); return locateAt(p.x, p.y, p.W, p.H); }
+function locateAt(x, y, W, H) {
   if (!state.two) return y < H * .45 ? null : { pl: PL[0], lane: x < W / 2 ? 0 : 1 };
   const h = H / 2;
   if (y >= h) return y - h < h * .38 ? null : { pl: PL[0], lane: x < W / 2 ? 0 : 1 };
@@ -5145,7 +5168,7 @@ function occCheck(pls, from) {
 const fmtDur = s => { s = Math.round(s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
 function openReplayScreen() {
   if (!RP.data) { toMenu(); return; }
-  tiltStart();
+  tiltStart(); lockOrient(false);
   const D = RP.data;
   $('#rpInfo').textContent = `${t('phase')} ${D.ph + 1} · ${t(D.ph ? 'ph2' : 'ph1')} · ${t(D.two ? 'p2' : 'p1')}`;
   const segs = $('#rpSegs'); segs.innerHTML = '';
@@ -5312,6 +5335,7 @@ let last = performance.now();
 function frame(nowMs) { requestAnimationFrame(frame); if (!state.manual) tick(nowMs, null); }
 function tick(nowMs, forceDt) {
   let dt = forceDt !== null ? forceDt : Math.min(.05, Math.max(0, (nowMs - last) / 1000)); last = nowMs;
+  updTurn();
   U.uTime.value = nowMs / 1000;
   // escolha na roda e transformação têm cenas próprias
   if (state.screen === 'select' && LINE.scene) { selFrame(nowMs / 1000, dt); return; }
@@ -5359,7 +5383,7 @@ const WORLD_MESHES = []; scene.traverse(o => { if (o.isMesh && o.geometry && o.g
 PL.push(makePlayer(0), makePlayer(1));
 setTwo(false); updReplayBtns();
 applyI18n(); syncOptUI();
-addEventListener('resize', layout); if (window.ResizeObserver) new ResizeObserver(layout).observe(app);
+addEventListener('resize', () => { updTurn(); layout(); }); if (window.ResizeObserver) new ResizeObserver(layout).observe(app);
 if (document.fonts && document.fonts.load) document.fonts.load('11px Silkscreen').catch(() => {});
 requestAnimationFrame(frame);
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
@@ -5419,7 +5443,7 @@ window.UG = {
     out.dist = +dist.toFixed(1);
     return out;
   },
-  locate(x, y) { const r = app.getBoundingClientRect(), L = locate({ clientX: r.left + x, clientY: r.top + y }); return L && [L.pl.id, L.lane]; },
+  locate(x, y) { const L = locateAt(x, y, app.clientWidth, app.clientHeight); return L && [L.pl.id, L.lane]; }, locateAt(cx, cy) { const L = locate({ clientX: cx, clientY: cy }); return L && [L.pl.id, L.lane]; }, turn: () => TURN,
   camLock(pos, aim, fov) { PL[0].tv.lock = pos ? { pos: new THREE.Vector3(...pos), aim: new THREE.Vector3(...aim), fov } : null; },
   body: () => ({ chest: PL[0].W.chest.toArray(), horn: PL[0].W.horn.toArray(), yaw: PL[0].base.yaw, fwd: PL[0].base.fwd.toArray() }),
   // escolha e transformação

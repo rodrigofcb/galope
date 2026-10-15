@@ -24,6 +24,8 @@ Depois de escolher a fase, cada jogador escolhe o seu personagem numa roda de qu
 ## Dois jogadores
 Celular deitado na mesa. A tela se divide ao meio e cada um usa os dois cascos da sua borda. Por padrão os dois ficam frente a frente (a metade de cima vem girada para quem está do outro lado); para jogar lado a lado, com o celular deitado de lado, cada um gira a imagem da sua metade com ↺ ↻ na tela de "Pronto!". Os cascos e as pistas não mudam de lugar, e a escolha fica salva. Quando os dois fecham o mesmo compasso só com PERFEITO, ganham o bônus de **Sincronia**.
 
+No modo lado a lado, a tela do celular vai para paisagem (do lado escolhido) e o jogo gira a imagem de volta, de modo que no celular nada muda e, numa TV por espelhamento (Smart View) ou DeX, a partida aparece em pé e ocupando a tela.
+
 ## Manobras a dois
 Na dupla, se os dois chegam juntos e sem erro às manobras com nome, eles se encontram no meio da pista e cada uma vira uma manobra nova a dois, com nome próprio (na fase 1: levantamentos, roda-gigante, tango, torre no chifre e mais; na fase 2: lançamento com mortal, rodopio de mãos dadas, trenzinho, hélice, sentada nos ombros e mais). Se um erra, o outro termina sozinho e a dupla se desfaz até o próximo bloco. Se os dois estão sentados lado a lado vendo a tela do mesmo lado, a tela dividida vira uma imagem panorâmica única desde a primeira manobra a dois e continua assim pelas estrelas e pela coroa; as pistas, os cascos e o placar de cada um seguem por cima, e a tela volta a se dividir se alguém errar. Na discoteca, quando a dupla faz junta a sequência final do último bloco, o globo de espelhos desce sobre os dois e, na pose final, gira jogando feixes de luz para todos os lados. Os nomes a dois ficam numa seção própria do **Álbum**.
 
