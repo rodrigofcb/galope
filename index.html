@@ -337,6 +337,10 @@ div.opt{cursor:default}
 #rpKnob{position:absolute;top:50%;left:0;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.25),0 2px 6px rgba(0,0,0,.4);translate:-50% -50%;scale:0;opacity:0;transition:scale .15s,opacity .15s;pointer-events:none}
 #rpKnob.on{scale:1;opacity:1}
 .expTrack{flex:none;width:min(100%,300px)}
+.expTrack i{transition:width .35s linear}
+.expTrack.busy i{background:repeating-linear-gradient(115deg,rgba(255,255,255,.28) 0 8px,rgba(255,255,255,0) 8px 16px),linear-gradient(90deg,var(--pink),var(--gold));background-size:32px 100%,100% 100%;animation:expStripe .7s linear infinite}
+@keyframes expStripe{to{background-position:32px 0,0 0}}
+@media (prefers-reduced-motion:reduce){.expTrack.busy i{animation:none}}
 .rpSegs{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:min(100%,330px)}
 .rpSeg{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px;border-radius:12px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:var(--ink);font:800 13px var(--f-body);text-align:left;cursor:pointer}
 .rpSeg:first-child{grid-column:1/-1}
@@ -529,7 +533,8 @@ div.opt{cursor:default}
     </dl>
     <div class="album"><p class="eyebrow" data-i18n="found"></p><ol id="rNames"></ol></div>
     <button class="btn alt rpBtn" id="rReplay" data-i18n="seeReplay" hidden></button>
-    <div class="menu row"><button class="btn" id="bAgain" data-i18n="again"></button><button class="btn ghost" id="bMenu" data-i18n="menu"></button></div>
+    <div class="menu row"><button class="btn" id="bNext" data-i18n="next"></button></div>
+    <div class="menu row"><button class="btn ghost" id="bAgain" data-i18n="again"></button><button class="btn ghost" id="bMenu" data-i18n="menu"></button></div>
   </section>
 
   <section id="replayS" class="screen panelS" hidden>
@@ -558,8 +563,8 @@ div.opt{cursor:default}
   </section>
 
   <section id="results2" class="screen split" hidden>
-    <div class="half flip"><div class="hin" data-p="1"><div class="rc" id="rc1"></div><button class="btn alt sm rpBtn r2replay" data-i18n="seeReplay" hidden></button><div class="menu row"><button class="btn sm r2again" data-i18n="again"></button><button class="btn ghost sm r2menu" data-i18n="menu"></button></div></div></div>
-    <div class="half"><div class="hin" data-p="0"><div class="rc" id="rc0"></div><button class="btn alt sm rpBtn r2replay" data-i18n="seeReplay" hidden></button><div class="menu row"><button class="btn sm r2again" data-i18n="again"></button><button class="btn ghost sm r2menu" data-i18n="menu"></button></div></div></div>
+    <div class="half flip"><div class="hin" data-p="1"><div class="rc" id="rc1"></div><button class="btn alt sm rpBtn r2replay" data-i18n="seeReplay" hidden></button><div class="menu row"><button class="btn sm r2next" data-i18n="next"></button><button class="btn ghost sm r2again" data-i18n="again"></button><button class="btn ghost sm r2menu" data-i18n="menu"></button></div></div></div>
+    <div class="half"><div class="hin" data-p="0"><div class="rc" id="rc0"></div><button class="btn alt sm rpBtn r2replay" data-i18n="seeReplay" hidden></button><div class="menu row"><button class="btn sm r2next" data-i18n="next"></button><button class="btn ghost sm r2again" data-i18n="again"></button><button class="btn ghost sm r2menu" data-i18n="menu"></button></div></div></div>
   </section>
 </div>
 
@@ -627,7 +632,7 @@ const STR = {
     paused: 'Pausado', cont: 'Continuar', restart: 'Recomeçar', menu: 'Menu',
     judges: 'Nota dos juízes · escala de 0 a 6,0', judge: 'JUIZ', ptsOf: 'pontos · {p} do máximo possível',
     sP: 'PERFEITO', sG: 'BOM', sM: 'ERRO', sPo: 'POSES', sSy: 'SINCRONIA',
-    found: 'Nomes descobertos', again: 'Jogar de novo', best: 'Recorde', newBest: 'Novo recorde!',
+    found: 'Nomes descobertos', again: 'Jogar de novo', next: 'Continuar', best: 'Recorde', newBest: 'Novo recorde!',
     calib: 'Calibrar ritmo', calHint: 'Toque em qualquer lugar da tela junto com cada clique. Os 4 primeiros cliques só marcam o tempo; os 8 seguintes são medidos.',
     calUse: 'Use fones ou o alto-falante, como você vai jogar.', calStart: 'Começar', calMeasuring: 'Medindo…', calRepeat: 'Repetir',
     calListen: 'Escute os 4 primeiros cliques e toque junto com os 8 seguintes.', calFew: 'Poucos toques registrados. Tente de novo, tocando junto com cada clique.',
@@ -651,7 +656,7 @@ const STR = {
     phTitle: 'Onde vamos patinar?', phase: 'Fase', ph1: 'Pista de Buenos Aires', ph1s: 'Gelo ao ar livre, ao pé do Obelisco.', ph2: 'Discoteca Neon', ph2s: 'Boate dos anos 70: pista iluminada, neon e globo de espelhos.',
     replay: 'Replay', seeReplay: 'Ver replay', rpWhole: 'Partida inteira', rpOrient: 'Vídeo', rpV: 'Em pé', rpH: 'Deitado', rpCam: 'Câmera', rpTv: 'TV', rpChase: 'Segue', rpFix: 'Fixa', rpWatch: 'Assistir', rpExport: 'Exportar vídeo',
     rpCamHint: 'TV corta entre câmeras de transmissão; Segue vai atrás do patinador; Fixa é uma só câmera na mureta, sem cortes, mostrando os dois na dupla. ', rpHint: 'Só a última partida fica guardada: ao começar outra, este replay é substituído. Exporte antes os vídeos que quiser guardar.',
-    rpMaking: 'Gerando o vídeo… {p}%', rpAudio: 'Gravando o som…', rpDone: 'Vídeo pronto!', rpSave: 'Salvar ou compartilhar', rpClose: 'Fechar', rpFail: 'Não deu para gerar o vídeo neste aparelho.', close: 'Fechar'
+    rpMaking: 'Gerando o vídeo… {p}%', rpAudio: 'Gravando o som… {p}%', rpDone: 'Vídeo pronto!', rpSave: 'Salvar ou compartilhar', rpClose: 'Fechar', rpFail: 'Não deu para gerar o vídeo neste aparelho.', close: 'Fechar'
   },
   es: {
     logo1: 'Galope', logo2: 'en el Hielo', sub: 'Ritmo · patines · brillantina',
@@ -663,7 +668,7 @@ const STR = {
     paused: 'Pausa', cont: 'Seguir', restart: 'Reiniciar', menu: 'Menú',
     judges: 'Nota de los jueces · escala de 0 a 6,0', judge: 'JUEZ', ptsOf: 'puntos · {p} del máximo posible',
     sP: 'PERFECTO', sG: 'BIEN', sM: 'ERROR', sPo: 'POSES', sSy: 'SINCRONÍA',
-    found: 'Nombres descubiertos', again: 'Jugar de nuevo', best: 'Récord', newBest: '¡Nuevo récord!',
+    found: 'Nombres descubiertos', again: 'Jugar de nuevo', next: 'Continuar', best: 'Récord', newBest: '¡Nuevo récord!',
     calib: 'Calibrar ritmo', calHint: 'Tocá en cualquier lugar de la pantalla junto con cada clic. Los 4 primeros clics solo marcan el tiempo; los 8 siguientes se miden.',
     calUse: 'Usá auriculares o el parlante, como vas a jugar.', calStart: 'Empezar', calMeasuring: 'Midiendo…', calRepeat: 'Repetir',
     calListen: 'Escuchá los 4 primeros clics y tocá junto con los 8 siguientes.', calFew: 'Se registraron pocos toques. Probá de nuevo, tocando junto con cada clic.',
@@ -687,7 +692,7 @@ const STR = {
     phTitle: '¿Dónde vamos a patinar?', phase: 'Fase', ph1: 'Pista de Buenos Aires', ph1s: 'Hielo al aire libre, al pie del Obelisco.', ph2: 'Discoteca Neón', ph2s: 'Boliche de los años 70: pista iluminada, neón y bola de espejos.',
     replay: 'Repetición', seeReplay: 'Ver repetición', rpWhole: 'Partida entera', rpOrient: 'Video', rpV: 'Vertical', rpH: 'Horizontal', rpCam: 'Cámara', rpTv: 'TV', rpChase: 'Sigue', rpFix: 'Fija', rpWatch: 'Mirar', rpExport: 'Exportar video',
     rpCamHint: 'TV corta entre cámaras de transmisión; Sigue va detrás del patinador; Fija es una sola cámara en la baranda, sin cortes, mostrando a los dos en el dúo. ', rpHint: 'Solo se guarda la última partida: al empezar otra, esta repetición se reemplaza. Exportá antes los videos que quieras guardar.',
-    rpMaking: 'Generando el video… {p}%', rpAudio: 'Grabando el sonido…', rpDone: '¡Video listo!', rpSave: 'Guardar o compartir', rpClose: 'Cerrar', rpFail: 'No se pudo generar el video en este dispositivo.', close: 'Cerrar'
+    rpMaking: 'Generando el video… {p}%', rpAudio: 'Grabando el sonido… {p}%', rpDone: '¡Video listo!', rpSave: 'Guardar o compartir', rpClose: 'Cerrar', rpFail: 'No se pudo generar el video en este dispositivo.', close: 'Cerrar'
   }
 };
 // nomes whimsical: [bloco][0 = 5ª manobra, 1 = 6ª manobra, 2 = pose final]
@@ -727,7 +732,7 @@ const nameOf = (b, i) => NAMES[OPT.lang][b][i];
 const fmt = n => Math.round(n).toLocaleString(OPT.lang === 'es' ? 'es-AR' : 'pt-BR');
 
 /* ============================== mapa da música ============================== */
-const APP_VERSION = '16';   // subir junto com VERSION em sw.js a cada publicação
+const APP_VERSION = '17';   // subir junto com VERSION em sw.js a cada publicação
 const BPM = 120, BEAT = 60 / BPM, MEAS = BEAT * 4, S8 = BEAT / 2, S16 = BEAT / 4;
 const BLOCK_START = [4, 14, 24], TOTAL_MEAS = 36;
 // manobra de cada etapa do bloco: [tipo (0 deslize, 1 giro, 2 salto), nível dentro do tipo]
@@ -1539,10 +1544,11 @@ function applyWorld() {
   FOG.set(PHI ? 0x1c0c36 : 0x2b1f63); U.uFogNear.value = PHI ? 24 : 16; U.uFogFar.value = PHI ? 95 : 125;
 }
 // as cenas separadas (roda e palcos) também têm as duas fases
-function worldIn(o) {
+function worldIn(o, on = true) {
   if (PHI && !o.disco) o.disco = buildDisco(o.scene);
-  o.world.group.visible = !PHI; if (o.disco) o.disco.group.visible = !!PHI;
+  o.world.group.visible = on && !PHI; if (o.disco) o.disco.group.visible = on && !!PHI;
 }
+const worldShown = o => PHI ? !!(o.disco && o.disco.group.visible) : o.world.group.visible;
 /* --------- globo de espelhos: na dupla, desce sobre o casal na sequência final a dois do último bloco --------- */
 const BALL = { target: 0, w: 0, at: new THREE.Vector3(0, 11.2, 0) };
 function ballUpdate(dt) {
@@ -3877,7 +3883,7 @@ function stageUpdate(st, dt, now) {
     R.root.updateMatrixWorld(true);
     // silhueta e fundo
     R.SIL.uSil.value = C.sil(t); R.SIL.uSilY.value = C.silY(t) + fl; R.SIL.uBaseY.value = fl; R.SIL.uHgt.value = H;
-    const rb = C.rainbow(t); st.rb.material.uniforms.uMix.value = rb; st.rb.visible = rb > .001; st.world.group.visible = rb < .999;
+    const rb = C.rainbow(t); st.rb.material.uniforms.uMix.value = rb; st.rb.visible = rb > .001; worldIn(st, rb < .999);
     st.rb.position.set(0, H * .6 + fl, 0);
     // brilho da ponta
     const gl = hornOn ? C.glow(t) : 0; st.glow.visible = gl > .01 && st.horn.visible;
@@ -3891,7 +3897,7 @@ function stageUpdate(st, dt, now) {
     if (gl > .3 && dt > 0) { st.glow.getWorldPosition(_tf1); for (let i = cnt(dt * 60 * gl); i > 0; i--) { const a = Math.random() * TAU, e = rnd(-1, 1); pEmit(st.ps, _tf1.x, _tf1.y, _tf1.z, Math.cos(a) * 1.2 * Math.sqrt(1 - e * e), e * 1.2, Math.sin(a) * 1.2 * Math.sqrt(1 - e * e), rnd(.3, .7), rnd(.03, .06), Math.random() < .6 ? C_WHITE : C_PINK, 0, 2); } }
   } else {
     // ---- depois do flash: o unicórnio na pista, em pose de patinação ----
-    st.rb.visible = false; st.world.group.visible = true; st.horn.visible = false; st.glow.visible = false; R.SIL.uSil.value = 0;
+    st.rb.visible = false; worldIn(st); st.horn.visible = false; st.glow.visible = false; R.SIL.uSil.value = 0;
     for (const p in R.state) if (R.state[p] !== 'u') setForm(R, p, 'u');
     R.root.position.set(0, 0, 0); R.root.rotation.set(0, 0, 0); R.spinner.rotation.set(0, 0, 0);
     const br = Math.sin(now * 3) * .03, o = Object.assign({}, POSE_SPIRAL, { lean: POSE_SPIRAL.lean + br, hd: POSE_SPIRAL.hd + br });
@@ -3903,7 +3909,7 @@ function stageUpdate(st, dt, now) {
   if (R.hornMat) R.hornMat.uniforms.uEmissive.value = final ? .5 + .3 * Math.sin(now * 6) : .25;
   st.flashEl.style.opacity = (st.C.flash(t) * (REDUCED ? .35 : 1)).toFixed(3);
   pUpdate(st.ps, dt);
-  const w = st.world; if (w.group.visible) { for (let i = 0; i < w.STARS.n; i++) w.STARS.alpha[i] = .55 + .45 * Math.sin(now * 1.7 + w.STARS.phase[i]); w.STARS.geo.attributes.palpha.needsUpdate = true; }
+  const w = st.world; if (w.group.visible && !PHI) { for (let i = 0; i < w.STARS.n; i++) w.STARS.alpha[i] = .55 + .45 * Math.sin(now * 1.7 + w.STARS.phase[i]); w.STARS.geo.attributes.palpha.needsUpdate = true; }
   stageCamera(st, now);
 }
 function ribbonsAt(st, list, p, t, now) {
@@ -3937,11 +3943,13 @@ function tfEvents(st, t) {
 }
 // braços abertos: a câmera dá uma volta completa em torno do personagem e fecha no peito quando as fitas começam
 const ORB0 = 6.6, ORB1 = 9.4;
+// 0→1 com aceleração e freada suaves de duração r (fração) e velocidade constante entre elas
+function rampPlateau(s, r) { s = clamp(s, 0, 1); const v = 1 / (1 - r); return s < r ? v * s * s / (2 * r) : s > 1 - r ? 1 - v * (1 - s) * (1 - s) / (2 * r) : v * (s - r / 2); }
 function stageCamera(st, now) {
   const R = st.R, t = st.t, final = t >= T_FINAL, H = R.H;
   let k;
   if (!final && t > ORB0 && t < ORB1) {
-    const a = camAt(CAMK, ORB0), b = camAt(CAMK, ORB1), s = (t - ORB0) / (ORB1 - ORB0), e = (1 - Math.cos(PI * s)) / 2, w = sm(.62, 1, s);
+    const a = camAt(CAMK, ORB0), b = camAt(CAMK, ORB1), s = (t - ORB0) / (ORB1 - ORB0), e = rampPlateau(s, .5 / (ORB1 - ORB0)), w = sm(.62, 1, s);
     k = [t, a[1].map((v, j) => lerp(v, b[1][j], w)), a[2] + (b[2] + 360 - a[2]) * e, lerp(a[3], b[3], s) + 7 * Math.sin(PI * s), lerp(a[4], b[4], w), lerp(a[5], b[5], w)];
   } else k = camAt(final ? CAMF : CAMK, t);
   const [x, yf, z] = k[1], az = k[2] * PI / 180, el = k[3] * PI / 180, hw = k[4], hh = k[5];
@@ -3981,16 +3989,17 @@ function musicTick() {
 function musicStart() { newMusicBus(); MUS.tok++; MUS.on = true; MUS.end = false; MUS.next = 0; MUS.t0 = AC.currentTime + .1; if (!MUS.iv) MUS.iv = setInterval(musicTick, 25); }
 function musicStop(fade) { MUS.end = true; const tok = ++MUS.tok; if (AC && musicBus) { try { musicBus.gain.setTargetAtTime(0, AC.currentTime, fade ? .8 : .05); } catch (e) {} } setTimeout(() => { if (MUS.tok === tok) MUS.on = false; }, fade ? 2600 : 100); }
 const SND = {
-  now: () => AC ? AC.currentTime + .01 : 0,
-  ting() { if (!AC) return; const t = SND.now(); I.bell(t, 93, .8, .7, sfxBus); I.bell(t + .07, 100, .5, .6, sfxBus); },
-  rise(d) { if (!AC) return; const t = SND.now(), s = AC.createBufferSource(); s.buffer = noiseBuf; s.loop = true; const f = AC.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 3; f.frequency.setValueAtTime(500, t); f.frequency.exponentialRampToValueAtTime(9000, t + d); const g = AC.createGain(); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.16, t + d); g.gain.exponentialRampToValueAtTime(.0001, t + d + .1); s.connect(f); f.connect(g); g.connect(sfxBus); s.start(t); s.stop(t + d + .2); for (let i = 0; i < 10; i++) I.bell(t + d * i / 10, 76 + i * 2, .25 + i * .03, .4, sfxBus); },
-  bling() { if (!AC) return; const t = SND.now(); [88, 92, 95, 100, 104, 107].forEach((n, i) => I.bell(t + i * .04, n, .55, .8, sfxBus)); noise(t, .8, sfxBus, .1, 'highpass', 6000, .5, .02); },
-  sweep(d) { if (!AC) return; const t = SND.now(), s = AC.createBufferSource(); s.buffer = noiseBuf; s.loop = true; const f = AC.createBiquadFilter(); f.type = 'lowpass'; f.Q.value = 8; f.frequency.setValueAtTime(8000, t); f.frequency.exponentialRampToValueAtTime(300, t + d); const g = AC.createGain(); g.gain.setValueAtTime(.18, t); g.gain.exponentialRampToValueAtTime(.0001, t + d); s.connect(f); f.connect(g); g.connect(sfxBus); s.start(t); s.stop(t + d + .1); },
-  chord() { if (!AC) return; const t = SND.now(); for (const n of [64, 68, 71, 76]) I.bell(t, n + 12, .45, 1.6, sfxBus); },
-  wrap(d) { if (!AC) return; const t = SND.now(); for (let i = 0; i < 12; i++) I.bell(t + d * .8 * i / 12, [64, 68, 71][i % 3] + 12 + 12 * Math.floor(i / 3) % 24, .3, .25, sfxBus); noise(t, d, sfxBus, .07, 'bandpass', 2500, 1.2, d * .6); },
-  pop() { if (!AC) return; const t = SND.now(); I.bell(t, 95, .7, .5, sfxBus); I.bell(t + .05, 102, .4, .4, sfxBus); noise(t, .15, sfxBus, .08, 'highpass', 5000, .7); },
-  flash() { if (!AC) return; const t = SND.now(); I.crash(t, 1); for (const n of [52, 64, 68, 71, 76, 83]) I.bell(t, n + 12, .45, 2.2, sfxBus); osc('sine', 55, t, .9, sfxBus, .45); },
-  fanfare() { if (!AC) return; const t = SND.now(); [76, 80, 83, 88].forEach((n, i) => I.bell(t + i * .12, n, .7, .6, sfxBus)); for (const n of [64, 68, 71, 76]) I.bell(t + .5, n + 12, .5, 1.8, sfxBus); }
+  mute: false, at: null,
+  now: () => SND.at !== null ? SND.at : AC ? AC.currentTime + .01 : 0,
+  ting() { if (!AC || SND.mute) return; const t = SND.now(); I.bell(t, 93, .8, .7, sfxBus); I.bell(t + .07, 100, .5, .6, sfxBus); },
+  rise(d) { if (!AC || SND.mute) return; const t = SND.now(), s = AC.createBufferSource(); s.buffer = noiseBuf; s.loop = true; const f = AC.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 3; f.frequency.setValueAtTime(500, t); f.frequency.exponentialRampToValueAtTime(9000, t + d); const g = AC.createGain(); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.16, t + d); g.gain.exponentialRampToValueAtTime(.0001, t + d + .1); s.connect(f); f.connect(g); g.connect(sfxBus); s.start(t); s.stop(t + d + .2); for (let i = 0; i < 10; i++) I.bell(t + d * i / 10, 76 + i * 2, .25 + i * .03, .4, sfxBus); },
+  bling() { if (!AC || SND.mute) return; const t = SND.now(); [88, 92, 95, 100, 104, 107].forEach((n, i) => I.bell(t + i * .04, n, .55, .8, sfxBus)); noise(t, .8, sfxBus, .1, 'highpass', 6000, .5, .02); },
+  sweep(d) { if (!AC || SND.mute) return; const t = SND.now(), s = AC.createBufferSource(); s.buffer = noiseBuf; s.loop = true; const f = AC.createBiquadFilter(); f.type = 'lowpass'; f.Q.value = 8; f.frequency.setValueAtTime(8000, t); f.frequency.exponentialRampToValueAtTime(300, t + d); const g = AC.createGain(); g.gain.setValueAtTime(.18, t); g.gain.exponentialRampToValueAtTime(.0001, t + d); s.connect(f); f.connect(g); g.connect(sfxBus); s.start(t); s.stop(t + d + .1); },
+  chord() { if (!AC || SND.mute) return; const t = SND.now(); for (const n of [64, 68, 71, 76]) I.bell(t, n + 12, .45, 1.6, sfxBus); },
+  wrap(d) { if (!AC || SND.mute) return; const t = SND.now(); for (let i = 0; i < 12; i++) I.bell(t + d * .8 * i / 12, [64, 68, 71][i % 3] + 12 + 12 * Math.floor(i / 3) % 24, .3, .25, sfxBus); noise(t, d, sfxBus, .07, 'bandpass', 2500, 1.2, d * .6); },
+  pop() { if (!AC || SND.mute) return; const t = SND.now(); I.bell(t, 95, .7, .5, sfxBus); I.bell(t + .05, 102, .4, .4, sfxBus); noise(t, .15, sfxBus, .08, 'highpass', 5000, .7); },
+  flash() { if (!AC || SND.mute) return; const t = SND.now(); I.crash(t, 1); for (const n of [52, 64, 68, 71, 76, 83]) I.bell(t, n + 12, .45, 2.2, sfxBus); osc('sine', 55, t, .9, sfxBus, .45); },
+  fanfare() { if (!AC || SND.mute) return; const t = SND.now(); [76, 80, 83, 88].forEach((n, i) => I.bell(t + i * .12, n, .7, .6, sfxBus)); for (const n of [64, 68, 71, 76]) I.bell(t + .5, n + 12, .5, 1.8, sfxBus); }
 };
 
 /* ============================== escolha: os quatro em roda, de costas uns para os outros ============================== */
@@ -4101,7 +4110,7 @@ function selFrame(now, dt) { bindLine(); lineupUpdate(now, dt); if (PHI) discoUp
 function tfFrame(now, dt) {
   for (const pl of ACTIVE) {
     const st = pl.stage; if (!st || !st.active) continue;
-    bindStage(st, pl, dt); stageUpdate(st, dt, now); if (PHI) discoUpdate(st.disco, now, dt, .55, 0, null);
+    bindStage(st, pl, dt); stageUpdate(st, dt, now); if (PHI && worldShown(st)) discoUpdate(st.disco, now, dt, .55, 0, null);
     renderStage(st, st.t < T_FINAL ? st.C.rainbow(st.t) : 0); drawLanes(pl, 0);
   }
   postRender();
@@ -4198,8 +4207,9 @@ function endTransformUI() {
   for (const pl of PL) { pl.tfx.hidden = true; pl.flashEl.style.opacity = ''; const st = pl.stage; if (st) { st.active = false; st.hold = false; } }
 }
 // para os testes: pula para um instante do roteiro, com as peças já trocadas até ali
-function tfSet(i, tm) {
-  const st = PL[i].stage, EVT = [['horn', TF_HORN], ['rise', 3], ['burst', 5.05], ['bg', 5], ['open', TF_OPEN], ['w0', 9.4], ['s0', 10.2], ['w1', 11.3], ['s1', 12.1], ['w2', 13.2], ['s2', 14], ['touch', T_FLASH + .05], ['final', T_FINAL]];
+function tfSet(i, tm) { stSet(PL[i].stage, tm); }
+function stSet(st, tm) {
+  const EVT = [['horn', TF_HORN], ['rise', 3], ['burst', 5.05], ['bg', 5], ['open', TF_OPEN], ['w0', 9.4], ['s0', 10.2], ['w1', 11.3], ['s1', 12.1], ['w2', 13.2], ['s2', 14], ['touch', T_FLASH + .05], ['final', T_FINAL]];
   st.t = tm; st.done = tm >= T_END; st.ev = {}; for (const [k, at] of EVT) if (at <= tm) st.ev[k] = 1;
   setAllForms(st.R, 'h'); for (const g of PARTS) if (tm >= g.sw) for (const p of g.parts) setForm(st.R, p, 'u'); if (tm >= T_FLASH + .05) setForm(st.R, 'head', 'u');
 }
@@ -4844,8 +4854,12 @@ $('#pContinue').onclick = resume;
 $('#pRestart').onclick = () => { show(null); startRun({ two: state.two, demo: state.demo }); };
 $('#pMenu').onclick = () => toMenu();
 $('#bAgain').onclick = () => startRun({ demo: state.demo });
+// continuar: próxima fase (da última volta à primeira), mesmos personagens e lados, direto para a pista
+function nextPhase(two) { setPhase((PHI + 1) % PHASES.length); startRun({ two, demo: !two && state.demo }); }
+$('#bNext').onclick = () => nextPhase(false);
 $('#bMenu').onclick = () => toMenu();
 $$('.r2again').forEach(b => b.onclick = () => startRun({ two: true }));
+$$('.r2next').forEach(b => b.onclick = () => nextPhase(true));
 $$('.r2menu').forEach(b => b.onclick = () => toMenu());
 
 /* --------- vitrine: fora da partida, os unicórnios mostram manobras --------- */
@@ -4919,13 +4933,14 @@ function rpLabel() { const i = RP.seg; $('#rpLbl').textContent = i ? `${t('block
 function playReplay(sgI) {
   if (!RP.data) return;
   initAudio();
-  const go = () => { replayPrepare(sgI); replayStartAudio(); rpLabel(); $('#rpUI').hidden = false; rpPauseUI(); requestWake(); };
+  const go = () => { replayPrepare(sgI); if (RP_SEGS[sgI] && !sgI) rpIntroStart(0); else replayStartAudio(); rpLabel(); $('#rpUI').hidden = false; rpPauseUI(); requestWake(); };
   AC.resume().then(go, go);
 }
 // fim da parte ou saída: volta para a tela do replay
 function rpRestoreCam() { if (RP.savedCam !== undefined) { OPT.cam = RP.savedCam; RP.savedCam = undefined; for (const pl of PL) { pl.tv.cur = 0; pl.tv.virt = false; pl.tv.snap = true; } } }
 function replayStop() {
   if (!state.replay) return;
+  rpIntroClear();
   state.replay = false; state.paused = false; state.ended = false; $('#rpUI').hidden = true; rpRestoreCam();
   if (AC) { newMusicBus(); if (AC.state === 'suspended') AC.resume().catch(() => {}); }
   pairReset(); panoOff(true); BALL.target = BALL.w = 0;
@@ -4943,14 +4958,92 @@ function rpTogglePause() {
 // busca: volta ao início da parte e avança a simulação sem desenhar nem tocar até o instante pedido (passos de 1/30 s)
 function rpSeek(frac) {
   if (!state.replay || RP.exp) return;
-  const Ts = clamp(RP.t0 + frac * (RP.t1 - RP.t0), RP.t0, RP.t1 - .6), Tq = Math.max(RP.t0, Ts - .25), paused = state.paused;
+  const IL = rpIntroLen(), Tt = frac * (IL + RP.t1 - RP.t0), paused = state.paused;
+  if (Tt < IL - .05) {   // dentro da transformação: recomeça a partida e a abertura naquele instante
+    if (AC) AC.suspend().catch(() => {});
+    rpIntroClear(); replayPrepare(RP.seg); rpIntroStart(Math.max(0, Tt));
+    state.paused = paused; if (!paused && AC) AC.resume().catch(() => {});
+    return;
+  }
+  const Ts = clamp(RP.t0 + (Tt - IL), RP.t0, RP.t1 - .6), Tq = Math.max(RP.t0, Ts - .25);
   if (AC) AC.suspend().catch(() => {});
-  if (Tq < state.songT) replayPrepare(RP.seg);   // para trás: recomeça a parte; para a frente: segue do ponto atual
+  if (RP.intro) { rpIntroClear(); }
+  else if (Tq < state.songT) replayPrepare(RP.seg);   // para trás: recomeça a parte; para a frente: segue do ponto atual
   state.paused = false; RP.seek = true;
   let n = 0; while (state.songT < Tq - 1e-4 && n++ < 6000) tick(performance.now(), Math.min(1 / 30, Tq - state.songT));
   RP.seek = false;
   replayStartAudio(Tq + .25, Tq + .25);   // o que se ouve agora é o instante Tq; a música entra um quarto de segundo depois
   state.paused = paused; if (!paused && AC) AC.resume().catch(() => {});
+}
+/* --------- replay: a partida inteira abre com a transformação dos personagens --------- */
+// Os palcos da transformação são desenhados no quadro do replay: um só, ou dois lado a lado na mesma orientação
+// (em pé: J1 em cima e J2 embaixo; deitado: J1 à esquerda e J2 à direita). Termina como no jogo: fim do roteiro e uma pausa curta.
+const RP_INTRO = T_END + .3;
+const rpIntroLen = () => RP.seg === 0 && RP_SEGS[0] ? RP_INTRO : 0;
+function rpFrac() { const IL = rpIntroLen(), tot = IL + RP.t1 - RP.t0, el = RP.intro ? RP.intro.t : IL + state.songT - RP.t0; return clamp(el / tot, 0, 1); }
+const TF_LEVEL = t => t < 3 ? 0 : t < 5 ? 1 : t < TF_OPEN ? 2 : t < 9.4 ? 3 : t < T_FINAL ? 4 : 5;
+function rpIntroStart(t0) {
+  RP.intro = { t: t0, faded: t0 >= T_END };
+  PANO.pads.hidden = true; PANO.names.innerHTML = '';
+  for (const pl of ACTIVE) { const st = stageOf(pl); setupStage(st, pl.charId); st.hold = true; st.off = 0; stSet(st, Math.min(t0, T_END)); }
+  if (!RP.exp) {   // música da transformação, já no compasso certo quando a abertura começa no meio
+    initAudio(); musicStart(); MUS.t0 = AC.currentTime + .1 - t0; MUS.next = Math.max(0, Math.ceil(t0 / .125)); MUS.lvl = TF_LEVEL(t0);
+    if (RP.intro.faded) musicStop(false);
+  }
+}
+// região do quadro do replay de cada jogador na abertura (coordenadas do WebGL: y a partir de baixo)
+function rpIntroRect(i, n) {
+  const W = PANO.RTW, H = PANO.RH;
+  if (n < 2) return [0, 0, W, H];
+  if (W > H) { const w = Math.floor(W / 2); return i ? [w, 0, W - w, H] : [0, 0, w, H]; }
+  const h = Math.floor(H / 2); return i ? [0, 0, W, h] : [0, h, W, H - h];
+}
+function rpIntroFrame(now, dt) {
+  const I = RP.intro; if (state.paused) dt = 0;
+  I.t += dt;
+  if (!I.faded && I.t >= T_END) { I.faded = true; if (!RP.exp) musicStop(true); }
+  let fl = 0;
+  ACTIVE.forEach((pl, i) => {
+    const st = pl.stage, [x, y, w, h] = rpIntroRect(i, ACTIVE.length);
+    st.rt = PANO.rt; st.RTW = w; st.RH = h; st.cam.aspect = w / h; st.cam.clearViewOffset(); st.cam.updateProjectionMatrix();
+    st.t = Math.min(I.t, T_END);
+    SND.mute = i > 0 || !!RP.exp;   // as duas andam juntas: os sons tocam uma vez só
+    stageUpdate(st, dt, now);
+    SND.mute = false;
+    if (PHI && worldShown(st)) discoUpdate(st.disco, now, dt, .55, 0, null);
+    PANO.rt.viewport.set(x, y, w, h); PANO.rt.scissor.set(x, y, w, h); PANO.rt.scissorTest = true;
+    renderStage(st, st.t < T_FINAL ? st.C.rainbow(st.t) : 0);
+    fl = Math.max(fl, st.C.flash(st.t));
+  });
+  PANO.rt.viewport.set(0, 0, PANO.RTW, PANO.RH); PANO.rt.scissor.set(0, 0, PANO.RTW, PANO.RH); PANO.rt.scissorTest = false;
+  I.flash = fl * (REDUCED ? .35 : 1); PANO.flash.style.opacity = I.flash.toFixed(3);
+  postRender();
+  if (!RP.exp && !RP.drag) $('#rpProg').style.width = (rpFrac() * 100).toFixed(1) + '%';
+  if (I.t >= RP_INTRO) rpIntroEnd();
+}
+function rpIntroClear() {
+  if (!RP.intro) return;
+  RP.intro = null; PANO.flash.style.opacity = ''; PANO.pads.hidden = !state.replay;
+  for (const pl of PL) { pl.flashEl.style.opacity = ''; const st = pl.stage; if (st) { st.active = false; st.hold = false; } }
+  if (MUS.on) musicStop(false);
+}
+// fim da abertura: a partida começa do início, como depois da transformação no jogo
+function rpIntroEnd() {
+  rpIntroClear(); PANO.snap = true;
+  if (!RP.exp) replayStartAudio();
+}
+// som da abertura para o vídeo: o mesmo laço musical (com as camadas por etapa) e os mesmos efeitos, nos mesmos instantes
+function introAudio(oac, out) {
+  const ib = oac.createGain(); ib.gain.value = OPT.music ? .6 : 0; ib.connect(out); ib.gain.setTargetAtTime(0, T_END, .8);
+  const sb = oac.createGain(); sb.gain.value = OPT.sfx ? .75 : 0; sb.connect(out);
+  const saved = [AC, musicBus, sfxBus, MUS.lvl, SND.at, SND.mute];
+  try {
+    AC = oac; musicBus = ib; sfxBus = sb; SND.mute = false;
+    for (let k = 0; k * .125 + .1 < T_END + .2; k++) { const t = .1 + k * .125; MUS.lvl = TF_LEVEL(t); musicStep(k, t); }
+    const ev = [[TF_HORN, () => SND.ting()], [3.0, () => SND.rise(1.4)], [5.0, () => SND.sweep(.5)], [5.05, () => SND.bling()], [TF_OPEN, () => SND.chord()], [T_FLASH + .05, () => SND.flash()], [T_FINAL, () => SND.fanfare()]];
+    for (const p of PARTS) { ev.push([p.a, () => SND.wrap(.55)]); ev.push([p.sw, () => SND.pop()]); }
+    for (const [at, fn] of ev) { SND.at = at; fn(); }
+  } finally { [AC, musicBus, sfxBus, MUS.lvl, SND.at, SND.mute] = saved; }
 }
 function rpPauseUI() { const b = $('#rpPlay'); b.textContent = state.paused ? '▶' : '❚❚'; b.setAttribute('aria-label', t(state.paused ? 'cont' : 'pauseL')); }
 // diretor do replay: a cada compasso escolhe quem a câmera mostra; o casal junto aparece sempre os dois
@@ -5176,7 +5269,7 @@ function openReplayScreen() {
     const b = document.createElement('button'); b.className = 'rpSeg'; b.setAttribute('aria-pressed', String(i === RP.seg));
     b.innerHTML = '<b></b><small></small>';
     b.querySelector('b').textContent = i ? `${t('block')} ${i} · ${t('blocks')[i - 1]}` : t('rpWhole');
-    b.querySelector('small').textContent = fmtDur(segLen(sg));
+    b.querySelector('small').textContent = fmtDur(segLen(sg) + (i ? 0 : RP_INTRO));
     b.onclick = () => { RP.seg = i; openReplayScreen(); }; segs.appendChild(b);
   });
   $('#rpV').setAttribute('aria-pressed', String(RP.orient === 'v')); $('#rpH').setAttribute('aria-pressed', String(RP.orient === 'h'));
@@ -5212,20 +5305,38 @@ async function pickAudio() {
   return null;
 }
 // a música da parte, refeita fora do tempo real, com os sinos dos nomes e da sincronia nos instantes certos
-async function renderAudio(T0, dur, sfx) {
-  const SR = 48000, oac = new OfflineAudioContext(2, Math.ceil(dur * SR), SR);
+async function renderAudio(T0, dur0, sfx, prog = () => {}, IL = 0) {
+  const dur = IL + dur0, SR = 48000, oac = new OfflineAudioContext(2, Math.ceil(dur * SR), SR);
   const comp = oac.createDynamicsCompressor(); comp.threshold.value = -12; comp.knee.value = 10; comp.ratio.value = 3.5; comp.attack.value = .004; comp.release.value = .18; comp.connect(oac.destination);
   const mst = oac.createGain(); mst.gain.value = .85; mst.connect(comp);
-  const saved = [AC, musicBus, sfxBus];
+  const mb = oac.createGain(); mb.gain.value = OPT.music ? .6 : 0; mb.connect(mst);
+  const sb = oac.createGain(); sb.gain.value = OPT.sfx ? .75 : 0; sb.connect(mst);
+  // 1) agenda a música e os efeitos (em lotes, devolvendo a vez à tela entre eles)
+  if (IL) introAudio(oac, mst);
+  const s0 = Math.max(0, Math.ceil((T0 - 1e-6) / S16)), s1 = Math.min(TOTAL_MEAS * 16, Math.ceil((T0 + dur0) / S16));
+  const sched = fn => { const saved = [AC, musicBus, sfxBus]; try { AC = oac; musicBus = mb; sfxBus = sb; fn(); } finally { [AC, musicBus, sfxBus] = saved; } };
+  for (let a = s0; a < s1; a += 48) {
+    if (RP.exp && RP.exp.cancel) throw new Error('cancel');
+    sched(() => { for (let k = a; k < Math.min(s1, a + 48); k++) playStep(k, IL + k * S16 - T0); });
+    prog('sched', (a - s0) / Math.max(1, s1 - s0)); await sleep0();
+  }
+  sched(() => { for (const [k, a, ts] of sfx) { const at = IL + ts - T0; if (at < IL || at > dur) continue; if (k === 'name') SFX.name(a, at); else if (k === 'sync') SFX.sync(at); else if (k === 'duo') SFX.duo(at); } });
+  // 2) grava; a cada trecho o contexto pausa um instante, o que dá o andamento real da gravação
   try {
-    AC = oac; musicBus = oac.createGain(); musicBus.gain.value = OPT.music ? .6 : 0; musicBus.connect(mst); sfxBus = oac.createGain(); sfxBus.gain.value = OPT.sfx ? .75 : 0; sfxBus.connect(mst);
-    const s0 = Math.max(0, Math.ceil((T0 - 1e-6) / S16)), s1 = Math.min(TOTAL_MEAS * 16, Math.ceil((T0 + dur) / S16));
-    for (let s = s0; s < s1; s++) playStep(s, s * S16 - T0);
-    for (const [k, a, ts] of sfx) { const at = ts - T0; if (at < 0 || at > dur) continue; if (k === 'name') SFX.name(a, at); else if (k === 'sync') SFX.sync(at); else if (k === 'duo') SFX.duo(at); }
-  } finally { [AC, musicBus, sfxBus] = saved; }
+    const step = Math.max(.5, dur / 80);
+    for (let tt = step; tt < dur - .05; tt += step) { const at = tt; oac.suspend(at).then(() => { prog('render', at / dur); oac.resume(); }); }
+  } catch (e) {}
+  prog('render', 0);
   return oac.startRendering();
 }
 // legendas desenhadas no vídeo: nome da manobra (com a marca "a dois"), cartões dos blocos, sincronia e a assinatura
+function drawIntroOverlay(cx, W, H) {
+  const k = Math.min(W, H) / 720, f = RP.intro ? RP.intro.flash || 0 : 0;
+  if (f > 0) { cx.globalAlpha = f; cx.fillStyle = '#ffffff'; cx.fillRect(0, 0, W, H); }
+  cx.globalAlpha = .7; cx.textAlign = 'left'; cx.textBaseline = 'middle'; cx.font = `${Math.round(16 * k)}px "Silkscreen"`; cx.lineJoin = 'round'; cx.lineWidth = Math.max(2, 3.2 * k); cx.strokeStyle = '#2a0b4d'; cx.fillStyle = '#ffffff';
+  const s = t('logo1').toUpperCase() + ' ' + t('logo2').toUpperCase(); cx.strokeText(s, 20 * k, 24 * k); cx.fillText(s, 20 * k, 24 * k);
+  cx.globalAlpha = 1; cx.textAlign = 'center';
+}
 function drawCaptions(cx, W, H, T) {
   const k = Math.min(W, H) / 720, land = W > H, cx0 = W / 2;
   const life = tier => tier === 1 ? 2.0 : tier === 2 ? 2.4 : 3.6;
@@ -5254,9 +5365,29 @@ function drawCaptions(cx, W, H, T) {
   cx.globalAlpha = 1; cx.textAlign = 'center';
   drawPads(cx, W, H, T, k);
 }
+const EXP_COST0 = { video: .5, sched: .02, render: .35, enc: .05 };   // segundos de trabalho por segundo de vídeo (estimativa até a primeira exportação)
+function expPlan(hasAudio) {
+  const c = Object.assign({}, EXP_COST0, store.get('expCost' + (RP.data ? RP.data.ph : PHI), {})), ph = hasAudio ? ['video', 'sched', 'render', 'enc'] : ['video'];
+  const tot = ph.reduce((a, k) => a + c[k], 0), plan = {}; let acc = 0;
+  for (const k of ph) { plan[k] = [acc / tot * .99, (acc + c[k]) / tot * .99]; acc += c[k]; }
+  return plan;
+}
+// andamento de uma etapa (0 a 1) → posição da barra; guarda quanto cada etapa levou para calibrar a próxima vez
+function expStep(ph, f) {
+  const E = RP.exp; if (!E || !E.plan[ph]) return;
+  const now = performance.now(); E.tm[ph] = E.tm[ph] || [now, now]; E.tm[ph][1] = now;
+  const [a, b] = E.plan[ph], p = a + (b - a) * clamp(f, 0, 1);
+  if (now - (E.lastUI || 0) > 120 || f >= 1) { E.lastUI = now; expUI(ph === 'video' ? 'video' : 'audio', p); }
+}
+function expLearn(E, dur) {
+  const c = Object.assign({}, EXP_COST0, store.get('expCost' + (RP.data ? RP.data.ph : PHI), {}));
+  for (const k in E.tm) { const s = (E.tm[k][1] - E.tm[k][0]) / 1000 / dur; if (s > 0) c[k] = s; }
+  store.set('expCost' + (RP.data ? RP.data.ph : PHI), c);
+}
 function expUI(st, p) {
-  $('#expBar').style.width = Math.round(p * 100) + '%';
-  $('#expMsg').textContent = st === 'audio' ? t('rpAudio') : st === 'done' ? t('rpDone') : st === 'fail' ? t('rpFail') : t('rpMaking', { p: Math.round(p * 100) });
+  const busy = st === 'video' || st === 'audio';
+  $('#expBar').style.width = (p * 100).toFixed(1) + '%'; $('#exportS .expTrack').classList.toggle('busy', busy);
+  $('#expMsg').textContent = st === 'audio' ? t('rpAudio', { p: Math.round(p * 100) }) : st === 'done' ? t('rpDone') : st === 'fail' ? t('rpFail') : t('rpMaking', { p: Math.round(p * 100) });
   $('#expSave').hidden = st !== 'done'; $('#expCancel').hidden = st === 'done' || st === 'fail'; $('#expClose').hidden = !(st === 'done' || st === 'fail');
 }
 const sleep0 = () => new Promise(r => setTimeout(r, 0));
@@ -5273,28 +5404,29 @@ async function exportReplay(sgI) {
     await loadMuxer(); try { await document.fonts.load('40px "Titan One"'); await document.fonts.load('20px "Silkscreen"'); } catch (e) {}
     const V = await pickVideo(W, H), A = await pickAudio();
     if (!V) throw new Error('video');
+    RP.exp.plan = expPlan(!!A); RP.exp.tm = {};
     const muxer = new Mp4Muxer.Muxer({ target: new Mp4Muxer.ArrayBufferTarget(), video: { codec: V.mux, width: W, height: H, frameRate: EXP_FPS }, audio: A ? { codec: A.mux, numberOfChannels: 2, sampleRate: 48000 } : undefined, fastStart: 'in-memory', firstTimestampBehavior: 'offset' });
     let err = null;
     const venc = new VideoEncoder({ output: (ch, meta) => muxer.addVideoChunk(ch, meta), error: e => { err = e; } });
     venc.configure(V.cfg);
     // a partida roda em passos fixos, sem relógio de áudio; cada quadro vai para o codificador
     state.manual = true; state.exporting = true; replayPrepare(sgI); show('export'); layout();
-    const dur = segLen(RP_SEGS[sgI]) + 1, N = Math.ceil(dur * EXP_FPS), dt = 1 / EXP_FPS, T0 = RP.t0;
+    const IL = sgI === 0 ? RP_INTRO : 0, dur = segLen(RP_SEGS[sgI]) + 1, N = Math.ceil((IL + dur) * EXP_FPS), dt = 1 / EXP_FPS, T0 = RP.t0;
+    if (IL) rpIntroStart(0);
     for (let i = 0; i < N; i++) {
       if (RP.exp.cancel) throw new Error('cancel');
       if (err) throw err;
       tick(i * 1000 / EXP_FPS, i ? dt : 0);
       cx.drawImage(view, 0, 0, W0, H0, 0, 0, W, H);
-      drawCaptions(cx, W, H, state.songT);
+      if (RP.intro) drawIntroOverlay(cx, W, H); else drawCaptions(cx, W, H, state.songT);
       const fr = new VideoFrame(ex, { timestamp: Math.round(i * 1e6 / EXP_FPS), duration: Math.round(1e6 / EXP_FPS) });
       venc.encode(fr, { keyFrame: i % (EXP_FPS * 3) === 0 }); fr.close();
       while (venc.encodeQueueSize > 3) await sleep0();
-      if (i % 6 === 0) { expUI('video', i / N * .9); await sleep0(); }
+      if (i % 6 === 0) { expStep('video', i / N); await sleep0(); }
     }
-    await venc.flush(); venc.close(); if (err) throw err;
+    await venc.flush(); venc.close(); if (err) throw err; expStep('video', 1);
     if (A) {
-      expUI('audio', .92); await sleep0();
-      const buf = await renderAudio(T0, dur, RP.exp.sfx);
+      const buf = await renderAudio(T0, dur, RP.exp.sfx, expStep, IL); expStep('render', 1);
       const aenc = new AudioEncoder({ output: (ch, meta) => muxer.addAudioChunk(ch, meta), error: e => { err = e; } });
       aenc.configure(A.cfg);
       const L = buf.getChannelData(0), R = buf.getChannelData(1), CH = 4800;
@@ -5302,9 +5434,12 @@ async function exportReplay(sgI) {
         const n = Math.min(CH, buf.length - i), data = new Float32Array(n * 2); data.set(L.subarray(i, i + n), 0); data.set(R.subarray(i, i + n), n);
         const ad = new AudioData({ format: 'f32-planar', sampleRate: 48000, numberOfFrames: n, numberOfChannels: 2, timestamp: Math.round(i / 48000 * 1e6), data });
         aenc.encode(ad); ad.close();
+        if ((i / CH) % 20 === 0) { if (RP.exp.cancel) throw new Error('cancel'); expStep('enc', i / buf.length); await sleep0(); }
+        while (aenc.encodeQueueSize > 40) await sleep0();
       }
-      await aenc.flush(); aenc.close(); if (err) throw err;
+      await aenc.flush(); aenc.close(); if (err) throw err; expStep('enc', 1);
     }
+    expLearn(RP.exp, IL + dur);
     muxer.finalize();
     const D = RP.data, part = sgI ? 'bloco' + sgI : 'partida';
     RP.exp.name = `galope-${D.ph ? 'discoteca' : 'buenos-aires'}-${part}-${land ? 'deitado' : 'em-pe'}.mp4`;
@@ -5313,7 +5448,7 @@ async function exportReplay(sgI) {
   } catch (e) {
     if (!(e && e.message === 'cancel')) { console.warn('exportar', e); RP.exp.error = String(e && e.message || e); }
   } finally {
-    state.exporting = false; state.manual = false;
+    state.exporting = false; state.manual = false; rpIntroClear();
     if (state.screen === 'play') state.screen = 'export';
     rpRestoreCam();
     if (state.replay) { state.replay = false; pairReset(); panoOff(true); BALL.target = BALL.w = 0; for (const pl of PL) { clearPoseFx(pl, false); pl.names.innerHTML = ''; } for (const f of fxL) killFx(f, .05); setTwo(false); setAnim(PL[0], 'skate', {}, performance.now() / 1000); }
@@ -5340,6 +5475,7 @@ function tick(nowMs, forceDt) {
   // escolha na roda e transformação têm cenas próprias
   if (state.screen === 'select' && LINE.scene) { selFrame(nowMs / 1000, dt); return; }
   if (state.screen === 'tf' || state.screen === 'ready2') { tfFrame(nowMs / 1000, dt); return; }
+  if (state.replay && RP.intro) { rpIntroFrame(nowMs / 1000, forceDt !== null ? forceDt : dt); return; }
   let tt;
   if (preview) { tt = preview.t; dt = 0; }
   else if (state.screen === 'play' && AC) {
@@ -5372,7 +5508,7 @@ function tick(nowMs, forceDt) {
   if (state.replay) directorCam(dt); else if (PANO.on) panoCamera(dt);
   if (RP.seek) return;
   render3D();
-  if (state.replay) { if (RP.seek) return; if (!RP.exp) { if (!RP.drag) $('#rpProg').style.width = (clamp((state.songT - RP.t0) / (RP.t1 - RP.t0), 0, 1) * 100).toFixed(1) + '%'; drawRpOverlay(); if (RP.orient === 'h' && PANO.rotQ !== TILT.q) panoLayout(); } }
+  if (state.replay) { if (RP.seek) return; if (!RP.exp) { if (!RP.drag) $('#rpProg').style.width = (rpFrac() * 100).toFixed(1) + '%'; drawRpOverlay(); if (RP.orient === 'h' && PANO.rotQ !== TILT.q) panoLayout(); } }
   else for (const pl of ACTIVE) { drawLanes(pl, tt); placeNames(pl); }
 }
 
@@ -5452,8 +5588,8 @@ window.UG = {
   line: () => ({ phi: LINE.cs && +LINE.cs.phi.toFixed(3), idle: +LINE.idle.toFixed(3), focus: LINE.focus, spin: +LINE.spin.toFixed(2), sides: [halfOf(0), halfOf(1)], who: PL.map(p => p.el.querySelector('.who').textContent) }),
   selState: () => ({ screen: state.screen, two: SEL.two, picks: SEL.picks.slice(), focus: LINE.focus, go: !$('#goT').disabled, chars: PL.map(p => p.charId) }),
   tf: () => ({ screen: state.screen, two: state.two, st: ACTIVE.map(pl => { const s = pl.stage; return s && { t: +s.t.toFixed(2), rate: s.rate, done: s.done, active: s.active, hold: s.hold, forms: s.R && Object.assign({}, s.R.state) }; }) }),
-  tfSet, tfRate: (i, r) => setRate(PL[i].stage, r), tfSkip: i => skipStage(PL[i].stage),
-  phase: i => { setPhase(i); return PHI; },
+  tfSet, tfCam: (i = 0) => { const st = PL[i].stage; return st && { t: st.t, p: st.cam.position.toArray(), fov: st.cam.fov, world: st.world.group.visible, disco: !!(st.disco && st.disco.group.visible), rb: st.rb.visible }; }, tfRate: (i, r) => setRate(PL[i].stage, r), tfSkip: i => skipStage(PL[i].stage),
+  phase: i => { if (i !== undefined) setPhase(i); return PHI; },
   rotRate: (i = 0) => +(PL[i].rotRate / TAU).toFixed(2), ghostsOn: (i = 0) => PL[i].ghosts.map(G => G.root.visible),
   ghost: o => { Object.assign(GHOST, o || {}); for (const pl of PL) pl.gStyle = null; return Object.assign({}, GHOST); },
   fluid: o => { Object.assign(FLUID, o || {}); return Object.assign({}, FLUID); },
@@ -5461,7 +5597,7 @@ window.UG = {
   ndc: () => ACTIVE.map(pl => { const q = pl.W.chest.clone().project(PANO.cam); return [+q.x.toFixed(2), +q.y.toFixed(2)]; }),
   occWhat() { const pls = state.two && PAIR.w > .5 ? PL : [PL[RP.fp]], out = []; for (const pt of occTargets(pls)) { _ocd.copy(pt).sub(PANO.cam.position); const d = _ocd.length(); _ocd.divideScalar(d); occRay.set(PANO.cam.position, _ocd); occRay.far = d - .35; for (const h of occRay.intersectObjects(occList(), false)) { const o = h.object, w = new THREE.Vector3(); o.getWorldPosition(w); out.push([o.geometry.type, w.toArray().map(v => +v.toFixed(1)), +h.distance.toFixed(1), pt.toArray().map(v => +v.toFixed(1))]); } } const pl0 = PL[RP.fp], pk = pickClearCam(pl0, occTargets([pl0]), PANO.cam.position); return { pick: pk && pk.toArray().map(v => +v.toFixed(1)), occT0: RP.occT0, cam: PANO.cam.position.toArray().map(v => +v.toFixed(1)), fp: RP.fp, tvcur: PL[RP.fp].tv.cur, virt: PL[RP.fp].tv.virt, hits: out }; },
   replayData: () => RP.data && { ph: RP.data.ph, two: RP.data.two, chars: RP.data.chars, n: RP.data.p.map(x => x.length), miss: RP.data.p.map(x => x.filter(r => r[0] === 2 || r[2] === 2).length) },
-  replay: (seg, o, c) => { if (o) RP.orient = o; if (c) RP.cam = c; playReplay(seg || 0); }, replayStop: () => replayStop(), rpx: () => ({ t0: RP.t0, t1: RP.t1, paused: state.paused, drag: !!RP.drag, seek: RP.seek, tilt: TILT.q, rotQ: PANO.rotQ }), rpSeek: f => rpSeek(f), rp: () => ({ on: !!state.replay, seg: RP.seg, fp: RP.fp, both: RP.both, mode: RP.mode, songT: state.songT, caps: RP.caps.length, score: ACTIVE.map(pl => pl.score), alt: !!RP.alt, angOff: +RP.angOff.toFixed(2), occ: blocked(PANO.cam.position, occTargets(state.two && PAIR.w > .5 ? PL : [PL[RP.fp]])), press: RP.press.length }),
+  replay: (seg, o, c) => { if (o) RP.orient = o; if (c) RP.cam = c; playReplay(seg || 0); }, replayStop: () => replayStop(), rpx: () => ({ t0: RP.t0, t1: RP.t1, paused: state.paused, drag: !!RP.drag, seek: RP.seek, tilt: TILT.q, rotQ: PANO.rotQ, intro: RP.intro && +RP.intro.t.toFixed(2), frac: +rpFrac().toFixed(3), songT: +state.songT.toFixed(2), mus: MUS.on && !MUS.end, stT: ACTIVE.map(pl => pl.stage ? +pl.stage.t.toFixed(2) : null) }), rpSeek: f => rpSeek(f), rp: () => ({ on: !!state.replay, seg: RP.seg, fp: RP.fp, both: RP.both, mode: RP.mode, songT: state.songT, caps: RP.caps.length, score: ACTIVE.map(pl => pl.score), alt: !!RP.alt, angOff: +RP.angOff.toFixed(2), occ: blocked(PANO.cam.position, occTargets(state.two && PAIR.w > .5 ? PL : [PL[RP.fp]])), press: RP.press.length }),
   exportReplay: async (seg, o, c) => { if (o) RP.orient = o; if (c) RP.cam = c; await exportReplay(seg || 0); const E = RP.exp; return E && { ok: !!E.blob, size: E.blob ? E.blob.size : 0, codec: E.codec, error: E.error, name: E.name }; },
   exportBlob: async () => { const E = RP.exp; if (!E || !E.blob) return null; const b = new Uint8Array(await E.blob.arrayBuffer()); let s = ''; for (let i = 0; i < b.length; i += 32768) s += String.fromCharCode.apply(null, b.subarray(i, i + 32768)); return btoa(s); }, ball: () => ({ target: BALL.target, w: +BALL.w.toFixed(3), at: BALL.at.toArray().map(v => +v.toFixed(2)) }),
   gap: () => +((((PL[1].base.s - PL[0].base.s) % PATH_L) + PATH_L) % PATH_L / PATH_L).toFixed(3)
