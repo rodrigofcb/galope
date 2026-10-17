@@ -1,8 +1,10 @@
-# Galope no Gelo · Galope en el Hielo
+# Galope no Gelo · Galope en el Hielo · Gallop on Ice · 冰上奔腾
 
 Jogo de ritmo para celular: unicórnios de pantufa patinam no gelo, numa praça de Buenos Aires, numa discoteca neon dos anos 70 ou numa pista de patins inline na areia da Praia da Barra, em Salvador, com visual de PlayStation 1.
 
 **Jogar:** https://rodrigofcb.github.io/galope/
+
+Em português, espanhol, inglês e chinês simplificado: as bandeiras na tela inicial (e em Opções) trocam o idioma de tudo, inclusive os nomes das manobras e as legendas do vídeo exportado. Na primeira vez, o jogo usa o idioma do aparelho (inglês se não for nenhum dos quatro).
 
 ## Como jogar
 - Toque o casco **rosa** (esquerda) e o **azul** (direita) quando cada estrela chegar ao anel. Na estrela longa, segure os dois.

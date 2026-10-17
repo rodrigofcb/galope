@@ -37,9 +37,9 @@
   --mint:#7dffc8;
   --teal:#5fe3e0;
   --outline:#2a0b4d;
-  --f-display:"Titan One","Arial Rounded MT Bold",ui-rounded,system-ui,sans-serif;
-  --f-body:"M PLUS Rounded 1c",ui-rounded,system-ui,sans-serif;
-  --f-pixel:"Silkscreen",ui-monospace,"Courier New",monospace;
+  --f-display:"Titan One","Arial Rounded MT Bold",ui-rounded,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --f-body:"M PLUS Rounded 1c",ui-rounded,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --f-pixel:"Silkscreen",ui-monospace,"Courier New","PingFang SC","Hiragino Sans GB","Noto Sans SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",monospace;
   color-scheme:dark;
 }
 html{height:100%;box-sizing:border-box;background:var(--deep)}
@@ -190,7 +190,7 @@ h2{font-family:var(--f-display);font-weight:400;font-size:30px;margin:0;filter:d
 #aboutS .hint{max-width:40ch}
 #aboutS .ver2{font-family:var(--f-pixel);font-size:10px;letter-spacing:.14em;color:var(--muted);margin:-6px 0 0;text-transform:uppercase}
 #aboutS a{color:var(--mint);text-decoration:underline;text-underline-offset:3px}
-.flag{width:46px;height:34px;padding:4px;border-radius:9px;border:2px solid transparent;background:rgba(20,10,50,.55);cursor:pointer;display:grid}
+.flag{width:42px;height:31px;padding:4px;border-radius:9px;border:2px solid transparent;background:rgba(20,10,50,.55);cursor:pointer;display:grid}
 .flag[aria-pressed=true]{border-color:var(--gold);background:rgba(255,214,96,.18)}
 .flag svg{width:100%;height:100%;display:block;border-radius:3px}
 .flag:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
@@ -403,7 +403,7 @@ div.opt{cursor:default}
   <p id="diag" hidden></p>
 
   <section id="title" class="screen">
-    <div class="flags" role="group" aria-label="Idioma / Idioma"><button class="flag" data-lang="pt"></button><button class="flag" data-lang="es"></button></div>
+    <div class="flags" role="group" aria-label="Idioma / Language / 语言"><button class="flag" data-lang="pt"></button><button class="flag" data-lang="es"></button><button class="flag" data-lang="en"></button><button class="flag" data-lang="zh"></button></div>
     <div>
       <div class="logo"><span class="l1" data-i18n="logo1">Galope</span><span class="l2" data-i18n="logo2">no Gelo</span></div>
       <p class="sub" data-i18n="sub"></p>
@@ -473,7 +473,7 @@ div.opt{cursor:default}
   <section id="options" class="screen panelS" hidden>
     <h2 data-i18n="options"></h2>
     <div class="opts">
-      <div class="opt"><span data-i18n="optLang"></span><div class="flags"><button class="flag" data-lang="pt"></button><button class="flag" data-lang="es"></button></div></div>
+      <div class="opt"><span data-i18n="optLang"></span><div class="flags"><button class="flag" data-lang="pt"></button><button class="flag" data-lang="es"></button><button class="flag" data-lang="en"></button><button class="flag" data-lang="zh"></button></div></div>
       <button class="opt sw" id="oMusic"><span data-i18n="optMusic"></span><i class="tg"></i></button>
       <button class="opt sw" id="oSfx"><span data-i18n="optSfx"></span><i class="tg"></i></button>
       <button class="opt sw" id="oVib"><span data-i18n="optVib"></span><i class="tg"></i></button>
@@ -630,7 +630,7 @@ const app = $('#app');
 /* ============================== idiomas ============================== */
 const STR = {
   pt: {
-    logo1: 'Galope', logo2: 'no Gelo', sub: 'Ritmo · patins · purpurina',
+    logo1: 'Galope', logo2: 'no Gelo', appName: 'Galope no Gelo', sub: 'Ritmo · patins · purpurina', pTag: 'J',
     p1: '1 jogador', p2: '2 jogadores', demo: 'Ver demonstração', options: 'Opções', album: 'Álbum',
     hint: 'Toque o casco <b>rosa</b> (esquerda) e o <b>azul</b> (direita) quando cada estrela chegar ao anel. Segure os dois na estrela longa.',
     points: 'PONTOS', block: 'Bloco', blocks: ['Básico', 'Avançado', 'Mágico'],
@@ -646,7 +646,7 @@ const STR = {
     calRes: 'Atraso medido: <b>{m} ms</b> (já aplicado).<br>Variação: <b>±{s} ms</b>, {q}.', calQ: ['ótima para jogo de ritmo', 'boa', 'alta; o atraso deste aparelho oscila'],
     back: 'Voltar', optLang: 'Idioma', optMusic: 'Música', optSfx: 'Efeitos sonoros', optVib: 'Vibração', optCam: 'Câmera', camTvL: 'TV', camChL: 'SEGUE',
     about: 'Sobre', aboutVer: 'Versão {v}',
-    aboutText: 'Jogo de ritmo de patinação artística com unicórnios, para jogar no celular, sozinho ou a dois. Duas fases, cada uma com o seu álbum de nomes de manobras, e replay da última partida com exportação em vídeo. Funciona no navegador, sem instalar nada, e pode ser adicionado à tela inicial.',
+    aboutText: 'Jogo de ritmo de patinação artística com unicórnios, para jogar no celular, sozinho ou a dois. Três fases, cada uma com o seu álbum de nomes de manobras, e replay da última partida com exportação em vídeo. Funciona no navegador, sem instalar nada, e pode ser adicionado à tela inicial.',
     aboutCredits: 'Código aberto: <a href="https://github.com/rodrigofcb/galope" target="_blank" rel="noopener">github.com/rodrigofcb/galope</a><br>Three.js e mp4-muxer (MIT); fontes Titan One, Silkscreen e M PLUS Rounded 1c (SIL OFL). Música e efeitos sonoros sintetizados no próprio jogo.',
     reset: 'Apagar progresso', resetQ: 'Apagar o álbum de nomes, o recorde e a calibração? Não dá para desfazer.', resetYes: 'Apagar', cancel: 'Cancelar', resetDone: 'Progresso apagado.',
     albumTitle: 'Álbum de nomes', albumCount: '{n} de {t} nomes descobertos', albumHint: 'Faça a sequência inteira sem errar para descobrir o nome de cada manobra. Os nomes a dois aparecem quando os dois jogadores chegam juntos, sem erro, às manobras com nome.', albumDuo: 'A dois',
@@ -666,7 +666,7 @@ const STR = {
     rpMaking: 'Gerando o vídeo… {p}%', rpAudio: 'Gravando o som… {p}%', rpDone: 'Vídeo pronto!', rpSave: 'Salvar ou compartilhar', rpClose: 'Fechar', rpFail: 'Não deu para gerar o vídeo neste aparelho.', close: 'Fechar'
   },
   es: {
-    logo1: 'Galope', logo2: 'en el Hielo', sub: 'Ritmo · patines · brillantina',
+    logo1: 'Galope', logo2: 'en el Hielo', appName: 'Galope en el Hielo', sub: 'Ritmo · patines · brillantina', pTag: 'J',
     p1: '1 jugador', p2: '2 jugadores', demo: 'Ver demostración', options: 'Opciones', album: 'Álbum',
     hint: 'Tocá el casco <b>rosa</b> (izquierda) y el <b>azul</b> (derecha) cuando cada estrella llegue al anillo. Mantené los dos en la estrella larga.',
     points: 'PUNTOS', block: 'Bloque', blocks: ['Básico', 'Avanzado', 'Mágico'],
@@ -682,7 +682,7 @@ const STR = {
     calRes: 'Retraso medido: <b>{m} ms</b> (ya aplicado).<br>Variación: <b>±{s} ms</b>, {q}.', calQ: ['excelente para un juego de ritmo', 'buena', 'alta; el retraso de este dispositivo oscila'],
     back: 'Volver', optLang: 'Idioma', optMusic: 'Música', optSfx: 'Efectos de sonido', optVib: 'Vibración', optCam: 'Cámara', camTvL: 'TV', camChL: 'SIGUE',
     about: 'Acerca de', aboutVer: 'Versión {v}',
-    aboutText: 'Juego de ritmo de patinaje artístico con unicornios, para jugar en el celular, solo o de a dos. Dos fases, cada una con su álbum de nombres de figuras, y repetición de la última partida con exportación en video. Funciona en el navegador, sin instalar nada, y se puede agregar a la pantalla de inicio.',
+    aboutText: 'Juego de ritmo de patinaje artístico con unicornios, para jugar en el celular, solo o de a dos. Tres fases, cada una con su álbum de nombres de figuras, y repetición de la última partida con exportación en video. Funciona en el navegador, sin instalar nada, y se puede agregar a la pantalla de inicio.',
     aboutCredits: 'Código abierto: <a href="https://github.com/rodrigofcb/galope" target="_blank" rel="noopener">github.com/rodrigofcb/galope</a><br>Three.js y mp4-muxer (MIT); fuentes Titan One, Silkscreen y M PLUS Rounded 1c (SIL OFL). Música y efectos de sonido sintetizados en el propio juego.',
     reset: 'Borrar progreso', resetQ: '¿Borrar el álbum de nombres, el récord y la calibración? No se puede deshacer.', resetYes: 'Borrar', cancel: 'Cancelar', resetDone: 'Progreso borrado.',
     albumTitle: 'Álbum de nombres', albumCount: '{n} de {t} nombres descubiertos', albumHint: 'Hacé la secuencia entera sin errores para descubrir el nombre de cada figura. Los nombres a dúo aparecen cuando los dos jugadores llegan juntos, sin errores, a las figuras con nombre.', albumDuo: 'A dúo',
@@ -700,6 +700,78 @@ const STR = {
     replay: 'Repetición', seeReplay: 'Ver repetición', rpWhole: 'Partida entera', rpOrient: 'Video', rpV: 'Vertical', rpH: 'Horizontal', rpCam: 'Cámara', rpTv: 'TV', rpChase: 'Sigue', rpFix: 'Fija', rpWatch: 'Mirar', rpExport: 'Exportar video',
     rpCamHint: 'TV corta entre cámaras de transmisión; Sigue va detrás del patinador; Fija es una sola cámara en la baranda, sin cortes, mostrando a los dos en el dúo. ', rpHint: 'Solo se guarda la última partida: al empezar otra, esta repetición se reemplaza. Exportá antes los videos que quieras guardar.',
     rpMaking: 'Generando el video… {p}%', rpAudio: 'Grabando el sonido… {p}%', rpDone: '¡Video listo!', rpSave: 'Guardar o compartir', rpClose: 'Cerrar', rpFail: 'No se pudo generar el video en este dispositivo.', close: 'Cerrar'
+  },
+  en: {
+    logo1: 'Gallop', logo2: 'on Ice', appName: 'Gallop on Ice', sub: 'Rhythm · skates · glitter', pTag: 'P',
+    p1: '1 player', p2: '2 players', demo: 'Watch demo', options: 'Options', album: 'Album',
+    hint: 'Tap the <b>pink</b> hoof (left) and the <b>blue</b> one (right) when each star reaches the ring. Hold both on the long star.',
+    points: 'POINTS', block: 'Block', blocks: ['Basic', 'Advanced', 'Magic'],
+    count: ['3', '2', '1', 'Go!'], end: 'Finish!', hold: 'HOLD', jp: 'PERFECT', jg: 'GOOD', jm: 'MISS',
+    camTv: 'TV CAM', camCh: 'CHASE CAM',
+    paused: 'Paused', cont: 'Resume', restart: 'Restart', menu: 'Menu',
+    judges: 'Judges’ scores · scale of 0 to 6.0', judge: 'JUDGE', ptsOf: 'points · {p} of the maximum possible',
+    sP: 'PERFECT', sG: 'GOOD', sM: 'MISS', sPo: 'POSES', sSy: 'SYNC',
+    found: 'Names discovered', again: 'Play again', next: 'Continue', best: 'Record', newBest: 'New record!',
+    calib: 'Calibrate rhythm', calHint: 'Tap anywhere on the screen along with each click. The first 4 clicks only set the beat; the next 8 are measured.',
+    calUse: 'Use headphones or the speaker, the way you will play.', calStart: 'Start', calMeasuring: 'Measuring…', calRepeat: 'Repeat',
+    calListen: 'Listen to the first 4 clicks and tap along with the next 8.', calFew: 'Too few taps were registered. Try again, tapping along with each click.',
+    calRes: 'Measured delay: <b>{m} ms</b> (already applied).<br>Variation: <b>±{s} ms</b>, {q}.', calQ: ['great for a rhythm game', 'good', 'high; this device’s delay fluctuates'],
+    back: 'Back', optLang: 'Language', optMusic: 'Music', optSfx: 'Sound effects', optVib: 'Vibration', optCam: 'Camera', camTvL: 'TV', camChL: 'CHASE',
+    about: 'About', aboutVer: 'Version {v}',
+    aboutText: 'A figure skating rhythm game with unicorns, to play on your phone, alone or as a pair. Three stages, each with its own album of move names, and a replay of the last match with video export. It runs in the browser with nothing to install, and it can be added to the home screen.',
+    aboutCredits: 'Open source: <a href="https://github.com/rodrigofcb/galope" target="_blank" rel="noopener">github.com/rodrigofcb/galope</a><br>Three.js and mp4-muxer (MIT); Titan One, Silkscreen and M PLUS Rounded 1c fonts (SIL OFL). Music and sound effects are synthesized by the game itself.',
+    reset: 'Erase progress', resetQ: 'Erase the album of names, the record and the calibration? This cannot be undone.', resetYes: 'Erase', cancel: 'Cancel', resetDone: 'Progress erased.',
+    albumTitle: 'Album of names', albumCount: '{n} of {t} names discovered', albumHint: 'Get through the whole sequence without a miss to discover the name of each move. Pair names appear when both players reach the named moves together, without a miss.', albumDuo: 'As a pair',
+    kinds: ['glide', 'spin', 'jump', 'final pose'],
+    pl: 'Player', readyHint: 'Lay the phone flat on the table. Your two hooves are on the edge on your side. If you are playing side by side, rotate the picture with ↺ ↻.',
+    orientFace: 'Face to face', orientSide: 'Side by side', rotL: 'Rotate the picture to the left', rotR: 'Rotate the picture to the right',
+    ready: 'Ready!', waiting: 'Waiting for the other…',
+    win: 'Victory!', lose: 'So close!', tie: 'Tie!', sync: 'In sync!',
+    pauseL: 'Pause', camL: 'Switch camera', viewL: 'Ice rink with unicorns skating',
+    selTitle: 'Who is going to skate?', transform: 'Transform!', skip: 'Skip', fastL: '2x speed',
+    selHint1: 'Drag to spin the wheel. Tap the character or the name to choose, and tap again to undo. During the transformation, 2× speeds it up and Skip goes straight to the rink.',
+    selHint2: 'Drag to spin the wheel. Player 1 chooses first, then player 2; tap again to undo. The drawn phone shows each player’s half of the screen, and Swap switches the sides.',
+    sideBot: 'bottom', sideTop: 'top', swap: 'Swap', swapL: 'Swap the sides of the screen', duoTag: '✦ as a pair ✦',
+    phTitle: 'Where shall we skate?', phase: 'Stage', ph1: 'Buenos Aires Rink', ph1s: 'Outdoor ice at the foot of the Obelisk.', ph2: 'Neon Disco', ph2s: '70s nightclub: lit-up floor, neon and a mirror ball.', ph3: 'Barra Beach', ph3s: 'Skates on the sand, at sunset by the Barra Lighthouse.',
+    replay: 'Replay', seeReplay: 'Watch replay', rpWhole: 'Whole match', rpOrient: 'Video', rpV: 'Portrait', rpH: 'Landscape', rpCam: 'Camera', rpTv: 'TV', rpChase: 'Chase', rpFix: 'Fixed', rpWatch: 'Watch', rpExport: 'Export video',
+    rpCamHint: 'TV cuts between broadcast cameras; Chase follows the skater; Fixed is a single camera on the rink wall, with no cuts, showing both skaters in pair mode. ', rpHint: 'Only the last match is saved: when you start another one, this replay is replaced. Export the videos you want to keep first.',
+    rpMaking: 'Making the video… {p}%', rpAudio: 'Recording the sound… {p}%', rpDone: 'Video ready!', rpSave: 'Save or share', rpClose: 'Close', rpFail: 'The video could not be made on this device.', close: 'Close'
+  },
+  zh: {
+    logo1: '奔腾', logo2: '冰上', appName: '冰上奔腾', sub: '节奏 · 溜冰 · 亮片', pTag: 'P',
+    p1: '单人', p2: '双人', demo: '观看演示', options: '设置', album: '图鉴',
+    hint: '星星到达圆环时，点击对应的<b>粉色</b>蹄子（左）或<b>蓝色</b>蹄子（右）。遇到长星星时，两个蹄子一起按住。',
+    points: '得分', block: '乐段', blocks: ['基础', '进阶', '魔法'],
+    count: ['3', '2', '1', '开始！'], end: '结束！', hold: '按住', jp: '完美', jg: '不错', jm: '失误',
+    camTv: '电视镜头', camCh: '跟随镜头',
+    paused: '已暂停', cont: '继续', restart: '重新开始', menu: '菜单',
+    judges: '裁判评分 · 0 至 6.0 分', judge: '裁判', ptsOf: '分 · 达到满分的 {p}',
+    sP: '完美', sG: '不错', sM: '失误', sPo: '定格', sSy: '同步',
+    found: '已发现的名称', again: '再玩一次', next: '下一关', best: '最高纪录', newBest: '新纪录！',
+    calib: '校准节奏', calHint: '每听到一声咔哒，就同时点击屏幕任意位置。前 4 声只用来定拍，后 8 声会被测量。',
+    calUse: '请使用耳机或扬声器，和平时游戏时一样。', calStart: '开始', calMeasuring: '测量中…', calRepeat: '重来',
+    calListen: '先听前 4 声，再跟着后 8 声点击。', calFew: '记录到的点击太少。请再试一次，跟着每一声点击。',
+    calRes: '测得延迟：<b>{m} 毫秒</b>（已应用）。<br>波动：<b>±{s} 毫秒</b>，{q}。', calQ: ['非常适合节奏游戏', '良好', '偏高；这台设备的延迟不稳定'],
+    back: '返回', optLang: '语言', optMusic: '音乐', optSfx: '音效', optVib: '振动', optCam: '镜头', camTvL: '电视', camChL: '跟随',
+    about: '关于', aboutVer: '版本 {v}',
+    aboutText: '一款独角兽花样滑冰节奏游戏，可以在手机上单人或双人游玩。共有三个关卡，每关都有自己的招式名称图鉴，还能回放上一局并导出视频。在浏览器中即可运行，无需安装，也可以添加到主屏幕。',
+    aboutCredits: '开源代码：<a href="https://github.com/rodrigofcb/galope" target="_blank" rel="noopener">github.com/rodrigofcb/galope</a><br>Three.js 与 mp4-muxer（MIT）；字体 Titan One、Silkscreen 与 M PLUS Rounded 1c（SIL OFL）。音乐与音效均由游戏实时合成。',
+    reset: '清除进度', resetQ: '要清除名称图鉴、最高纪录和校准吗？此操作无法撤销。', resetYes: '清除', cancel: '取消', resetDone: '进度已清除。',
+    albumTitle: '名称图鉴', albumCount: '已发现 {n} / {t} 个名称', albumHint: '整段动作零失误完成，就能发现每个招式的名称。两位玩家一起零失误到达有名称的招式时，会出现双人招式的名称。', albumDuo: '双人',
+    kinds: ['滑行', '旋转', '跳跃', '结束定格'],
+    pl: '玩家', readyHint: '把手机平放在桌上。你的两个蹄子在你这一侧的边缘。如果并排玩，用 ↺ ↻ 旋转画面。',
+    orientFace: '面对面', orientSide: '并排', rotL: '向左旋转画面', rotR: '向右旋转画面',
+    ready: '准备好了！', waiting: '等待对方…',
+    win: '胜利！', lose: '差一点！', tie: '平局！', sync: '同步！',
+    pauseL: '暂停', camL: '切换镜头', viewL: '独角兽在冰场上滑冰',
+    selTitle: '谁来滑冰？', transform: '变身！', skip: '跳过', fastL: '2 倍速',
+    selHint1: '拖动可旋转圆圈。点击角色或名字进行选择，再点一次可取消。变身时，2× 可加速，“跳过”直接进入冰场。',
+    selHint2: '拖动可旋转圆圈。玩家 1 先选，然后是玩家 2；再点一次可取消。图中的手机显示每人各自的半边屏幕，“交换”可互换两边。',
+    sideBot: '下方', sideTop: '上方', swap: '交换', swapL: '交换屏幕的两边', duoTag: '✦ 双人 ✦',
+    phTitle: '去哪里滑冰？', phase: '关卡', ph1: '布宜诺斯艾利斯冰场', ph1s: '方尖碑脚下的露天冰场。', ph2: '霓虹迪斯科', ph2s: '70 年代夜店：发光舞池、霓虹灯和镜面球。', ph3: '巴拉海滩', ph3s: '日落时分，在巴拉灯塔旁的沙滩上轮滑。',
+    replay: '回放', seeReplay: '观看回放', rpWhole: '整局', rpOrient: '视频', rpV: '竖屏', rpH: '横屏', rpCam: '镜头', rpTv: '电视', rpChase: '跟随', rpFix: '固定', rpWatch: '观看', rpExport: '导出视频',
+    rpCamHint: '“电视”在转播镜头之间切换；“跟随”跟在滑冰者身后；“固定”是围栏上的单一镜头，不切换，双人时同时拍到两人。', rpHint: '只保存最后一局：开始新的一局后，这段回放会被替换。想保留的视频请先导出。',
+    rpMaking: '正在生成视频… {p}%', rpAudio: '正在录制声音… {p}%', rpDone: '视频已完成！', rpSave: '保存或分享', rpClose: '关闭', rpFail: '这台设备无法生成视频。', close: '关闭'
   }
 };
 // nomes whimsical: [bloco][0 = 5ª manobra, 1 = 6ª manobra, 2 = pose final]
@@ -713,14 +785,24 @@ const NAMES1 = {
     ['Tornado de Brillantina', 'Lazo de Arcoíris', 'Suspiro de Algodón de Azúcar Eterno'],
     ['Vals de la Vía Láctea', 'Axel Porteño Duodécuplo', 'Calesita Cósmica Azucarada'],
     ['Pirueta Cuerno-Taladro', 'Salto Lunar en Pantuflas', 'Supernova de Peluche Arcoíris']
-  ]
+  ],
+  en: [['Glitter Tornado', 'Rainbow Lasso', 'Eternal Cotton Candy Sigh'],
+       ['Milky Way Waltz', 'Twelvefold Porteño Axel', 'Sugar-Coated Cosmic Carousel'],
+       ['Drill-Horn Pirouette', 'Slipper Moon Jump', 'Rainbow Plush Supernova']],
+  zh: [['亮片龙卷风', '彩虹套索', '永恒的棉花糖叹息'],
+       ['银河华尔兹', '布市十二周阿克塞尔跳', '糖霜宇宙旋转木马'],
+       ['钻头独角旋转', '拖鞋登月跳', '彩虹毛绒超新星']]
 };
 let NAMES = NAMES1;
 const FLAGS = {
   pt: '<svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" fill="#009b3a"/><path d="M14 2.2 25.6 10 14 17.8 2.4 10z" fill="#fedf00"/><circle cx="14" cy="10" r="4.6" fill="#002776"/><path d="M9.6 9.1c2.9-.6 6.2.1 8.7 1.9" stroke="#fff" stroke-width=".9" fill="none"/></svg>',
+  en: '<svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" fill="#fff"/><path d="M0 0h28v1.54H0zM0 3.08h28v1.54H0zM0 6.15h28v1.54H0zM0 9.23h28v1.54H0zM0 12.3h28v1.54H0zM0 15.38h28v1.54H0zM0 18.46h28V20H0z" fill="#b22234"/><rect width="12" height="10.77" fill="#3c3b6e"/><g fill="#fff"><circle cx="2" cy="2" r=".6"/><circle cx="5" cy="2" r=".6"/><circle cx="8" cy="2" r=".6"/><circle cx="11" cy="2" r=".6"/><circle cx="3.5" cy="4.2" r=".6"/><circle cx="6.5" cy="4.2" r=".6"/><circle cx="9.5" cy="4.2" r=".6"/><circle cx="2" cy="6.4" r=".6"/><circle cx="5" cy="6.4" r=".6"/><circle cx="8" cy="6.4" r=".6"/><circle cx="11" cy="6.4" r=".6"/><circle cx="3.5" cy="8.6" r=".6"/><circle cx="6.5" cy="8.6" r=".6"/><circle cx="9.5" cy="8.6" r=".6"/></g></svg>',
+  zh: '<svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" fill="#de2910"/><path d="M4.67 2.5l.88 2.71H8.4L6.1 6.88l.88 2.71-2.31-1.67-2.31 1.67.88-2.71-2.31-1.67h2.86z" fill="#ffde00"/><g fill="#ffde00"><circle cx="9.3" cy="2" r=".75"/><circle cx="11.2" cy="3.9" r=".75"/><circle cx="11.2" cy="6.6" r=".75"/><circle cx="9.3" cy="8.4" r=".75"/></g></svg>',
   es: '<svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" fill="#75aadb"/><rect y="6.67" width="28" height="6.67" fill="#fff"/><path d="M14 7.4v-.9M14 12.6v.9M11.4 10h-.9M16.6 10h.9M15.84 8.16l.42-.42M12.16 8.16l-.42-.42M15.84 11.84l.42.42M12.16 11.84l-.42.42" stroke="#f6b40e" stroke-width=".7"/><circle cx="14" cy="10" r="2" fill="#f6b40e" stroke="#85340a" stroke-width=".3"/></svg>'
 };
-const langGuess = () => { try { return (navigator.language || 'pt').toLowerCase().startsWith('es') ? 'es' : 'pt'; } catch (e) { return 'pt'; } };
+const LANG_NAME = { pt: 'Português', es: 'Español', en: 'English', zh: '中文' }, LOCALE = { pt: 'pt-BR', es: 'es-AR', en: 'en-US', zh: 'zh-CN' };
+const langGuess = () => { try { const l = (navigator.language || 'pt').toLowerCase().slice(0, 2); return STR_LANGS.includes(l) ? l : 'en'; } catch (e) { return 'pt'; } };
+const STR_LANGS = ['pt', 'es', 'en', 'zh'];
 const OPT = {
   lang: store.get('lang', null) || langGuess(),
   music: store.get('music', true) !== false, sfx: store.get('sfx', true) !== false, vib: store.get('vib', true) !== false,
@@ -736,10 +818,12 @@ function t(k, vars) {
   return s;
 }
 const nameOf = (b, i) => NAMES[OPT.lang][b][i];
-const fmt = n => Math.round(n).toLocaleString(OPT.lang === 'es' ? 'es-AR' : 'pt-BR');
+// chinês: sem espaços entre as palavras, quebra e anima letra por letra; no canvas, fonte do sistema para os ideogramas
+const isCJK = s => /[\u3000-\u9fff\uff00-\uffef]/.test(s), CANVAS_CJK = '"PingFang SC", "Noto Sans SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif';
+const fmt = n => Math.round(n).toLocaleString(LOCALE[OPT.lang] || 'pt-BR');
 
 /* ============================== mapa da música ============================== */
-const APP_VERSION = '18';   // subir junto com VERSION em sw.js a cada publicação
+const APP_VERSION = '19';   // subir junto com VERSION em sw.js a cada publicação
 const BPM = 120, BEAT = 60 / BPM, MEAS = BEAT * 4, S8 = BEAT / 2, S16 = BEAT / 4;
 const BLOCK_START = [4, 14, 24], TOTAL_MEAS = 36;
 // manobra de cada etapa do bloco: [tipo (0 deslize, 1 giro, 2 salto), nível dentro do tipo]
@@ -2303,7 +2387,13 @@ const DUO_NAMES1 = {
        ['Torre Chifre-Broca', 'Lua de Mel de Pantufa', 'Big Bang de Pelúcia']],
   es: [['Ronda de Brillantina', 'Vuelta al Mundo de Arcoíris', 'Corazón de Algodón de Azúcar'],
        ['Tango de la Vía Láctea', 'Axel Porteño Cruzado', 'Constelación de Bombones'],
-       ['Torre Cuerno-Taladro', 'Luna de Miel en Pantuflas', 'Big Bang de Peluche']]
+       ['Torre Cuerno-Taladro', 'Luna de Miel en Pantuflas', 'Big Bang de Peluche']],
+  en: [['Glitter Ring Dance', 'Rainbow Ferris Wheel', 'Cotton Candy Heart'],
+       ['Milky Way Tango', 'Crossed Porteño Axel', 'Bonbon Constellation'],
+       ['Drill-Horn Tower', 'Slipper Honeymoon', 'Plush Big Bang']],
+  zh: [['亮片圆圈舞', '彩虹摩天轮', '棉花糖之心'],
+       ['银河探戈', '布市交叉阿克塞尔跳', '夹心糖星座'],
+       ['钻头独角塔', '拖鞋蜜月', '毛绒大爆炸']]
 };
 let DUO_NAMES = DUO_NAMES1;
 const duoNameOf = (b, i) => DUO_NAMES[OPT.lang][b][i];
@@ -2464,7 +2554,13 @@ const NAMES_D = {
     ['Mortal Boogie de Lentejuelas', 'Trompo Bola de Espejos', 'Fiebre de Sábado de Peluche'],
     ['Espiral Neón Brillantinada', 'Salto a la Bola de Espejos', 'Spagat Boogie de Brillantina'],
     ['Molino de Pantufla Centelleante', 'Patinazo Arcoíris de Neón', 'Apoteosis de la Discoteca Galáctica']
-  ]
+  ],
+  en: [['Sequin Boogie Flip', 'Mirror Ball Spin', 'Plush Saturday Night Fever'],
+       ['Glittery Neon Spiral', 'Leap to the Mirror Ball', 'Glitter Boogie Splits'],
+       ['Sparkling Slipper Windmill', 'Neon Rainbow Slide', 'Galactic Disco Apotheosis']],
+  zh: [['亮片布吉空翻', '镜面球陀螺转', '毛绒周六夜狂热'],
+       ['亮片霓虹螺旋', '飞向镜面球', '亮片布吉劈叉'],
+       ['闪亮拖鞋风车', '霓虹彩虹滑步', '银河迪斯科巅峰']]
 };
 /* --------- remada da discoteca: braços dobrados balançando no tempo, quadril e cabeça junto --------- */
 const SKD = [
@@ -2660,7 +2756,13 @@ const DUO_NAMES_D = {
        ['Hélice de Pantufa', 'Barco de Neon nos Ombros', 'Apoteose do Globo de Espelhos']],
   es: [['Lanzamiento Boogie de Lentejuelas', 'Remolino de la Mano', 'Fiebre de Sábado a Dúo'],
        ['Trencito de Lentejuelas', 'Viaje a la Bola de la Mano', 'Caída de Discoteca'],
-       ['Hélice de Pantufla', 'Barco de Neón en los Hombros', 'Apoteosis de la Bola de Espejos']]
+       ['Hélice de Pantufla', 'Barco de Neón en los Hombros', 'Apoteosis de la Bola de Espejos']],
+  en: [['Sequin Boogie Throw', 'Hand-in-Hand Twirl', 'Saturday Night Fever for Two'],
+       ['Sequin Conga Line', 'Hand-in-Hand Trip to the Mirror Ball', 'Disco Dip'],
+       ['Slipper Propeller', 'Neon Boat on the Shoulders', 'Mirror Ball Apotheosis']],
+  zh: [['亮片布吉抛跳', '牵手旋转', '双人周六夜狂热'],
+       ['亮片小火车', '牵手飞向镜面球', '迪斯科下腰'],
+       ['拖鞋螺旋桨', '肩上的霓虹船', '镜面球巅峰']]
 };
 const DUO_MOVES_D = {}, DUO_POSES_D = [];
 { // bloco 1 · 5ª: Lançamento Boogie (no lugar do Mortal Boogie): A agacha e lança B, que dá o mortal grupado no alto e volta ao lado dele
@@ -2844,7 +2946,13 @@ const NAMES_B = {
     ['Serpentina de Coco Helado', 'Voltereta de Agua de Coco', 'Saludo al Atardecer'],
     ['Trompo de Cintita del Bonfim', 'Surfeada Arcoíris en la Arena', 'Sirena Encantada del Faro'],
     ['Salto de la Ballena Jorobada', 'Huracán de Axé Dorado', 'Apoteosis del Faro de Barra']
-  ]
+  ],
+  en: [['Iced Coconut Serpentine', 'Coconut Water Somersault', 'Sunset Salute'],
+       ['Bonfim Ribbon Spin', 'Rainbow Sand Surf', 'Enchanted Lighthouse Mermaid'],
+       ['Humpback Whale Leap', 'Golden Axé Hurricane', 'Barra Lighthouse Apotheosis']],
+  zh: [['冰椰子蛇形滑', '椰子水空翻', '日落致敬'],
+       ['邦芬彩带陀螺转', '沙滩彩虹冲浪', '灯塔的魔法美人鱼'],
+       ['座头鲸飞跃', '金色阿谢飓风', '巴拉灯塔巅峰']]
 };
 /* --------- remada de patins inline: passada longa, quadril solto e braços balançando no samba --------- */
 const SKB = [
@@ -3033,7 +3141,13 @@ const DUO_NAMES_B = {
        ['Arremesso da Baleia Jubarte', 'Furacão de Axé a Dois', 'Farol Humano da Barra']],
   es: [['Látigo de la Mano en la Arena', 'Salto Rango de la Marea', 'Saludo al Sol a Dúo'],
        ['Trompo de Cintitas en Espejo', 'Surfeada a Dúo en el Tubo', 'Sirena en Brazos del Faro'],
-       ['Lanzamiento de la Ballena Jorobada', 'Huracán de Axé a Dúo', 'Faro Humano de Barra']]
+       ['Lanzamiento de la Ballena Jorobada', 'Huracán de Axé a Dúo', 'Faro Humano de Barra']],
+  en: [['Hand-in-Hand Whip on the Sand', 'Tide Leapfrog', 'Sun Salute for Two'],
+       ['Mirrored Ribbon Spin', 'Pair Surf in the Barrel', 'Mermaid in the Lighthouse’s Arms'],
+       ['Humpback Whale Throw', 'Axé Hurricane for Two', 'Human Barra Lighthouse']],
+  zh: [['沙滩牵手甩鞭', '潮汐跳山羊', '双人日落致敬'],
+       ['镜像彩带陀螺转', '双人浪管冲浪', '灯塔怀抱中的美人鱼'],
+       ['座头鲸抛跳', '双人阿谢飓风', '巴拉人体灯塔']]
 };
 const DUO_MOVES_B = {}, DUO_POSES_B = [];
 { // bloco 1 · 5ª: Chicote de Mãos Dadas (no lugar da Serpentina): A gira plantado num avanço e B, presa à mão dele,
@@ -5078,7 +5192,7 @@ function renderChips() {
   $('#selHint').textContent = t(SEL.two ? 'selHint2' : 'selHint1');
   $('#select').classList.toggle('duo', SEL.two);
   // na dupla, a etiqueta de quem já foi escolhido mostra de qual jogador ele é
-  LINE.Rs.forEach((R, i) => { const j = SEL.picks.indexOf(CHARS[i].id), on = SEL.two && j >= 0; R.own.hidden = !on; if (on) { R.own.textContent = 'J' + (j + 1); R.own.className = 'own j' + (j + 1); } });
+  LINE.Rs.forEach((R, i) => { const j = SEL.picks.indexOf(CHARS[i].id), on = SEL.two && j >= 0; R.own.hidden = !on; if (on) { R.own.textContent = t('pTag') + (j + 1); R.own.className = 'own j' + (j + 1); } });
   applySides();
 }
 function pick(p, id) {
@@ -5091,7 +5205,7 @@ function unpick(p) { SEL.picks[p] = null; if (SEL.two) SEL.focus = p; focusOn(-1
 // dupla: metade da tela de cada jogador. O jogador 1 fica embaixo (quadro PL[0]), a não ser que os lados estejam invertidos.
 const halfOf = j => j ^ (OPT.swap ? 1 : 0);   // jogador (0 = J1) ↔ metade (0 = de baixo); a troca é a própria inversa
 function applySides() {
-  PL.forEach((pl, i) => { const j = halfOf(i) + 1, w = pl.el.querySelector('.who'); w.textContent = 'J' + j; w.className = 'who j' + j; });
+  PL.forEach((pl, i) => { const j = halfOf(i) + 1, w = pl.el.querySelector('.who'); w.textContent = t('pTag') + j; w.className = 'who j' + j; });
   for (const h of $$('#ready2 .hin')) { const j = halfOf(+h.dataset.p) + 1, el = h.querySelector('.who2'); el.className = 'who2 j' + j; el.querySelector('.pn').textContent = j; h.querySelector('.rdy').classList.toggle('alt', j === 2); }
   [0, 1].forEach(j => { const top = halfOf(j) === 1; $('#pick' + j + ' .mini').className = 'mini ' + (top ? 'top' : 'bot'); $('#pick' + j + ' .side').textContent = '· ' + t(top ? 'sideTop' : 'sideBot'); });
 }
@@ -5176,7 +5290,7 @@ function makePlayer(id) {
     tfx: q('.tfx'), tbox: q('.tbox'), waitEl: q('.wait'), b2x: q('.b2x'), bskip: q('.bskip'), stage: null
   };
   pl.g2 = pl.lc.getContext('2d');
-  q('.who').textContent = 'J' + (id + 1);
+  q('.who').textContent = t('pTag') + (id + 1);
   // transformação: 2× e Pular de cada lado, sem afetar o outro
   pl.b2x.onclick = () => { const st = pl.stage; if (st) setRate(st, st.rate > 1 ? 1 : 2); };
   pl.bskip.onclick = () => skipStage(pl.stage);
@@ -5387,10 +5501,10 @@ function showNameIn(box, text, tier, duo) {
   if (duo) { const tg = document.createElement('span'); tg.className = 'duoTag'; tg.textContent = t('duoTag'); wrap.appendChild(tg); }
   if (tier === 3) { const bu = document.createElement('div'); bu.className = 'burst'; wrap.appendChild(bu); }
   const el = document.createElement('div'); el.className = 'nm t' + tier; wrap.appendChild(el);
-  const words = text.split(' ');
+  const cj = isCJK(text), words = cj ? [...text] : text.split(' '), gap = cj ? '' : ' ', dw = cj ? S8 * .4 : S8;
   if (tier === 1) el.textContent = text;
-  else if (tier === 2) words.forEach((w, i) => { const s = document.createElement('span'); s.className = 'w'; s.textContent = w; s.style.animationDelay = (i * S8) + 's'; el.appendChild(s); if (i < words.length - 1) el.appendChild(document.createTextNode(' ')); });
-  else { let li = 0; words.forEach((w, i) => { const ws = document.createElement('span'); ws.className = 'w'; [...w].forEach((ch, j) => { const c = document.createElement('span'); c.className = 'c'; c.textContent = ch; c.style.animationDelay = `${(i * S8 + j * .03).toFixed(3)}s, ${(-li * .09).toFixed(2)}s`; li++; ws.appendChild(c); }); el.appendChild(ws); if (i < words.length - 1) el.appendChild(document.createTextNode(' ')); }); }
+  else if (tier === 2) words.forEach((w, i) => { const s = document.createElement('span'); s.className = 'w'; s.textContent = w; s.style.animationDelay = (i * dw) + 's'; el.appendChild(s); if (gap && i < words.length - 1) el.appendChild(document.createTextNode(gap)); });
+  else { let li = 0; words.forEach((w, i) => { const ws = document.createElement('span'); ws.className = 'w'; [...w].forEach((ch, j) => { const c = document.createElement('span'); c.className = 'c'; c.textContent = ch; c.style.animationDelay = `${(i * dw + j * .03).toFixed(3)}s, ${(-li * .09).toFixed(2)}s`; li++; ws.appendChild(c); }); el.appendChild(ws); if (gap && i < words.length - 1) el.appendChild(document.createTextNode(gap)); }); }
   box.appendChild(wrap);
   const life = tier === 1 ? 2.0 : tier === 2 ? 2.4 : 3.6;
   setTimeout(() => { wrap.classList.add('old'); setTimeout(() => wrap.remove(), 320); }, life * 1000);
@@ -5623,8 +5737,8 @@ function setLang(l) {
   if (state.screen === 'results' || state.screen === 'results2') { if (state.two) showResults2(); else { fillAlbum($('#rNames'), false); } }
 }
 function applyI18n() {
-  document.documentElement.lang = OPT.lang === 'es' ? 'es-AR' : 'pt-BR';
-  document.title = t('logo1') + ' ' + t('logo2');
+  document.documentElement.lang = LOCALE[OPT.lang] || 'pt-BR';
+  document.title = t('appName');
   $$('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
   $$('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
   $$('[data-i18n-aria]').forEach(el => el.setAttribute('aria-label', t(el.dataset.i18nAria)));
@@ -5726,7 +5840,7 @@ addEventListener('keydown', e => {
 addEventListener('keyup', e => { const k = KEYS[e.code]; const pl = k && ACTIVE[k[0]]; if (pl && state.screen === 'play') release(pl, k[1]); });
 document.addEventListener('visibilitychange', () => { if (document.hidden) pause(0); else if (state.screen === 'play') requestWake(); });
 
-$$('.flag').forEach(b => { b.innerHTML = FLAGS[b.dataset.lang]; b.setAttribute('aria-label', b.dataset.lang === 'es' ? 'Español' : 'Português'); b.onclick = () => setLang(b.dataset.lang); });
+$$('.flag').forEach(b => { b.innerHTML = FLAGS[b.dataset.lang]; b.setAttribute('aria-label', LANG_NAME[b.dataset.lang]); b.onclick = () => setLang(b.dataset.lang); });
 $('#b1p').onclick = () => openPhase(false);
 $('#b2p').onclick = () => openPhase(true);
 $$('.phc').forEach(b => b.onclick = () => { setPhase(+b.dataset.ph); openSelect(SEL.two); });
@@ -6091,7 +6205,7 @@ function drawPads(cx, W, H, T, k, bottom = 0) {
     const lx = l => x0 + l * (pw + gap) + pw / 2;
     // nome do personagem acima da pista de cada um
     if (two) {
-      cx.font = `${Math.round(15 * k)}px "Silkscreen"`; cx.lineWidth = 3.5 * k; cx.strokeStyle = '#2a0b4d'; cx.fillStyle = '#ffffff'; cx.globalAlpha = .9;
+      cx.font = `${Math.round(15 * k)}px "Silkscreen", ${CANVAS_CJK}`; cx.lineWidth = 3.5 * k; cx.strokeStyle = '#2a0b4d'; cx.fillStyle = '#ffffff'; cx.globalAlpha = .9;
       const nm = (CHAR_BY_ID[pl.charId] || { name: '' }).name.toUpperCase(); cx.strokeText(nm, x0 + pw + gap / 2, top - 12 * k); cx.fillText(nm, x0 + pw + gap / 2, top - 12 * k);
     }
     cx.globalAlpha = 1;
@@ -6283,8 +6397,8 @@ async function renderAudio(T0, dur0, sfx, prog = () => {}, IL = 0) {
 function drawIntroOverlay(cx, W, H) {
   const k = Math.min(W, H) / 720, f = RP.intro ? RP.intro.flash || 0 : 0;
   if (f > 0) { cx.globalAlpha = f; cx.fillStyle = '#ffffff'; cx.fillRect(0, 0, W, H); }
-  cx.globalAlpha = .7; cx.textAlign = 'left'; cx.textBaseline = 'middle'; cx.font = `${Math.round(16 * k)}px "Silkscreen"`; cx.lineJoin = 'round'; cx.lineWidth = Math.max(2, 3.2 * k); cx.strokeStyle = '#2a0b4d'; cx.fillStyle = '#ffffff';
-  const s = t('logo1').toUpperCase() + ' ' + t('logo2').toUpperCase(); cx.strokeText(s, 20 * k, 24 * k); cx.fillText(s, 20 * k, 24 * k);
+  cx.globalAlpha = .7; cx.textAlign = 'left'; cx.textBaseline = 'middle'; cx.font = `${Math.round(16 * k)}px "Silkscreen", ${CANVAS_CJK}`; cx.lineJoin = 'round'; cx.lineWidth = Math.max(2, 3.2 * k); cx.strokeStyle = '#2a0b4d'; cx.fillStyle = '#ffffff';
+  const s = t('appName').toUpperCase(); cx.strokeText(s, 20 * k, 24 * k); cx.fillText(s, 20 * k, 24 * k);
   cx.globalAlpha = 1; cx.textAlign = 'center';
 }
 function drawCaptions(cx, W, H, T) {
@@ -6292,9 +6406,9 @@ function drawCaptions(cx, W, H, T) {
   const life = tier => tier === 1 ? 2.0 : tier === 2 ? 2.4 : 3.6;
   const fade = (a, d) => clamp(a / .15, 0, 1) * clamp((d - a) / .3, 0, 1);
   const text = (s, x, y, size, fill, stroke = '#2a0b4d', font = 'Titan One') => {
-    cx.font = `${Math.round(size)}px "${font}"`; cx.lineJoin = 'round'; cx.lineWidth = Math.max(2, size * .2); cx.strokeStyle = stroke; cx.strokeText(s, x, y); cx.fillStyle = fill; cx.fillText(s, x, y);
+    cx.font = `${Math.round(size)}px "${font}", ${CANVAS_CJK}`; cx.lineJoin = 'round'; cx.lineWidth = Math.max(2, size * .2); cx.strokeStyle = stroke; cx.strokeText(s, x, y); cx.fillStyle = fill; cx.fillText(s, x, y);
   };
-  const wrap = (s, size, maxW) => { cx.font = `${Math.round(size)}px "Titan One"`; const out = []; let line = ''; for (const w of s.split(' ')) { const tryL = line ? line + ' ' + w : w; if (cx.measureText(tryL).width > maxW && line) { out.push(line); line = w; } else line = tryL; } if (line) out.push(line); return out; };
+  const wrap = (s, size, maxW) => { cx.font = `${Math.round(size)}px "Titan One", ${CANVAS_CJK}`; const out = []; let line = ''; const cj = isCJK(s), gap = cj ? '' : ' '; for (const w of cj ? [...s] : s.split(' ')) { const tryL = line ? line + gap + w : w; if (cx.measureText(tryL).width > maxW && line) { out.push(line); line = w; } else line = tryL; } if (line) out.push(line); return out; };
   cx.textAlign = 'center'; cx.textBaseline = 'middle';
   // cartão do bloco
   for (const c of RP.cards) { const a = T - c.t; if (a < 0 || a > c.dur) continue; cx.globalAlpha = fade(a, c.dur); if (c.small) text(c.small, cx0, H * (land ? .3 : .3), 30 * k, '#ffd660', '#2a0b4d', 'Silkscreen'); text(c.big, cx0, H * (land ? .3 : .3) + 56 * k, 62 * k, '#ffffff'); }
@@ -6311,7 +6425,7 @@ function drawCaptions(cx, W, H, T) {
     });
   }
   for (const s of RP.syncs) { const a = T - s.t; if (a < 0 || a > 1.5) continue; cx.globalAlpha = fade(a, 1.5); text(s.text, cx0, H - 52 * k - Math.min(170 * k, H * .26) - 30 * k - 14 * k * a, 40 * k, '#7dffc8'); }
-  cx.globalAlpha = .7; cx.textAlign = 'left'; text(t('logo1').toUpperCase() + ' ' + t('logo2').toUpperCase(), 20 * k, 24 * k, 16 * k, '#ffffff', '#2a0b4d', 'Silkscreen');
+  cx.globalAlpha = .7; cx.textAlign = 'left'; text(t('appName').toUpperCase(), 20 * k, 24 * k, 16 * k, '#ffffff', '#2a0b4d', 'Silkscreen');
   cx.globalAlpha = 1; cx.textAlign = 'center';
   drawPads(cx, W, H, T, k);
 }
@@ -6410,7 +6524,7 @@ async function exportReplay(sgI) {
 async function saveExport() {
   const E = RP.exp; if (!E || !E.blob) return;
   const file = new File([E.blob], E.name, { type: 'video/mp4' });
-  try { if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: t('logo1') + ' ' + t('logo2') }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+  try { if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: t('appName') }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
   const a = document.createElement('a'), url = URL.createObjectURL(E.blob); a.href = url; a.download = E.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000);
 }
 function closeExport() { RP.exp = null; openReplayScreen(); }
