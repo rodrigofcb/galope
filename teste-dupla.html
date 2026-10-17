@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#160d38">
+<title>Galope Mágico · teste da dupla no Wi-Fi</title>
+<style>
+:root{--deep:#0b0720;--card:#1c1240;--line:#3a2a6e;--ink:#f6f0ff;--muted:#b8a8e0;--pink:#ff5fae;--teal:#5fe3e0;--gold:#ffd660;--mint:#7dffc8;--red:#ff6b6b}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--deep);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+body{min-height:100dvh;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom))}
+main{max-width:460px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+h1{font-size:22px;margin:4px 0 0;letter-spacing:.01em}
+h1 small{display:block;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px}
+p{margin:0}
+.muted{color:var(--muted);font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.row{display:flex;gap:10px;align-items:center}
+.row>*{flex:1}
+button{font:inherit;font-weight:700;border:0;border-radius:12px;padding:13px 14px;color:#fff;background:var(--line);cursor:pointer;touch-action:manipulation}
+button.pink{background:var(--pink)}
+button.teal{background:var(--teal);color:#14102e}
+button.gold{background:var(--gold);color:#14102e}
+button:disabled{opacity:.45}
+input{font:inherit;font-size:24px;letter-spacing:.3em;text-align:center;width:100%;padding:10px;border-radius:12px;border:1px solid var(--line);background:#120b2c;color:var(--ink)}
+.code{font-size:44px;font-weight:800;letter-spacing:.25em;text-align:center;color:var(--gold)}
+.stats{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:14px}
+.stats b{font-variant-numeric:tabular-nums;text-align:right}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.who div{border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center;font-size:14px}
+.who div.on{border-color:var(--mint);color:var(--mint)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg button{background:#120b2c;border:1px solid var(--line);font-weight:600}
+.seg button[aria-pressed=true]{border-color:var(--gold);color:var(--gold)}
+#stage{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:var(--deep);z-index:5;padding:20px;text-align:center;user-select:none;-webkit-user-select:none}
+#stage.on{display:flex}
+#big{font-size:96px;font-weight:900;line-height:1}
+#flash{position:absolute;inset:0;background:var(--pink);opacity:0;pointer-events:none}
+#pad{width:min(78vw,320px);aspect-ratio:1;border-radius:50%;border:4px solid var(--teal);display:grid;place-items:center;font-weight:800;font-size:20px;color:var(--teal);position:relative;z-index:1;touch-action:none}
+#pad.hit{background:rgba(95,227,224,.25)}
+#stageMsg{font-size:15px;color:var(--muted);max-width:340px;position:relative;z-index:1}
+#bar{width:min(80vw,340px);height:6px;background:var(--line);border-radius:3px;overflow:hidden;position:relative;z-index:1}
+#bar i{display:block;height:100%;width:0;background:var(--gold)}
+.res{font-size:14px;display:flex;flex-direction:column;gap:6px}
+.res .big{font-size:22px;font-weight:800}
+.ok{color:var(--mint)}.warn{color:var(--gold)}.bad{color:var(--red)}
+.adj{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
+.adj b{text-align:center;font-variant-numeric:tabular-nums}
+.adj button{padding:8px 14px}
+details{font-size:14px;color:var(--muted)}
+summary{cursor:pointer}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <h1><small>Galope Mágico · teste</small>Dupla em dois celulares pelo Wi-Fi</h1>
+
+  <section id="sStart" class="card">
+    <p>Os dois celulares no mesmo Wi-Fi (ou um usando o roteador do outro). Um cria a sala; o outro entra com o código. A internet só é usada para o primeiro contato.</p>
+    <button class="pink" id="bHost">Criar sala</button>
+    <div class="row"><input id="iCode" inputmode="numeric" maxlength="4" placeholder="0000" autocomplete="off"><button class="teal" id="bJoin" style="flex:0 0 auto">Entrar</button></div>
+    <p class="muted" id="startMsg"></p>
+  </section>
+
+  <section id="sRoom" class="card" hidden>
+    <div id="roomHead"></div>
+    <div class="stats">
+      <span>Conexão</span><b id="vType">…</b>
+      <span>Ida e volta da mensagem</span><b id="vRtt">…</b>
+      <span>Relógios alinhados com precisão de</span><b id="vPrec">…</b>
+      <span>Atraso do som informado (este celular)</span><b id="vLat">…</b>
+      <span>Ajuste deste celular</span><b id="vAdj">0 ms</b>
+    </div>
+  </section>
+
+  <section id="sTests" class="card" hidden>
+    <p><b>1. Medir pelo microfone.</b> Coloquem os celulares lado a lado, com som alto. Os dois tocam 20 cliques (um agudo, outro mais grave) e o celular que mediu ouve os dois. O ajuste é aplicado sozinho no celular que entrou na sala. Repitam até a diferença ficar perto de zero.</p>
+    <button class="gold" id="bMeasure">Medir sincronia (usa o microfone)</button>
+    <div class="res" id="mRes"></div>
+  </section>
+
+  <section id="sPlay" class="card" hidden>
+    <p><b>2. Pronto! e música.</b> Como no jogo: a música só começa quando os dois tocam em Pronto. Durante a música, toquem no círculo junto com cada batida.</p>
+    <div class="who"><div id="wMe">Este celular: esperando</div><div id="wThem">Outro celular: esperando</div></div>
+    <button class="pink" id="bReady">Pronto!</button>
+    <div class="res" id="pRes"></div>
+  </section>
+
+  <section id="sAdj" class="card" hidden>
+    <details>
+      <summary>Ajuste manual deste celular</summary>
+      <p style="margin:8px 0">Atrasa (+) ou adianta (−) o som só deste celular. A medição pelo microfone já faz isso; use se quiser acertar de ouvido.</p>
+      <div class="adj"><button id="bAdjM">−5</button><b id="vAdj2">0 ms</b><button id="bAdjP">+5</button></div>
+      <p style="margin-top:8px"><button id="bAdj0" style="width:100%">Zerar ajuste</button></p>
+    </details>
+  </section>
+
+  <p class="muted" id="foot">Esta página é só um teste e fica fora do jogo. Nada aqui muda o jogo publicado.</p>
+</main>
+
+<div id="stage"><div id="flash"></div><div id="big"></div><div id="pad" hidden>Toque no ritmo</div><div id="bar"><i></i></div><p id="stageMsg"></p></div>
+
+<script src="vendor/peerjs.min.js"></script>
+<script>
+'use strict';
+/* ---------- utilidades ---------- */
+const $ = s => document.querySelector(s);
+const Q = new URLSearchParams(location.search);
+const SRV = Q.get('srv');   // só para testes: servidor de sinalização local (host:porta)
+const PEER_OPTS = SRV ? { host: SRV.split(':')[0], port: +SRV.split(':')[1], path: '/myapp', key: 'peerjs', secure: false, debug: 1 } : { debug: 1 };
+const PREFIX = 'galope-magico-dupla-';
+const BEAT = .5;   // 120 batidas por minuto, como no jogo
+const fmtMs = (v, sign) => (v === null || !isFinite(v)) ? '…' : (sign && v > 0 ? '+' : '') + Math.round(v) + ' ms';
+const median = a => { const b = [...a].sort((x, y) => x - y); return b.length ? (b.length % 2 ? b[b.length >> 1] : (b[b.length / 2 - 1] + b[b.length / 2]) / 2) : NaN; };
+const sd = a => { if (a.length < 2) return 0; const m = a.reduce((s, v) => s + v, 0) / a.length; return Math.sqrt(a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - 1)); };
+const store = { get(k, d) { try { const v = localStorage.getItem('galope.' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('galope.' + k, JSON.stringify(v)); } catch (e) {} } };
+
+/* ---------- estado ---------- */
+const S = {
+  host: false, code: '', peer: null, conn: null, open: false,
+  off: 0, rtt: NaN, prec: NaN, samples: [], pingId: 0,   // off = relógio da sala − relógio deste celular (ms)
+  adj: +store.get('wifiAdj', 0) || 0,                    // ms somados ao horário do som deste celular
+  meReady: false, themReady: false, running: false, run: 0,
+  taps: [], beats: null, myRes: null, theirRes: null, listener: false, onsets: [[], []]
+};
+
+/* ---------- som ---------- */
+let AC = null, OUT = null, NOISE = null;
+function audio() {
+  if (!AC) {
+    AC = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 'interactive' });
+    OUT = AC.createGain(); OUT.gain.value = .9; OUT.connect(AC.destination);
+    // fonte silenciosa: mantém a saída de som correndo, para o relógio do som andar sempre
+    const o = AC.createOscillator(), g = AC.createGain(); g.gain.value = 0; o.connect(g).connect(AC.destination); o.start();
+    const n = AC.createBuffer(1, AC.sampleRate, AC.sampleRate), d = n.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; NOISE = n;
+  }
+  if (AC.state !== 'running') AC.resume();
+  return AC;
+}
+const latMs = () => AC ? 1000 * ((AC.outputLatency || 0) || (AC.baseLatency || 0)) : NaN;
+// instante deste celular (performance.now, ms) → tempo do relógio do som em que a amostra precisa sair para ser OUVIDA nesse instante
+function perfToCtx(p) {
+  const ts = AC.getOutputTimestamp ? AC.getOutputTimestamp() : null;
+  if (ts && ts.performanceTime > 0 && ts.contextTime > 0) return ts.contextTime + (p - ts.performanceTime) / 1000;
+  return AC.currentTime + (p - performance.now()) / 1000 - ((AC.outputLatency || 0) || (AC.baseLatency || 0));
+}
+function tone(t, f, dur, vol, type = 'sine', f2, att = .002) {
+  const o = AC.createOscillator(), g = AC.createGain(); o.type = type; o.frequency.setValueAtTime(f, t); if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur * .8);
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + att); g.gain.exponentialRampToValueAtTime(.0005, t + dur);
+  o.connect(g).connect(OUT); o.start(t); o.stop(t + dur + .05);
+}
+function noise(t, dur, vol, hp) {
+  const s = AC.createBufferSource(), f = AC.createBiquadFilter(), g = AC.createGain(); s.buffer = NOISE; f.type = 'highpass'; f.frequency.value = hp;
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0005, t + dur); s.connect(f).connect(g).connect(OUT); s.start(t, Math.random() * .5); s.stop(t + dur + .05);
+}
+// cliques de medição: tom curto com ataque seco (2 ms); a sala toca 1800 Hz e quem entrou toca 3000 Hz
+const F_MEAS = [1800, 3000], N_MEAS = 20;
+function scheduleMeasure(t0) { const f = F_MEAS[S.host ? 0 : 1]; for (let k = 0; k < N_MEAS; k++) tone(t0 + k * BEAT, f, .08, .95, 'sine', 0, .004); return N_MEAS; }
+// música do teste: 4 cliques de entrada e 15 compassos de batida (bumbo, caixa, chimbal, baixo) com um clique em cada tempo
+const BASS = [[45, 45, 52, 45], [43, 43, 50, 43], [41, 41, 48, 41], [43, 43, 50, 47]];   // notas MIDI (Lá, Sol, Fá, Sol)
+const midi = n => 440 * Math.pow(2, (n - 69) / 12);
+function scheduleMusic(t0) {
+  const NBAR = 16, NB = NBAR * 4;
+  for (let k = 0; k < NB; k++) {
+    const t = t0 + k * BEAT, bar = k >> 2, b = k & 3;
+    tone(t, b === 0 ? 1760 : 1320, .035, k < 4 ? .7 : .28, 'square');   // clique em cada tempo (é o que se compara de ouvido)
+    if (k < 4) continue;
+    if (b === 0 || b === 2) tone(t, 130, .16, .95, 'sine', 45);
+    if (b === 1 || b === 3) { noise(t, .14, .45, 1500); tone(t, 200, .08, .3, 'triangle'); }
+    noise(t, .035, .14, 7000); noise(t + BEAT / 2, .035, .1, 7000);
+    const nt = BASS[bar % 4][b]; tone(t, midi(nt), .22, .38, 'triangle'); tone(t + BEAT / 2, midi(nt + 12), .12, .2, 'triangle');
+    if (k === NB - 4) noise(t, 1.4, .3, 4000);
+  }
+  return NB;
+}
+
+/* ---------- microfone: grava a medição inteira e analisa depois ----------
+   Cada celular toca 20 cliques, um a cada meio segundo, em tons diferentes. A gravação é "dobrada" no período de meio segundo
+   (média dos 20 períodos): o que não se repete nesse ritmo some, e cada tom vira um pico nítido no período médio.
+   O começo de cada clique é o ponto em que ele chega à metade do seu pico; a diferença entre os dois é o atraso entre os celulares. */
+const WORKLET = `
+class Rec extends AudioWorkletProcessor {
+  constructor() { super(); this.buf = new Float32Array(8192); this.n = 0; this.on = true; this.port.onmessage = e => { if (e.data === 'stop') { if (this.n) this.port.postMessage(this.buf.slice(0, this.n)); this.on = false; } }; }
+  process(inputs) {
+    if (!this.on) return false;
+    const x = inputs[0] && inputs[0][0], L = x ? x.length : 128;
+    if (x) this.buf.set(x, this.n); else this.buf.fill(0, this.n, this.n + L);
+    this.n += L; if (this.n >= 4096) { this.port.postMessage(this.buf.slice(0, this.n)); this.n = 0; }
+    return true;
+  }
+}
+registerProcessor('rec', Rec);`;
+let MIC = null, REC = null, WK = false;
+async function worklet() { if (!WK) { await AC.audioWorklet.addModule(URL.createObjectURL(new Blob([WORKLET], { type: 'application/javascript' }))); WK = true; } }
+function recStart(src) {
+  const node = new AudioWorkletNode(AC, 'rec'), z = AC.createGain(); z.gain.value = 0; src.connect(node); node.connect(z).connect(AC.destination);
+  const R = { node, z, src, chunks: [] }; REC = R; node.port.onmessage = e => R.chunks.push(e.data);
+}
+function recStop() {
+  if (!REC) return Promise.resolve(null);
+  const R = REC; REC = null; R.node.port.postMessage('stop');
+  return new Promise(res => setTimeout(() => { try { R.src.disconnect(R.node); R.node.disconnect(); R.z.disconnect(); } catch (e) {} let n = 0; for (const c of R.chunks) n += c.length; const out = new Float32Array(n); let o = 0; for (const c of R.chunks) { out.set(c, o); o += c.length; } res(out); }, 150));
+}
+async function micStart() {
+  audio(); await worklet();
+  if (!MIC) { const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } }); MIC = { stream, src: AC.createMediaStreamSource(stream) }; }
+}
+function micRelease() { if (MIC) { MIC.stream.getTracks().forEach(t => t.stop()); MIC = null; } }
+// envelope de uma faixa estreita (dois passa-faixa de 300 Hz em série: o tom de um celular quase não vaza na faixa do outro)
+function bandEnv(x, sr, fc) {
+  const BW = 300, Q = fc / BW, w = 2 * Math.PI * fc / sr, a = Math.sin(w) / (2 * Q), a0 = 1 + a, b0 = a / a0, b2 = -a / a0, a1 = -2 * Math.cos(w) / a0, a2 = (1 - a) / a0, rel = Math.exp(-1 / (.004 * sr));
+  const env = new Float32Array(x.length), st = [[0, 0, 0, 0], [0, 0, 0, 0]]; let e = 0;
+  for (let i = 0; i < x.length; i++) { let y = x[i]; for (const s of st) { const o = b0 * y + b2 * s[1] - a1 * s[2] - a2 * s[3]; s[1] = s[0]; s[0] = y; s[3] = s[2]; s[2] = o; y = o; } const v = Math.abs(y); e = v > e ? v : e * rel; env[i] = e; }
+  return env;
+}
+function halfRise(arr, from, to, P, back) {   // começo do clique: do pico, volta até cair abaixo da metade (P: período circular; 0 = linear)
+  const g = P ? i => arr[((i % P) + P) % P] : i => (i >= 0 && i < arr.length ? arr[i] : 0);
+  from = Math.round(from); to = Math.round(to);
+  let pk = 0, pi = from; for (let i = from; i < to; i++) { const v = g(i); if (v > pk) { pk = v; pi = i; } }
+  for (let i = pi; i > pi - back; i--) if (g(i) < pk * .5) return { at: i + 1, pk };
+  return { at: pi, pk };
+}
+function analyze(x, sr) {
+  const P = Math.round(BEAT * sr), nP = Math.floor(x.length / P); if (nP < 8) return { ok: false };
+  const out = { n: 0 }, prof = [], on = [];
+  for (let k = 0; k < 2; k++) {
+    const env = bandEnv(x, sr, F_MEAS[k]), pr = new Float32Array(P);
+    for (let i = 0; i < nP * P; i++) pr[i % P] += env[i];
+    const md = median(Array.from(pr.filter((_, i) => i % 8 === 0))), r = halfRise(pr, 0, P, P, .12 * sr);
+    prof.push({ env, pr, pk: r.pk / nP, pp: r.pk }); on.push(r.at); out['snr' + k] = r.pk / Math.max(md, 1e-9);
+  }
+  let d = on[1] - on[0]; d = ((d % P) + P) % P; if (d > P / 2) d -= P;
+  out.diff = d / sr * 1000;
+  // conferência de que são os cliques (tons puros) e não um barulho que pega todas as frequências: uma faixa no meio deve ficar fraca
+  { const env = bandEnv(x, sr, 2400), pr = new Float32Array(P); for (let i = 0; i < nP * P; i++) pr[i % P] += env[i];
+    const near = o => { let m = 0; for (let i = 0; i < .03 * sr; i++) m = Math.max(m, pr[(o + i) % P]); return m; };
+    out.tonal = near(on[0]) < prof[0].pp * .35 && near(((on[1] % P) + P) % P) < prof[1].pp * .35; }
+  // conferência período a período (variação)
+  const ds = [];
+  for (let r = 0; r < nP; r++) {
+    const a = halfRise(prof[0].env, r * P + on[0] - .02 * sr, r * P + on[0] + .06 * sr, 0, .03 * sr), b = halfRise(prof[1].env, r * P + on[0] + d - .02 * sr, r * P + on[0] + d + .06 * sr, 0, .03 * sr);
+    if (a.pk > prof[0].pk * .3 && b.pk > prof[1].pk * .3) ds.push((b.at - a.at) / sr * 1000);   // só períodos com os dois cliques
+  }
+  const good = ds.filter(v => Math.abs(v - out.diff) < 15);
+  out.n = Math.min(good.length, N_MEAS); out.spread = sd(good);
+  out.ok = out.snr0 > 6 && out.snr1 > 6 && out.n >= 8 && out.tonal;
+  return out;
+}
+/* ---------- conexão (PeerJS: a internet só para o primeiro contato; depois, direto pelo Wi-Fi) ---------- */
+function send(m) { if (S.conn && S.open) try { S.conn.send(m); } catch (e) {} }
+function makeHost(tries = 0) {
+  audio(); S.host = true; S.code = String(1000 + Math.floor(Math.random() * 9000));
+  $('#startMsg').textContent = 'Criando a sala…'; $('#bHost').disabled = $('#bJoin').disabled = true;
+  const p = new Peer(PREFIX + S.code, PEER_OPTS); S.peer = p;
+  p.on('open', () => { showRoom(); });
+  p.on('connection', c => { if (S.conn && S.open) { c.on('open', () => c.close()); return; } bindConn(c); });
+  p.on('error', e => { if (e.type === 'unavailable-id' && tries < 5) { p.destroy(); makeHost(tries + 1); return; } fail(e); });
+  p.on('disconnected', () => { if (!p.destroyed) p.reconnect(); });
+}
+function join() {
+  const code = $('#iCode').value.replace(/\D/g, ''); if (code.length !== 4) { $('#startMsg').textContent = 'Digite os 4 números que aparecem no outro celular.'; return; }
+  audio(); S.host = false; S.code = code; $('#startMsg').textContent = 'Conectando…'; $('#bHost').disabled = $('#bJoin').disabled = true;
+  const p = new Peer(PEER_OPTS); S.peer = p;
+  p.on('open', () => bindConn(p.connect(PREFIX + code, { serialization: 'json', reliable: true })));
+  p.on('error', e => fail(e));
+}
+function fail(e) {
+  const t = e && e.type;
+  $('#startMsg').textContent = t === 'peer-unavailable' ? 'Sala não encontrada. Confira o código.' : t === 'network' || t === 'server-error' || t === 'socket-error' ? 'Sem contato com o servidor de conexão. Confira a internet e tente de novo.' : t === 'browser-incompatible' ? 'Este navegador não faz conexão direta (WebRTC).' : 'Erro na conexão: ' + (t || e);
+  $('#bHost').disabled = $('#bJoin').disabled = false;
+  if (S.peer && !S.open) { try { S.peer.destroy(); } catch (x) {} S.peer = null; }
+}
+function bindConn(c) {
+  S.conn = c;
+  c.on('open', () => { S.open = true; showRoom(); onOpen(); });
+  c.on('data', onData);
+  c.on('close', () => { S.open = false; lost(); });
+  c.on('error', () => { S.open = false; lost(); });
+}
+function lost() {
+  $('#roomHead').innerHTML = '<p class="bad"><b>Conexão perdida.</b> Recarreguem a página nos dois celulares e conectem de novo.</p>';
+  for (const s of ['#sTests', '#sPlay']) $(s).hidden = true;
+  stopStage();
+}
+function showRoom() {
+  $('#sStart').hidden = true; $('#sRoom').hidden = false;
+  if (S.host && !S.open) $('#roomHead').innerHTML = `<p class="muted">Código da sala (digite no outro celular):</p><div class="code">${S.code}</div>`;
+  else $('#roomHead').innerHTML = `<p class="ok"><b>Conectados</b> · sala ${S.code} · este celular ${S.host ? 'criou a sala' : 'entrou na sala'}</p>`;
+}
+let pingT = null;
+function onOpen() {
+  for (const s of ['#sTests', '#sPlay', '#sAdj']) $(s).hidden = false;
+  updAdj(); updWho();
+  // quem entrou mede o relógio da sala o tempo todo (4 vezes por segundo)
+  if (!S.host) { clearInterval(pingT); pingT = setInterval(ping, 250); for (let i = 0; i < 12; i++) setTimeout(ping, i * 40); }
+  setTimeout(connType, 1500);
+  setInterval(() => { $('#vLat').textContent = fmtMs(latMs()); }, 1000);
+}
+async function connType() {
+  try {
+    const pc = S.conn.peerConnection, st = await pc.getStats(); let pair = null, loc = {};
+    st.forEach(r => { if (r.type === 'transport' && r.selectedCandidatePairId) pair = st.get(r.selectedCandidatePairId); });
+    if (!pair) st.forEach(r => { if (r.type === 'candidate-pair' && r.state === 'succeeded' && (r.nominated || r.selected)) pair = r; });
+    if (pair) loc = st.get(pair.localCandidateId) || {};
+    const ty = loc.candidateType;
+    $('#vType').textContent = ty === 'host' ? 'direta, pela rede local' : ty === 'srflx' || ty === 'prflx' ? 'direta, pela internet' : ty === 'relay' ? 'por um servidor (mais lenta)' : '…';
+    $('#vType').className = ty === 'host' ? 'ok' : ty === 'relay' ? 'warn' : '';
+  } catch (e) {}
+}
+function ping() { send({ t: 'ping', id: ++S.pingId, a: performance.now() }); }
+function onData(m) {
+  if (!m || !m.t) return;
+  if (m.t === 'ping') { send({ t: 'pong', id: m.id, a: m.a, b: performance.now() }); return; }
+  if (m.t === 'pong') {
+    const now = performance.now(), rtt = now - m.a, off = m.b - (m.a + now) / 2;
+    S.samples.push({ rtt, off }); if (S.samples.length > 40) S.samples.shift();
+    // as mensagens mais rápidas são as mais confiáveis: mediana dos 25% de menor ida e volta
+    const best = [...S.samples].sort((x, y) => x.rtt - y.rtt).slice(0, Math.max(3, S.samples.length >> 2));
+    S.off = median(best.map(s => s.off)); S.rtt = median(S.samples.map(s => s.rtt)); S.prec = best[best.length - 1].rtt / 2;
+    if (S.pingId % 4 === 0) send({ t: 'sync', rtt: S.rtt, prec: S.prec });
+    showSync(); return;
+  }
+  if (m.t === 'sync') { S.rtt = m.rtt; S.prec = m.prec; showSync(); return; }
+  if (m.t === 'ready') { S.themReady = m.v; updWho(); if (S.host) maybeGo(); return; }
+  if (m.t === 'measureReq') { if (S.host) goMeasure(m.from); return; }
+  if (m.t === 'go') { startRun(m); return; }
+  if (m.t === 'measured') { showMeasured(m.r, false); return; }
+  if (m.t === 'res') { S.theirRes = m.r; showPlayRes(); return; }
+  if (m.t === 'adjSet') { setAdj(S.adj + m.d, true); return; }
+}
+function showSync() { $('#vRtt').textContent = fmtMs(S.rtt); $('#vPrec').textContent = isFinite(S.prec) ? '± ' + Math.max(1, Math.round(S.prec)) + ' ms' : '…'; }
+// relógio da sala → relógio deste celular
+const hostToLocal = h => S.host ? h : h - S.off;
+const localToHost = l => S.host ? l : l + S.off;
+
+/* ---------- Pronto! e largada ---------- */
+function updWho() {
+  $('#wMe').textContent = 'Este celular: ' + (S.meReady ? 'pronto!' : 'esperando'); $('#wMe').className = S.meReady ? 'on' : '';
+  $('#wThem').textContent = 'Outro celular: ' + (S.themReady ? 'pronto!' : 'esperando'); $('#wThem').className = S.themReady ? 'on' : '';
+  $('#bReady').textContent = S.meReady ? 'Esperando o outro…' : 'Pronto!';
+}
+function toggleReady() { if (S.running) return; audio(); S.meReady = !S.meReady; updWho(); send({ t: 'ready', v: S.meReady }); if (S.host) maybeGo(); }
+function maybeGo() {
+  if (!(S.meReady && S.themReady) || S.running) return;
+  const at = performance.now() + 3200; S.run++;
+  const m = { t: 'go', mode: 'music', at, run: S.run }; send(m); startRun(m);
+}
+function goMeasure(listenerIsHost) {
+  if (S.running) return;
+  const at = performance.now() + 2600; S.run++;
+  const m = { t: 'go', mode: 'measure', at, run: S.run, lh: listenerIsHost }; send(m); startRun(m);
+}
+async function requestMeasure() {
+  if (S.running) return;
+  try { await micStart(); } catch (e) { $('#mRes').innerHTML = '<p class="bad">Sem acesso ao microfone. Permita o microfone para esta página e tente de novo.</p>'; return; }
+  S.listener = true; $('#mRes').innerHTML = '<p class="muted">Ouvindo…</p>';
+  if (S.host) goMeasure(true); else send({ t: 'measureReq', from: false });
+}
+// cada celular agenda o som para ser OUVIDO no mesmo instante do relógio da sala (mais o seu ajuste)
+function startRun(m) {
+  audio(); S.running = true; S.run = m.run; S.mode = m.mode; S.myRes = S.theirRes = null; S.taps = [];
+  if (m.mode === 'measure') { S.listener = (m.lh === S.host); if (S.listener && MIC) recStart(MIC.src); }
+  const local0 = hostToLocal(m.at) + S.adj, t0 = perfToCtx(local0);
+  const n = m.mode === 'measure' ? scheduleMeasure(t0) : scheduleMusic(t0);
+  S.beats = { local0, n };
+  showStage(m.mode);
+  const endLocal = local0 + n * BEAT * 1000 + 900;
+  const tick = () => {
+    if (!S.running) return;
+    const now = performance.now(), el = now - local0;
+    if (el < 0) { $('#big').textContent = Math.ceil(-el / 1000); $('#bar i').style.width = '0'; }
+    else { const k = Math.floor(el / (BEAT * 1000)), ph = el / (BEAT * 1000) - k; $('#big').textContent = m.mode === 'measure' ? (k < n ? k + 1 : '') : ''; $('#flash').style.opacity = k < n ? String(Math.max(0, .5 - ph * 1.6) * (k % 4 === 0 ? 1 : .5)) : '0'; $('#bar i').style.width = Math.min(100, 100 * el / (n * BEAT * 1000)) + '%'; }
+    if (now > endLocal) { endRun(); return; }
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+function endRun() {
+  S.running = false; stopStage();
+  if (S.mode === 'measure') {
+    if (S.listener) { $('#mRes').innerHTML = '<p class="muted">Calculando…</p>'; recStop().then(x => { const r = x ? analyze(x, AC.sampleRate) : { ok: false }; showMeasured(r, true); send({ t: 'measured', r }); }); S.listener = false; }
+    else $('#mRes').innerHTML = '<p class="muted">O outro celular está calculando…</p>';
+  } else {
+    S.meReady = false; S.themReady = false; updWho();
+    const e = S.taps.filter(v => Math.abs(v) < 220);
+    S.myRes = { n: e.length, mean: e.length ? e.reduce((s, v) => s + v, 0) / e.length : NaN, sd: sd(e) };
+    send({ t: 'res', r: S.myRes }); showPlayRes();
+  }
+}
+function showStage(mode) {
+  $('#stage').classList.add('on'); $('#pad').hidden = mode !== 'music';
+  $('#stageMsg').textContent = mode === 'measure' ? 'Medindo: deixem os dois celulares lado a lado, em silêncio.' : 'Toque no círculo junto com cada batida.';
+}
+function stopStage() { $('#stage').classList.remove('on'); $('#flash').style.opacity = '0'; }
+// toque no círculo: erro em relação à batida mais próxima (só da 5ª batida em diante; as 4 primeiras são a entrada)
+$('#pad').addEventListener('pointerdown', e => {
+  e.preventDefault(); if (!S.running || S.mode !== 'music') return;
+  const t = e.timeStamp && e.timeStamp > 1e3 ? e.timeStamp : performance.now(), k = Math.round((t - S.beats.local0) / (BEAT * 1000));
+  if (k >= 4 && k < S.beats.n) S.taps.push(t - (S.beats.local0 + k * BEAT * 1000));
+  $('#pad').classList.add('hit'); setTimeout(() => $('#pad').classList.remove('hit'), 90);
+});
+
+/* ---------- resultados ---------- */
+function verdict(ms) { const a = Math.abs(ms); return a <= 10 ? ['ok', 'excelente: soa como um só'] : a <= 25 ? ['ok', 'bom: imperceptível no jogo'] : a <= 50 ? ['warn', 'dá para sentir; meçam de novo'] : ['bad', 'fora de sincronia']; }
+function showMeasured(r, iMeasured) {
+  if (r && r.snr0 > 6 && r.snr1 > 6 && r.tonal === false) { $('#mRes').innerHTML = '<p class="bad">Tinha outro som no ritmo dos cliques (música, conversa, batidas). Façam silêncio e meçam de novo.</p>'; return; }
+  if (!r || !r.ok) { const q = v => v > 6 ? 'ouvido' : 'não ouvido'; $('#mRes').innerHTML = `<p class="bad">Não deu para ouvir bem os dois celulares (clique da sala: ${r ? q(r.snr0) : '?'}; do outro: ${r ? q(r.snr1) : '?'}). Aumentem o volume, deixem os celulares lado a lado e façam silêncio.</p>`; return; }
+  const [cls, txt] = verdict(r.diff), who = r.diff > 0 ? 'o celular que entrou na sala soou depois' : 'o celular que entrou na sala soou antes';
+  let h = `<span class="big ${cls}">${fmtMs(Math.abs(r.diff))}</span><span>${Math.abs(r.diff) < 1 ? 'sem diferença' : who} · ${txt}</span><span class="muted">${r.n} de 20 cliques conferidos · variação ${fmtMs(r.spread)} · medido no celular que ${iMeasured === S.host ? 'criou' : 'entrou na'} sala</span>`;
+  // o ajuste vai para quem entrou na sala (adianta ou atrasa o som dele)
+  if (Math.abs(r.diff) >= 2 && !S.host) { setAdj(S.adj - r.diff, true); h += `<span class="ok">Ajuste aplicado neste celular: ${fmtMs(-r.diff, true)} (total ${fmtMs(S.adj, true)}). Meçam de novo para conferir.</span>`; }
+  else if (Math.abs(r.diff) >= 2) h += `<span class="muted">O outro celular recebeu o ajuste de ${fmtMs(-r.diff, true)}. Meçam de novo para conferir.</span>`;
+  $('#mRes').innerHTML = h;
+}
+function showPlayRes() {
+  const me = S.myRes, th = S.theirRes; if (!me) return;
+  const line = (n, r) => r ? `<span>${n}: ${r.n} toques · média ${fmtMs(r.mean, true)} · variação ${fmtMs(r.sd)}</span>` : `<span class="muted">${n}: esperando…</span>`;
+  let h = line('Este celular', me) + line('Outro celular', th);
+  if (me && th && me.n >= 6 && th.n >= 6) { const d = me.mean - th.mean, [cls] = verdict(d); h += `<span class="${cls}">Diferença entre as médias: ${fmtMs(Math.abs(d))} (inclui o jeito de cada um tocar)</span>`; }
+  else if (me && th) h += '<span class="muted">Poucos toques para comparar. Toquem junto com cada batida na próxima rodada.</span>';
+  $('#pRes').innerHTML = h;
+}
+function setAdj(v, silent) { S.adj = Math.round(v); store.set('wifiAdj', S.adj); updAdj(); }
+function updAdj() { $('#vAdj').textContent = fmtMs(S.adj, true); $('#vAdj2').textContent = fmtMs(S.adj, true); }
+
+/* ---------- botões ---------- */
+$('#bHost').onclick = () => makeHost();
+$('#bJoin').onclick = join;
+$('#iCode').addEventListener('keydown', e => { if (e.key === 'Enter') join(); });
+$('#bReady').onclick = toggleReady;
+$('#bMeasure').onclick = requestMeasure;
+$('#bAdjM').onclick = () => setAdj(S.adj - 5);
+$('#bAdjP').onclick = () => setAdj(S.adj + 5);
+$('#bAdj0').onclick = () => setAdj(0);
+if (!window.Peer || !window.RTCPeerConnection) { $('#startMsg').textContent = 'Este navegador não faz conexão direta (WebRTC). Use o Chrome.'; $('#bHost').disabled = $('#bJoin').disabled = true; }
+updAdj();
+
+// ganchos de teste (servidor local e microfone simulado)
+window.T = {
+  S, analyze, perfToCtx: p => audio() && perfToCtx(p),
+  // autoteste do detector: este celular toca os dois cliques (o segundo atrasado de d ms) para dentro do detector, sem microfone
+  async selfTest(d, noise = 0) {
+    audio(); await worklet(); const mix = AC.createGain(); recStart(mix);
+    if (noise) { const ns = AC.createBufferSource(), g = AC.createGain(); ns.buffer = NOISE; ns.loop = true; g.gain.value = noise; ns.connect(g).connect(mix); ns.start(); setTimeout(() => ns.stop(), 11500); }
+    const old = OUT; OUT = mix; const t0 = AC.currentTime + .3;
+    for (let k = 0; k < N_MEAS; k++) { tone(t0 + k * BEAT, F_MEAS[0], .08, .5 + .4 * Math.random(), 'sine', 0, .004); tone(t0 + k * BEAT + d / 1000, F_MEAS[1], .08, .15 + .5 * Math.random(), 'sine', 0, .004); }
+    OUT = old; await new Promise(r => setTimeout(r, N_MEAS * BEAT * 1000 + 700)); const x = await recStop(); return analyze(x, AC.sampleRate);
+  }
+};
+</script>
+</body>
+</html>
