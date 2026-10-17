@@ -3,7 +3,7 @@
 // Subir VERSION a cada publicação.
 const VERSION = 'galope-v20';
 const SHELL = [
-  './', 'index.html', 'manifest.webmanifest', 'vendor/three.min.js', 'vendor/mp4-muxer.min.js',
+  './', 'index.html', 'manifest.webmanifest', 'mp-net.js', 'vendor/three.min.js', 'vendor/mp4-muxer.min.js', 'vendor/peerjs.min.js',
   'fonts/titan-one-latin-400-normal.woff2', 'fonts/silkscreen-latin-400-normal.woff2',
   'fonts/m-plus-rounded-1c-latin-500-normal.woff2', 'fonts/m-plus-rounded-1c-latin-800-normal.woff2',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'

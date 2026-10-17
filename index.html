@@ -216,6 +216,10 @@ h2{font-family:var(--f-display);font-weight:400;font-size:30px;margin:0;filter:d
 #results2 .half{background:var(--panel)}
 #results2 .hin{gap:8px;justify-content:safe center}
 #results2 .half.flip{background:rgba(10,30,44,.9)}
+/* dupla em dois celulares: os dois cartões em pé, o deste celular em cima e destacado; botões só nele */
+#results2.mp .half.flip{rotate:none;background:var(--panel);box-shadow:inset 0 0 0 3px rgba(255,214,96,.5)}
+#results2.mp .half:not(.flip) .menu.row,#results2.mp .r2replay{display:none}
+#results2.mp .rc .eyebrow{margin-bottom:2px}
 .badge{font-family:var(--f-display);font-size:34px;margin:0;color:var(--gold);filter:drop-shadow(2px 0 0 var(--outline)) drop-shadow(-2px 0 0 var(--outline)) drop-shadow(0 3px 0 var(--outline))}
 .badge.lose{color:var(--ice)}
 
@@ -391,6 +395,93 @@ div.opt{cursor:default}
 .album.big li{font-size:15px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.07)}
 @media (prefers-reduced-motion:reduce){.burst{animation:none}.nm.t3 .c{animation:drop .3s both}}
 /* @@MP-CSS@@ (dupla em dois celulares: estilos da interface entram aqui) */
+/* MP-UI css begin */
+/* Dupla em dois celulares: escolha do modo, sala, espera, aviso, conexão perdida e placar do parceiro */
+/* escolha do modo: cartões como os das fases */
+.mpcs{display:grid;gap:12px;width:min(100%,330px)}
+.mpc{display:grid;grid-template-columns:84px 1fr;gap:14px;align-items:center;padding:12px 14px 12px 10px;border-radius:16px;border:2px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:var(--ink);text-align:left;cursor:pointer;font:inherit;min-height:96px}
+.mpc .art{width:84px;height:auto;display:block}
+.mpc .pht{gap:5px}
+.mpc .pht b{font-size:20px}
+.mpc .pht em{font-size:13px}
+.mpc:active{translate:0 2px}
+.mpc:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.mpc.wifi{border-color:rgba(95,227,224,.55);box-shadow:0 0 14px rgba(95,227,224,.2)}
+.mpc.wifi .pht b{color:#c9fbfa}
+/* sala: um bloco por estado */
+.mpst{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%}
+.mpst .menu{align-items:stretch}
+.mpBox{display:flex;flex-direction:column;align-items:center;gap:12px}
+.mpOr{display:flex;align-items:center;gap:10px;width:min(100%,300px);margin:4px 0 -2px;font:400 10px var(--f-pixel);letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.mpOr::before,.mpOr::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.2)}
+.mpJoin{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;width:min(100%,300px)}
+.mpJoin .btn{flex:1 1 96px}
+.mpIn{flex:0 1 150px;min-width:0;width:150px;font:400 26px var(--f-pixel);letter-spacing:.3em;text-indent:.3em;text-align:center;padding:10px 4px;border-radius:14px;border:2px solid rgba(255,255,255,.25);background:rgba(0,0,0,.3);color:var(--ink);outline:none;user-select:text;-webkit-user-select:text;touch-action:manipulation}
+.mpIn:focus{border-color:var(--gold);background:rgba(255,214,96,.08)}
+.mpIn::placeholder{color:rgba(255,255,255,.22)}
+.mpst .hint,.mpMB .hint,.mpRes,.mpErr,.mpRow,.mpCard .hint,.mpc em{text-wrap:pretty}
+.mpErr{margin:0;min-height:1.45em;max-width:34ch;font-size:13px;line-height:1.45;color:#ff8fae}
+/* código da sala em plaquinhas, como as notas dos juízes */
+.mpCode{justify-content:center;margin:4px 0 6px}
+.mpCode .jc{width:min(60px,17cqw);padding:12px 0 10px}
+.mpCode .jc b{font-size:min(38px,10.5cqw);line-height:1}
+.mpCode.sm .jc{width:min(46px,13cqw);padding:8px 0 7px}
+.mpCode.sm .jc b{font-size:min(26px,8cqw)}
+/* linha de espera com o anel girando */
+.mpRow{display:flex;align-items:center;justify-content:center;gap:10px;margin:0;font-size:14px;line-height:1.35;color:var(--muted);max-width:34ch;text-align:left}
+.mpSpin{display:block;flex:none;width:22px;height:22px;border-radius:50%;background:conic-gradient(var(--pink),var(--gold),var(--mint),var(--blue),rgba(79,134,255,0));-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 4.5px),#000 calc(100% - 3.5px));mask:radial-gradient(farthest-side,transparent calc(100% - 4.5px),#000 calc(100% - 3.5px));animation:spin .9s linear infinite}
+.mpSpin.big{width:54px;height:54px;-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 8px),#000 calc(100% - 7px));mask:radial-gradient(farthest-side,transparent calc(100% - 8px),#000 calc(100% - 7px))}
+@media (prefers-reduced-motion:reduce){.mpSpin{animation-duration:2.4s}}
+/* conectados: situação da conexão */
+.mpWho{margin:-6px 0 0;font:400 10px var(--f-pixel);letter-spacing:.08em;color:var(--muted);text-transform:uppercase;line-height:1.5}
+.mpNet{display:flex;flex-direction:column;align-items:center;gap:8px;width:min(100%,330px)}
+.mpLink{display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;column-gap:8px;margin:0;font-size:13px;color:var(--muted)}
+.mpLink b{font-weight:800;font-size:15px;color:var(--ink)}
+.mpLink b.ok{color:var(--mint)}
+.mpLink b.warn{color:var(--gold)}
+.mpStats{grid-template-columns:1fr 1fr;width:100%}
+.mpStats dt{line-height:1.3}
+.mpStats dd{font-size:15px}
+.mpGo{gap:10px;width:min(100%,300px)}
+.mpGo .btn{font-size:24px;padding:15px 18px}
+/* medição da sincronia (opcional, recolhida) */
+.mpMeas{display:flex;flex-direction:column;width:min(100%,330px);border-radius:14px;background:rgba(255,255,255,.06)}
+.mpMeas .opt{background:none;width:100%}
+.mpMeas .opt span{flex:1}
+.mpChev{flex:none;width:9px;height:9px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);rotate:45deg;translate:0 -2px;transition:rotate .2s,translate .2s}
+.mpMeas .opt[aria-expanded=true] .mpChev{rotate:225deg;translate:0 2px}
+.mpMB{display:flex;flex-direction:column;align-items:center;gap:12px;padding:0 14px 16px}
+.mpMB .hint{font-size:12.5px}
+.mpProg{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%}
+.mpProg .expTrack{width:100%}
+.mpRes{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:14px;line-height:1.4;max-width:34ch}
+.mpRes small{font-size:12px;color:var(--muted)}
+.mpBig{font:400 36px/1.05 var(--f-display);filter:drop-shadow(0 3px 0 var(--outline))}
+.mpRes .ok{color:var(--mint)}
+.mpRes .warn{color:var(--gold)}
+.mpRes .bad{color:#ff8fae}
+.mpAdj{display:flex;flex-direction:column;align-items:center;gap:6px;padding-top:4px;border-top:1px solid rgba(255,255,255,.1);width:100%}
+.mpAdj .lbl{font:400 10px var(--f-pixel);letter-spacing:.1em;color:var(--muted);text-transform:uppercase;padding-top:8px}
+.mpAdj .nudge{flex-wrap:wrap;justify-content:center;gap:8px}
+.mpAdj .btn{white-space:nowrap;padding-inline:12px}
+.mpAdj .nudge b{font-weight:400;min-width:7ch;text-align:center;font-variant-numeric:tabular-nums}
+/* camadas sobre todas as telas: espera, aviso e conexão perdida (fora de screens) */
+.mpOver{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:max(28px,env(safe-area-inset-top)) 24px calc(max(22px,env(safe-area-inset-bottom)) + 60px);background:radial-gradient(130% 70% at 50% 45%,rgba(11,7,32,.96) 40%,rgba(11,7,32,.88));text-align:center;touch-action:none}
+.mpWaitT{margin:0;max-width:16em;font-family:var(--f-display);font-size:22px;line-height:1.2;color:#fff;text-wrap:balance;filter:drop-shadow(0 2px 0 var(--outline)) drop-shadow(0 0 8px rgba(0,0,0,.5))}
+.mpOut{position:absolute;left:0;right:0;bottom:max(22px,env(safe-area-inset-bottom));width:max-content;margin:0 auto}
+.mpModal{z-index:10;padding-bottom:max(22px,env(safe-area-inset-bottom));background:rgba(11,7,32,.82)}
+.mpCard{display:flex;flex-direction:column;align-items:center;gap:14px;width:min(100%,320px);padding:26px 20px 24px;border-radius:20px;background:var(--night);box-shadow:inset 0 0 0 2px rgba(255,79,168,.5),0 18px 40px rgba(0,0,0,.5)}
+.mpCard .btn{min-width:150px}
+.mpToast{position:absolute;left:50%;top:max(16px,env(safe-area-inset-top));z-index:9;translate:-50% 0;width:max-content;max-width:calc(100% - 32px);margin:0;padding:10px 18px;border-radius:999px;background:rgba(20,10,50,.94);box-shadow:inset 0 0 0 2px rgba(255,214,96,.6),0 8px 22px rgba(0,0,0,.45);font:800 15px/1.3 var(--f-body);color:var(--ink);text-align:center;pointer-events:none;animation:mpToast 2.5s ease both}
+@keyframes mpToast{0%{opacity:0;translate:-50% -14px}10%{opacity:1;translate:-50% 0}82%{opacity:1;translate:-50% 0}100%{opacity:0;translate:-50% 0}}
+@media (prefers-reduced-motion:reduce){.mpToast{animation:none}}
+/* placar do parceiro na partida: embaixo do bloco e das bolinhas, no centro do placar de cima */
+.mpChip{position:absolute;left:50%;top:calc(max(12px,env(safe-area-inset-top)) + 47px);z-index:2;translate:-50% 0;display:flex;align-items:center;gap:6px;padding:4px 10px 4px 8px;border-radius:999px;background:rgba(20,10,50,.62);border:1px solid rgba(255,255,255,.28);font:400 9px var(--f-pixel);letter-spacing:.1em;color:var(--muted);text-transform:uppercase;white-space:nowrap;pointer-events:none;text-shadow:0 1px 0 var(--outline)}
+.mpChip i{flex:none;width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 6px var(--teal)}
+.mpChip b{font-weight:400;font-size:12px;letter-spacing:.04em;color:var(--ink);font-variant-numeric:tabular-nums}
+/* janela muito estreita (celular deitado): tira o desenho dos cartões */
+@container (max-width:300px){.mpc{grid-template-columns:1fr;min-height:0}.mpc .art{display:none}}
+/* MP-UI css end */
 </style>
 </head>
 <body>
@@ -578,6 +669,91 @@ div.opt{cursor:default}
 </div>
 
 <!-- @@MP-HTML@@ (dupla em dois celulares: telas da interface entram aqui) -->
+<!-- MP-UI html begin -->
+<!-- dupla em dois celulares: o código da interface copia este molde para dentro do #app -->
+<template id="mpUiT">
+  <section id="mpModeS" class="screen panelS" hidden>
+    <header><p class="eyebrow" data-i18n="p2"></p><h2 data-i18n="mpModeT"></h2></header>
+    <div class="mpcs">
+      <button class="mpc" id="mpHere">
+        <svg class="art" viewBox="0 0 84 64" aria-hidden="true"><ellipse cx="42" cy="58" rx="34" ry="4" fill="#000" opacity=".25"/><rect x="26" y="3" width="32" height="56" rx="6" fill="#1b1030" stroke="#fbf4ff" stroke-opacity=".75" stroke-width="2"/><rect x="30" y="8" width="24" height="22" rx="2" fill="#5fe3e0"/><rect x="30" y="32" width="24" height="22" rx="2" fill="#ff4fa8"/><path d="M30 31h24" stroke="#ffd660" stroke-width="1.6"/><g fill="#fff" fill-opacity=".9"><circle cx="36" cy="13" r="2.6"/><circle cx="48" cy="13" r="2.6"/><circle cx="36" cy="49" r="2.6"/><circle cx="48" cy="49" r="2.6"/></g></svg>
+        <span class="pht"><b data-i18n="mpHere"></b><em data-i18n="mpHereS"></em></span>
+      </button>
+      <button class="mpc wifi" id="mpTwo">
+        <svg class="art" viewBox="0 0 84 64" aria-hidden="true"><ellipse cx="42" cy="59" rx="38" ry="4" fill="#000" opacity=".25"/><rect x="3" y="15" width="26" height="44" rx="5" fill="#1b1030" stroke="#fbf4ff" stroke-opacity=".75" stroke-width="2"/><rect x="7" y="20" width="18" height="34" rx="2" fill="#ff4fa8"/><rect x="55" y="15" width="26" height="44" rx="5" fill="#1b1030" stroke="#fbf4ff" stroke-opacity=".75" stroke-width="2"/><rect x="59" y="20" width="18" height="34" rx="2" fill="#5fe3e0"/><g fill="#fff" fill-opacity=".9"><circle cx="12" cy="49" r="2.2"/><circle cx="20" cy="49" r="2.2"/><circle cx="64" cy="49" r="2.2"/><circle cx="72" cy="49" r="2.2"/></g><g fill="none" stroke="#ffd660" stroke-width="2.6" stroke-linecap="round"><path d="M37.76 25.76a6 6 0 0 1 8.48 0"/><path d="M33.51 21.51a12 12 0 0 1 16.98 0"/></g><circle cx="42" cy="30.5" r="2.6" fill="#ffd660"/></svg>
+        <span class="pht"><b data-i18n="mpTwo"></b><em data-i18n="mpTwoS"></em></span>
+      </button>
+    </div>
+    <button class="btn ghost" id="mpModeBack" data-i18n="back"></button>
+  </section>
+
+  <section id="mpRoomS" class="screen panelS" hidden data-st="start">
+    <header><p class="eyebrow" data-i18n="mpTag"></p><h2 id="mpRoomH" data-i18n="mpRoomT"></h2></header>
+    <div class="mpst" data-st="start">
+      <p class="hint" data-i18n="mpStartHint"></p>
+      <div class="menu"><button class="btn" id="mpHostB" data-i18n="mpCreate"></button></div>
+      <p class="mpOr"><span data-i18n="mpOr"></span></p>
+      <div class="mpJoin"><input class="mpIn" id="mpCode" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="0000" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="go" data-i18n-aria="mpCodeL"><button class="btn alt" id="mpJoinB" data-i18n="mpJoin"></button></div>
+      <p class="mpErr" id="mpErr" role="alert"></p>
+      <button class="btn ghost" id="mpStartBack" data-i18n="back"></button>
+    </div>
+    <div class="mpst" data-st="hosting" hidden>
+      <p class="mpRow" id="mpCreating"><i class="mpSpin"></i><span data-i18n="mpCreating"></span></p>
+      <div class="mpBox" id="mpCodeBox" hidden>
+        <p class="eyebrow" data-i18n="mpCodeL"></p>
+        <div class="judges mpCode" id="mpCodeD"></div>
+        <p class="hint" data-i18n-html="mpTypeCode"></p>
+        <p class="mpRow"><i class="mpSpin"></i><span data-i18n="mpWaitGuest"></span></p>
+      </div>
+      <button class="btn ghost" id="mpHostX" data-i18n="cancel"></button>
+    </div>
+    <div class="mpst" data-st="joining" hidden>
+      <p class="eyebrow" data-i18n="mpCodeL"></p>
+      <div class="judges mpCode sm" id="mpJoinD"></div>
+      <p class="mpRow"><i class="mpSpin"></i><span data-i18n="mpJoining"></span></p>
+      <button class="btn ghost" id="mpJoinX" data-i18n="cancel"></button>
+    </div>
+    <div class="mpst" data-st="connected" hidden>
+      <p class="mpWho" id="mpWho"></p>
+      <div class="mpNet">
+        <p class="mpLink"><span data-i18n="mpLinkL"></span><b id="mpLink">…</b></p>
+        <dl class="stats mpStats"><div><dt data-i18n="mpRttL"></dt><dd id="mpRtt">…</dd></div><div><dt data-i18n="mpPrecL"></dt><dd id="mpPrec">…</dd></div></dl>
+      </div>
+      <div class="menu mpGo">
+        <button class="btn" id="mpBegin" data-i18n="mpStart" disabled></button>
+        <p class="mpRow" id="mpSyncing"><i class="mpSpin"></i><span data-i18n="mpSyncing"></span></p>
+        <p class="mpRow" id="mpGuestW"><i class="mpSpin"></i><span data-i18n="mpWaitBegin"></span></p>
+      </div>
+      <div class="mpMeas" id="mpMeas">
+        <button class="opt" id="mpMT" aria-expanded="false" aria-controls="mpMB"><span data-i18n="mpMeasT"></span><em data-i18n="mpOpt"></em><i class="mpChev" aria-hidden="true"></i></button>
+        <div class="mpMB" id="mpMB" hidden>
+          <p class="hint" data-i18n="mpMeasHint"></p>
+          <button class="btn alt sm" id="mpMeasB" data-i18n="mpMeasure"></button>
+          <div class="mpProg" id="mpProg" hidden><p class="mpRow"><i class="mpSpin"></i><span id="mpProgT"></span></p><div class="expTrack" id="mpBar"><i></i></div></div>
+          <div class="mpRes" id="mpRes" hidden aria-live="polite"></div>
+          <div class="mpAdj"><span class="lbl" data-i18n="mpAdjL"></span><div class="nudge"><button class="btn ghost sm" id="mpAdjM">−5 ms</button><b id="mpAdjV">0 ms</b><button class="btn ghost sm" id="mpAdjP">+5 ms</button></div></div>
+        </div>
+      </div>
+      <button class="btn ghost" id="mpLeaveB" data-i18n="mpLeave"></button>
+    </div>
+    <div class="mpst" data-st="lost" hidden>
+      <p class="hint" data-i18n="mpLostHint"></p>
+      <div class="menu"><button class="btn" id="mpRetry" data-i18n="mpReconnect"></button><button class="btn ghost" id="mpLostMenu" data-i18n="menu"></button></div>
+    </div>
+  </section>
+
+  <div class="mpChip" id="mpChip" hidden><i></i><span data-i18n="mpPartner"></span><b id="mpChipV">0</b></div>
+  <div class="mpOver" id="mpWait" hidden role="status" aria-live="polite">
+    <i class="mpSpin big"></i>
+    <p class="mpWaitT" id="mpWaitT"></p>
+    <button class="btn ghost sm mpOut" id="mpWaitX" data-i18n="mpLeave"></button>
+  </div>
+  <p class="mpToast" id="mpToast" hidden role="status" aria-live="polite"></p>
+  <div class="mpOver mpModal" id="mpLostM" hidden role="alertdialog" aria-modal="true" aria-labelledby="mpLostH" aria-describedby="mpLostP">
+    <div class="mpCard"><h2 id="mpLostH" data-i18n="mpLost"></h2><p class="hint" id="mpLostP" data-i18n="mpLostHint"></p><button class="btn" id="mpLostOk" data-i18n="mpOk"></button></div>
+  </div>
+</template>
+<!-- MP-UI html end -->
 <template id="pvT">
   <div class="pv">
     <canvas class="lanes"></canvas>
@@ -877,6 +1053,7 @@ function buildChart() {
   }
   max += POSE_BONUS * 3;
   notes.sort((a, b) => a.t - b.t || a.lane - b.lane);
+  for (let i = 0; i < notes.length; i++) notes[i].k = i;   // índice da nota (o mesmo nos dois celulares)
   return { notes, meas, max };
 }
 
@@ -1109,7 +1286,8 @@ function playStepD(s, t) {
 }
 let songT0 = 0, nextStep = 0, schedIv = null;
 function schedTick() {
-  if (!AC || state.screen !== 'play' || state.paused || state.exporting) return;
+  // pausado, só agenda na volta combinada da dupla em dois celulares (antes do instante de retomar)
+  if (!AC || state.screen !== 'play' || (state.paused && !(MPX.rs && !MPX.anc)) || state.exporting) return;
   const ahead = AC.currentTime + .25;
   while (nextStep < TOTAL_MEAS * 16) {
     const t = songT0 + nextStep * S16;
@@ -2080,7 +2258,7 @@ function whaleUpdate(B, t, dt, w, go) {
     W_.spT = (W_.spT || 0) - dt;
     if (W_.spT <= 0) { W_.spT = 1.6 - w; const x = W_.at.x + (Math.random() - .5) * 14, z = W_.at.z + 4 + (Math.random() - .5) * 6; for (let i = 0; i < 26; i++) splashEmit(B, x + rnd(-.3, .3), .2, z + rnd(-.3, .3), rnd(-.6, .6), rnd(5, 8), rnd(-.6, .6), rnd(1, 1.6), rnd(.35, .6)); }
   }
-  if (go && !W_.done) { W_.done = 1; W_.ct = 0; W_.f0 = W_.f1 = W_.f2 = 0; whaleSpot(B); g.visible = true; SFX.whale && SFX.whale(); }
+  if (go && !W_.done) { W_.done = 1; W_.ct = 0; W_.f0 = W_.f1 = W_.f2 = 0; whaleSpot(B); g.visible = true; if (mpShared()) SFX.whale && SFX.whale(); }
   if (!go && w < .2 && W_.done) { W_.done = 0; W_.ct = -1; g.visible = false; }
   if (B.ringT !== undefined && B.ringT < 2.2) { B.ringT += dt; const k = B.ringT / 2.2; B.ring.scale.setScalar(2 + 16 * easeOut(k)); setOpacity(B.ring, .7 * (1 - k)); }
   W_.t = W_.ct;
@@ -2107,7 +2285,7 @@ function whaleUpdate(B, t, dt, w, go) {
     const burstAt = (n, spd, up_, size) => { for (let i = 0; i < n; i++) { const a = Math.random() * TAU, r = rnd(0, 3); splashEmit(B, g.position.x + Math.cos(a) * r, 0, g.position.z + Math.sin(a) * r * .6, Math.cos(a) * rnd(1, spd), rnd(up_ * .5, up_), Math.sin(a) * rnd(1, spd) * .6, rnd(1.4, 2.6), size * rnd(.7, 1.3)); } };
     const column = (n, up_, size) => { for (let i = 0; i < n; i++) splashEmit(B, g.position.x + rnd(-2.2, 2.2), 0, g.position.z + rnd(-1.2, 1.2), rnd(-1.5, 1.5), rnd(up_ * .6, up_), rnd(-.8, .8), rnd(1.8, 2.8), size * rnd(.8, 1.3)); };
     if (!W_.f1 && s > .02) { W_.f1 = 1; burstAt(200, 6, 12, 1.1); column(60, 15, 1.2); B.ringT = 0; B.ring.position.set(g.position.x, -.15, g.position.z); }
-    if (!W_.f2 && s > .88) { W_.f2 = 1; burstAt(420, 10, 19, 1.25); column(180, 24, 1.4); B.ringT = 0; B.ring.position.set(g.position.x, -.15, g.position.z); SFX.splash && SFX.splash(); }
+    if (!W_.f2 && s > .88) { W_.f2 = 1; burstAt(420, 10, 19, 1.25); column(180, 24, 1.4); B.ringT = 0; B.ring.position.set(g.position.x, -.15, g.position.z); if (mpShared()) SFX.splash && SFX.splash(); }
   }
   for (const e of W_.eyes) e.scale.y = 1 - .9 * blink;
 }
@@ -3315,7 +3493,7 @@ const roleOf = pl => pl.id === PAIR.roleA ? 0 : 1;
 const partnerOf = pl => PL[1 - pl.id];
 // dos pés às pontas dos cascos, com os braços para cima, na escala do jogo
 const reachOf = pl => (1.13 * CHAR_BY_ID[pl.charId].h + .1) * GAME_K;
-const sameSide = () => OPT.rot[0] === (OPT.rot[1] + 2) % 4;   // os dois vendo a tela do mesmo lado (lado a lado)
+const sameSide = () => !MP.on && OPT.rot[0] === (OPT.rot[1] + 2) % 4;   // os dois vendo a tela do mesmo lado (lado a lado); em dois celulares, nunca
 function pairAnchor() {
   const th = PAIR.th;
   PAIR.pos.set(PAIR_RX * Math.cos(th), 0, PAIR_RZ * Math.sin(th)); PAIR.fwd.set(-PAIR_RX * Math.sin(th), 0, PAIR_RZ * Math.cos(th)).normalize();
@@ -3346,6 +3524,7 @@ function pairReset() { PAIR.target = 0; PAIR.wt = 0; PAIR.w = 0; PAIR.landed = -
 // alguém errou: a dupla se desfaz; o nome que o outro esperava aparece na versão solo e a pose dele volta a ser solo
 function pairBreak(pl) {
   const o = partnerOf(pl);
+  if (MP.on) mpLog('x' + pl.id + '@' + state.mi);
   if (o.pend) { const pn = o.pend; o.pend = null; showName(o, nameOf(pn.b, pn.i), pn.tier); o.found.add(pn.b + '.' + pn.i); }
   pl.pend = null;
   if (o.posing && (o.anim.kind === 'wind' || o.anim.kind === 'hold')) startPoseFx(o, o.anim.b);
@@ -3367,6 +3546,7 @@ function pairWanted(mi) {
 function pairMeasure(mi) {
   if (ACTIVE.length < 2) return;
   const want = pairWanted(mi);
+  if (MP.on && !want !== !PAIR.target) mpLog((want ? 'b' : 'e') + mi);
   if (want && !PAIR.target) pairBegin(); else if (!want && PAIR.target) pairEnd();
   if (!want) return;
   const sec = sectionOf(mi), t0 = mi * MEAS;
@@ -3383,6 +3563,7 @@ function duoDone(pl, mi, b, i, tier) {
   pl.pend = { mi, b, i, tier };
   const o = partnerOf(pl); if (!o.pend || o.pend.mi !== mi) return;
   for (const p of PL) { p.pend = null; p.found.add('d' + b + '.' + i); }
+  if (MP.on) mpLog('d' + b + '.' + i);
   if (i === 2) { PAIR.landed = b; if (sameSide() && !PANO.on) panoOn(); if (PHI >= 1 && b === 2) BALL.target = 1; }
   if (PANO.on) { showNameIn(PANO.names, duoNameOf(b, i), tier, true); if (i === 2) PANO.flash.animate([{ opacity: REDUCED ? .3 : .85 }, { opacity: 0 }], { duration: 700, easing: 'ease-out' }); return; }
   for (const p of PL) showName(p, duoNameOf(b, i), tier, true);
@@ -3413,7 +3594,7 @@ function pairUpdate(dt) {
     RA.hpL.getWorldPosition(_pq); RA.knL.getWorldPosition(_pd); _pq.add(_pd).multiplyScalar(.5).sub(PAIR.pos);
     PAIR.thighA.set(_pq.dot(PAIR.left) * PAIR.sideA, _pq.y + .06, _pq.dot(PAIR.fwd));
   }
-  if (!PAIR.met && PAIR.w > .97 && PAIR.target) { PAIR.met = true; SFX.duo(); }
+  if (!PAIR.met && PAIR.w > .97 && PAIR.target) { PAIR.met = true; if (mpShared()) SFX.duo(); }
   const k = snap ? 0 : Math.exp(-dt * 5), w = PAIR.w;
   for (const pl of PL) {
     const s = slotFor(pl, simT), B = pl.base;
@@ -3462,7 +3643,7 @@ function panoOn(q, live, force) {
 function panoOff(force) {
   if (!PANO.on || (state.replay && !force)) return;
   PANO.on = false; PANO.el.hidden = true; PANO.names.innerHTML = ''; PANO.card.className = 'card'; PANO.pads.hidden = true;
-  for (const pl of PL) pl.el.hidden = !(pl.id === 0 || state.two); $('#divider').hidden = !state.two; layout();
+  for (const pl of PL) pl.el.hidden = !viewOn(pl); $('#divider').hidden = !state.two || mpv(); layout();
 }
 function panoLayout() {
   PANO.quad.visible = PANO.on; if (!PANO.on) return;
@@ -4305,7 +4486,7 @@ function renderView(pl) {
 }
 function render3D() {
   if (PANO.on) { renderPano(); postRender(); return; }
-  for (const pl of ACTIVE) renderView(pl);
+  for (const pl of VIEWS) renderView(pl);
   postRender();
 }
 
@@ -5047,7 +5228,7 @@ function musicTick() {
   const ahead = AC.currentTime + .2;
   while (MUS.t0 + MUS.next * .125 < ahead) { const tt = MUS.t0 + MUS.next * .125; if (tt > AC.currentTime - .02 && !MUS.end) musicStep(MUS.next, tt); MUS.next++; }
 }
-function musicStart() { newMusicBus(); MUS.tok++; MUS.on = true; MUS.end = false; MUS.next = 0; MUS.t0 = AC.currentTime + .1; if (!MUS.iv) MUS.iv = setInterval(musicTick, 25); }
+function musicStart(t0) { newMusicBus(); MUS.tok++; MUS.on = true; MUS.end = false; MUS.next = 0; MUS.t0 = t0 !== undefined ? t0 : AC.currentTime + .1; if (!MUS.iv) MUS.iv = setInterval(musicTick, 25); }
 function musicStop(fade) { MUS.end = true; const tok = ++MUS.tok; if (AC && musicBus) { try { musicBus.gain.setTargetAtTime(0, AC.currentTime, fade ? .8 : .05); } catch (e) {} } setTimeout(() => { if (MUS.tok === tok) MUS.on = false; }, fade ? 2600 : 100); }
 const SND = {
   mute: false, at: null,
@@ -5169,7 +5350,7 @@ function bindStage(st, pl, dt) {
 }
 function selFrame(now, dt) { bindLine(); lineupUpdate(now, dt); sceneWorldTick(LINE, now, dt, .6); renderStage(LINE, 0); drawLanes(PL[0], 0); postRender(); }
 function tfFrame(now, dt) {
-  for (const pl of ACTIVE) {
+  for (const pl of VIEWS) {
     const st = pl.stage; if (!st || !st.active) continue;
     bindStage(st, pl, dt); stageUpdate(st, dt, now); sceneWorldTick(st, now, dt, .55);
     renderStage(st, st.t < T_FINAL ? st.C.rainbow(st.t) : 0); drawLanes(pl, 0);
@@ -5192,7 +5373,7 @@ function renderChips() {
   });
   $('#pick1').hidden = !SEL.two;
   $('#goT').disabled = !SEL.picks[0] || (SEL.two && !SEL.picks[1]);
-  $('#selMode').textContent = t(SEL.two ? 'p2' : 'p1');
+  $('#selMode').textContent = MP.on ? t('mpTag') || t('p2') : t(SEL.two ? 'p2' : 'p1');
   $('#selHint').textContent = t(SEL.two ? 'selHint2' : 'selHint1');
   $('#select').classList.toggle('duo', SEL.two);
   // na dupla, a etiqueta de quem já foi escolhido mostra de qual jogador ele é
@@ -5238,6 +5419,7 @@ function openSelect(two, keep) {
   setTwo(false); openScreen('select'); renderChips();
 }
 function confirmSelect() {
+  if (MP.on) { mpPick(); return; }
   if (!SEL.picks[0] || (SEL.two && !SEL.picks[1])) return;
   if (SEL.two) [0, 1].forEach(j => setPlayerChar(PL[halfOf(j)], SEL.picks[j])); else setPlayerChar(PL[0], SEL.picks[0]);
   store.set('chars', PL.map(pl => pl.charId));
@@ -5253,6 +5435,7 @@ function startTransform(two) {
 }
 const TFX = { end: 0 };
 function onStageDone(st) {
+  if (MP.on) { mpTfDone(); return; }
   const act = ACTIVE.map(pl => pl.stage);
   if (act.every(s => s && s.done)) {
     musicStop(true); for (const s of act) s.waitEl.hidden = true;
@@ -5278,9 +5461,15 @@ function stSet(st, tm) {
 /* ============================== jogadores ============================== */
 const WIN_P = .065, WIN_G = .14, WIN_X = .22;
 const state = { screen: 'title', paused: false, demo: false, two: false, songT: 0, clockInit: false, mi: -1, bi: -1, ended: false, manual: false, offset: store.get('offset', 0) / 1000 };
+// dupla em dois celulares: on (fluxo ativo), me (0 = quem criou a sala, 1 = quem entrou), run (partida atual)
+const MP = { on: false, me: 0, run: 0, begin: () => mpBegin(), end: () => mpEnd() };
+const MPX = { runN: 0, sel: 0, pk: [null, null], tfd: [false, false], q: [], h: 0, pend: -1, pendAt: 0, fb: -1, nfb: 0, mi0: -1, fin: null, pT: [NaN, NaN], rs: null, anc: null,
+  tm: [], wait: null, waits: [], bot: false, chip: { score: 0 }, chipT: 0, log: [], mirror: null, chars: false,
+  refAt: 0, refT: 0, reT: 0, nre: 0 };   // âncora da música (instante combinado e tempo da música nele) e reancoragens
 const album = new Set((store.get('album', []) || []).filter(x => /^(n:)?d?[0-2]\.[0-2]$/.test(x)));
 const PL = [];
 let ACTIVE = [];
+let VIEWS = [];   // jogadores desenhados na tela (em dois celulares, só o deste celular; senão, os mesmos de ACTIVE)
 let preview = null;
 function makePlayer(id) {
   const el = $('#pvT').content.firstElementChild.cloneNode(true);
@@ -5323,9 +5512,10 @@ function resetPlayer(pl, auto) {
   buildPips(pl); updBlk(pl); pl.scoreEl.textContent = '0'; pl.demoTag.hidden = !auto; updMult(pl);
 }
 function setTwo(on) {
-  state.two = on; ACTIVE = on ? PL.slice() : [PL[0]];
-  const p2 = PL[1]; p2.uni.root.visible = on; p2.shadow.visible = on; p2.el.hidden = !on;
-  $('#divider').hidden = !on; app.classList.toggle('two', on);
+  state.two = on; ACTIVE = on ? PL.slice() : [PL[0]]; setViews();
+  const p2 = PL[1]; p2.uni.root.visible = on; p2.shadow.visible = on;
+  if (MP.on) for (const pl of PL) pl.el.hidden = !viewOn(pl); else p2.el.hidden = !on;
+  const split = on && !mpv(); $('#divider').hidden = !split; app.classList.toggle('two', split);
   if (on) { p2.base.s = (PL[0].base.s + PATH_L / 2) % PATH_L; p2.base.spd = PL[0].base.spd; updBase(p2, 0, 1); p2.tv.snap = true; p2.att = null; }
   PL[0].tv.snap = true; PL[0].att = null;
   layout();
@@ -5384,20 +5574,21 @@ function onBeat(pl, bi) {
 }
 function judge(pl, n, j, d) {
   n.j = j; n.dt = d; if (state.replay) rpPress(pl, n, j);
-  pl.fx2d.push({ lane: n.lane, j, t0: fx2dNow() });
+  if (!pl.net) pl.fx2d.push({ lane: n.lane, j, t0: fx2dNow() });
   const ms = pl.ms[n.mi];
-  if (j === 'm') { pl.stats.m++; onMiss(pl, n); return; }
+  if (j === 'm') { pl.stats.m++; onMiss(pl, n); if (MP.on) mpJudged(pl, n); return; }
   pl.stats[j]++;
   if (ms && j === 'g') ms.allP = false;
   if (ms && ms.kind === 'move' && !ms.started && ms.ok) { ms.started = true; startMeasureAnim(pl, ms); }
   pl.score += (j === 'p' ? 100 : 50) * mult(pl, n);
-  if (!state.replay) SFX.hit(j === 'p'); pl.lastHit[n.lane] = state.songT; hitKick(pl, n.lane, n.slot === 0);
-  if (!pl.auto && !state.two && !state.replay) buzz(9);
+  if (!state.replay && mpOwn(pl)) SFX.hit(j === 'p'); pl.lastHit[n.lane] = state.songT; hitKick(pl, n.lane, n.slot === 0);
+  if (!pl.auto && (!state.two || MP.on && pl.id === MP.me) && !state.replay) buzz(9);
   const f = n.lane ? pl.W.fR : pl.W.fL; for (let i = 0; i < (j === 'p' ? 8 : 4); i++) emit(f.x, f.y + .1, f.z, rnd(-1, 1), rnd(.5, 1.5), rnd(-1, 1), .4, .08, n.lane ? C_BLUE : C_PINK, 2, 1);
   checkMeasure(pl, n.mi); updMult(pl);
+  if (MP.on) mpJudged(pl, n);
 }
 function onMiss(pl, n) {
-  if (!state.replay) { SFX.miss(); if (!pl.auto) buzz(35); }
+  if (!state.replay && mpOwn(pl)) { SFX.miss(); if (!pl.auto) buzz(35); }
   const ms = pl.ms[n.mi];
   if (ms && ms.ok) {
     ms.ok = false; ms.allP = false; pl.chain = 0;
@@ -5423,7 +5614,7 @@ function landPose(pl, ms) {
   const duo = ms.duo && PAIR.target ? roleOf(pl) : undefined;
   setAnim(pl, 'hold', { b, t0: ms.mi * MEAS, landed: true, duo }, state.songT);
   landFx(pl, b); pip(pl, 6, 'o');
-  if (!pl.auto && !state.two) buzz([20, 40, 30]);
+  if (!pl.auto && (!state.two || MP.on && pl.id === MP.me)) buzz([20, 40, 30]);
   if (duo !== undefined) duoDone(pl, ms.mi, b, 2, 3);
   else { showName(pl, nameOf(b, 2), 3); pl.found.add(b + '.2'); }
 }
@@ -5432,6 +5623,7 @@ function trySync(mi) {
   const a = PL[0].ms[mi], b = PL[1].ms[mi];
   if (!a || !b || !a.done || !b.done || a.sync || !a.allP || !b.allP) return;
   a.sync = b.sync = true;
+  if (MP.on) mpLog('s' + mi);
   for (const [pl, ms] of [[PL[0], a], [PL[1], b]]) {
     const pts = SYNC_K * ms.level; pl.score += pts; pl.syncPts += pts; pl.stats.sync++;
     ringFx(pl.uni.root.position.x, pl.uni.root.position.z, 4.5, .8, .1);
@@ -5441,7 +5633,7 @@ function trySync(mi) {
     el.textContent = `${t('sync')} +${fmt(pts)}`; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
     if (state.replay) rpSync(el.textContent);
   }
-  SFX.sync(); buzz(15);
+  if (mpShared()) SFX.sync(); buzz(15);
   $('#divider').animate([{ filter: 'brightness(2.6)', scale: '1 3' }, { filter: 'brightness(1)', scale: '1 1' }], { duration: 650, easing: 'ease-out' });
 }
 function press(pl, lane, perf) {
@@ -5456,34 +5648,43 @@ function press(pl, lane, perf) {
 }
 function release(pl, lane) { pl.down[lane] = Math.max(0, pl.down[lane] - 1); }
 function processNotes(pl, T) {
+  if (pl.net) return;   // parceiro em outro celular: só valem os julgamentos que chegam dele
   for (const n of pl.notes) {
     if (n.t > T + .3) break;
     if (!n.j) {
       if (state.replay && n.rj) { if (n.rj !== 'm' ? T >= n.t + n.rdt : T > n.t + WIN_G) judge(pl, n, n.rj, n.rj === 'm' ? T - n.t : n.rdt); }
-      else if (pl.auto && T >= n.t) { pl.padFlash[n.lane] = n.hold ? (n.end - n.t) : .1; judge(pl, n, 'p', 0); }
+      else if (pl.auto && T >= n.t && !(pl.skip && pl.skip.has(n.k))) { pl.padFlash[n.lane] = n.hold ? (n.end - n.t) : .1; judge(pl, n, 'p', 0); }
       else if (T > n.t + WIN_G) judge(pl, n, 'm', T - n.t);
     } else if (n.hold && n.j !== 'm' && n.tail === null) {
       const held = pl.auto || pl.down[n.lane] > 0 || (state.replay && !(n.rtail === 2 && T >= n.t + n.rtt));
-      if (!held && T < n.end - .18) { n.tail = 'm'; n.tt = T; pl.stats.m++; if (state.replay) RP.press.push({ p: pl.id, lane: n.lane, t: T, end: T, m: 1 }); onMiss(pl, n); }
-      else if (T >= n.end - .02) { n.tail = 'ok'; pl.score += 100 * mult(pl, n); checkMeasure(pl, n.mi); }
+      if (!held && T < n.end - .18) { n.tail = 'm'; n.tt = T; pl.stats.m++; if (state.replay) RP.press.push({ p: pl.id, lane: n.lane, t: T, end: T, m: 1 }); onMiss(pl, n); if (MP.on) mpTail(pl, n, 2); }
+      else if (T >= n.end - .02) { n.tail = 'ok'; pl.score += 100 * mult(pl, n); checkMeasure(pl, n.mi); if (MP.on) mpTail(pl, n, 1); }
     }
   }
 }
 function gameUpdate(dt) {
-  const T = state.songT;
+  const T = state.songT, mp = MP.on;
+  if (mp) mpDrain();
   // processa notas e viradas de compasso em ordem de tempo, mesmo se um quadro atrasar
   while (state.mi < TOTAL_MEAS) {
     const nextStart = (state.mi + 1) * MEAS - .12;
     if (T < nextStart) break;
-    for (const pl of ACTIVE) processNotes(pl, nextStart);
+    // em dois celulares, as notas do compasso que acaba fecham antes da virada (a última colcheia perde 10 ms de janela):
+    // assim o que cada um fez num compasso chega ao outro antes do aviso do compasso seguinte, na mesma ordem nos dois
+    for (const pl of ACTIVE) processNotes(pl, mp ? nextStart + .02 : nextStart);
     state.mi++;
+    if (mp) { mpMeasure(state.mi); continue; }
     for (const pl of ACTIVE) onMeasureStart(pl, state.mi);
     pairMeasure(state.mi);
     if (state.replay) replayDirect(state.mi);
   }
+  // nem o aviso nem o fim do compasso anterior do parceiro chegaram em 1 s: segue sem eles (pode divergir; o resto do parceiro
+  // está atrás do aviso na fila, então esperar mais só atrasa a figura dele)
+  if (mp && MPX.pend >= 0 && performance.now() - MPX.pendAt > 1000) mpFallback();
   for (const pl of ACTIVE) processNotes(pl, T);
   const bi = Math.floor(T / BEAT); if (bi !== state.bi) { state.bi = bi; for (const pl of ACTIVE) onBeat(pl, bi); }
   for (const pl of ACTIVE) {
+    if (pl.net) continue;
     for (let l = 0; l < 2; l++) { pl.padFlash[l] = Math.max(0, pl.padFlash[l] - dt); pl.padEls[l].classList.toggle('on', pl.down[l] > 0 || pl.padFlash[l] > 0); }
     pl.shownScore += (pl.score - pl.shownScore) * (1 - Math.exp(-dt * 10));
     pl.scoreEl.textContent = fmt(pl.shownScore);
@@ -5496,6 +5697,7 @@ function gameUpdate(dt) {
 let lastNameSfx = 0;
 function showName(pl, text, tier, duo) {
   if (state.replay) { if (state.two && pl !== PL[RP.fp] && !duo) return; showNameIn(PANO.names, text, tier, duo); return; }
+  if (MP.on && pl.id !== MP.me) return;   // em dois celulares, cada nome aparece só no celular do seu jogador (os a dois, nos dois)
   showNameIn(pl.names, text, tier, duo); if (tier === 2) flash(pl, .12);
 }
 function showNameIn(box, text, tier, duo) {
@@ -5512,7 +5714,7 @@ function showNameIn(box, text, tier, duo) {
   box.appendChild(wrap);
   const life = tier === 1 ? 2.0 : tier === 2 ? 2.4 : 3.6;
   setTimeout(() => { wrap.classList.add('old'); setTimeout(() => wrap.remove(), 320); }, life * 1000);
-  const now = performance.now(); if (now - lastNameSfx > 150) { SFX.name(tier); lastNameSfx = now; }   // na dupla, o mesmo nome toca uma vez só
+  const now = performance.now(); if (now - lastNameSfx > 150 && (!duo || mpShared())) { SFX.name(tier); lastNameSfx = now; }   // na dupla, o mesmo nome toca uma vez só
 }
 function showCard(pl, small, big, dur, kind) {
   if (state.replay) { if (pl !== PL[0]) return; rpCard(small, big, dur); if (RP.seek) return; }
@@ -5530,7 +5732,7 @@ function placeNames(pl) {
   if (!isFinite(_p.x + _p.y)) return;
   const [dx, dy] = rotCW(g.q, (_p.x / 2) * g.Wi, (-_p.y / 2) * g.Hi);
   const fv = toFrame(g, (dx + g.W / 2) / g.W, (dy + g.H / 2) / g.H)[1];
-  const y = state.two ? clamp(fv - .04, (52 + 80) / g.Hf, .62) : clamp(fv - .07 * g.H / g.Hz, .12, .36);
+  const y = state.two && !mpv() ? clamp(fv - .04, (52 + 80) / g.Hf, .62) : clamp(fv - .07 * g.H / g.Hz, .12, .36);
   pl.namesY += (y - pl.namesY) * .15; pl.names.style.top = (pl.namesY * 100).toFixed(2) + '%';
 }
 
@@ -5538,7 +5740,7 @@ function placeNames(pl) {
 let APPW = 360, APPH = 720;
 function layout() {
   APPW = Math.max(1, app.clientWidth); APPH = Math.max(1, app.clientHeight);
-  const two = state.two, DPR = Math.min(2, window.devicePixelRatio || 1);
+  const two = state.two && !mpv(), DPR = Math.min(2, window.devicePixelRatio || 1);   // em dois celulares: geometria de um jogador só
   RHT = Math.max(200, Math.round(RW * APPH / APPW));
   renderer.setSize(RW, RHT, false);
   const ph = two ? APPH / 2 : APPH;
@@ -5562,7 +5764,7 @@ function layout() {
     pl.laneTop = two ? .42 : .55; pl.laneHit = two ? .745 : .8;
     const u = pl.quad.material.uniforms;
     if (two) u.uRect.value.set(-1, i ? 0 : -1, 1, i ? 1 : 0); else u.uRect.value.set(-1, -1, 1, 1);
-    u.uRot.value = ((two && i ? 2 : 0) + q) % 4; pl.quad.visible = i === 0 || two;
+    u.uRot.value = ((two && i ? 2 : 0) + q) % 4; pl.quad.visible = mpv() ? i === MP.me : i === 0 || two;
     pl.tbox.className = 'tbox q' + q;
   });
   panoLayout();
@@ -5595,6 +5797,8 @@ addEventListener('popstate', () => {
   if (ignorePop) { ignorePop = false; return; }
   navPushed = false;
   if (state.screen === 'title') return;
+  if (state.screen === 'mpmode' || state.screen === 'mproom') { mpui('back'); return; }
+  if (MP.on && !state.replay) { mpBack(); pushNav(); return; }
   if (state.replay && !RP.exp) { replayStop(); pushNav(); return; }
   if (state.screen === 'export') { if (RP.exp && !RP.exp.blob && !RP.exp.error) RP.exp.cancel = true; else closeExport(); pushNav(); return; }
   if (state.screen === 'play') { if (!state.paused) pause(0); pushNav(); return; }
@@ -5639,6 +5843,7 @@ function startRun(opts) {
     pairReset();
     show(null); setHud(true); ptrs.clear();
     songT0 = AC.currentTime + .4; nextStep = 0;
+    if (opts.at !== undefined) mpRunInit(opts.at);   // dupla em dois celulares: largada no instante combinado
     for (const pl of ACTIVE) { setAnim(pl, 'skate', {}, state.songT); pl.tv.virt = false; pl.tv.cur = 0; pl.tv.snap = true; }
     if (!schedIv) schedIv = setInterval(schedTick, 25);
     schedTick(); requestWake();
@@ -5646,6 +5851,7 @@ function startRun(opts) {
   return AC.resume().then(go, go);
 }
 function toMenu(fromPop) {
+  if (MP.on) mpOff();   // sair por qualquer caminho encerra o fluxo da dupla em dois celulares
   endTransformUI(); if (MUS.on) musicStop(false); pairReset();
   if (AC) newMusicBus();
   for (const pl of PL) { pl.auto = false; clearPoseFx(pl, false); pl.names.innerHTML = ''; }
@@ -5661,10 +5867,12 @@ function pause(by) {
   if (state.replay) { if (!state.paused && !RP.exp) rpTogglePause(); return; }
   if (state.screen !== 'play' || state.paused || state.ended || resuming) return;
   state.paused = true; if (AC) AC.suspend().catch(() => {});
-  screens.pause.className = 'screen panelS r' + (state.two ? ((by === 1 ? 2 : 0) + OPT.rot[by]) % 4 : 0); show('pause');
+  screens.pause.className = 'screen panelS r' + (state.two && !MP.on ? ((by === 1 ? 2 : 0) + OPT.rot[by]) % 4 : 0); show('pause');
   for (const pl of ACTIVE) { pl.down = [0, 0]; } ptrs.clear();
+  if (MP.on) { MPX.pT[MP.me] = state.songT; if (by !== 'net') mpSend('mp:pause', { run: MP.run, T: state.songT }); }
 }
 function resume() {
+  if (MP.on) { mpResumeReq(); return; }
   if (resuming) return; resuming = true;
   show(null); let n = 3; for (const pl of ACTIVE) showCard(pl, '', '3', .5, 'count');
   const iv = setInterval(() => {
@@ -5680,9 +5888,10 @@ function judgesOf(pct) { const g = 6 * pct, sp = .25 * (1 - pct); return [g - sp
 const pctOf = pl => clamp((pl.score - pl.syncPts) / pl.max, 0, 1);
 function endGame() {
   state.ended = true; setHud(false); pairReset();
-  const real = !ACTIVE.some(pl => pl.auto);
-  if (real) { for (const pl of ACTIVE) for (const id of pl.found) album.add(PH.key + id); store.set('album', [...album]); saveReplay(); }
-  if (state.two) showResults2(); else showResults1(real);
+  const real = MP.on ? !PL[MP.me].auto : !ACTIVE.some(pl => pl.auto);
+  // em dois celulares, o álbum deste celular guarda só os nomes do seu jogador
+  if (real) { for (const pl of MP.on ? [PL[MP.me]] : ACTIVE) for (const id of pl.found) album.add(PH.key + id); store.set('album', [...album]); saveReplay(); }
+  if (MP.on) mpFinal(); else if (state.two) showResults2(); else showResults1(real);
   releaseWake();
 }
 function showResults1(real) {
@@ -5697,11 +5906,14 @@ function showResults1(real) {
   state.screen = 'results'; show('results');
 }
 function showResults2() {
-  const [a, b] = PL, res = a.score === b.score ? [0, 0] : a.score > b.score ? [1, -1] : [-1, 1];
+  const [a, b] = PL, res = a.score === b.score ? [0, 0] : a.score > b.score ? [1, -1] : [-1, 1], mp = MP.on;
+  screens.results2.classList.toggle('mp', mp);
   PL.forEach((pl, i) => {
     const pct = pctOf(pl), r = res[i], badge = r > 0 ? t('win') : r < 0 ? t('lose') : t('tie');
     const st = [['sP', pl.stats.p], ['sG', pl.stats.g], ['sM', pl.stats.m], ['sPo', pl.stats.poses + '/3'], ['sSy', pl.stats.sync]];
-    $('#rc' + i).innerHTML = `<p class="badge${r < 0 ? ' lose' : ''}">${badge}</p>`
+    // em dois celulares: o cartão deste celular na metade de cima (que fica em pé), com Você / Parceiro
+    const k = mp ? (i === MP.me ? 1 : 0) : i, who = mp ? `<p class="eyebrow">${t(i === MP.me ? 'mpYou' : 'mpPartner') || ''}</p>` : '';
+    $('#rc' + k).innerHTML = who + `<p class="badge${r < 0 ? ' lose' : ''}">${badge}</p>`
       + `<div class="judges sm">${judgesOf(pct).map((v, k) => `<div class="jc"><b>${v}</b><small>${t('judge')} ${k + 1}</small></div>`).join('')}</div>`
       + `<div class="total"><b>${fmt(pl.score)}</b><span>${t('ptsOf', { p: Math.round(pct * 100) + '%' })}</span></div>`
       + `<dl class="stats five">${st.map(([k, v]) => `<div><dt>${t(k)}</dt><dd>${v}</dd></div>`).join('')}</dl>`;
@@ -5815,7 +6027,7 @@ function appPt(e) {
 }
 function locate(e) { const p = appPt(e); return locateAt(p.x, p.y, p.W, p.H); }
 function locateAt(x, y, W, H) {
-  if (!state.two) return y < H * .45 ? null : { pl: PL[0], lane: x < W / 2 ? 0 : 1 };
+  if (!state.two || mpv()) return y < H * .45 ? null : { pl: mpv() ? PL[MP.me] : PL[0], lane: x < W / 2 ? 0 : 1 };   // em dois celulares: a tela toda é do jogador deste celular
   const h = H / 2;
   if (y >= h) return y - h < h * .38 ? null : { pl: PL[0], lane: x < W / 2 ? 0 : 1 };
   const ly = h - y, lx = W - x;
@@ -5838,19 +6050,21 @@ addEventListener('keydown', e => {
   const k = KEYS[e.code]; if (!k) return;
   e.preventDefault(); if (e.repeat) return;
   if (state.screen === 'calib') { calibTap(evPerf(e)); return; }
-  const pl = ACTIVE[k[0]];
+  const pl = keyPl(k);
   if (pl && state.screen === 'play' && !state.paused && !state.ended && !pl.auto) press(pl, k[1], evPerf(e));
 });
-addEventListener('keyup', e => { const k = KEYS[e.code]; const pl = k && ACTIVE[k[0]]; if (pl && state.screen === 'play') release(pl, k[1]); });
+// teclas do jogador 1 (F, D, J, K, setas); em dois celulares são do jogador deste celular e as do jogador 2 não valem
+const keyPl = k => mpv() ? (k[0] ? null : PL[MP.me]) : ACTIVE[k[0]];
+addEventListener('keyup', e => { const k = KEYS[e.code]; const pl = k && keyPl(k); if (pl && state.screen === 'play') release(pl, k[1]); });
 document.addEventListener('visibilitychange', () => { if (document.hidden) pause(0); else if (state.screen === 'play') requestWake(); });
 
 $$('.flag').forEach(b => { b.innerHTML = FLAGS[b.dataset.lang]; b.setAttribute('aria-label', LANG_NAME[b.dataset.lang]); b.onclick = () => setLang(b.dataset.lang); });
 $('#b1p').onclick = () => openPhase(false);
 $('#b2p').onclick = () => openPhase(true);
-$$('.phc').forEach(b => b.onclick = () => { setPhase(+b.dataset.ph); openSelect(SEL.two); });
-$('#phBack').onclick = () => toMenu();
+$$('.phc').forEach(b => b.onclick = () => { if (MP.on) { mpPhase(+b.dataset.ph); return; } setPhase(+b.dataset.ph); openSelect(SEL.two); });
+$('#phBack').onclick = () => { if (MP.on) mpRoomBack(); else toMenu(); };
 $('#goT').onclick = confirmSelect;
-$('#sBack').onclick = () => openPhase(SEL.two);
+$('#sBack').onclick = () => { if (MP.on) mpSelBack(); else openPhase(SEL.two); };
 $('#swapS').onclick = swapSides;
 $('#bDemo').onclick = () => startRun({ demo: true });
 $('#bOpt').onclick = openOptions;
@@ -5912,16 +6126,304 @@ $('#cBack').onclick = () => { cal.running = false; $('#cStart').disabled = false
 $('#cMinus').onclick = () => { state.offset -= .01; store.set('offset', Math.round(state.offset * 1000)); updOffInfo(); };
 $('#cPlus').onclick = () => { state.offset += .01; store.set('offset', Math.round(state.offset * 1000)); updOffInfo(); };
 $('#pContinue').onclick = resume;
-$('#pRestart').onclick = () => { show(null); startRun({ two: state.two, demo: state.demo }); };
-$('#pMenu').onclick = () => toMenu();
+$('#pRestart').onclick = () => { if (MP.on) { mpAct('restart'); return; } show(null); startRun({ two: state.two, demo: state.demo }); };
+$('#pMenu').onclick = () => { if (MP.on) mpAct('menu'); else toMenu(); };
 $('#bAgain').onclick = () => startRun({ demo: state.demo });
 // continuar: próxima fase (da última volta à primeira), mesmos personagens e lados, direto para a pista
 function nextPhase(two) { setPhase((PHI + 1) % PHASES.length); startRun({ two, demo: !two && state.demo }); }
 $('#bNext').onclick = () => nextPhase(false);
 $('#bMenu').onclick = () => toMenu();
-$$('.r2again').forEach(b => b.onclick = () => startRun({ two: true }));
-$$('.r2next').forEach(b => b.onclick = () => nextPhase(true));
-$$('.r2menu').forEach(b => b.onclick = () => toMenu());
+$$('.r2again').forEach(b => b.onclick = () => { if (MP.on) mpAct('again'); else startRun({ two: true }); });
+$$('.r2next').forEach(b => b.onclick = () => { if (MP.on) mpAct('next'); else nextPhase(true); });
+$$('.r2menu').forEach(b => b.onclick = () => { if (MP.on) mpAct('menu'); else toMenu(); });
+
+/* ============================== dupla em dois celulares (Wi-Fi) ============================== */
+// Cada celular roda a lógica dos dois jogadores (a mesma da dupla num celular só), mas só desenha o seu, em tela cheia,
+// como no jogo a um. PL[0] é sempre quem criou a sala e PL[1] quem entrou, nos dois celulares (mesmo mundo, mesmos papéis).
+// Cada um é dono dos julgamentos do seu jogador e os manda ao outro, que os aplica no parceiro pelo caminho normal
+// (judge, onMiss, checkMeasure): correntes, figuras a dois, sincronia e nomes andam igual nos dois. Quem criou a sala
+// decide o fluxo (fase, transformação, largada, retomada) e marca os instantes no relógio compartilhado (NET.now).
+// As mensagens da partida levam o número dela (run); as de outra partida são descartadas.
+function mpui(fn, ...a) { const u = window.MPUI; if (u && u[fn]) return u[fn](...a); }
+function mpv() { return MP.on && state.two; }   // modo "visões": só o jogador deste celular é desenhado
+function mpShared() { return !MP.on || !MP.me; }   // sons dos dois (sincronia, nome a dois, encontro, baleia): só num celular, sem eco
+function mpOwn(pl) { return !MP.on || pl.id === MP.me; }   // sons do próprio jogador
+function viewOn(pl) { return mpv() ? pl.id === MP.me : pl.id === 0 || state.two; }
+function setViews() { VIEWS = mpv() ? [PL[MP.me]] : ACTIVE; }
+function mpSend(t, d) { if (window.NET && NET.open) NET.send(t, d); }
+function mpWait(k) { MPX.wait = k || null; if (k) { MPX.waits.push(k); if (MPX.waits.length > 40) MPX.waits.shift(); } mpui('wait', k || null); }
+function mpLog(s) { if (MPX.log.length < 400) MPX.log.push(s); }
+function mpTimer(fn, ms) { const id = setTimeout(() => { const i = MPX.tm.indexOf(id); if (i >= 0) MPX.tm.splice(i, 1); fn(); }, Math.max(0, ms)); MPX.tm.push(id); }
+function mpClearTimers() { for (const id of MPX.tm) clearTimeout(id); MPX.tm.length = 0; }
+// estado de uma partida: fila do parceiro, compasso esperando aviso, placar final, pausa e retomada
+function mpRunReset() {
+  MPX.q.length = 0; MPX.h = 0; MPX.pend = -1; MPX.fb = -1; MPX.mi0 = -1; MPX.fin = null; MPX.pT[0] = MPX.pT[1] = NaN;
+  MPX.rs = null; MPX.anc = null; MPX.log.length = 0; MPX.mirror = null; resuming = false; MPX.nre = 0; MPX.reT = 0;
+}
+// sai do fluxo (para a sala ou o título): tela de um jogador de novo e os personagens deste celular de volta
+function mpOff() {
+  MP.on = false; mpClearTimers(); mpRunReset(); MPX.pk = [null, null]; MPX.tfd = [false, false];
+  mpWait(null); mpui('partner', null);
+  for (const pl of PL) { pl.net = false; pl.skip = null; pl.b2x.hidden = false; }
+  PL[0].el.hidden = false; $('#sBack').hidden = false; screens.results2.classList.remove('mp');
+  if (MUS.on) musicStop(false);
+  setViews();
+  if (MPX.chars) { MPX.chars = false; const c = store.get('chars', DEFAULT_CHARS) || DEFAULT_CHARS; PL.forEach((pl, i) => { if (c[i] && pl.charId !== c[i]) setPlayerChar(pl, c[i]); }); }
+}
+function mpBegin() {   // quem criou a sala começa: escolhe a fase; quem entrou espera
+  if (!window.NET || !NET.open || NET.role !== 'host') return;
+  MP.on = true; MP.me = 0; mpClearTimers(); mpRunReset(); MPX.pk = [null, null];
+  mpSend('mp:begin', {}); mpOpenPhase();
+}
+function mpEnd() { if (window.NET) NET.close(); mpOff(); toMenu(); }
+function mpToRoom() { mpOff(); toMenu(true); mpui('room'); }   // de volta à sala, ainda conectados
+function mpLost() { mpOff(); toMenu(); mpui('lost'); }
+function mpRoomBack() { if (MP.me) return; mpSend('mp:room', {}); mpToRoom(); }
+/* --------- fase e personagem --------- */
+function mpOpenPhase() { MPX.pk = [null, null]; mpWait(null); openPhase(false); $('#phMode').textContent = t('mpTag') || t('p2'); }
+function mpPhase(ph) {
+  if (MP.me) return;
+  setPhase(ph); MPX.sel++; MPX.pk = [null, null];
+  mpSend('mp:phase', { ph: PHI, sel: MPX.sel }); mpOpenSelect();
+}
+function mpOpenSelect() { openSelect(false); $('#sBack').hidden = MP.me === 1; }   // só quem criou a sala volta para as fases
+function mpSelBack() { if (MP.me) return; mpSend('mp:begin', {}); mpOpenPhase(); }
+// confirmou o personagem: avisa e espera; quem criou a sala marca a transformação quando os dois escolheram
+function mpPick() {
+  const id = SEL.picks[0]; if (!id || MPX.wait) return;
+  const L = PL[MP.me]; if (L.charId !== id) setPlayerChar(L, id); MPX.chars = true;
+  MPX.pk[MP.me] = id; mpSend('mp:pick', { sel: MPX.sel, char: id });
+  mpWait('mpWaitPick'); mpTryTf();
+}
+function mpTryTf() {
+  if (MP.me || !MPX.pk[0] || !MPX.pk[1] || state.screen !== 'select') return;
+  const d = { run: ++MPX.runN, at: NET.now() + 1200, ph: PHI, chars: MPX.pk.slice() };
+  mpSend('mp:tf', d); mpTf(d);
+}
+function mpChars(c) { PL.forEach((pl, i) => { if (c && c[i] && pl.charId !== c[i]) setPlayerChar(pl, c[i]); }); MPX.chars = true; }
+/* --------- transformação: no mesmo instante nos dois, cada um com o seu personagem, e a música junto --------- */
+function mpTf(d) {
+  MP.run = d.run; MPX.tfd = [false, false];
+  if (d.ph !== PHI) setPhase(d.ph);
+  mpChars(d.chars); mpWait('mpWaitStart');
+  const L = PL[MP.me], st = stageOf(L); setupStage(st, L.charId); st.active = false;   // monta o palco antes (pode demorar), parado até o instante
+  initAudio(); musicStart(NET.ctxTime(AC, d.at));
+  mpTimer(mpTfGo, NET.toLocal(d.at) - performance.now());
+}
+function mpTfGo() {
+  if (!MP.on) return;
+  mpWait(null); AC.resume().catch(() => {});
+  endTransformUI(); setTwo(true); show(null); state.screen = 'tf'; lockOrient(false);
+  const L = PL[MP.me]; setupStage(stageOf(L), L.charId);
+  for (const pl of PL) { pl.tfx.hidden = pl !== L; pl.b2x.hidden = true; }   // 2× mudaria a música só neste celular; Pular continua
+  requestWake();
+}
+function mpTfDone() {
+  if (state.screen !== 'tf') return;
+  MPX.tfd[MP.me] = true;
+  if (MP.me) mpSend('mp:tfDone', { run: MP.run });
+  if (!(MPX.tfd[0] && MPX.tfd[1])) mpWait('mpWaitTf');
+  mpTryStart();
+}
+function mpTryStart() { if (!MP.me && MPX.tfd[0] && MPX.tfd[1] && state.screen === 'tf') mpStart(PHI); }
+/* --------- largada: quem criou a sala marca o instante (1,5 s à frente) em que o tempo 0 da música é ouvido nos dois --------- */
+function mpStart(ph) {
+  if (!MP.on || MP.me) return;
+  const d = { run: ++MPX.runN, at: NET.now() + 1500, ph, chars: [PL[0].charId, PL[1].charId] };
+  mpSend('mp:start', d); mpStartRun(d);
+}
+function mpStartRun(d) {
+  MP.run = d.run; mpClearTimers(); mpRunReset();
+  if (d.ph !== PHI) setPhase(d.ph);
+  mpChars(d.chars); mpWait(null); mpui('partner', null);
+  if (MUS.on) musicStop(true);
+  endTransformUI(); show(null);
+  const L = PL[MP.me];
+  startRun({ two: true, at: d.at }).then(() => flash(L, .6));
+}
+function mpRunInit(at) {
+  const L = PL[MP.me], R = PL[1 - MP.me];
+  L.net = false; R.net = true; L.auto = MPX.bot; R.auto = false; L.demoTag.hidden = true;
+  PL[0].base.s = 0; PL[1].base.s = PATH_L / 2;   // o mesmo mundo nos dois: cada um no seu ponto da pista, parado
+  for (const pl of PL) { const B = pl.base; B.spd = 0; B.bank = 0; updBase(pl, 0, 1); B.vyaw = B.yaw; B.ppos.copy(B.pos); }
+  MPX.anc = { at, T: 0 }; MPX.refAt = at; MPX.refT = 0; mpAnchor();
+}
+// a cada 2 s, confere onde o tempo 0 da música deve estar: uma falha do som (underrun) pode deslocar de vez o relógio do som
+// deste celular em relação ao do aparelho; se mudou mais de 8 ms, a música segue da nova posição
+function mpReanchor(now) {
+  MPX.reT = now; if (!AC || state.ended) return;
+  const e = NET.ctxTime(AC, MPX.refAt) - MPX.refT, d = e - songT0;
+  if (d > .008 || d < -.008) { console.info('[dupla] música reancorada em ' + Math.round(d * 1000) + ' ms'); songT0 = e; MPX.nre++; }
+}
+// início da música no relógio do som, refeito a cada quadro até meio segundo antes do instante combinado
+// (logo depois de retomar o som, o mapa entre o relógio do som e o do celular ainda pode estar velho)
+function mpAnchor() {
+  const A = MPX.anc; if (!A || !AC) return;
+  songT0 = NET.ctxTime(AC, A.at) - A.T;
+  if (NET.toLocal(A.at) - performance.now() < 500) MPX.anc = null;
+}
+/* --------- a partida: julgamentos do dono, compassos do parceiro esperando o aviso dele --------- */
+function mpJudged(pl, n) { if (pl.id === MP.me) mpSend('mp:j', { run: MP.run, i: n.k, j: n.j, dt: n.dt, sc: pl.score }); }
+function mpTail(pl, n, ok) { if (pl.id === MP.me) mpSend('mp:tail', { run: MP.run, i: n.k, ok, tt: n.tt, sc: pl.score }); }
+// virada de compasso: o jogador deste celular começa já e avisa (com a corrente de antes da virada); o compasso do
+// parceiro e a decisão da dupla esperam o que falta saber dele: o aviso, ou o fim do compasso anterior dele (mpEarly)
+function mpMeasure(mi) {
+  const L = PL[MP.me], chain = L.chain, posing = L.posing;
+  if (MPX.pend >= 0) mpFallback();
+  onMeasureStart(L, mi);
+  const ms = L.ms[mi];
+  mpSend('mp:ms', { run: MP.run, mi, chain, posing: posing ? 1 : 0, level: ms ? ms.level : 0, kind: ms ? ms.kind : '', sc: L.score });
+  MPX.pend = mi; MPX.pendAt = performance.now(); mpDrain();
+}
+// todas as notas do compasso anterior do parceiro já chegaram? Então o começo do compasso dele, calculado aqui, é igual
+// ao do celular dele (tudo o que ele fez antes da virada já foi aplicado, na mesma ordem); o aviso só confere depois
+function mpEarly() {
+  const mi = MPX.pend, R = PL[1 - MP.me], prev = R.meas[mi - 1];
+  if (prev) for (const n of prev) if (!n.j || (n.hold && n.j !== 'm' && n.tail === null)) return;
+  MPX.pend = -1; MPX.fb = mi;
+  onMeasureStart(R, mi); pairMeasure(mi);
+}
+function mpFallback() {   // nada chegou a tempo: o compasso do parceiro começa com o que se sabe; os números se corrigem com o aviso
+  const mi = MPX.pend; MPX.pend = -1; MPX.fb = mi; MPX.nfb++;
+  console.warn('[dupla] aviso do compasso ' + mi + ' do parceiro atrasado; seguindo sem ele');
+  onMeasureStart(PL[1 - MP.me], mi); pairMeasure(mi);
+}
+// o que chegou do parceiro, em ordem; o aviso de um compasso espera este celular chegar à mesma virada
+function mpDrain() {
+  const Q = MPX.q;
+  while (MPX.h < Q.length) { const d = Q[MPX.h]; if (d.$ === 'ms' && d.mi > state.mi) break; MPX.h++; mpApply(d); }
+  if (MPX.h && MPX.h === Q.length) { Q.length = 0; MPX.h = 0; }
+  if (MPX.pend >= 0) mpEarly();
+}
+function mpApply(d) {
+  const R = PL[1 - MP.me];
+  if (d.$ === 'ms') {
+    if (d.mi < MPX.mi0) return;   // de antes de um pulo (testes)
+    if (d.mi !== MPX.pend) { mpPatch(R, d); return; }
+    MPX.pend = -1; R.chain = d.chain; R.posing = !!d.posing;
+    onMeasureStart(R, d.mi); R.score = d.sc;
+    const ms = R.ms[d.mi]; if (ms && (ms.level !== d.level || ms.kind !== d.kind)) console.warn('[dupla] compasso ' + d.mi + ' do parceiro difere', ms.level, ms.kind, d.level, d.kind);
+    pairMeasure(d.mi);
+    return;
+  }
+  const n = R.notes[d.i]; if (!n) return;
+  if (n.mi >= MPX.mi0) {
+    if (d.$ === 'j') { if (!n.j) judge(R, n, d.j, d.dt); }
+    else if (n.hold && n.j && n.j !== 'm' && n.tail === null) {   // fim da estrela longa
+      if (d.ok === 1) { n.tail = 'ok'; R.score += 100 * mult(R, n); checkMeasure(R, n.mi); }
+      else { n.tail = 'm'; n.tt = d.tt; R.stats.m++; onMiss(R, n); }
+    }
+  }
+  R.score = d.sc;   // o placar do parceiro é o do dono
+}
+// aviso que chegou depois do prazo: corrige corrente, nível e tipo do compasso do parceiro
+function mpPatch(R, d) {
+  const sec = sectionOf(d.mi); let chain = d.chain, posing = !!d.posing;
+  if (sec.k === 'block') { if (sec.m === 0) { chain = 0; posing = false; } else if (sec.m === 6 && chain >= 6) posing = true; else if (!(sec.m === 7 && posing)) posing = false; }
+  R.chain = chain; R.posing = posing; R.score = d.sc;
+  const ms = R.ms[d.mi];
+  if (ms && (ms.level !== d.level || ms.kind !== d.kind)) { console.warn('[dupla] compasso ' + d.mi + ' do parceiro corrigido', ms.level, ms.kind, d.level, d.kind); ms.level = d.level; ms.kind = d.kind; }
+}
+/* --------- pausa: qualquer um pausa os dois; quem criou a sala marca a volta, no menor tempo dos dois --------- */
+function mpResumeReq() {
+  if (!state.paused || MPX.rs || state.ended) return;
+  if (MP.me) { mpSend('mp:resumeReq', { run: MP.run, T: MPX.pT[1] }); mpWait('mpWaitResume'); }
+  else mpResumeGo();
+}
+function mpResumeGo() {
+  const a = MPX.pT[0], b = MPX.pT[1], m = Math.min(isFinite(a) ? a : 1e9, isFinite(b) ? b : 1e9);
+  const d = { run: MP.run, at: NET.now() + 1600, T: (m < 1e9 ? m : state.songT) - .05 };
+  mpSend('mp:resume', d); mpResumeAt(d);
+}
+// contagem 3-2-1 alinhada ao instante combinado; a música é reagendada para o tempo T ser ouvido nesse instante
+function mpResumeAt(d) {
+  mpWait(null);
+  if (!state.paused || state.ended || state.screen !== 'play' || MPX.rs) return;
+  resuming = true; show(null); MPX.rs = d; MPX.anc = d; MPX.refAt = d.at; MPX.refT = d.T;
+  if (AC) AC.resume().catch(() => {});
+  newMusicBus(); nextStep = Math.max(0, Math.ceil(d.T / S16)); mpAnchor();
+  const tl = NET.toLocal(d.at), now = performance.now();
+  for (let k = 0; k < 3; k++) mpTimer(() => { for (const pl of VIEWS) showCard(pl, '', String(3 - k), .5, 'count'); }, tl - 1560 + k * 520 - now);
+  mpTimer(() => { MPX.rs = MPX.anc = null; state.paused = false; state.clockInit = false; resuming = false; requestWake(); }, tl - now);
+}
+function mpResumeCancel() { mpClearTimers(); MPX.rs = MPX.anc = null; resuming = false; if (AC) AC.suspend().catch(() => {}); show('pause'); }   // pausou de novo na contagem
+/* --------- fim e botões: quem criou a sala executa, quem entrou pede --------- */
+function mpAct(k) {
+  if (!MP.on) return;
+  if (k === 'menu') { mpSend('mp:menu', { run: MP.run }); mpToRoom(); return; }
+  if (MP.me) { mpSend(k === 'again' ? 'mp:againReq' : k === 'next' ? 'mp:nextReq' : 'mp:restartReq', { run: MP.run }); mpWait('mpWaitNext'); return; }
+  if (k === 'next') setPhase((PHI + 1) % PHASES.length);
+  mpStart(PHI);
+}
+// fim da música: manda o placar e espera o do parceiro (até 3 s); o resultado usa os números de cada dono
+function mpFinal() {
+  const L = PL[MP.me];
+  mpSend('mp:final', { run: MP.run, score: L.score, stats: Object.assign({}, L.stats), syncPts: L.syncPts, found: [...L.found] });
+  mpui('partner', null);
+  if (MPX.fin) mpResults(); else { mpWait('mpWaitEnd'); mpTimer(mpResults, 3000); }
+}
+function mpResults() {
+  if (!MP.on || !state.ended) return;
+  const R = PL[1 - MP.me], f = MPX.fin;
+  if (!MPX.mirror) MPX.mirror = { score: R.score, stats: Object.assign({}, R.stats), syncPts: R.syncPts, found: [...R.found].sort() };   // o que este celular calculou do parceiro
+  if (f) { R.score = f.score; R.stats = Object.assign({}, f.stats); R.syncPts = f.syncPts; R.found = new Set(f.found); }
+  mpWait(null); showResults2();
+}
+// botão voltar do Android no meio do fluxo
+function mpBack() {
+  const s = state.screen;
+  if (s === 'phase') mpRoomBack();
+  else if (s === 'select') { if (!MP.me && !MPX.wait) mpSelBack(); }
+  else if (s === 'play') { if (!state.paused) pause(MP.me); }
+  else if (s === 'results2') mpAct('menu');
+}
+// só para testes: quem criou a sala marca um pulo da música para antes de um bloco, no mesmo instante nos dois
+function mpJump(b) {
+  if (!MP.on || MP.me || state.screen !== 'play') return;
+  const d = { run: MP.run, b, at: NET.now() + 700 }; mpSend('mp:jump', d); mpJumpAt(d);
+}
+function mpJumpAt(d) {
+  mpTimer(() => {
+    if (!MP.on || state.screen !== 'play' || state.paused) return;
+    const T = jumpTo(d.b); MPX.q.length = 0; MPX.h = 0; MPX.pend = -1; MPX.mi0 = state.mi + 1;
+    songT0 = NET.ctxTime(AC, d.at) - T; MPX.refAt = d.at; MPX.refT = T; nextStep = Math.max(0, Math.ceil((T + .3) / S16));
+  }, NET.toLocal(d.at) - performance.now());
+}
+// mensagens da dupla (registradas só se a rede existe; sem mp-net.js o jogo segue igual)
+function mpListen() {
+  const on = (t, f) => NET.on(t, d => { try { f(d || {}); } catch (e) { console.error('[dupla] ' + t, e); } });
+  const cur = d => MP.on && d.run === MP.run;
+  const queue = k => d => { if (cur(d)) { d.$ = k; MPX.q.push(d); if (state.screen === 'play' && !state.paused && !state.ended) mpDrain(); } };   // aplica já, sem esperar o quadro
+  on('mp:begin', () => {   // quem entrou: espera quem criou a sala escolher a fase
+    if (NET.role !== 'guest') return;
+    MP.on = true; MP.me = 1; mpClearTimers(); mpRunReset(); MPX.pk = [null, null];
+    endTransformUI(); if (MUS.on) musicStop(false);
+    setTwo(false); setHud(false); show(null); state.screen = 'mpwait'; pushNav();
+    mpWait('mpWaitHost');
+  });
+  on('mp:phase', d => { if (MP.on && MP.me) { MPX.sel = d.sel; MPX.pk = [null, null]; setPhase(d.ph); mpWait(null); mpOpenSelect(); } });
+  on('mp:pick', d => { if (MP.on && d.sel === MPX.sel) { MPX.pk[1 - MP.me] = d.char; mpTryTf(); } });
+  on('mp:tf', d => { if (MP.on && MP.me) mpTf(d); });
+  on('mp:tfDone', d => { if (cur(d) && !MP.me) { MPX.tfd[1] = true; mpTryStart(); } });
+  on('mp:start', d => { if (MP.on && MP.me) mpStartRun(d); });
+  on('mp:j', queue('j')); on('mp:tail', queue('tail')); on('mp:ms', queue('ms'));
+  on('mp:pause', d => {
+    if (!cur(d)) return;
+    MPX.pT[1 - MP.me] = d.T;
+    if (MPX.rs) mpResumeCancel(); else pause('net');
+    if (state.paused) mpui('toast', 'mpPaused');
+  });
+  on('mp:resumeReq', d => { if (cur(d) && !MP.me && !MPX.rs) { if (isFinite(d.T)) MPX.pT[1] = d.T; mpResumeGo(); } });
+  on('mp:resume', d => { if (cur(d) && MP.me) mpResumeAt(d); });
+  on('mp:final', d => { if (!cur(d)) return; MPX.fin = d; if (state.ended && (state.screen === 'play' || state.screen === 'results2')) mpResults(); });
+  on('mp:againReq', d => { if (cur(d) && !MP.me) mpAct('again'); });
+  on('mp:nextReq', d => { if (cur(d) && !MP.me) mpAct('next'); });
+  on('mp:restartReq', d => { if (cur(d) && !MP.me) mpAct('restart'); });
+  on('mp:menu', () => { if (MP.on) mpToRoom(); });
+  on('mp:room', () => { if (MP.on) mpToRoom(); });
+  on('mp:jump', d => { if (cur(d) && MP.me) mpJumpAt(d); });
+  NET.on('close', () => { if (MP.on) mpLost(); });
+}
 
 /* --------- vitrine: fora da partida, os unicórnios mostram manobras --------- */
 const ATTRACT = [[0, 1], [0, 2], [2, 1], [0, 3], [1, 1], [2, 2], [0, 4], [1, 3]];
@@ -6544,6 +7046,8 @@ function tick(nowMs, forceDt) {
   if (state.screen === 'select' && LINE.scene) { selFrame(nowMs / 1000, dt); return; }
   if (state.screen === 'tf' || state.screen === 'ready2') { tfFrame(nowMs / 1000, dt); return; }
   if (state.replay && RP.intro) { rpIntroFrame(nowMs / 1000, forceDt !== null ? forceDt : dt); return; }
+  if (MPX.anc && state.screen === 'play') mpAnchor();
+  else if (MP.on && state.screen === 'play' && !state.paused && !resuming && nowMs - MPX.reT > 2000) mpReanchor(nowMs);
   let tt;
   if (preview) { tt = preview.t; dt = 0; }
   else if (state.screen === 'play' && AC) {
@@ -6574,17 +7078,29 @@ function tick(nowMs, forceDt) {
   if (PHI === 2 && WORLD3) {
     ballUpdate(dt); const play = state.screen === 'play';
     // a baleia aparece na direção em que a câmera olha quando começa a antecipação do final a dois
-    WORLD3.cam = PANO.on ? PANO.cam : ACTIVE[0].cam;
+    WORLD3.cam = PANO.on ? PANO.cam : VIEWS[0].cam;
     if (BALL.target > .3 && !WORLD3.placed) { whaleSpot(WORLD3, WORLD3.cam); WORLD3.placed = 1; } else if (BALL.target === 0 && BALL.w < .05) WORLD3.placed = 0;
     beachUpdate(WORLD3, play ? state.songT : nowMs / 1000, dt, play ? hypeOf(state.mi) : .55, BALL.w, BALL.target >= 1);
   }
   if (BULBS) { const ts = nowMs / 1000; for (let i = 0; i < BULBS.n; i++) BULBS.alpha[i] = .75 + .25 * Math.sin(ts * 3 + i * 1.3); BULBS.geo.attributes.palpha.needsUpdate = true; }
-  for (const pl of ACTIVE) { if (preview) pl.tv.snap = true; updateCamera(pl, dt); }
+  for (const pl of VIEWS) { if (preview) pl.tv.snap = true; updateCamera(pl, dt); }
   if (state.replay) directorCam(dt); else if (PANO.on) panoCamera(dt);
   if (RP.seek) return;
   render3D();
   if (state.replay) { if (RP.seek) return; if (!RP.exp) { if (!RP.drag) $('#rpProg').style.width = (rpFrac() * 100).toFixed(1) + '%'; drawRpOverlay(); if (RP.orient === 'h' && PANO.rotQ !== TILT.q) panoLayout(); } }
-  else for (const pl of ACTIVE) { drawLanes(pl, tt); placeNames(pl); }
+  else for (const pl of VIEWS) { drawLanes(pl, tt); placeNames(pl); }
+  // placar do parceiro (dupla em dois celulares), no máximo 4 vezes por segundo
+  if (MP.on && state.screen === 'play' && !state.ended && nowMs - MPX.chipT > 250) { MPX.chipT = nowMs; MPX.chip.score = Math.round(PL[1 - MP.me].score); mpui('partner', MPX.chip); }
+}
+
+// pula a música para o compasso antes de um bloco (protótipo e testes); as notas que ficaram para trás não contam
+function jumpTo(b) {
+  const mi0 = b === 0 ? 3 : BLOCK_START[b] - 1, T = mi0 * MEAS - .02;
+  newMusicBus(); applyVolumes();
+  songT0 = AC.currentTime + .1 - T; nextStep = Math.max(0, Math.ceil((T + .12) / S16)); state.clockInit = false; state.songT = T; state.mi = mi0 - 1; state.bi = Math.floor(T / BEAT); state.ended = false;
+  pairReset();
+  for (const pl of ACTIVE) { for (const n of pl.notes) if (n.t < T + .3) { if (!n.j) n.j = 'p'; if (n.hold && !n.tail) n.tail = 'ok'; } pl.chain = 0; pl.posing = false; clearPoseFx(pl, false); setAnim(pl, 'skate', {}, T); pl.names.innerHTML = ''; }
+  return T;
 }
 
 /* --------- início --------- */
@@ -6594,6 +7110,7 @@ const WORLD_MESHES = []; scene.traverse(o => { if (o.isMesh && o.geometry && o.g
 PL.push(makePlayer(0), makePlayer(1));
 setTwo(false); updReplayBtns();
 applyI18n(); syncOptUI();
+window.MP = MP; if (window.NET) mpListen();
 addEventListener('resize', () => { updTurn(); layout(); }); if (window.ResizeObserver) new ResizeObserver(layout).observe(app);
 if (document.fonts && document.fonts.load) document.fonts.load('11px Silkscreen').catch(() => {});
 requestAnimationFrame(frame);
@@ -6612,14 +7129,7 @@ window.UG = {
   rot: r => { OPT.rot = r.slice(0, 2); updOrientUI(); layout(); },
   pair: () => ({ w: +PAIR.w.toFixed(2), target: PAIR.target, roleA: PAIR.roleA, sideA: PAIR.sideA, landed: PAIR.landed, pano: PANO.on, anims: PL.map(p => [p.anim.kind, p.anim.b, p.anim.lvl, p.anim.duo]), found: PL.map(p => [...p.found]), pos: PL.map(p => [+p.base.pos.x.toFixed(2), +p.base.pos.z.toFixed(2), +(p.base.y || 0).toFixed(2)]) }),
   // pula a música para o compasso antes de um bloco (protótipo e testes); as notas que ficaram para trás não contam
-  jump(b) {
-    if (state.screen !== 'play' || !AC) return;
-    const mi0 = b === 0 ? 3 : BLOCK_START[b] - 1, T = mi0 * MEAS - .02;
-    newMusicBus(); applyVolumes();
-    songT0 = AC.currentTime + .1 - T; nextStep = Math.max(0, Math.ceil((T + .12) / S16)); state.clockInit = false; state.songT = T; state.mi = mi0 - 1; state.bi = Math.floor(T / BEAT); state.ended = false;
-    pairReset();
-    for (const pl of ACTIVE) { for (const n of pl.notes) if (n.t < T + .3) { if (!n.j) n.j = 'p'; if (n.hold && !n.tail) n.tail = 'ok'; } pl.chain = 0; pl.posing = false; clearPoseFx(pl, false); setAnim(pl, 'skate', {}, T); pl.names.innerHTML = ''; }
-  },
+  jump(b) { if (state.screen === 'play' && AC) jumpTo(b); },
   // prévia de uma figura a dois parada num instante: 'tipo.nível' (manobra) ou 'bloco' com fase wind/rise/fin/linger
   duoShow(key, ph, kind, q = 1) {
     if (!state.two) setTwo(true);
@@ -6675,9 +7185,392 @@ window.UG = {
   replay: (seg, o, c) => { if (o) RP.orient = o; if (c) RP.cam = c; playReplay(seg || 0); }, rpLock: (pos, aim, fov) => { RP.lock = pos ? { pos, aim, fov } : null; }, pairPos: () => ({ pos: PAIR.pos.toArray(), yaw: PAIR.yaw, pl: PL.map(q => q.W.chest.toArray()) }), wcam: () => { const r = v => v.toArray().map(x => +x.toFixed(2)), d = new THREE.Vector3(); PANO.cam.getWorldDirection(d); return { c: WORLD3 && +WORLD3.whale.ct.toFixed(2), wc: r(WC.pos), aim: r(WC.aim), w: +WC.w.toFixed(2), cam: r(PANO.cam.position), dir: r(d), fov: PANO.cam.fov, asp: +PANO.cam.aspect.toFixed(2), P: r(PAIR.pos), whale: WORLD3 && r(WORLD3.whale.g.position), at: WORLD3 && r(WORLD3.whale.at) }; }, bones: () => PL.map(q => { const U_ = q.uni, o = { yaw: +q.uni.root.rotation.y.toFixed(3), root: U_.root.position.toArray().map(v => +v.toFixed(2)) }; for (const k of ['chest', 'hornTip', 'handL', 'handR', 'hpL', 'hpR', 'knL', 'knR', 'skL', 'skR', 'shL', 'shR']) { const v = new THREE.Vector3(); U_[k].getWorldPosition(v); o[k] = v.toArray().map(x => +x.toFixed(2)); } return o; }), perfectReplay: (ph, two, chars) => perfectReplay(ph, two, chars), whale: () => WORLD3 && { eye: +WORLD3.whale.eyes[0].scale.y.toFixed(2), t: +WORLD3.whale.t.toFixed(2), at: WORLD3.whale.at.toArray(), w: +BALL.w.toFixed(2), target: BALL.target }, replayStop: () => replayStop(), rpx: () => ({ t0: RP.t0, t1: RP.t1, paused: state.paused, drag: !!RP.drag, seek: RP.seek, tilt: TILT.q, rotQ: PANO.rotQ, intro: RP.intro && +RP.intro.t.toFixed(2), frac: +rpFrac().toFixed(3), songT: +state.songT.toFixed(2), mus: MUS.on && !MUS.end, stT: ACTIVE.map(pl => pl.stage ? +pl.stage.t.toFixed(2) : null) }), rpSeek: f => rpSeek(f), rp: () => ({ on: !!state.replay, seg: RP.seg, fp: RP.fp, both: RP.both, mode: RP.mode, songT: state.songT, caps: RP.caps.length, score: ACTIVE.map(pl => pl.score), alt: !!RP.alt, angOff: +RP.angOff.toFixed(2), occ: blocked(PANO.cam.position, occTargets(state.two && PAIR.w > .5 ? PL : [PL[RP.fp]])), press: RP.press.length }),
   exportReplay: async (seg, o, c) => { if (o) RP.orient = o; if (c) RP.cam = c; await exportReplay(seg || 0); const E = RP.exp; return E && { ok: !!E.blob, size: E.blob ? E.blob.size : 0, codec: E.codec, error: E.error, name: E.name }; },
   exportBlob: async () => { const E = RP.exp; if (!E || !E.blob) return null; const b = new Uint8Array(await E.blob.arrayBuffer()); let s = ''; for (let i = 0; i < b.length; i += 32768) s += String.fromCharCode.apply(null, b.subarray(i, i + 32768)); return btoa(s); }, ball: () => ({ target: BALL.target, w: +BALL.w.toFixed(3), at: BALL.at.toArray().map(v => +v.toFixed(2)) }),
-  gap: () => +((((PL[1].base.s - PL[0].base.s) % PATH_L) + PATH_L) % PATH_L / PATH_L).toFixed(3)
+  gap: () => +((((PL[1].base.s - PL[0].base.s) % PATH_L) + PATH_L) % PATH_L / PATH_L).toFixed(3),
+  // dupla em dois celulares
+  mp: () => {
+    const inf = pl => ({ id: pl.id, score: pl.score, chain: pl.chain, posing: pl.posing, stats: Object.assign({}, pl.stats), syncPts: pl.syncPts, found: [...pl.found].sort(), auto: pl.auto, net: !!pl.net, char: pl.charId });
+    return { on: MP.on, me: MP.me, run: MP.run, screen: state.screen, two: state.two, paused: state.paused, ended: state.ended, songT: +state.songT.toFixed(3), mi: state.mi, phase: PHI,
+      wait: MPX.wait, waits: MPX.waits.slice(), pending: MPX.pend, fallbacks: MPX.nfb, reanchors: MPX.nre, queue: MPX.q.length - MPX.h, views: VIEWS.map(p => p.id), els: PL.map(p => !p.el.hidden),
+      quads: PL.map(p => p.quad.visible), app: app.className, divider: !$('#divider').hidden, pano: PANO.on, pauseCls: screens.pause.className,
+      local: inf(PL[MP.me]), remote: inf(PL[1 - MP.me]), mirror: MPX.mirror, log: MPX.log.slice(), chars: PL.map(p => p.charId), tfx: PL.map(p => !p.tfx.hidden),
+      clk: AC && window.NET ? [NET.now(), heardAt(performance.now()) - songT0] : null };   // tempo da música ouvido agora, no relógio compartilhado
+  },
+  mpNotes: i => PL[i].notes.map(n => n.j ? n.j + (n.tail === 'm' ? 'x' : '') : '-').join(''),
+  botSkip: (i, idx) => { PL[i].skip = idx && idx.length ? new Set(idx) : null; },
+  mpBot: on => { MPX.bot = !!on; if (MP.on && state.screen === 'play') PL[MP.me].auto = !!on; },
+  mpJump: b => mpJump(b),
+  saveReplay: () => { saveReplay(); const D = RP.data; return D && { two: D.two, ph: D.ph, chars: D.chars, n: D.p.map(x => x.length), miss: D.p.map(x => x.filter(r => r[0] === 2 || r[2] === 2).length), p: D.p.map(x => x.filter(r => r[0] === 0).length) }; }
 };
 // @@MP-JS@@ (dupla em dois celulares: código da interface entra aqui, dentro do escopo do jogo)
+// MP-UI js begin
+/* ============================== dupla em dois celulares: interface ============================== */
+// escolha do modo, sala (criar, entrar, conectados, medir sincronia), espera, aviso, conexão perdida e placar do parceiro.
+// Usa window.NET e window.CAL (mp-net.js) e window.MP (jogo); sem NET, o botão de 2 jogadores continua como antes.
+{
+const MPS = {
+  pt: {
+    mpTag: '2 jogadores · 2 celulares', mpWaitHost: 'Esperando quem criou a sala escolher a fase…', mpWaitPick: 'Esperando o parceiro escolher o personagem…',
+    mpWaitTf: 'Esperando o parceiro terminar a transformação…', mpWaitStart: 'Preparando a largada…', mpWaitNext: 'Esperando o parceiro…',
+    mpWaitResume: 'Voltando ao jogo…', mpWaitEnd: 'Esperando o placar do parceiro…', mpPaused: 'O parceiro pausou', mpLeft: 'O parceiro saiu',
+    mpLost: 'Conexão perdida', mpYou: 'Você', mpPartner: 'Parceiro',
+    mpModeT: 'Como vão jogar?', mpHere: 'Neste celular', mpHereS: 'Os dois no mesmo celular, deitado na mesa, cada um do seu lado.',
+    mpTwo: 'Em dois celulares', mpTwoS: 'Cada um no seu celular, os dois no mesmo Wi-\u2060Fi.',
+    mpRoomT: 'Sala da dupla', mpStartHint: 'Os dois celulares no mesmo Wi-\u2060Fi (ou um usando o roteador do outro). Um cria a sala; o outro entra com o código.',
+    mpCreate: 'Criar sala', mpOr: 'ou entre numa sala', mpCodeL: 'Código da sala', mpJoin: 'Entrar',
+    mpNeedCode: 'Digite os 4 números que aparecem no outro celular.',
+    mpErrNotFound: 'Sala não encontrada. Confira o código.',
+    mpErrNet: 'Sem contato com o servidor de conexão (a internet só é usada para o primeiro contato). Confira a internet e tente de novo.',
+    mpErrBrowser: 'Este navegador não faz conexão direta (WebRTC). Use o Chrome.',
+    mpErrTimeout: 'A conexão demorou demais. Confiram se os dois estão no mesmo Wi-\u2060Fi e tentem de novo.',
+    mpErrOther: 'Não deu para conectar ({e}). Tente de novo.',
+    mpCreating: 'Criando a sala…', mpTypeCode: 'Digite este código no <b>outro celular</b>.', mpWaitGuest: 'Esperando o outro celular…', mpJoining: 'Conectando…',
+    mpConnT: 'Conectados!', mpRoomN: 'Sala {c}', mpRoleHost: 'este celular criou a sala', mpRoleGuest: 'este celular entrou na sala',
+    mpLinkL: 'Conexão', mpLinkLocal: 'direta pela rede local', mpLinkNet: 'direta pela internet', mpLinkRelay: 'por um servidor (mais lenta)',
+    mpRttL: 'Ida e volta', mpPrecL: 'Precisão dos relógios',
+    mpStart: 'Começar', mpSyncing: 'Alinhando os relógios…', mpWaitBegin: 'Esperando quem criou a sala começar…', mpLeave: 'Sair',
+    mpMeasT: 'Medir sincronia', mpOpt: 'opcional',
+    mpMeasHint: 'Coloquem os celulares lado a lado, com o volume alto, em silêncio. Os dois tocam 20 cliques e este celular ouve pelo microfone. O ajuste vai para o celular que entrou na sala.',
+    mpMeasure: 'Medir (usa o microfone)', mpMeasAgain: 'Medir de novo',
+    mpCalMic: 'Pedindo o microfone…', mpCalMicO: 'O outro celular está pedindo o microfone…', mpCalCount: 'Silêncio! Começa em {n}…',
+    mpCalPlay: 'Ouvindo os cliques…', mpCalPlayO: 'Tocando os cliques; o outro celular está ouvindo…', mpCalAn: 'Calculando…', mpCalAnO: 'O outro celular está calculando…',
+    mpVerd: ['excelente: soa como um só', 'bom: imperceptível no jogo', 'dá para sentir; meçam de novo', 'fora de sincronia'],
+    mpLater: 'o celular que entrou na sala soou depois', mpEarlier: 'o celular que entrou na sala soou antes', mpSame: 'sem diferença',
+    mpChecked: '{n} de 20 cliques conferidos · variação ±{s}\u00a0ms',
+    mpAdjMine: 'Ajuste aplicado neste celular: {d} (total {t}). Meçam de novo para conferir.',
+    mpAdjOther: 'O outro celular recebeu o ajuste de {d}. Meçam de novo para conferir.',
+    mpFailNoise: 'Tinha outro som no ritmo dos cliques (música, conversa, batidas). Façam silêncio e meçam de novo.',
+    mpFailQuiet: 'Não deu para ouvir bem os dois celulares. Aumentem o volume, deixem os celulares lado a lado e façam silêncio.',
+    mpHeard: 'Clique de quem criou a sala: {a} · de quem entrou: {b}', mpHeardY: 'ouvido', mpHeardN: 'não ouvido',
+    mpFailMic: 'Sem acesso ao microfone. Permita o microfone para esta página e tente de novo.', mpFailOther: 'Não deu para medir. Tentem de novo.',
+    mpAdjL: 'Ajuste deste celular', mpLostHint: 'O outro celular saiu ou a conexão caiu.', mpReconnect: 'Conectar de novo', mpOk: 'OK'
+  },
+  es: {
+    mpTag: '2 jugadores · 2 celulares', mpWaitHost: 'Esperando que quien creó la sala elija la fase…', mpWaitPick: 'Esperando que tu compañero elija el personaje…',
+    mpWaitTf: 'Esperando que tu compañero termine la transformación…', mpWaitStart: 'Preparando la largada…', mpWaitNext: 'Esperando a tu compañero…',
+    mpWaitResume: 'Volviendo al juego…', mpWaitEnd: 'Esperando el puntaje de tu compañero…', mpPaused: 'Tu compañero pausó', mpLeft: 'Tu compañero salió',
+    mpLost: 'Se perdió la conexión', mpYou: 'Vos', mpPartner: 'Compañero',
+    mpModeT: '¿Cómo van a jugar?', mpHere: 'En este celular', mpHereS: 'Los dos en el mismo celular, apoyado en la mesa, cada uno de su lado.',
+    mpTwo: 'En dos celulares', mpTwoS: 'Cada uno en su celular, los dos en el mismo Wi-\u2060Fi.',
+    mpRoomT: 'Sala del dúo', mpStartHint: 'Los dos celulares en el mismo Wi-\u2060Fi (o uno conectado a la zona Wi-\u2060Fi del otro). Uno crea la sala; el otro entra con el código.',
+    mpCreate: 'Crear sala', mpOr: 'o entrá a una sala', mpCodeL: 'Código de la sala', mpJoin: 'Entrar',
+    mpNeedCode: 'Escribí los 4 números que aparecen en el otro celular.',
+    mpErrNotFound: 'No se encontró la sala. Revisá el código.',
+    mpErrNet: 'No hay contacto con el servidor de conexión (internet solo se usa para el primer contacto). Revisá internet y probá de nuevo.',
+    mpErrBrowser: 'Este navegador no hace conexión directa (WebRTC). Usá Chrome.',
+    mpErrTimeout: 'La conexión tardó demasiado. Revisen que los dos estén en el mismo Wi-\u2060Fi y prueben de nuevo.',
+    mpErrOther: 'No se pudo conectar ({e}). Probá de nuevo.',
+    mpCreating: 'Creando la sala…', mpTypeCode: 'Escribí este código en el <b>otro celular</b>.', mpWaitGuest: 'Esperando al otro celular…', mpJoining: 'Conectando…',
+    mpConnT: '¡Conectados!', mpRoomN: 'Sala {c}', mpRoleHost: 'este celular creó la sala', mpRoleGuest: 'este celular entró a la sala',
+    mpLinkL: 'Conexión', mpLinkLocal: 'directa por la red local', mpLinkNet: 'directa por internet', mpLinkRelay: 'por un servidor (más lenta)',
+    mpRttL: 'Ida y vuelta', mpPrecL: 'Precisión de los relojes',
+    mpStart: 'Empezar', mpSyncing: 'Sincronizando los relojes…', mpWaitBegin: 'Esperando que quien creó la sala empiece…', mpLeave: 'Salir',
+    mpMeasT: 'Medir sincronía', mpOpt: 'opcional',
+    mpMeasHint: 'Pongan los celulares uno al lado del otro, con el volumen alto, en silencio. Los dos tocan 20 clics y este celular escucha con el micrófono. El ajuste va al celular que entró a la sala.',
+    mpMeasure: 'Medir (usa el micrófono)', mpMeasAgain: 'Medir de nuevo',
+    mpCalMic: 'Pidiendo el micrófono…', mpCalMicO: 'El otro celular está pidiendo el micrófono…', mpCalCount: '¡Silencio! Empieza en {n}…',
+    mpCalPlay: 'Escuchando los clics…', mpCalPlayO: 'Tocando los clics; el otro celular está escuchando…', mpCalAn: 'Calculando…', mpCalAnO: 'El otro celular está calculando…',
+    mpVerd: ['excelente: suenan como uno solo', 'bien: no se nota en el juego', 'se nota; midan de nuevo', 'fuera de sincronía'],
+    mpLater: 'el celular que entró a la sala sonó después', mpEarlier: 'el celular que entró a la sala sonó antes', mpSame: 'sin diferencia',
+    mpChecked: '{n} de 20 clics verificados · variación ±{s}\u00a0ms',
+    mpAdjMine: 'Ajuste aplicado en este celular: {d} (total {t}). Midan de nuevo para verificar.',
+    mpAdjOther: 'El otro celular recibió el ajuste de {d}. Midan de nuevo para verificar.',
+    mpFailNoise: 'Había otro sonido al ritmo de los clics (música, charla, golpes). Hagan silencio y midan de nuevo.',
+    mpFailQuiet: 'No se pudieron escuchar bien los dos celulares. Suban el volumen, pongan los celulares uno al lado del otro y hagan silencio.',
+    mpHeard: 'Clic de quien creó la sala: {a} · de quien entró: {b}', mpHeardY: 'escuchado', mpHeardN: 'no escuchado',
+    mpFailMic: 'Sin acceso al micrófono. Permití el micrófono para esta página y probá de nuevo.', mpFailOther: 'No se pudo medir. Prueben de nuevo.',
+    mpAdjL: 'Ajuste de este celular', mpLostHint: 'El otro celular salió o se cortó la conexión.', mpReconnect: 'Conectar de nuevo', mpOk: 'OK'
+  },
+  en: {
+    mpTag: '2 players · 2 phones', mpWaitHost: 'Waiting for the room creator to choose the stage…', mpWaitPick: 'Waiting for your partner to choose a character…',
+    mpWaitTf: 'Waiting for your partner to finish transforming…', mpWaitStart: 'Getting ready to start…', mpWaitNext: 'Waiting for your partner…',
+    mpWaitResume: 'Back to the game…', mpWaitEnd: 'Waiting for your partner’s score…', mpPaused: 'Your partner paused', mpLeft: 'Your partner left',
+    mpLost: 'Connection lost', mpYou: 'You', mpPartner: 'Partner',
+    mpModeT: 'How will you play?', mpHere: 'On this phone', mpHereS: 'Both on one phone, lying flat on the table, one player on each side.',
+    mpTwo: 'On two phones', mpTwoS: 'Each player on their own phone, both on the same Wi-\u2060Fi.',
+    mpRoomT: 'Pair room', mpStartHint: 'Both phones on the same Wi-\u2060Fi (or one on the other’s hotspot). One creates the room; the other joins with the code.',
+    mpCreate: 'Create room', mpOr: 'or join a room', mpCodeL: 'Room code', mpJoin: 'Join',
+    mpNeedCode: 'Type the 4 digits shown on the other phone.',
+    mpErrNotFound: 'Room not found. Check the code.',
+    mpErrNet: 'Can’t reach the connection server (the internet is only used for the first contact). Check the internet and try again.',
+    mpErrBrowser: 'This browser can’t make a direct connection (WebRTC). Use Chrome.',
+    mpErrTimeout: 'The connection took too long. Check that both phones are on the same Wi-\u2060Fi and try again.',
+    mpErrOther: 'Could not connect ({e}). Try again.',
+    mpCreating: 'Creating the room…', mpTypeCode: 'Type this code on the <b>other phone</b>.', mpWaitGuest: 'Waiting for the other phone…', mpJoining: 'Connecting…',
+    mpConnT: 'Connected!', mpRoomN: 'Room {c}', mpRoleHost: 'this phone created the room', mpRoleGuest: 'this phone joined the room',
+    mpLinkL: 'Connection', mpLinkLocal: 'direct, local network', mpLinkNet: 'direct, over the internet', mpLinkRelay: 'through a server (slower)',
+    mpRttL: 'Round trip', mpPrecL: 'Clock precision',
+    mpStart: 'Start', mpSyncing: 'Syncing the clocks…', mpWaitBegin: 'Waiting for the room creator to start…', mpLeave: 'Leave',
+    mpMeasT: 'Measure sync', mpOpt: 'optional',
+    mpMeasHint: 'Put the phones side by side, volume up, and keep quiet. Both play 20 clicks and this phone listens with the microphone. The adjustment goes to the phone that joined the room.',
+    mpMeasure: 'Measure (uses the microphone)', mpMeasAgain: 'Measure again',
+    mpCalMic: 'Asking for the microphone…', mpCalMicO: 'The other phone is asking for the microphone…', mpCalCount: 'Quiet! Starting in {n}…',
+    mpCalPlay: 'Listening to the clicks…', mpCalPlayO: 'Playing the clicks; the other phone is listening…', mpCalAn: 'Calculating…', mpCalAnO: 'The other phone is calculating…',
+    mpVerd: ['excellent: they sound as one', 'good: unnoticeable in the game', 'you can feel it; measure again', 'out of sync'],
+    mpLater: 'the phone that joined sounded later', mpEarlier: 'the phone that joined sounded earlier', mpSame: 'no difference',
+    mpChecked: '{n} of 20 clicks checked · variation ±{s}\u00a0ms',
+    mpAdjMine: 'Adjustment applied on this phone: {d} (total {t}). Measure again to check.',
+    mpAdjOther: 'The other phone received an adjustment of {d}. Measure again to check.',
+    mpFailNoise: 'Another sound was following the rhythm of the clicks (music, talking, tapping). Keep quiet and measure again.',
+    mpFailQuiet: 'The two phones could not be heard clearly. Turn the volume up, put the phones side by side and keep quiet.',
+    mpHeard: 'Room creator’s click: {a} · joiner’s click: {b}', mpHeardY: 'heard', mpHeardN: 'not heard',
+    mpFailMic: 'No access to the microphone. Allow the microphone for this page and try again.', mpFailOther: 'The measurement didn’t work. Try again.',
+    mpAdjL: 'This phone’s adjustment', mpLostHint: 'The other phone left or the connection dropped.', mpReconnect: 'Connect again', mpOk: 'OK'
+  },
+  zh: {
+    mpTag: '双人 · 两台手机', mpWaitHost: '等待房主选择关卡…', mpWaitPick: '等待搭档选择角色…',
+    mpWaitTf: '等待搭档完成变身…', mpWaitStart: '准备开始…', mpWaitNext: '等待搭档…',
+    mpWaitResume: '正在返回游戏…', mpWaitEnd: '等待搭档的得分…', mpPaused: '搭档暂停了游戏', mpLeft: '搭档已离开',
+    mpLost: '连接已断开', mpYou: '你', mpPartner: '搭档',
+    mpModeT: '怎么玩？', mpHere: '同一台手机', mpHereS: '两人共用一台手机，平放在桌上，各占一边。',
+    mpTwo: '两台手机', mpTwoS: '每人一台手机，连接同一个 Wi-\u2060Fi。',
+    mpRoomT: '双人房间', mpStartHint: '两台手机连接同一个 Wi-\u2060Fi（或一台连接另一台的热点）。一人创建房间，另一人输入房间号加入。',
+    mpCreate: '创建房间', mpOr: '或加入房间', mpCodeL: '房间号', mpJoin: '加入',
+    mpNeedCode: '请输入另一台手机上显示的 4 位数字。',
+    mpErrNotFound: '找不到房间，请检查房间号。',
+    mpErrNet: '无法连接到连接服务器（只有首次连接需要互联网）。请检查网络后重试。',
+    mpErrBrowser: '此浏览器不支持直接连接（WebRTC）。请使用 Chrome。',
+    mpErrTimeout: '连接超时。请确认两台手机连接同一个 Wi-\u2060Fi，然后重试。',
+    mpErrOther: '无法连接（{e}）。请重试。',
+    mpCreating: '正在创建房间…', mpTypeCode: '在<b>另一台手机</b>上输入这个房间号。', mpWaitGuest: '等待另一台手机…', mpJoining: '正在连接…',
+    mpConnT: '已连接！', mpRoomN: '房间 {c}', mpRoleHost: '本机创建了房间', mpRoleGuest: '本机加入了房间',
+    mpLinkL: '连接方式', mpLinkLocal: '直连（局域网）', mpLinkNet: '直连（互联网）', mpLinkRelay: '经服务器中转（较慢）',
+    mpRttL: '消息往返', mpPrecL: '时钟精度',
+    mpStart: '开始', mpSyncing: '正在校准时钟…', mpWaitBegin: '等待房主开始…', mpLeave: '退出',
+    mpMeasT: '测量同步', mpOpt: '可选',
+    mpMeasHint: '把两台手机并排放好，调高音量，保持安静。两台手机各播放 20 声咔哒，本机用麦克风收听。校正会应用到加入房间的那台手机上。',
+    mpMeasure: '测量（使用麦克风）', mpMeasAgain: '再测一次',
+    mpCalMic: '正在请求麦克风…', mpCalMicO: '另一台手机正在请求麦克风…', mpCalCount: '请安静！{n} 秒后开始…',
+    mpCalPlay: '正在收听咔哒声…', mpCalPlayO: '正在播放咔哒声，另一台手机在收听…', mpCalAn: '正在计算…', mpCalAnO: '另一台手机正在计算…',
+    mpVerd: ['极佳：听起来像一台', '良好：游戏中察觉不到', '能听出差异；请再测一次', '不同步'],
+    mpLater: '加入房间的手机声音偏晚', mpEarlier: '加入房间的手机声音偏早', mpSame: '没有差异',
+    mpChecked: '已核对 {n}/20 声 · 波动 ±{s}\u00a0ms',
+    mpAdjMine: '已在本机应用校正：{d}（合计 {t}）。请再测一次确认。',
+    mpAdjOther: '另一台手机已应用 {d} 的校正。请再测一次确认。',
+    mpFailNoise: '有其他声音和咔哒声的节奏重合（音乐、说话、敲击）。请保持安静后再测一次。',
+    mpFailQuiet: '没能清楚听到两台手机的声音。请调高音量，把手机并排放好，并保持安静。',
+    mpHeard: '房主的咔哒声：{a} · 加入者的：{b}', mpHeardY: '听到', mpHeardN: '未听到',
+    mpFailMic: '无法使用麦克风。请允许此页面使用麦克风后重试。', mpFailOther: '测量失败，请重试。',
+    mpAdjL: '本机校正', mpLostHint: '另一台手机已退出，或连接已中断。', mpReconnect: '重新连接', mpOk: '好的'
+  }
+};
+for (const l of STR_LANGS) Object.assign(STR[l], MPS[l]);
+app.append($('#mpUiT').content.cloneNode(true));   // telas e camadas para dentro do #app (posição e tamanho do jogo)
+screens.mpmode = $('#mpModeS'); screens.mproom = $('#mpRoomS');
+applyI18n();
+
+const net = () => window.NET, cal = () => window.CAL;
+const setKey = (el, k, v) => { el.dataset.i18n = k; el.textContent = t(k, v); };
+const fms = (v, sign) => !isFinite(v) ? '…' : (v < 0 && Math.round(v) ? '−' : sign && Math.round(v) > 0 ? '+' : '') + Math.abs(Math.round(v)) + '\u00a0ms';
+const setTxt = (el, s) => { if (el.textContent !== s) el.textContent = s; };
+const audioOn = () => { initAudio(); AC.resume().catch(() => {}); };
+const ERR = { 'peer-unavailable': 'mpErrNotFound', network: 'mpErrNet', 'server-error': 'mpErrNet', 'socket-error': 'mpErrNet', 'socket-closed': 'mpErrNet',
+  'browser-incompatible': 'mpErrBrowser', timeout: 'mpErrTimeout' };
+const LINK = { local: ['mpLinkLocal', 'ok'], internet: ['mpLinkNet', ''], relay: ['mpLinkRelay', 'warn'] };
+// excelente / bom / dá para sentir / fora (como na página de teste)
+const verdict = ms => { const a = Math.abs(ms); return a <= 10 ? ['ok', 0] : a <= 25 ? ['ok', 1] : a <= 50 ? ['warn', 2] : ['bad', 3]; };
+
+/* --------- sala: start → hosting | joining → connected; lost --------- */
+const R = { st: 'start', gen: 0, code: '', cal: null, iv: 0, att: null, pend: false };   // pend: medição pedida aqui, antes de o CAL responder
+const roomEl = $('#mpRoomS'), inp = $('#mpCode'), errEl = $('#mpErr');
+const roomOn = () => state.screen === 'mproom';
+function setErr(k, v) { if (k) setKey(errEl, k, v); else { delete errEl.dataset.i18n; errEl.textContent = ''; } }
+function setSt(st) {
+  R.st = st; roomEl.dataset.st = st;
+  for (const el of $$('.mpst', roomEl)) el.hidden = el.dataset.st !== st;
+  setKey($('#mpRoomH'), st === 'connected' ? 'mpConnT' : st === 'lost' ? 'mpLost' : 'mpRoomT');
+  if (st !== 'start') setErr('');
+  if (st === 'connected') renderConn(); else calTimer(false);
+  roomEl.scrollTop = 0;
+}
+function openRoom(st) { openScreen('mproom'); setErr(''); setSt(st); }
+const tiles = (box, code) => { box.innerHTML = ''; for (const c of String(code)) { const d = document.createElement('div'), b = document.createElement('b'); d.className = 'jc'; b.textContent = c; d.appendChild(b); box.appendChild(d); } };
+function attach() { const c = cal(); if (c && AC && R.att !== AC) { try { c.attach(AC); R.att = AC; } catch (e) {} } }
+function failTo(e) {
+  try { net().close(); } catch (x) {}
+  const ty = e && e.type;
+  setSt('start'); setErr(ERR[ty] || 'mpErrOther', { e: ty || (e && e.message) || '?' });
+}
+function doHost() {
+  const N = net(); if (!N) { setErr('mpErrBrowser'); return; }
+  audioOn();
+  const g = ++R.gen; setSt('hosting'); $('#mpCreating').hidden = false; $('#mpCodeBox').hidden = true;
+  Promise.resolve().then(() => N.host()).then(code => {
+    if (g !== R.gen || R.st !== 'hosting') return;
+    R.code = String(code || N.code); tiles($('#mpCodeD'), R.code); $('#mpCreating').hidden = true; $('#mpCodeBox').hidden = false;
+    if (N.open) onOpen();
+  }, e => { if (g === R.gen && R.st === 'hosting') failTo(e); });
+}
+function doJoin() {
+  const code = inp.value.replace(/\D/g, '');
+  if (code.length !== 4) { setErr('mpNeedCode'); inp.focus(); return; }
+  const N = net(); if (!N) { setErr('mpErrBrowser'); return; }
+  audioOn(); inp.blur();
+  const g = ++R.gen; R.code = code; tiles($('#mpJoinD'), code); setSt('joining');
+  Promise.resolve().then(() => N.join(code)).then(() => { if (g === R.gen && R.st === 'joining') onOpen(); }, e => { if (g === R.gen && R.st === 'joining') failTo(e); });
+}
+function cancelConn() { ++R.gen; try { net().close(); } catch (e) {} setSt('start'); }
+function onOpen() {
+  if (!roomOn() || (R.st !== 'hosting' && R.st !== 'joining')) return;
+  ++R.gen; audioOn(); attach();
+  const N = net(); if (N.code) R.code = String(N.code);
+  R.cal = null; setSt('connected');
+}
+function leave(fromPop) { calTimer(false); ++R.gen; R.cal = null; R.pend = false; try { net().close(); } catch (e) {} toMenu(fromPop); }
+
+/* --------- conectados: situação, começar, medição --------- */
+function renderConn() {
+  const N = net(), host = !!N && N.role === 'host';
+  setTxt($('#mpWho'), t('mpRoomN', { c: R.code || (N && N.code) || '' }) + ' · ' + t(host ? 'mpRoleHost' : 'mpRoleGuest'));
+  $('#mpBegin').hidden = !host; $('#mpGuestW').hidden = host;
+  $('#mpMeas').hidden = !cal();
+  renderStat(); renderAdj(); renderCal();
+}
+function renderStat() {
+  const N = net(); if (!N) return;
+  const lk = LINK[N.link], el = $('#mpLink');
+  setTxt(el, lk ? t(lk[0]) : '…'); el.className = lk ? lk[1] : '';
+  setTxt($('#mpRtt'), fms(N.rtt)); setTxt($('#mpPrec'), isFinite(N.prec) ? '±\u00a0' + Math.max(1, Math.round(N.prec)) + '\u00a0ms' : '…');
+  const busy = calBusy();
+  $('#mpBegin').disabled = !N.synced || busy;
+  $('#mpSyncing').hidden = N.role !== 'host' || !!N.synced;
+}
+function renderAdj() { const N = net(); setTxt($('#mpAdjV'), fms(N ? N.adj || 0 : 0, true)); }
+const calBusy = () => { const c = cal(); return !!(c && c.busy) || R.pend; };
+const calEnd = ev => !!ev && (ev.phase === 'done' || ev.phase === 'fail');
+// a medição pode ser pedida por um celular e ouvida pelo outro: listener = true/false ou o papel de quem ouve
+const listens = ev => ev.listener === true || (!!ev.listener && net() && ev.listener === net().role);
+function setExp(on) { $('#mpMT').setAttribute('aria-expanded', String(on)); $('#mpMB').hidden = !on; }
+function renderCal() {
+  const ev = R.cal, ph = ev && ev.phase, busy = calBusy(), N = net(), btn = $('#mpMeasB');
+  btn.disabled = busy || !(N && N.open);
+  $('#mpAdjM').disabled = $('#mpAdjP').disabled = busy;
+  setKey(btn, ev && (ph === 'done' || ph === 'fail') ? 'mpMeasAgain' : 'mpMeasure');
+  const prog = busy && !!ev && !calEnd(ev);
+  $('#mpProg').hidden = !prog; $('#mpRes').hidden = prog || !calEnd(ev);
+  if (!ev) return;
+  if (prog) {
+    const me = listens(ev), now = N ? N.now() : performance.now();
+    let k = me ? 'mpCalAn' : 'mpCalAnO', v, f = 1;
+    if (ph === 'mic') k = me ? 'mpCalMic' : 'mpCalMicO';
+    else if (ph === 'countdown') { k = 'mpCalCount'; v = { n: isFinite(ev.at) ? Math.max(1, Math.ceil((ev.at - now) / 1000)) : 3 }; f = 0; }
+    else if (ph === 'playing') { k = me ? 'mpCalPlay' : 'mpCalPlayO'; f = isFinite(ev.at) ? Math.min(1, Math.max(0, (now - ev.at) / (ev.dur || 10000))) : 0; }
+    const s = t(k, v); setTxt($('#mpProgT'), s);
+    $('#mpBar').hidden = ph === 'mic'; $('#mpBar i').style.width = (f * 100).toFixed(1) + '%';
+    return;
+  }
+  if (calEnd(ev)) $('#mpRes').innerHTML = resHtml(ev);
+}
+function resHtml(ev) {
+  const r = ev.result || {}, N = net();
+  if (phOf(ev) === 'fail' || !r.ok) {
+    const why = r.reason || (r.snr0 > 6 && r.snr1 > 6 && r.tonal === false ? 'noise' : isFinite(r.snr0) ? 'quiet' : '');
+    let h = `<span class="bad">${t(why === 'noise' ? 'mpFailNoise' : why === 'quiet' ? 'mpFailQuiet' : why === 'mic' ? 'mpFailMic' : 'mpFailOther')}</span>`;
+    if (why === 'quiet' && isFinite(r.snr0) && isFinite(r.snr1)) h += `<small>${t('mpHeard', { a: t(r.snr0 > 6 ? 'mpHeardY' : 'mpHeardN'), b: t(r.snr1 > 6 ? 'mpHeardY' : 'mpHeardN') })}</small>`;
+    return h;
+  }
+  const d = +r.diff || 0, a = Math.abs(d), [cls, vi] = verdict(d);
+  let h = `<b class="mpBig ${cls}">${fms(a)}</b><span>${a < 1 ? t('mpSame') : t(d > 0 ? 'mpLater' : 'mpEarlier')} · ${t('mpVerd')[vi]}</span>`;
+  if (isFinite(r.n)) h += `<small>${t('mpChecked', { n: r.n, s: Math.round(r.spread || 0) })}</small>`;
+  // o ajuste vai para quem entrou na sala: applied/adj vêm no evento (CAL real); sem eles, −diff e NET.adj
+  const ap = isFinite(ev.applied) && ev.applied ? ev.applied : -d, tot = isFinite(ev.adj) ? ev.adj : N ? N.adj || 0 : 0;
+  if (a >= 2) h += N && N.role === 'guest' ? `<span class="ok">${t('mpAdjMine', { d: fms(ap, true), t: fms(tot, true) })}</span>` : `<small>${t('mpAdjOther', { d: fms(-d, true) })}</small>`;
+  return h;
+}
+const phOf = ev => ev && ev.phase;
+function calTimer(on) { if (on && !R.iv) R.iv = setInterval(() => { if (roomOn()) renderCal(); }, 200); else if (!on && R.iv) { clearInterval(R.iv); R.iv = 0; } }
+function onCal(ev) {
+  if (!ev || !ev.phase) return;
+  R.cal = ev;
+  if (!roomOn() || R.st !== 'connected') return;
+  if ($('#mpMB').hidden) setExp(true);
+  calTimer(ev.phase === 'countdown' || ev.phase === 'playing');
+  renderCal(); renderStat(); renderAdj();
+  if (ev.phase === 'done') setTimeout(() => { if (R.cal === ev && roomOn()) { renderCal(); renderAdj(); } }, 120);   // o ajuste chega logo depois no celular que entrou
+}
+function measure() {
+  const c = cal(); if (!c || calBusy()) return;
+  audioOn(); attach();
+  // evento provisório até o CAL mandar os seus; se nenhum chegar (recusa imediata), o resultado vem da promessa.
+  // 'busy': o outro celular pediu junto e a medição dele segue pelos eventos
+  const ev0 = { phase: 'mic', listener: true, mine: true }; R.pend = true; onCal(ev0);
+  const settle = () => { R.pend = false; if (roomOn() && R.st === 'connected') { renderCal(); renderStat(); } };
+  Promise.resolve().then(() => c.measure()).then(res => {
+    settle();
+    if (res && typeof res === 'object' && !calEnd(R.cal)) onCal({ phase: res.ok === false ? 'fail' : 'done', listener: true, mine: true, result: res });
+  }, e => {
+    const ty = e && e.type; settle();
+    if (R.cal === ev0 || (ty !== 'busy' && R.cal && R.cal.mine && !calEnd(R.cal))) onCal({ phase: 'fail', listener: true, mine: true, result: { ok: false, reason: ty || 'other' } });
+  });
+}
+
+/* --------- camadas: espera, aviso, conexão perdida, placar do parceiro --------- */
+const waitEl = $('#mpWait'), toastEl = $('#mpToast'), lostEl = $('#mpLostM'), chipEl = $('#mpChip'), chipV = $('#mpChipV');
+let toastT = 0, chipN = NaN;
+function wait(key) { if (!key) { waitEl.hidden = true; return; } setKey($('#mpWaitT'), key); waitEl.hidden = false; }
+function toast(key) {
+  if (!key) { toastEl.hidden = true; return; }
+  setKey(toastEl, key); toastEl.hidden = false;
+  toastEl.style.animation = 'none'; void toastEl.offsetWidth; toastEl.style.animation = '';
+  clearTimeout(toastT); toastT = setTimeout(() => { toastEl.hidden = true; }, 2500);
+}
+function lost() { wait(null); partner(null); calTimer(false); lostEl.hidden = false; try { $('#mpLostOk').focus({ preventScroll: true }); } catch (e) {} }
+function partner(info) {
+  if (!info) { if (!chipEl.hidden) chipEl.hidden = true; chipN = NaN; return; }
+  const v = Math.round(+info.score || 0); if (v !== chipN) { chipN = v; chipV.textContent = fmt(v); }
+  if (chipEl.hidden) chipEl.hidden = false;
+}
+function room() {
+  wait(null); partner(null); lostEl.hidden = true;
+  const N = net();
+  openScreen('mproom');
+  if (R.cal && !calEnd(R.cal) && !calBusy()) R.cal = null;   // medição interrompida: não mostra progresso parado
+  if (N && N.open) { audioOn(); attach(); if (N.code) R.code = String(N.code); setSt('connected'); } else setSt('lost');
+}
+// voltar do Android (o jogo chama pelo popstate): conectados → sai da sala; criando/entrando → cancela; resto → início
+function back() {
+  if (state.screen === 'mproom' && (R.st === 'hosting' || R.st === 'joining')) { cancelConn(); pushNav(); return; }
+  if (state.screen === 'mproom' && R.st === 'connected') { leave(true); return; }
+  toMenu(true);
+}
+const info = () => ({ screen: state.screen, room: R.st, code: R.code, err: errEl.dataset.i18n || '', cal: phOf(R.cal) || null,
+  wait: waitEl.hidden ? null : $('#mpWaitT').dataset.i18n, toast: toastEl.hidden ? null : toastEl.dataset.i18n, lost: !lostEl.hidden, partner: chipEl.hidden ? null : chipN });
+window.MPUI = { room, wait, toast, lost, partner, back, info };
+
+/* --------- botões e eventos --------- */
+if (net()) $('#b2p').onclick = () => { goFull(); audioOn(); partner(null); openScreen('mpmode'); };
+$('#mpHere').onclick = () => openPhase(true);
+$('#mpTwo').onclick = () => { audioOn(); openRoom('start'); };
+$('#mpModeBack').onclick = () => toMenu();
+$('#mpHostB').onclick = doHost;
+$('#mpJoinB').onclick = doJoin;
+inp.addEventListener('input', () => { const v = inp.value.replace(/\D/g, '').slice(0, 4); if (v !== inp.value) inp.value = v; if (errEl.dataset.i18n) setErr(''); });
+inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doJoin(); } });
+$('#mpStartBack').onclick = () => { ++R.gen; openScreen('mpmode'); };
+$('#mpHostX').onclick = cancelConn;
+$('#mpJoinX').onclick = cancelConn;
+$('#mpBegin').onclick = () => { const N = net(), M = window.MP; if (!N || !N.synced || calBusy()) return; calTimer(false); if (M && M.begin) M.begin(); };
+$('#mpMT').onclick = () => { const on = $('#mpMB').hidden; setExp(on); if (on) $('#mpMeas').scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
+$('#mpMeasB').onclick = measure;
+const adjBy = d => { const N = net(); if (!N || !N.setAdj) return; N.setAdj(Math.round((N.adj || 0) + d)); renderAdj(); };
+$('#mpAdjM').onclick = () => adjBy(-5); $('#mpAdjP').onclick = () => adjBy(5);
+$('#mpLeaveB').onclick = () => leave(false);
+$('#mpRetry').onclick = () => setSt('start');
+$('#mpLostMenu').onclick = () => toMenu();
+$('#mpWaitX').onclick = () => { const M = window.MP; if (M && M.end) M.end(); else { wait(null); try { net().close(); } catch (e) {} toMenu(); } };
+$('#mpLostOk').onclick = () => { lostEl.hidden = true; if (state.screen !== 'title') toMenu(); };
+for (const el of [waitEl, lostEl]) el.addEventListener('pointerdown', e => e.stopPropagation());   // nada passa para os cascos
+{
+  const N = net();
+  if (N && N.on) {
+    N.on('open', onOpen);
+    N.on('close', () => { R.pend = false; if (roomOn() && R.st !== 'start' && R.st !== 'lost') { ++R.gen; calTimer(false); R.cal = null; setSt('lost'); } });
+    N.on('sync', () => { if (roomOn() && R.st === 'connected') { renderStat(); renderAdj(); } });   // setAdj também avisa por 'sync'
+    N.on('error', e => { if (roomOn() && (R.st === 'hosting' || R.st === 'joining')) { ++R.gen; failTo(e); } });
+  }
+  const C = cal(); if (C && C.on) C.on(onCal);
+}
+}
+// MP-UI js end
 })();
 </script>
 </body>
