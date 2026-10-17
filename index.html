@@ -319,6 +319,9 @@ div.opt{cursor:default}
 .pht em{font-style:normal;font-size:12px;line-height:1.35;color:var(--muted)}
 .pht .phb{font-style:normal;font-family:var(--f-pixel);font-size:9px;letter-spacing:.06em;color:var(--mint)}
 .phc.neon .pht b{color:#ffd0f0;text-shadow:0 0 8px rgba(255,61,184,.8)}
+.phc.sunset{border-color:rgba(255,176,112,.55);box-shadow:0 0 14px rgba(255,140,90,.22)}
+.phc.sunset[aria-pressed=true]{border-color:var(--gold)}
+.phc.sunset .pht b{color:#ffe2c0}
 
 /* Replay */
 #rpUI{position:absolute;inset:0;z-index:5;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:max(10px,env(safe-area-inset-top)) 12px max(14px,env(safe-area-inset-bottom))}
@@ -425,6 +428,10 @@ div.opt{cursor:default}
       <button class="phc neon" data-ph="1">
         <svg class="art" viewBox="0 0 160 84" aria-hidden="true"><rect width="160" height="84" fill="#140a2a"/><g stroke-width="1.2" opacity=".8"><path d="M80 22 6 60M80 22 40 84M80 22 120 84M80 22 154 60M80 22 0 30M80 22 160 26" stroke="#fff6ff"/></g><path d="M80 0v12" stroke="#9a90b8"/><circle cx="80" cy="22" r="10" fill="#c9d3ec"/><path d="M70 22h20M72 17h16M72 27h16M80 12v20M75 13v18M85 13v18" stroke="#6b7090" stroke-width=".8"/><g><rect x="0" y="66" width="20" height="9" fill="#ff3db8"/><rect x="20" y="66" width="20" height="9" fill="#3df2ff"/><rect x="40" y="66" width="20" height="9" fill="#ffe14d"/><rect x="60" y="66" width="20" height="9" fill="#b04dff"/><rect x="80" y="66" width="20" height="9" fill="#4dff9a"/><rect x="100" y="66" width="20" height="9" fill="#ff3db8"/><rect x="120" y="66" width="20" height="9" fill="#3df2ff"/><rect x="140" y="66" width="20" height="9" fill="#ffe14d"/><rect x="0" y="75" width="20" height="9" fill="#b04dff"/><rect x="20" y="75" width="20" height="9" fill="#ffe14d"/><rect x="40" y="75" width="20" height="9" fill="#ff3db8"/><rect x="60" y="75" width="20" height="9" fill="#3df2ff"/><rect x="80" y="75" width="20" height="9" fill="#ffe14d"/><rect x="100" y="75" width="20" height="9" fill="#4dff9a"/><rect x="120" y="75" width="20" height="9" fill="#ff3db8"/><rect x="140" y="75" width="20" height="9" fill="#b04dff"/></g><text x="22" y="50" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="15" fill="none" stroke="#ff3db8" stroke-width="1.4">DISCO</text></svg>
         <span class="pht"><small><span data-i18n="phase"></span> 2</small><b data-i18n="ph2"></b><em data-i18n="ph2s"></em><i class="phb"></i></span>
+      </button>
+      <button class="phc sunset" data-ph="2">
+        <svg class="art" viewBox="0 0 160 84" aria-hidden="true"><defs><linearGradient id="phs3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a2a7a"/><stop offset=".55" stop-color="#e07a8a"/><stop offset=".75" stop-color="#ffb070"/></linearGradient></defs><rect width="160" height="84" fill="url(#phs3)"/><circle cx="44" cy="46" r="11" fill="#fff0b0"/><rect x="0" y="50" width="160" height="14" fill="#2a6a9a"/><path d="M30 52h28M34 56h20M38 60h12" stroke="#ffd27a" stroke-width="1.2"/><path d="M104 50l6-8h22l6 8Z" fill="#efe2c4"/><path d="M117 42 118 18h4l1 24Z" fill="#f4f1ea"/><rect x="117.6" y="26" width="5" height="3" fill="#1c1a22"/><rect x="117.3" y="33" width="5.6" height="3" fill="#1c1a22"/><rect x="117" y="14" width="6" height="4" fill="#fff1b0"/><path d="M116.5 14h7l-3.5-3Z" fill="#24202c"/><path d="M0 64h160v20H0Z" fill="#e8c58e"/><ellipse cx="80" cy="74" rx="44" ry="7" fill="#4fb6c9"/><ellipse cx="80" cy="74" rx="44" ry="7" fill="none" stroke="#ffd23f" stroke-width="2"/><path d="M8 64q4-14 10-16M18 48l-7 2M18 48l-3-6M18 48l6-3" stroke="#3f8f3a" stroke-width="1.6" fill="none"/></svg>
+        <span class="pht"><small><span data-i18n="phase"></span> 3</small><b data-i18n="ph3"></b><em data-i18n="ph3s"></em><i class="phb"></i></span>
       </button>
     </div>
     <button class="btn ghost" id="phBack" data-i18n="back"></button>
@@ -642,7 +649,7 @@ const STR = {
     aboutText: 'Jogo de ritmo de patinação artística com unicórnios, para jogar no celular, sozinho ou a dois. Duas fases, cada uma com o seu álbum de nomes de manobras, e replay da última partida com exportação em vídeo. Funciona no navegador, sem instalar nada, e pode ser adicionado à tela inicial.',
     aboutCredits: 'Código aberto: <a href="https://github.com/rodrigofcb/galope" target="_blank" rel="noopener">github.com/rodrigofcb/galope</a><br>Three.js e mp4-muxer (MIT); fontes Titan One, Silkscreen e M PLUS Rounded 1c (SIL OFL). Música e efeitos sonoros sintetizados no próprio jogo.',
     reset: 'Apagar progresso', resetQ: 'Apagar o álbum de nomes, o recorde e a calibração? Não dá para desfazer.', resetYes: 'Apagar', cancel: 'Cancelar', resetDone: 'Progresso apagado.',
-    albumTitle: 'Álbum de nomes', albumCount: '{n} de 36 nomes descobertos', albumHint: 'Faça a sequência inteira sem errar para descobrir o nome de cada manobra. Os nomes a dois aparecem quando os dois jogadores chegam juntos, sem erro, às manobras com nome.', albumDuo: 'A dois',
+    albumTitle: 'Álbum de nomes', albumCount: '{n} de {t} nomes descobertos', albumHint: 'Faça a sequência inteira sem errar para descobrir o nome de cada manobra. Os nomes a dois aparecem quando os dois jogadores chegam juntos, sem erro, às manobras com nome.', albumDuo: 'A dois',
     kinds: ['deslize', 'giro', 'salto', 'pose final'],
     pl: 'Jogador', readyHint: 'Deitem o celular na mesa. Seus dois cascos ficam na borda do seu lado. Se forem jogar lado a lado, girem a imagem com ↺ ↻.',
     orientFace: 'Frente a frente', orientSide: 'Lado a lado', rotL: 'Girar a imagem para a esquerda', rotR: 'Girar a imagem para a direita',
@@ -653,7 +660,7 @@ const STR = {
     selHint1: 'Arraste para girar a roda. Toque no personagem ou no nome para escolher e toque de novo para desfazer. Na transformação, 2× acelera e Pular vai direto para a pista.',
     selHint2: 'Arraste para girar a roda. Primeiro escolhe o jogador 1, depois o 2; toque de novo para desfazer. O celular desenhado mostra a metade da tela de cada um e Inverter troca os lados.',
     sideBot: 'embaixo', sideTop: 'em cima', swap: 'Inverter', swapL: 'Inverter os lados da tela', duoTag: '✦ a dois ✦',
-    phTitle: 'Onde vamos patinar?', phase: 'Fase', ph1: 'Pista de Buenos Aires', ph1s: 'Gelo ao ar livre, ao pé do Obelisco.', ph2: 'Discoteca Neon', ph2s: 'Boate dos anos 70: pista iluminada, neon e globo de espelhos.',
+    phTitle: 'Onde vamos patinar?', phase: 'Fase', ph1: 'Pista de Buenos Aires', ph1s: 'Gelo ao ar livre, ao pé do Obelisco.', ph2: 'Discoteca Neon', ph2s: 'Boate dos anos 70: pista iluminada, neon e globo de espelhos.', ph3: 'Praia da Barra', ph3s: 'Patins na areia, ao pôr do sol no Farol da Barra.',
     replay: 'Replay', seeReplay: 'Ver replay', rpWhole: 'Partida inteira', rpOrient: 'Vídeo', rpV: 'Em pé', rpH: 'Deitado', rpCam: 'Câmera', rpTv: 'TV', rpChase: 'Segue', rpFix: 'Fixa', rpWatch: 'Assistir', rpExport: 'Exportar vídeo',
     rpCamHint: 'TV corta entre câmeras de transmissão; Segue vai atrás do patinador; Fixa é uma só câmera na mureta, sem cortes, mostrando os dois na dupla. ', rpHint: 'Só a última partida fica guardada: ao começar outra, este replay é substituído. Exporte antes os vídeos que quiser guardar.',
     rpMaking: 'Gerando o vídeo… {p}%', rpAudio: 'Gravando o som… {p}%', rpDone: 'Vídeo pronto!', rpSave: 'Salvar ou compartilhar', rpClose: 'Fechar', rpFail: 'Não deu para gerar o vídeo neste aparelho.', close: 'Fechar'
@@ -678,7 +685,7 @@ const STR = {
     aboutText: 'Juego de ritmo de patinaje artístico con unicornios, para jugar en el celular, solo o de a dos. Dos fases, cada una con su álbum de nombres de figuras, y repetición de la última partida con exportación en video. Funciona en el navegador, sin instalar nada, y se puede agregar a la pantalla de inicio.',
     aboutCredits: 'Código abierto: <a href="https://github.com/rodrigofcb/galope" target="_blank" rel="noopener">github.com/rodrigofcb/galope</a><br>Three.js y mp4-muxer (MIT); fuentes Titan One, Silkscreen y M PLUS Rounded 1c (SIL OFL). Música y efectos de sonido sintetizados en el propio juego.',
     reset: 'Borrar progreso', resetQ: '¿Borrar el álbum de nombres, el récord y la calibración? No se puede deshacer.', resetYes: 'Borrar', cancel: 'Cancelar', resetDone: 'Progreso borrado.',
-    albumTitle: 'Álbum de nombres', albumCount: '{n} de 36 nombres descubiertos', albumHint: 'Hacé la secuencia entera sin errores para descubrir el nombre de cada figura. Los nombres a dúo aparecen cuando los dos jugadores llegan juntos, sin errores, a las figuras con nombre.', albumDuo: 'A dúo',
+    albumTitle: 'Álbum de nombres', albumCount: '{n} de {t} nombres descubiertos', albumHint: 'Hacé la secuencia entera sin errores para descubrir el nombre de cada figura. Los nombres a dúo aparecen cuando los dos jugadores llegan juntos, sin errores, a las figuras con nombre.', albumDuo: 'A dúo',
     kinds: ['deslizamiento', 'giro', 'salto', 'pose final'],
     pl: 'Jugador', readyHint: 'Apoyen el celular en la mesa. Tus dos cascos están en el borde de tu lado. Si van a jugar lado a lado, giren la imagen con ↺ ↻.',
     orientFace: 'Frente a frente', orientSide: 'Lado a lado', rotL: 'Girar la imagen a la izquierda', rotR: 'Girar la imagen a la derecha',
@@ -689,7 +696,7 @@ const STR = {
     selHint1: 'Arrastrá para girar la ronda. Tocá el personaje o el nombre para elegir y tocá de nuevo para deshacer. En la transformación, 2× acelera y Saltar va directo a la pista.',
     selHint2: 'Arrastrá para girar la ronda. Primero elige el jugador 1, después el 2; tocá de nuevo para deshacer. El celular dibujado muestra la mitad de la pantalla de cada uno e Invertir cambia los lados.',
     sideBot: 'abajo', sideTop: 'arriba', swap: 'Invertir', swapL: 'Invertir los lados de la pantalla', duoTag: '✦ a dúo ✦',
-    phTitle: '¿Dónde vamos a patinar?', phase: 'Fase', ph1: 'Pista de Buenos Aires', ph1s: 'Hielo al aire libre, al pie del Obelisco.', ph2: 'Discoteca Neón', ph2s: 'Boliche de los años 70: pista iluminada, neón y bola de espejos.',
+    phTitle: '¿Dónde vamos a patinar?', phase: 'Fase', ph1: 'Pista de Buenos Aires', ph1s: 'Hielo al aire libre, al pie del Obelisco.', ph2: 'Discoteca Neón', ph2s: 'Boliche de los años 70: pista iluminada, neón y bola de espejos.', ph3: 'Playa de Barra', ph3s: 'Patines en la arena, al atardecer en el Faro de Barra.',
     replay: 'Repetición', seeReplay: 'Ver repetición', rpWhole: 'Partida entera', rpOrient: 'Video', rpV: 'Vertical', rpH: 'Horizontal', rpCam: 'Cámara', rpTv: 'TV', rpChase: 'Sigue', rpFix: 'Fija', rpWatch: 'Mirar', rpExport: 'Exportar video',
     rpCamHint: 'TV corta entre cámaras de transmisión; Sigue va detrás del patinador; Fija es una sola cámara en la baranda, sin cortes, mostrando a los dos en el dúo. ', rpHint: 'Solo se guarda la última partida: al empezar otra, esta repetición se reemplaza. Exportá antes los videos que quieras guardar.',
     rpMaking: 'Generando el video… {p}%', rpAudio: 'Grabando el sonido… {p}%', rpDone: '¡Video listo!', rpSave: 'Guardar o compartir', rpClose: 'Cerrar', rpFail: 'No se pudo generar el video en este dispositivo.', close: 'Cerrar'
@@ -732,7 +739,7 @@ const nameOf = (b, i) => NAMES[OPT.lang][b][i];
 const fmt = n => Math.round(n).toLocaleString(OPT.lang === 'es' ? 'es-AR' : 'pt-BR');
 
 /* ============================== mapa da música ============================== */
-const APP_VERSION = '17';   // subir junto com VERSION em sw.js a cada publicação
+const APP_VERSION = '18';   // subir junto com VERSION em sw.js a cada publicação
 const BPM = 120, BEAT = 60 / BPM, MEAS = BEAT * 4, S8 = BEAT / 2, S16 = BEAT / 4;
 const BLOCK_START = [4, 14, 24], TOTAL_MEAS = 36;
 // manobra de cada etapa do bloco: [tipo (0 deslize, 1 giro, 2 salto), nível dentro do tipo]
@@ -853,7 +860,7 @@ const PROG = { intro: ['D', 'A', 'Bm', 'G'], block: ['D', 'A', 'Bm', 'G', 'D', '
 function chordOf(mi) { const s = sectionOf(mi); const k = s.k === 'intro' ? PROG.intro[s.i] : s.k === 'block' ? PROG.block[s.m] : s.k === 'break' ? PROG.break[s.i] : s.k === 'outro' ? PROG.outro[s.i] : 'D'; return CHORD[k]; }
 function guidePitch(ch, lane, slot) { const alt = (slot >> 1) & 1; return lane === 0 ? ch.t[alt] + 12 : (alt ? ch.t[0] + 24 : ch.t[2] + 12); }
 
-function playStep(s, t) { if (PHI) playStepD(s, t); else playStep1(s, t); }
+function playStep(s, t) { if (PHI === 2) playStepB(s, t); else if (PHI) playStepD(s, t); else playStep1(s, t); }
 function playStep1(s, t) {
   const mi = Math.floor(s / 16), k = s % 16, sec = sectionOf(mi), ch = chordOf(mi);
   if (sec.k === 'intro') {
@@ -1045,6 +1052,139 @@ const SFX = {
   }
 };
 SFX.sync = function (at) { if (state.exporting && at === undefined) { RP.exp.sfx.push(['sync', 0, state.songT]); return; } if (!AC || RP.seek) return; const t = at !== undefined ? at : AC.currentTime; [74, 81, 86, 90, 93].forEach((n, k) => I.bell(t + k * .05, n + 12, .55, .5, sfxBus)); };
+/* --------- música da fase 3: samba-reggae / axé (mesmo andamento, mesmo mapa de compassos) --------- */
+// Bateria de bloco: surdos (fundo marcando o 2 e o 4, dobra no contratempo), caixa em semicolcheias com o acento do
+// samba-reggae, repique chamando as viradas, timbal, agogô e ganzá. Por cima, guitarra baiana, metais e o baixo.
+// As notas-guia (L/R) tocam num tambor de aço (som de praia).
+Object.assign(I, {
+  surdo(t, v = 1, open = true, f0 = 92) {
+    const o = AC.createOscillator(), g = AC.createGain(); o.type = 'sine';
+    o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f0 * .62, t + .18);
+    env(g, t, .003, .8 * v, open ? .5 : .12); o.connect(g); g.connect(musicBus); o.start(t); o.stop(t + .6);
+    noise(t, .03, musicBus, .12 * v, 'lowpass', 600, .7);
+  },
+  caixa(t, v = 1) { noise(t, .055, musicBus, .13 * v, 'bandpass', 3200, 1.1); osc('triangle', 330, t, .03, musicBus, .03 * v); },
+  repique(t, v = 1) { noise(t, .08, musicBus, .16 * v, 'bandpass', 1800, 2); osc('triangle', 520, t, .07, musicBus, .09 * v, .001); osc('sine', 780, t, .05, musicBus, .04 * v, .001); },
+  timbal(t, v = 1, slap = false) {
+    noise(t, slap ? .05 : .09, musicBus, (slap ? .2 : .1) * v, slap ? 'highpass' : 'bandpass', slap ? 2600 : 900, 1.2);
+    osc('sine', slap ? 420 : 250, t, slap ? .06 : .12, musicBus, .1 * v, .001);
+  },
+  agogo(t, hi, v = 1) { const f = hi ? 1180 : 880; osc('square', f, t, .09, musicBus, .025 * v, .001); osc('sine', f * 2.7, t, .05, musicBus, .03 * v, .001); osc('sine', f, t, .2, musicBus, .05 * v, .001); },
+  ganza(t, v = 1) { noise(t, .04, musicBus, .05 * v, 'highpass', 6500, .8, .006); },
+  // guitarra baiana: aguda e estalada, com o ataque da palheta
+  gbaiana(t, n, dur = .14, v = 1) {
+    const f = AC.createBiquadFilter(); f.type = 'bandpass'; f.frequency.setValueAtTime(mtof(n) * 3, t); f.Q.value = 1.2;
+    const g = AC.createGain(); env(g, t, .002, .09 * v, dur); f.connect(g); g.connect(musicBus);
+    for (const [ty, d] of [['sawtooth', -6], ['square', 6]]) { const o = AC.createOscillator(); o.type = ty; o.frequency.value = mtof(n); o.detune.value = d; o.connect(f); o.start(t); o.stop(t + dur + .05); }
+    noise(t, .012, musicBus, .05 * v, 'highpass', 4000, .7);
+  },
+  // acorde da guitarra em levada (abafado e curto)
+  chop(t, notes, v = 1) { for (const n of notes) I.gbaiana(t, n + 12, .07, .45 * v); },
+  brass(t, notes, dur = .22, v = 1) {
+    const f = AC.createBiquadFilter(); f.type = 'lowpass'; f.Q.value = 2; f.frequency.setValueAtTime(900, t); f.frequency.linearRampToValueAtTime(3800, t + .04); f.frequency.exponentialRampToValueAtTime(1600, t + dur);
+    const g = AC.createGain(); g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(.06 * v, t + .025); g.gain.setValueAtTime(.06 * v, t + dur * .75); g.gain.exponentialRampToValueAtTime(.0001, t + dur + .06);
+    f.connect(g); g.connect(musicBus);
+    for (const n of notes) for (const d of [-8, 8]) { const o = AC.createOscillator(); o.type = 'sawtooth'; o.frequency.value = mtof(n); o.detune.value = d; o.connect(f); o.start(t); o.stop(t + dur + .1); }
+  },
+  // tambor de aço para as notas-guia
+  pan(t, n, v = 1, dur = .45) {
+    const f0 = mtof(n);
+    osc('sine', f0, t, dur, musicBus, .13 * v, .002); osc('sine', f0 * 2, t, dur * .6, musicBus, .05 * v, .002); osc('sine', f0 * 2.99, t, dur * .3, musicBus, .025 * v, .002);
+    noise(t, .015, musicBus, .03 * v, 'bandpass', f0 * 4, 2);
+  },
+  apito(t, v = 1, two = false) {   // apito de mestre de bateria
+    for (let k = 0; k < (two ? 2 : 1); k++) {
+      const s = t + k * .18, o = AC.createOscillator(), g = AC.createGain(), lfo = AC.createOscillator(), ld = AC.createGain();
+      o.type = 'sine'; o.frequency.setValueAtTime(3100, s); lfo.frequency.value = 42; ld.gain.value = 180; lfo.connect(ld); ld.connect(o.frequency);
+      g.gain.setValueAtTime(.0001, s); g.gain.linearRampToValueAtTime(.05 * v, s + .01); g.gain.setValueAtTime(.05 * v, s + .11); g.gain.exponentialRampToValueAtTime(.0001, s + .15);
+      o.connect(g); g.connect(musicBus); o.start(s); o.stop(s + .17); lfo.start(s); lfo.stop(s + .17);
+    }
+  }
+});
+// sol maior, alegre: G – D – Em – C, com a virada para D7 no fim do bloco
+const CHORD_B = { G: { r: 43, t: [62, 67, 71] }, D: { r: 38, t: [62, 66, 69] }, Em: { r: 40, t: [64, 67, 71] }, C: { r: 36, t: [64, 67, 72] }, D7: { r: 38, t: [60, 66, 69] }, Am: { r: 45, t: [64, 69, 72] } };
+const PROG_B = { intro: ['G', 'C', 'G', 'D7'], block: ['G', 'D', 'Em', 'C', 'G', 'D', 'C', 'D7'], break: ['Am', 'D7'], outro: ['G', 'C', 'D7', 'G'] };
+function chordOfB(mi) { const s = sectionOf(mi); const k = s.k === 'intro' ? PROG_B.intro[s.i] : s.k === 'block' ? PROG_B.block[s.m] : s.k === 'break' ? PROG_B.break[s.i] : s.k === 'outro' ? PROG_B.outro[s.i] : 'G'; return CHORD_B[k]; }
+// caixa do samba-reggae: acentos em 0, 3, 6, 10 e 12 (o "tum-tum-tum, tá-tá")
+const CAIXA_B = [1, .35, .35, .9, .35, .35, .9, .35, .35, .35, .9, .35, .9, .35, .35, .35];
+// guitarra baiana: frase de frevo-axé em sol maior, dois compassos que se alternam: [passo, nota, duração em semicolcheias]
+const RIFF_B = [[[0, 79, 1], [2, 81, 1], [3, 83, 2], [6, 81, 1], [7, 79, 1], [8, 78, 2], [10, 79, 1], [12, 81, 3]], [[0, 83, 1], [2, 86, 2], [4, 84, 1], [6, 83, 1], [7, 81, 1], [8, 79, 2], [11, 78, 1], [12, 79, 3]]];
+// metais: respostas curtas no fim de cada compasso
+const HORN_B = [[[10, 0, 1], [12, 1, 2]], [[8, 1, 1], [10, 2, 1], [12, 1, 3]]];
+function playStepB(s, t) {
+  const mi = Math.floor(s / 16), k = s % 16, sec = sectionOf(mi), ch = chordOfB(mi);
+  // surdos: fundo aberto no 2 e no 4 (abafado no 1 e no 3), dobra no "e" do 2 e antes do 4, marcação respondendo
+  const surdos = (v = 1) => {
+    if (k === 0 || k === 8) I.surdo(t, .55 * v, false, 88);
+    if (k === 4 || k === 12) I.surdo(t, 1 * v, true, 82);
+    if (k === 6 || k === 11) I.surdo(t, .7 * v, true, 104);
+    if (k === 14) I.surdo(t, .6 * v, false, 120);
+  };
+  const perc = (v = 1, b = 0) => {
+    I.caixa(t, CAIXA_B[k] * v);
+    if (k % 4 === 2) I.timbal(t, .8 * v, true); else if (k === 0 || k === 8) I.timbal(t, .6 * v);
+    if (b >= 1) I.ganza(t, k % 2 ? .6 : 1);
+    if (b >= 1 && (k === 0 || k === 3 || k === 8 || k === 10)) I.agogo(t, k === 3 || k === 10, .9);
+  };
+  const bassLine = (v = 1) => { const BP = { 0: 0, 3: 7, 6: 12, 8: 0, 10: 7, 12: 12, 14: 7 }; if (k in BP) I.bass(t, ch.r + 12 + BP[k], k === 12 ? .22 : .16, v); };
+  if (sec.k === 'intro') {
+    if (sec.i === 0 && k === 0) I.apito(t, 1, true);
+    if (k === 0) I.pad(t, ch.t, MEAS, .4 + .15 * sec.i);
+    if (sec.i >= 0) I.caixa(t, CAIXA_B[k] * (.5 + .15 * sec.i));
+    if (sec.i >= 1) surdos(sec.i === 1 ? .6 : .9);
+    if (sec.i >= 2) { bassLine(.8); if (k % 4 === 2) I.timbal(t, .7, true); }
+    if (sec.i === 3 && k % 4 === 0) I.repique(t, .8 + .1 * (k / 4));
+    if (sec.i === 3 && k >= 12) I.repique(t, .5 + .15 * (k - 12));
+  } else if (sec.k === 'block') {
+    const b = sec.b, m = sec.m, stop = m === 7 && k >= 8;
+    if (k === 0) I.pad(t, ch.t, MEAS, m === 7 ? .6 : .5);
+    if (!stop) {
+      surdos(); perc(1, b); bassLine();
+      if (k % 4 === 2) I.chop(t, ch.t, b === 0 ? .6 : .9);   // guitarra no contratempo
+      if (b >= 1 && m < 6) for (const [st, n, d] of RIFF_B[m % 2]) if (st === k) I.gbaiana(t, n - (b === 1 ? 12 : 0), d * S16 * .9, b === 1 ? .7 : 1);
+      if (b === 2 && m < 6) for (const [st, j, d] of HORN_B[m % 2]) if (st === k) I.brass(t, [ch.t[j] + 12, ch.t[(j + 1) % 3] + 12], d * S16 * .95, .9);
+      if (m === 6 && k % 2 === 1) I.repique(t, .35 + .04 * k);
+      if (m === 0 && k === 0 && b > 0) I.apito(t, .9, true);
+    }
+    if (m === 6 && k === 8) I.riser(t, MEAS, .9);
+    if (m === 7 && k === 8) { I.crash(t, .8); I.surdo(t, 1.2, true, 76); I.brass(t, ch.t.map(n => n + 12), .6, 1); }
+    if (k % 2 === 0) {
+      const slot = k >> 1, c = PATTERNS[b][m][slot];
+      if (c === 'L' || c === 'B') I.pan(t, guidePitch(ch, 0, slot), 1);
+      if (c === 'R' || c === 'B') I.pan(t, guidePitch(ch, 1, slot), 1);
+      if (c === 'H') for (const n of ch.t) I.pan(t, n + 12, .8, 1.1);
+    }
+  } else if (sec.k === 'break') {
+    // só a bateria: surdos e repique chamando o próximo bloco
+    surdos(.9); I.caixa(t, CAIXA_B[k] * .8);
+    if (sec.i === 0 && k % 4 === 0) I.bass(t, ch.r + 12, .3, .7);
+    if (sec.i === 1 && k >= 8) I.repique(t, .35 + .08 * (k - 8));
+    if (sec.i === 1 && k === 12) I.apito(t, .9, true);
+  } else if (sec.k === 'outro') {
+    if (k === 0) I.pad(t, ch.t, MEAS, sec.i === 3 ? .9 : .6);
+    if (sec.i === 0 && k === 0) I.crash(t, .8);
+    if (sec.i < 3) { surdos(.9 - .2 * sec.i); I.caixa(t, CAIXA_B[k] * (.8 - .2 * sec.i)); if (sec.i < 2) bassLine(.8); }
+    if (sec.i < 2 && k % 4 === 2) I.chop(t, ch.t, .7);
+    if (sec.i === 2 && k === 12) I.apito(t, 1, true);
+    if (sec.i === 3 && k === 0) { I.surdo(t, 1.3, true, 72); I.brass(t, ch.t.map(n => n + 12), 1.4, 1); I.pan(t, ch.t[0] + 24, 1, 2); }
+  }
+}
+/* --------- sons da baleia: o canto grave e o splash --------- */
+SFX.whale = function (at) {
+  if (state.exporting && at === undefined) { RP.exp.sfx.push(['whale', 0, state.songT]); return; }
+  if (!AC || RP.seek) return; const t = at !== undefined ? at : AC.currentTime;
+  const o = AC.createOscillator(), g = AC.createGain(), f = AC.createBiquadFilter(), lfo = AC.createOscillator(), ld = AC.createGain();
+  o.type = 'sawtooth'; o.frequency.setValueAtTime(180, t); o.frequency.exponentialRampToValueAtTime(420, t + .9); o.frequency.exponentialRampToValueAtTime(240, t + 1.8);
+  f.type = 'lowpass'; f.frequency.value = 900; f.Q.value = 4; lfo.frequency.value = 6; ld.gain.value = 12; lfo.connect(ld); ld.connect(o.frequency);
+  g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(.12, t + .3); g.gain.setValueAtTime(.12, t + 1.3); g.gain.exponentialRampToValueAtTime(.0001, t + 2);
+  o.connect(f); f.connect(g); g.connect(sfxBus); o.start(t); o.stop(t + 2.1); lfo.start(t); lfo.stop(t + 2.1);
+};
+SFX.splash = function (at) {
+  if (state.exporting && at === undefined) { RP.exp.sfx.push(['splash', 0, state.songT]); return; }
+  if (!AC || RP.seek) return; const t = at !== undefined ? at : AC.currentTime;
+  noise(t, 1.8, sfxBus, .45, 'lowpass', 1400, .6, .01); noise(t + .05, 1.2, sfxBus, .2, 'highpass', 3000, .5, .02);
+  const o = AC.createOscillator(), g = AC.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(70, t); o.frequency.exponentialRampToValueAtTime(32, t + .6); env(g, t, .005, .7, .7); o.connect(g); g.connect(sfxBus); o.start(t); o.stop(t + .8);
+};
 function applyVolumes() {
   if (!AC) return;
   try { musicBus.gain.setTargetAtTime(OPT.music ? .6 : 0, AC.currentTime, .02); sfxBus.gain.setTargetAtTime(OPT.sfx ? .75 : 0, AC.currentTime, .02); } catch (e) {}
@@ -1538,27 +1678,339 @@ const DOWN_Y = new THREE.Vector3(0, 1, 0);
 function mulberryHash(n) { let a = n * 2654435761 >>> 0; a ^= a >>> 15; a = Math.imul(a, 2246822519) >>> 0; a ^= a >>> 13; return (a >>> 0) / 4294967296; }
 let WORLD2 = null;
 // mostra o mundo da fase atual (a boate só é montada na primeira vez) e ajusta a névoa
+let WORLD3 = null;
 function applyWorld() {
-  if (PHI && !WORLD2) WORLD2 = buildDisco(scene);
-  WORLD1.visible = !PHI; if (WORLD2) WORLD2.group.visible = !!PHI;
-  FOG.set(PHI ? 0x1c0c36 : 0x2b1f63); U.uFogNear.value = PHI ? 24 : 16; U.uFogFar.value = PHI ? 95 : 125;
+  if (PHI === 1 && !WORLD2) WORLD2 = buildDisco(scene);
+  if (PHI === 2 && !WORLD3) WORLD3 = buildBeach(scene);
+  WORLD1.visible = PHI === 0; if (WORLD2) WORLD2.group.visible = PHI === 1; if (WORLD3) WORLD3.group.visible = PHI === 2;
+  FOG.set([0x2b1f63, 0x1c0c36, 0xd98a8a][PHI]); U.uFogNear.value = [16, 24, 40][PHI]; U.uFogFar.value = [125, 95, 150][PHI];
+  U.uLightCol.value.copy(PHI === 2 ? LIGHT_BEACH : LIGHT_STD);
+  renderer.setClearColor(PHI === 2 ? 0xd98a8a : 0x0b0720, 1);
+  applySkates();
 }
+const ambOf = () => [AMB_GAME, AMB_DISCO, AMB_BEACH][PHI];
 // as cenas separadas (roda e palcos) também têm as duas fases
 function worldIn(o, on = true) {
-  if (PHI && !o.disco) o.disco = buildDisco(o.scene);
-  o.world.group.visible = on && !PHI; if (o.disco) o.disco.group.visible = on && !!PHI;
+  if (PHI === 1 && !o.disco) o.disco = buildDisco(o.scene);
+  if (PHI === 2 && !o.beach) o.beach = buildBeach(o.scene);
+  o.world.group.visible = on && PHI === 0; if (o.disco) o.disco.group.visible = on && PHI === 1; if (o.beach) o.beach.group.visible = on && PHI === 2;
 }
-const worldShown = o => PHI ? !!(o.disco && o.disco.group.visible) : o.world.group.visible;
+const worldShown = o => PHI === 2 ? !!(o.beach && o.beach.group.visible) : PHI ? !!(o.disco && o.disco.group.visible) : o.world.group.visible;
+// cenário das cenas separadas (roda, transformação e abertura do replay) a cada quadro
+function sceneWorldTick(o, now, dt, hype) { if (!worldShown(o)) return; if (PHI === 1) discoUpdate(o.disco, now, dt, hype, 0, null); else if (PHI === 2) beachUpdate(o.beach, now, dt, hype, 0); }
 /* --------- globo de espelhos: na dupla, desce sobre o casal na sequência final a dois do último bloco --------- */
 const BALL = { target: 0, w: 0, at: new THREE.Vector3(0, 11.2, 0) };
 function ballUpdate(dt) {
-  if (!WORLD2) return;
   BALL.w += (BALL.target - BALL.w) * (1 - Math.exp(-dt * (BALL.target > BALL.w ? .8 : 1.5)));
+  if (!WORLD2 || PHI !== 1) return;
   const w = BALL.w, h = WORLD2.ball.home, k = sm(0, .45, w);
   BALL.at.set(lerp(h.x, PAIR.pos.x, k), lerp(h.y, 4.7, easeIO(w)), lerp(h.z, PAIR.pos.z, k));
 }
 // intensidade das luzes da boate em cada parte da música
 function hypeOf(mi) { const s = sectionOf(mi); return s.k === 'block' ? .7 + .15 * s.b + (s.m >= 6 ? .15 : 0) : s.k === 'intro' ? .35 + .1 * s.i : s.k === 'break' ? .5 : s.k === 'outro' ? .8 - .15 * s.i : .5; }
+
+/* --------- fase 3: praia da Barra, em Salvador, ao pôr do sol --------- */
+// A pista de patins (do mesmo tamanho das outras) fica no meio da areia. O mar fica no fundo (lado -z), com o sol se pondo
+// sobre ele à esquerda e o Farol da Barra no forte, num cabo de pedras à direita; banhistas em volta da pista e coqueiros
+// no calçadão, atrás das câmeras. A baleia jubarte salta no mar quando a dupla chega sincronizada ao fim do bloco 3.
+const SEA_Z = -27, BEACH_SUN = new THREE.Vector3(-26, 5.2, -98), FAROL = { x: 19, z: -66 };
+const AMB_BEACH = new THREE.Color(.6, .48, .62), AMB_BEACH_LINE = new THREE.Color(.74, .6, .7), LIGHT_BEACH = new THREE.Color(1.0, .8, .64), LIGHT_STD = new THREE.Color(1.0, .9, .96);
+const sandTex = canvasTex(32, 32, (g, w, h) => {
+  noiseFill(g, w, h, '#e8c58e', 18, 12); const R = mulberry(13);
+  for (let i = 0; i < 40; i++) { g.fillStyle = R() < .5 ? '#f6dcaa' : '#cfa772'; g.fillRect(Math.floor(R() * w), Math.floor(R() * h), 1, 1); }
+  g.fillStyle = 'rgba(160,110,70,.35)'; for (let i = 0; i < 4; i++) { const y = Math.floor(R() * h); for (let x = 0; x < w; x++) if ((x + i) % 3) g.fillRect(x, y + Math.round(Math.sin(x / 4 + i) * 1.2), 1, 1); }
+});
+// piso da pista: concreto pintado de azul-piscina, liso, com marcas de rodinha
+const rinkBTex = canvasTex(64, 64, (g, w, h) => {
+  noiseFill(g, w, h, '#4fb6c9', 10, 21); const R = mulberry(22);
+  g.strokeStyle = 'rgba(255,255,255,.18)'; g.lineWidth = 1;
+  for (let i = 0; i < 6; i++) { g.beginPath(); g.arc(R() * w, R() * h, 10 + R() * 26, R() * TAU, R() * TAU + 1.2); g.stroke(); }
+  g.fillStyle = 'rgba(20,60,90,.18)'; for (let i = 0; i < 50; i++) g.fillRect(Math.floor(R() * w), Math.floor(R() * h), 1, 1);
+});
+// mureta de tábuas coloridas, como as barracas de praia
+const boardBTex = canvasTex(64, 16, (g, w, h) => {
+  const cs = ['#ff7a3d', '#ffd23f', '#2ec4b6', '#ff4f8b', '#ffffff', '#3d8bff'];
+  for (let i = 0; i < 8; i++) { g.fillStyle = cs[i % cs.length]; g.fillRect(i * 8, 0, 8, h); g.fillStyle = 'rgba(0,0,0,.18)'; g.fillRect(i * 8 + 7, 0, 1, h); }
+  g.fillStyle = '#fff6e0'; g.fillRect(0, 0, w, 2); g.fillStyle = '#5a3a20'; g.fillRect(0, h - 2, w, 2);
+});
+// torre do farol: branca com duas faixas pretas (v = 0 embaixo, 1 em cima)
+const farolTex = canvasTex(8, 64, (g, w, h) => { g.fillStyle = '#f4f1ea'; g.fillRect(0, 0, w, h); g.fillStyle = '#1c1a22'; g.fillRect(0, 14, w, 9); g.fillRect(0, 34, w, 9); g.fillStyle = '#d8d2c6'; g.fillRect(0, h - 2, w, 2); });
+const fortTex = canvasTex(32, 32, (g, w, h) => {
+  noiseFill(g, w, h, '#efe2c4', 12, 31); g.fillStyle = 'rgba(150,120,80,.35)';
+  for (let y = 0; y < h; y += 6) { g.fillRect(0, y, w, 1); for (let x = (y / 6) % 2 ? 4 : 0; x < w; x += 9) g.fillRect(x, y, 1, 6); }
+  g.fillStyle = '#c9b48c'; g.fillRect(0, h - 5, w, 5);
+});
+const rockTex = canvasTex(16, 16, (g, w, h) => { noiseFill(g, w, h, '#5d4a44', 30, 41); });
+const trunkTex = canvasTex(8, 32, (g, w, h) => { noiseFill(g, w, h, '#8a6a48', 16, 51); g.fillStyle = '#6a4e34'; for (let y = 0; y < h; y += 4) g.fillRect(0, y, w, 1); });
+const frondTex = canvasTex(32, 16, (g, w, h) => {
+  g.clearRect(0, 0, w, h); g.fillStyle = '#3f8f3a'; g.fillRect(0, 7, w, 2);
+  for (let x = 2; x < w - 1; x += 2) { const L = Math.round(7 * Math.sin(PI * x / w)) + 1; g.fillStyle = x % 4 ? '#55b04a' : '#2f7a34'; g.fillRect(x, 8 - L, 1, L); g.fillRect(x, 9, 1, L); }
+}, false);
+// cores de roupa de banho e de pele dos banhistas
+const SWIM = ['#ff4f8b', '#2ec4b6', '#ffd23f', '#3d8bff', '#ff7a3d', '#7b4bd6', '#ffffff', '#e8443a', '#1a1a2e'], SKIN = ['#f1c7a4', '#c98c63', '#8a5a3c', '#e8b48a', '#5e3b26', '#d9a27a'], HAIR = ['#1b130e', '#3a2418', '#7a5230', '#e8c060', '#121212'];
+// junta caixas coloridas numa malha só (um boneco inteiro num único desenho)
+function mergeBoxes(parts) {
+  const pos = [], nor = [], col = [], uv = [], m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), c = new THREE.Color();
+  for (const p of parts) {
+    const g = (p.geo || new THREE.BoxGeometry(p.w, p.h, p.d)).toNonIndexed();
+    e.set(p.rx || 0, p.ry || 0, p.rz || 0); q.setFromEuler(e); m4.compose(new THREE.Vector3(p.x || 0, p.y || 0, p.z || 0), q, new THREE.Vector3(1, 1, 1)); g.applyMatrix4(m4);
+    c.set(p.col); const P_ = g.attributes.position, N_ = g.attributes.normal;
+    for (let i = 0; i < P_.count; i++) { pos.push(P_.getX(i), P_.getY(i), P_.getZ(i)); nor.push(N_.getX(i), N_.getY(i), N_.getZ(i)); const k = p.shade ? 1 - p.shade * (N_.getY(i) < 0 ? 1 : 0) : 1; col.push(c.r * k, c.g * k, c.b * k); uv.push(0, 0); }
+  }
+  const G_ = new THREE.BufferGeometry();
+  G_.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); G_.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+  G_.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); G_.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  return G_;
+}
+// um banhista: 'stand' (de pé), 'cheer' (braços para cima), 'sit' (sentado na canga), 'kid' (criança)
+function bather(R, kind) {
+  const sk = SKIN[(R() * SKIN.length) | 0], sw = SWIM[(R() * SWIM.length) | 0], hr = HAIR[(R() * HAIR.length) | 0], fem = R() < .5, kid = kind === 'kid';
+  const s = kid ? .62 : .95 + R() * .12, P_ = [];
+  const box = (w, h, d, x, y, z, col, rx = 0, rz = 0) => P_.push({ w: w * s, h: h * s, d: d * s, x: x * s, y: y * s, z: z * s, col, rx, rz });
+  if (kind === 'sit') {
+    box(.36, .5, .26, 0, .3, 0, sk); box(.37, .16, .27, 0, .12, 0, sw); if (fem) box(.37, .1, .27, 0, .44, .01, sw);
+    box(.14, .12, .55, -.1, .08, .3, sk); box(.14, .12, .55, .1, .08, .3, sk);
+    box(.1, .42, .1, -.25, .3, -.05, sk, .3); box(.1, .42, .1, .25, .3, -.05, sk, .3);
+    box(.24, .26, .24, 0, .72, 0, sk); box(.26, .1, .26, 0, .87, -.01, hr); if (fem) box(.26, .3, .08, 0, .66, -.13, hr);
+  } else {
+    box(.13, .82, .13, -.1, .41, 0, sk); box(.13, .82, .13, .1, .41, 0, sk);
+    box(.38, .2, .24, 0, .9, 0, sw); box(.36, .55, .22, 0, 1.27, 0, sk); if (fem) box(.37, .14, .23, 0, 1.38, .005, sw);
+    if (kind === 'cheer') { box(.1, .55, .1, -.26, 1.75, 0, sk, 0, .25); box(.1, .55, .1, .26, 1.75, 0, sk, 0, -.25); }
+    else { box(.1, .55, .1, -.25, 1.24, 0, sk, 0, .06); box(.1, .55, .1, .25, 1.24, 0, sk, 0, -.06); }
+    box(.26, .28, .26, 0, 1.7, 0, sk); box(.28, .1, .28, 0, 1.86, -.01, hr); if (fem) box(.28, .34, .08, 0, 1.62, -.14, hr);
+    if (R() < .25 && kind === 'stand') box(.12, .14, .12, .3, 1.08, .1, '#6fbf4a');   // um coco na mão
+  }
+  return mergeBoxes(P_);
+}
+function coqueiro(parent, x, z, h, lean, R) {
+  const g = new THREE.Group(); g.position.set(x, 0, z); parent.add(g);
+  const tm = psxMat({ map: trunkTex, rep: [1, 3] }), fm = psxMat({ map: frondTex, side: DS, color: 0xd8e8c0 });
+  let px = 0, py = 0, segs = 5;
+  for (let i = 0; i < segs; i++) {
+    const hh = h / segs, a = lean * (i + 1) / segs, m = new THREE.Mesh(new THREE.CylinderGeometry(.16 - i * .015, .2 - i * .015, hh * 1.05, 6), tm);
+    m.position.set(px + Math.sin(a) * hh / 2, py + Math.cos(a) * hh / 2, 0); m.rotation.z = -a; g.add(m); px += Math.sin(a) * hh; py += Math.cos(a) * hh;
+  }
+  const top = new THREE.Group(); top.position.set(px, py, 0); g.add(top);
+  for (let i = 0; i < 8; i++) { const f = new THREE.Mesh(new THREE.PlaneGeometry(2.6, .9, 4, 1), fm); f.geometry.translate(1.3, 0, 0); const pa = f.geometry.attributes.position; for (let k = 0; k < pa.count; k++) pa.setY(k, pa.getY(k) - .12 * Math.pow(pa.getX(k), 2)); f.rotation.set(-HP + .25, i * TAU / 8 + R() * .3, 0); top.add(f); }
+  for (let i = 0; i < 3; i++) { const c = new THREE.Mesh(new THREE.SphereGeometry(.14, 5, 4), psxMat({ color: 0x5a7a2a })); c.position.set(Math.cos(i * 2.1) * .18, -.15, Math.sin(i * 2.1) * .18); top.add(c); }
+  g.rotation.y = R() * TAU; return g;
+}
+function buildBeach(parent) {
+  const B = { group: new THREE.Group() }, g = B.group; parent.add(g);
+  const add = (m, x = 0, y = 0, z = 0) => { m.position.set(x, y, z); g.add(m); return m; };
+  const R = mulberry(77);
+  // céu do pôr do sol: azul-violeta no alto, rosa e laranja no horizonte, amarelo em volta do sol
+  { const skyG = new THREE.SphereGeometry(112, 24, 16), pos = skyG.attributes.position, cols = [], c = new THREE.Color(), sd = BEACH_SUN.clone().normalize();
+    const top = new THREE.Color(0x2a2a78), mid = new THREE.Color(0x8a4a9a), hor = new THREE.Color(0xff8a6a), gold = new THREE.Color(0xffd27a), low = new THREE.Color(0x3a2a5a), v = new THREE.Vector3();
+    for (let i = 0; i < pos.count; i++) {
+      v.set(pos.getX(i), pos.getY(i), pos.getZ(i)).normalize(); const y = v.y, near = Math.max(0, v.dot(sd));
+      if (y > .35) c.copy(mid).lerp(top, (y - .35) / .65); else if (y > .02) c.copy(hor).lerp(mid, (y - .02) / .33); else c.copy(hor).lerp(low, Math.min(1, -y * 4));
+      c.lerp(gold, Math.pow(near, 6) * (y > -.05 ? .85 : .3)); cols.push(c.r, c.g, c.b);
+    }
+    skyG.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
+    add(new THREE.Mesh(skyG, psxMat({ vc: true, emissive: 1, fog: false, side: THREE.BackSide })));
+  }
+  // sol baixo, encostando no mar, e o brilho em volta
+  { const sun = add(new THREE.Mesh(new THREE.CircleGeometry(4.6, 24), psxMat({ color: 0xfff0b0, emissive: 1, fog: false })), BEACH_SUN.x, BEACH_SUN.y, BEACH_SUN.z); sun.lookAt(0, 3, 0);
+    const halo = add(new THREE.Mesh(new THREE.CircleGeometry(10, 24), psxMat({ color: 0xffb070, additive: true, emissive: 1, fog: false, opacity: .3 })), BEACH_SUN.x * .99, BEACH_SUN.y, BEACH_SUN.z * .99); halo.lookAt(0, 3, 0);
+    B.sun = sun; B.halo = halo;
+    // nuvens finas em faixas, acesas por baixo
+    for (let i = 0; i < 7; i++) { const w = 18 + R() * 26, cl = add(new THREE.Mesh(new THREE.PlaneGeometry(w, 1.2 + R()), psxMat({ color: R() < .5 ? 0xffb48a : 0xe08ab0, emissive: 1, fog: false, opacity: .75, transparent: true })), -60 + R() * 120, 14 + R() * 18, -100 + R() * 6); cl.lookAt(0, cl.position.y * .6, 0); }
+  }
+  // ilha de Itaparica, baixa e azulada no horizonte
+  { const isl = add(new THREE.Mesh(new THREE.SphereGeometry(1, 16, 6, 0, TAU, 0, HP), psxMat({ color: 0x5a4a7a, fog: false })), -70, -.6, -104); isl.scale.set(52, 3.2, 6); }
+  // mar: malha que ondula, mais clara perto do sol (reflexo), espuma na beira
+  { const NX = 48, NZ = 26, W = 230, D = 80, geo = new THREE.PlaneGeometry(W, D, NX, NZ); geo.rotateX(-HP); geo.translate(0, -.35, SEA_Z - D / 2);
+    const pos = geo.attributes.position, cols = [], c = new THREE.Color(), deep = new THREE.Color(0x2a4a8a), near = new THREE.Color(0x2aa0a8), glow = new THREE.Color(0xffb070);
+    for (let i = 0; i < pos.count; i++) { const x = pos.getX(i), z = pos.getZ(i), f = clamp((SEA_Z - z) / D, 0, 1), dx = Math.abs(x - lerp(BEACH_SUN.x * .3, BEACH_SUN.x, f)) / (5 + 22 * f); c.copy(near).lerp(deep, Math.min(1, f * 1.6)).lerp(glow, Math.max(0, 1 - dx) * (.2 + .6 * f)); cols.push(c.r, c.g, c.b); }
+    geo.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
+    const sea = add(new THREE.Mesh(geo, psxMat({ vc: true, emissive: .55 }))); B.sea = { geo, y0: Float32Array.from({ length: pos.count }, (_, i) => pos.getY(i)) };
+    // espuma das ondas chegando na areia
+    B.foam = [];
+    for (let i = 0; i < 4; i++) { const f = add(new THREE.Mesh(new THREE.PlaneGeometry(220, 1.2, 40, 1), psxMat({ color: 0xffffff, emissive: .8, opacity: .0, transparent: true, depthWrite: false })), 0, -.25, SEA_Z - 2 - i * 6); f.rotation.x = -HP; f.renderOrder = 2; B.foam.push({ m: f, ph: i / 4 }); }
+    // trilha de brilho do sol na água
+    const GL = makePoints(140); GL.pts.renderOrder = 6; g.add(GL.pts);
+    for (let i = 0; i < GL.n; i++) { const t = Math.pow(R(), .7), z = lerp(SEA_Z - 3, BEACH_SUN.z + 6, t), x = lerp(BEACH_SUN.x * .35, BEACH_SUN.x, t) + (R() - .5) * (3 + 10 * t); GL.pos[i * 3] = x; GL.pos[i * 3 + 1] = -.2; GL.pos[i * 3 + 2] = z; const cc = R() < .6 ? new THREE.Color(1, .85, .55) : C_WHITE; GL.col[i * 3] = cc.r; GL.col[i * 3 + 1] = cc.g; GL.col[i * 3 + 2] = cc.b; GL.size[i] = .2 + R() * .5 * (1 + t); GL.alpha[i] = 0; }
+    GL.ph = Float32Array.from({ length: GL.n }, () => R() * TAU); B.glint = GL;
+  }
+  // areia: um plano grande, com a beira molhada mais escura perto do mar
+  { const sm_ = psxMat({ map: sandTex, color: 0xf0d8b8 });
+    const plate = (w, d, x, z, col) => { const pg = new THREE.PlaneGeometry(w, d, Math.ceil(w / 8), Math.ceil(d / 8)); pg.rotateX(-HP); const uv = pg.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * w / 4, uv.getY(i) * d / 4); return add(new THREE.Mesh(pg, col ? psxMat({ map: sandTex, color: col }) : sm_), x, -.02, z); };
+    const RX = 14, RZ = 8;
+    plate(230, 96, 0, RZ + 48); plate(230, -RZ - SEA_Z - 3, 0, (-RZ + SEA_Z + 3) / 2); plate(100, RZ * 2, -RX - 50, 0); plate(100, RZ * 2, RX + 50, 0);
+    plate(230, 7, 0, SEA_Z - .5, 0xa88a72);
+  }
+  // pista de patins: piso liso pintado (com reflexo leve), linhas brancas e mureta de tábuas coloridas
+  { const RX = 14, RZ = 8, fg = new THREE.PlaneGeometry(RX * 2, RZ * 2, 28, 16); fg.rotateX(-HP);
+    const fl = add(new THREE.Mesh(fg, psxMat({ map: rinkBTex, rep: [5, 3], opacity: .86, transparent: true, depthWrite: true, color: 0xcfeef2, emissive: .22 }))); fl.renderOrder = 1;
+    const lm = psxMat({ color: 0xffffff, emissive: .5, opacity: .7, transparent: true, depthWrite: false });
+    const line = (w, d, x, z) => { const m = add(new THREE.Mesh(new THREE.PlaneGeometry(w, d), lm), x, .012, z); m.rotation.x = -HP; m.renderOrder = 2; };
+    line(.12, RZ * 2 - .6, 0, 0); line(RX * 2 - .6, .12, 0, -RZ + .3); line(RX * 2 - .6, .12, 0, RZ - .3); line(.12, RZ * 2 - .6, -RX + .3, 0); line(.12, RZ * 2 - .6, RX - .3, 0);
+    for (const [r, x] of [[2.6, 0], [2, -8.5], [2, 8.5]]) { const m = add(new THREE.Mesh(new THREE.RingGeometry(r - .07, r + .07, 40), lm), x, .013, 0); m.rotation.x = -HP; m.renderOrder = 2; }
+    const bm = rx => psxMat({ map: boardBTex, rep: [rx, 1] });
+    const board = (w, d, x, z, rx) => add(new THREE.Mesh(new THREE.BoxGeometry(w, .55, d), bm(rx)), x, .275, z);
+    board(RX * 2 + .3, .15, 0, -RZ - .07, 14); board(RX * 2 + .3, .15, 0, RZ + .07, 14); board(.15, RZ * 2 + .3, -RX - .07, 0, 8); board(.15, RZ * 2 + .3, RX + .07, 0, 8);
+  }
+  // Farol da Barra: cabo de pedras entrando no mar, o forte de Santo Antônio e a torre listrada com a lanterna acesa
+  { const F = new THREE.Group(); F.position.set(FAROL.x, 0, FAROL.z); F.scale.setScalar(.72); g.add(F);
+    const rm = psxMat({ map: rockTex, rep: [2, 2], color: 0xa08a90 });
+    for (let i = 0; i < 22; i++) { const a = i * TAU / 22 + R() * .2, r = 10.2 + R() * 2.2, s = .8 + R() * 1.2; const m = new THREE.Mesh(new THREE.DodecahedronGeometry(s, 0), rm); m.position.set(Math.cos(a) * r, -.4 + R() * .5, Math.sin(a) * r); m.rotation.set(R() * 3, R() * 3, R() * 3); F.add(m); }
+    // ponta de terra ligando o forte à praia da direita
+    const land = new THREE.Mesh(new THREE.BoxGeometry(60, 1.6, 26), psxMat({ map: sandTex, rep: [10, 4], color: 0xc8a888 })); land.position.set(32, -.2, 10); land.rotation.y = -.25; F.add(land);
+    const fm = psxMat({ map: fortTex, rep: [10, 1] });
+    const fort = new THREE.Mesh(new THREE.CylinderGeometry(9, 10, 4, 10), fm); fort.position.y = 2; F.add(fort);
+    const top = new THREE.Mesh(new THREE.CylinderGeometry(8.6, 8.6, .3, 10), psxMat({ color: 0x9a8a70 })); top.position.y = 4.1; F.add(top);
+    for (let i = 0; i < 10; i++) { const a = i * TAU / 10 + TAU / 20, m = new THREE.Mesh(new THREE.BoxGeometry(1.4, .7, .7), fm); m.position.set(Math.cos(a) * 9, 4.3, Math.sin(a) * 9); m.rotation.y = -a; F.add(m); }
+    for (const a of [.4, 2.2, 4.1]) { const gx = Math.cos(a) * 9.4, gz = Math.sin(a) * 9.4, gu = new THREE.Mesh(new THREE.CylinderGeometry(.7, .7, 1.6, 8), fm); gu.position.set(gx, 4.6, gz); F.add(gu); const d = new THREE.Mesh(new THREE.SphereGeometry(.75, 8, 4, 0, TAU, 0, HP), fm); d.position.set(gx, 5.4, gz); F.add(d); }
+    const tower = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.45, 11, 12, 1, true), psxMat({ map: farolTex, emissive: .25, side: DS })); tower.position.y = 4 + 5.5; F.add(tower);
+    const gal = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.2, .35, 12), psxMat({ color: 0x24202c })); gal.position.y = 15.1; F.add(gal);
+    const lamp = new THREE.Mesh(new THREE.CylinderGeometry(.8, .8, 1.3, 10), psxMat({ color: 0xfff1b0, emissive: 1 })); lamp.position.y = 15.9; F.add(lamp);
+    const cap = new THREE.Mesh(new THREE.ConeGeometry(.95, .8, 10), psxMat({ color: 0x24202c })); cap.position.y = 16.95; F.add(cap);
+    // facho de luz girando devagar (fraco, ainda é fim de tarde)
+    const bg = new THREE.ConeGeometry(2.6, 46, 10, 1, true); bg.translate(0, -23, 0); bg.rotateX(HP);
+    const beam = new THREE.Mesh(bg, psxMat({ color: 0xfff2c0, additive: true, emissive: 1, opacity: .1, fog: false, side: DS })); beam.position.y = 15.9; beam.renderOrder = 7; F.add(beam);
+    B.beam = beam; B.lamp = lamp;
+  }
+  // morro e prédios do outro lado (à esquerda, bem longe), em silhueta
+  for (let i = 0; i < 16; i++) { const h = 4 + R() * 9, w = 3 + R() * 5, m = add(new THREE.Mesh(new THREE.BoxGeometry(w, h, 4), psxMat({ color: 0xc89ab8, emissive: .45 })), -112 + i * 5.5, h / 2 - .3, -70 + R() * 6); m.rotation.y = .9; }
+  // calçadão atrás das câmeras: coqueiros, quiosques e a fileira de prédios da Barra
+  for (let i = 0; i < 14; i++) coqueiro(g, -48 + i * 7.4 + R() * 2, 33 + R() * 4, 6 + R() * 3, .15 + R() * .25, R);
+  for (const x of [-30, 30]) for (const z of [-14, -20]) coqueiro(g, x + R() * 4, z + R() * 3, 6.5 + R() * 2, .3 + R() * .2, R);
+  for (let i = 0; i < 18; i++) { const h = 8 + R() * 16, w = 6 + R() * 6, m = add(new THREE.Mesh(new THREE.BoxGeometry(w, h, 7), psxMat({ color: [0xffe8d0, 0xffd6e6, 0xd8e8ff, 0xfff4c8, 0xe8f6ff][i % 5], emissive: .55 })), -66 + i * 7.6, h / 2, 54 + R() * 8);
+    for (let k = 1; k < h / 2.4; k++) add(new THREE.Mesh(new THREE.BoxGeometry(w * .9, .25, .1), psxMat({ color: 0x8a6a8a, emissive: .3 })), m.position.x, k * 2.4, m.position.z - 3.55); }
+  // banhistas: em pé atrás da mureta (lado do mar), sentados em cangas com guarda-sóis, crianças com castelo de areia
+  B.people = [];
+  const pm = psxMat({ vc: true });
+  const person = (x, z, kind, face = 0) => { const m = add(new THREE.Mesh(bather(R, kind), pm), x, 0, z); m.rotation.y = face; m.userData = { kind, ph: R() * TAU, occ: false }; B.people.push(m); return m; };
+  for (let i = 0; i < 15; i++) { const x = -13 + i * 1.85 + (R() - .5) * .5; person(x, -9.6 - R() * .9, R() < .4 ? 'cheer' : 'stand', (R() - .5) * .4); }
+  for (const sx of [-1, 1]) for (let i = 0; i < 5; i++) person(sx * (15.6 + R() * 1.2), -6 + i * 2.8 + R(), R() < .35 ? 'cheer' : 'stand', -sx * HP + (R() - .5) * .4);
+  const umb = (x, z, col) => {
+    const pole = add(new THREE.Mesh(new THREE.CylinderGeometry(.05, .05, 2.6, 5), psxMat({ color: 0xeeeeee })), x, 1.3, z); pole.userData.occ = false;
+    const tp = add(new THREE.Mesh(new THREE.ConeGeometry(1.6, .6, 10, 1, true), psxMat({ map: canvasTex(16, 4, (g2, w, h) => { for (let k = 0; k < 8; k++) { g2.fillStyle = k % 2 ? '#ffffff' : col; g2.fillRect(k * 2, 0, 2, h); } }), side: DS })), x, 2.6, z); tp.userData.occ = false;
+  };
+  const towel = (x, z, col, ry) => { const m = add(new THREE.Mesh(new THREE.PlaneGeometry(1, 1.9), psxMat({ color: col })), x, .015, z); m.rotation.set(-HP, 0, ry); };
+  [[-22, -12, '#ff4f8b'], [-19, -19, '#2ec4b6'], [21, -11, '#ffd23f'], [24, -18, '#3d8bff'], [-26, 3, '#ff7a3d'], [25, 2, '#7b4bd6']].forEach(([x, z, col], i) => {
+    umb(x, z, col); towel(x + .9, z + .4, SWIM[i % SWIM.length], .3); person(x + .9, z + .3, 'sit', PI * .1 + (x > 0 ? -.6 : .6)); if (i % 2) { towel(x - .8, z + .5, SWIM[(i + 3) % SWIM.length], -.2); person(x - .8, z + .4, 'sit', x > 0 ? -.4 : .4); }
+  });
+  // crianças com balde e castelo de areia perto da água
+  { const cm = psxMat({ map: sandTex, color: 0xe0c090 }), cx = -6, cz = -22;
+    add(new THREE.Mesh(new THREE.CylinderGeometry(.9, 1.1, .7, 8), cm), cx, .35, cz);
+    for (const [dx, dz] of [[-.7, -.7], [.7, -.7], [-.7, .7], [.7, .7]]) { add(new THREE.Mesh(new THREE.CylinderGeometry(.25, .3, 1.1, 6), cm), cx + dx, .55, cz + dz); add(new THREE.Mesh(new THREE.ConeGeometry(.3, .4, 6), cm), cx + dx, 1.3, cz + dz); }
+    add(new THREE.Mesh(new THREE.CylinderGeometry(.18, .14, .3, 8), psxMat({ color: 0xff4f8b })), cx + 1.6, .15, cz + .4);
+    person(cx + 1.4, cz + 1.2, 'kid', PI * .9); person(cx - 1.5, cz + .8, 'kid', -PI * .8);
+  }
+  // cabeças de quem está nadando
+  B.swim = []; for (let i = 0; i < 5; i++) { const m = add(new THREE.Mesh(new THREE.SphereGeometry(.2, 6, 4), psxMat({ color: SKIN[i % SKIN.length] })), -30 + R() * 50, -.2, SEA_Z - 6 - R() * 10); B.swim.push({ m, ph: R() * TAU }); }
+  // a baleia jubarte (escondida embaixo da água até a hora do salto) e o borrifo
+  B.whale = buildWhale(); g.add(B.whale.g);
+  // borrifo: gotas opacas (mistura normal), para o branco aparecer mesmo contra o céu claro do pôr do sol
+  B.splash = makePoints(900); B.splash.pts.renderOrder = 7; g.add(B.splash.pts);
+  B.splash.pts.material = new THREE.ShaderMaterial({ uniforms: { uRes: U.uRes, uScale: U.uScale }, vertexShader: P_VS, fragmentShader: P_FS.replace('vec4(vC * vA, 1.0)', 'vec4(vC, vA)'), transparent: true, depthWrite: false });
+  B.sv = new Float32Array(B.splash.n * 3); B.sl = new Float32Array(B.splash.n); B.sm = new Float32Array(B.splash.n); B.sNext = 0;
+  B.ring = add(new THREE.Mesh(new THREE.RingGeometry(.8, 1, 40), psxMat({ color: 0xffffff, additive: true, emissive: 1, opacity: 0, side: DS })), 0, -.15, -60); B.ring.rotation.x = -HP; B.ring.renderOrder = 7;
+  B.spouts = [];
+  return B;
+}
+/* --------- baleia jubarte: corpo escuro e longo, barriga clara com pregas, nadadeiras peitorais compridas, rabo largo --------- */
+function buildWhale() {
+  const g = new THREE.Group(), body = new THREE.Group(); g.add(body);
+  const dark = psxMat({ color: 0x2a3446 }), belly = psxMat({ color: 0xd8dce4 }), fin = psxMat({ color: 0x3a4458, side: DS });
+  // corpo: elipsoide comprido (eixo z = da cauda para a cabeça), com a barriga clara por baixo
+  const bg = new THREE.SphereGeometry(1, 16, 10); bg.scale(1.7, 1.55, 7.2);
+  const pa = bg.attributes.position, cols = [];
+  for (let i = 0; i < pa.count; i++) { const y = pa.getY(i), z = pa.getZ(i), pleat = y < -.35 && z > -2 ? (Math.floor((pa.getX(i) + 2) * 6) % 2 ? .82 : 1) : 1, c = y < -.45 ? new THREE.Color(0xd8dce4).multiplyScalar(pleat) : new THREE.Color(0x2a3446); cols.push(c.r, c.g, c.b); }
+  bg.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
+  body.add(new THREE.Mesh(bg, psxMat({ vc: true })));
+  // calombos na cabeça
+  for (let i = 0; i < 10; i++) { const k = new THREE.Mesh(new THREE.SphereGeometry(.16, 5, 4), dark); k.position.set((i % 2 ? .35 : -.35) * (1 - i / 14), 1.15 - i * .02, 6.2 - i * .38); body.add(k); }
+  // nadadeiras peitorais (longas e brancas por baixo, como as da jubarte)
+  for (const s of [-1, 1]) { const f = new THREE.Mesh(new THREE.BoxGeometry(5.2, .18, 1.1), belly); f.geometry.translate(s * 2.6, 0, 0); f.position.set(s * 1.3, -.6, 2.6); f.rotation.set(0, -s * .35, -s * .5); body.add(f); f.userData.s = s; (g.userData.fins = g.userData.fins || []).push(f); }
+  // cauda e nadadeira caudal
+  const tail = new THREE.Group(); tail.position.set(0, 0, -6.6); body.add(tail);
+  const ped = new THREE.Mesh(new THREE.CylinderGeometry(.5, .9, 3, 8), dark); ped.rotation.x = HP; ped.position.z = -1.2; tail.add(ped);
+  const fl = new THREE.Shape(); fl.moveTo(0, 0); fl.quadraticCurveTo(2.2, .4, 3.4, 1.6); fl.quadraticCurveTo(2.6, .2, 1.2, -.6); fl.quadraticCurveTo(.4, -.5, 0, -.2); fl.quadraticCurveTo(-.4, -.5, -1.2, -.6); fl.quadraticCurveTo(-2.6, .2, -3.4, 1.6); fl.quadraticCurveTo(-2.2, .4, 0, 0);
+  const fluke = new THREE.Mesh(new THREE.ShapeGeometry(fl, 6), fin); fluke.rotation.x = -HP; fluke.position.z = -2.6; tail.add(fluke);
+  g.visible = false; g.userData.tail = tail; g.userData.body = body;
+  g.scale.setScalar(1.1);
+  return { g, body, tail, t: -1, at: new THREE.Vector3(-4, 0, -62), dir: 1, spouted: 0, view: 0 };
+}
+/* --------- a cada quadro: ondas, espuma, brilho do sol, banhistas, farol, baleia e borrifo --------- */
+function beachUpdate(B, t, dt, hype, whaleW, whaleGo) {
+  if (!B) return;
+  // mar ondulando (só o perto da praia mexe de verdade)
+  { const P_ = B.sea.geo.attributes.position, y0 = B.sea.y0;
+    for (let i = 0; i < P_.count; i++) { const x = P_.getX(i), z = P_.getZ(i), near = clamp(1 - (SEA_Z - z) / 60, 0, 1); P_.setY(i, y0[i] + (.18 + .25 * near) * Math.sin(z * .35 + t * 1.6 + x * .05) + .08 * Math.sin(x * .3 - t * 1.1)); }
+    P_.needsUpdate = true; }
+  for (const f of B.foam) { const p = ((t * .12 + f.ph) % 1 + 1) % 1; f.m.position.z = SEA_Z - 9 + 9.5 * easeOut(p); f.m.position.y = -.2; setOpacity(f.m, .55 * bump(p) * (1 - p * .3)); f.m.scale.x = 1 + .03 * Math.sin(t + f.ph * 9); }
+  { const GL = B.glint; for (let i = 0; i < GL.n; i++) GL.alpha[i] = Math.max(0, Math.sin(t * 3.1 + GL.ph[i]) * .9 - .1); GL.geo.attributes.palpha.needsUpdate = true; }
+  // banhistas balançando (quem torce, pula com a música)
+  const beat = t / BEAT, bp = ((beat % 1) + 1) % 1;
+  for (const m of B.people) { const u = m.userData; if (u.kind === 'cheer') m.position.y = .12 * hype * Math.abs(Math.sin((beat + u.ph) * PI)); else if (u.kind === 'stand') m.rotation.z = .03 * Math.sin(t * 1.3 + u.ph); }
+  for (const s of B.swim) s.m.position.y = -.25 + .08 * Math.sin(t * 1.4 + s.ph);
+  B.beam.rotation.y = t * .5; setOpacity(B.beam, .09 + .03 * Math.sin(t * 2));
+  // a baleia: borrifos na antecipação e o salto quando a dupla completa o final sincronizado
+  whaleUpdate(B, t, dt, whaleW, whaleGo);
+  // gotas do borrifo
+  const S = B.splash;
+  for (let i = 0; i < S.n; i++) {
+    if (B.sl[i] <= 0) { S.alpha[i] = 0; continue; }
+    B.sl[i] -= dt; const k = B.sl[i] / B.sm[i];
+    B.sv[i * 3 + 1] -= 9.8 * dt;
+    S.pos[i * 3] += B.sv[i * 3] * dt; S.pos[i * 3 + 1] += B.sv[i * 3 + 1] * dt; S.pos[i * 3 + 2] += B.sv[i * 3 + 2] * dt;
+    if (S.pos[i * 3 + 1] < -.3) { S.pos[i * 3 + 1] = -.3; B.sv[i * 3 + 1] *= -.15; B.sv[i * 3] *= .5; B.sv[i * 3 + 2] *= .5; }
+    S.alpha[i] = Math.min(1, k * 2);
+  }
+  S.geo.attributes.position.needsUpdate = true; S.geo.attributes.palpha.needsUpdate = true;
+  if (B.sDirty) { S.geo.attributes.pcol.needsUpdate = true; S.geo.attributes.psize.needsUpdate = true; B.sDirty = 0; }   // cor e tamanho das gotas novas
+}
+const SPL_A = new THREE.Color(.8, .93, 1), SPL_B = new THREE.Color(.62, .8, .9);
+function splashEmit(B, x, y, z, vx, vy, vz, life, size) {
+  const S = B.splash, i = B.sNext; B.sNext = (B.sNext + 1) % S.n;
+  S.pos[i * 3] = x; S.pos[i * 3 + 1] = y; S.pos[i * 3 + 2] = z; B.sv[i * 3] = vx; B.sv[i * 3 + 1] = vy; B.sv[i * 3 + 2] = vz; B.sl[i] = life; B.sm[i] = life;
+  const r = Math.random(), c = r < .6 ? C_WHITE : r < .85 ? SPL_A : SPL_B; S.col[i * 3] = c.r; S.col[i * 3 + 1] = c.g; S.col[i * 3 + 2] = c.b; S.size[i] = size; S.alpha[i] = 1; B.sDirty = 1;
+}
+// salto da jubarte: sobe inclinada girando de lado, as nadadeiras abertas, e cai de costas num splash enorme
+const WHALE_T = 3.6;   // segundos do salto inteiro
+function whaleUpdate(B, t, dt, w, go) {
+  const W_ = B.whale, g = W_.g;
+  // a câmera do casal se afasta enquanto a baleia se anuncia e volta depois do splash
+  { const vT = W_.done && W_.t >= WHALE_T ? 0 : sm(.6, .95, w); if (dt > 0) W_.view += (vT - W_.view) * (1 - Math.exp(-dt * (vT > W_.view ? 1.4 : .8))); }
+  // antecipação (w entre .4 e .9): esguichos de respiração no mar, cada vez mais perto
+  if (w > .38 && !go && dt > 0) {
+    W_.spT = (W_.spT || 0) - dt;
+    if (W_.spT <= 0) { W_.spT = 1.6 - w; const x = W_.at.x + (Math.random() - .5) * 14, z = W_.at.z + 6 + (Math.random() - .5) * 6; for (let i = 0; i < 26; i++) splashEmit(B, x + rnd(-.3, .3), .2, z + rnd(-.3, .3), rnd(-.6, .6), rnd(5, 8), rnd(-.6, .6), rnd(1, 1.6), rnd(.35, .6)); }
+  }
+  if (go && W_.t < 0 && !W_.done) { if (B.cam) whaleSpot(B, B.cam); W_.t = 0; W_.done = 1; g.visible = true; SFX.whale && SFX.whale(); }
+  if (!go && w < .2) W_.done = 0;
+  if (W_.t >= WHALE_T && !go) { W_.t = -1; g.visible = false; }
+  if (W_.t < 0 || W_.t >= WHALE_T) { if (W_.t >= WHALE_T) g.visible = false; return; }
+  W_.t += dt; const s = clamp(W_.t / WHALE_T, 0, 1), at = W_.at;
+  // trajetória: sai da água subindo (até 2/3 do corpo para fora), gira de lado e cai de costas
+  const up = s < .45 ? easeOut(s / .45) : 1 - easeIO((s - .45) / .55);
+  g.position.set(at.x + 3 * s * W_.dir, -8 + 15 * up, at.z + 4 * s);
+  g.rotation.set(-1.25 * (1 - s) + .3 * s, .4 * W_.dir, W_.dir * PI * .9 * easeIO(seg(s, .2, .8)));
+  for (const f of g.userData.fins) f.rotation.z = -f.userData.s * (.5 + .5 * Math.sin(s * PI));
+  W_.tail.rotation.x = .3 * Math.sin(s * TAU * 1.5);
+  // borrifo: na saída da água e, maior, na queda
+  const burstAt = (n, spd, up_, size) => { for (let i = 0; i < n; i++) { const a = Math.random() * TAU, r = rnd(0, 3); splashEmit(B, g.position.x + Math.cos(a) * r, 0, g.position.z + Math.sin(a) * r * .6, Math.cos(a) * rnd(1, spd), rnd(up_ * .5, up_), Math.sin(a) * rnd(1, spd) * .6, rnd(1.4, 2.6), size * rnd(.7, 1.3)); } };
+  const column = (n, up_, size) => { for (let i = 0; i < n; i++) splashEmit(B, g.position.x + rnd(-2.2, 2.2), 0, g.position.z + rnd(-1.2, 1.2), rnd(-1.5, 1.5), rnd(up_ * .6, up_), rnd(-.8, .8), rnd(1.8, 2.8), size * rnd(.8, 1.3)); };
+  if (!W_.f1 && s > .02) { W_.f1 = 1; burstAt(200, 6, 12, 1.1); column(60, 15, 1.2); B.ringT = 0; }
+  if (!W_.f2 && s > .86) { W_.f2 = 1; burstAt(420, 10, 19, 1.25); column(180, 24, 1.4); B.ringT = 0; SFX.splash && SFX.splash(); }
+  if (s >= 1) { W_.f1 = W_.f2 = 0; }
+  if (B.ringT !== undefined && B.ringT < 2.2) { B.ringT += dt; const k = B.ringT / 2.2; B.ring.position.set(g.position.x, -.15, g.position.z); B.ring.scale.setScalar(2 + 16 * easeOut(k)); setOpacity(B.ring, .7 * (1 - k)); }
+}
+// onde a baleia aparece: no mar, na direção em que a câmera do casal olha, um pouco à direita dele (à esquerda fica o sol, que apagaria o borrifo)
+function whaleSpot(B, cam) {
+  const W_ = B.whale, d = new THREE.Vector3(), Z = -62; cam.getWorldDirection(d);
+  let x = -4;
+  if (d.z < -.2) {
+    const k = (Z - cam.position.z) / d.z, cx = cam.position.x + d.x * k, hw = k * Math.tan(cam.fov * PI / 360) * cam.aspect * (1 + 1.1 * (1 - W_.view));
+    x = clamp(cx + clamp(.5 * hw, 8, 15), -34, 5);
+  }
+  W_.at.set(x, 0, Z); W_.dir = -1;
+}
+// quanto a câmera do casal se afasta para mostrar a baleia (0 a 1)
+function whaleView() { return PHI === 2 && WORLD3 ? WORLD3.whale.view : 0; }
 
 /* ============================== poses e manobras: clipes feitos à mão ============================== */
 // Cada manobra é um clipe de poses-chave em tempos (batidas). A primeira chave de todo clipe é a pose em que
@@ -2326,14 +2778,365 @@ const DUO_MOVES_D = {}, DUO_POSES_D = [];
   } };
 }
 
+/* ============================== FASE 3: PRAIA DA BARRA (patins inline) ============================== */
+// mesmo mapa das outras fases (6 manobras por bloco, nomes nas duas últimas e na pose), com outra ordem
+const SEQ_B = [
+  [[1, 1], [0, 1], [2, 1], [1, 2], [0, 5], [2, 5]],
+  [[2, 2], [0, 2], [1, 3], [2, 3], [1, 5], [0, 6]],
+  [[0, 3], [1, 4], [0, 4], [2, 4], [2, 6], [1, 6]]
+];
+// notas no balanço do samba-reggae (3 + 3 + 2 colcheias, contratempos)
+const PATTERNS_B = [
+  ['L...R...', 'L..R..L.', 'L...R.B.', 'L..R..R.', 'L.R.L.R.', 'L..RL.B.', 'L..R..L.', 'H.......'],
+  ['L..R..L.', 'L.R..RL.', 'L..RL.B.', 'LR..R.L.', 'L..R.LR.', 'L.RL..B.', 'L..RLRL.', 'H.......'],
+  ['L..RL.R.', 'LR.LR.B.', 'L.RL.RL.', 'LRL..RB.', 'L.RLR.L.', 'LR.RL.RB', 'LRL.RLB.', 'H.......']
+];
+const NAMES_B = {
+  pt: [
+    ['Serpentina de Coco Gelado', 'Cambalhota de Água de Coco', 'Saudação ao Pôr do Sol'],
+    ['Pião de Fitinha do Bonfim', 'Surfada Arco-Íris na Areia', 'Sereia Encantada do Farol'],
+    ['Salto da Baleia Jubarte', 'Furacão de Axé Dourado', 'Apoteose do Farol da Barra']
+  ],
+  es: [
+    ['Serpentina de Coco Helado', 'Voltereta de Agua de Coco', 'Saludo al Atardecer'],
+    ['Trompo de Cintita del Bonfim', 'Surfeada Arcoíris en la Arena', 'Sirena Encantada del Faro'],
+    ['Salto de la Ballena Jorobada', 'Huracán de Axé Dorado', 'Apoteosis del Faro de Barra']
+  ]
+};
+/* --------- remada de patins inline: passada longa, quadril solto e braços balançando no samba --------- */
+const SKB = [
+  { lean: .32, side: -.08, tw: -.16, hd: -.08, hy: .12, aL: [.95, 1.1, -.9], aR: [.7, -.7, -.5], lL: [.06, .12, .48], lR: [.22, -.7, .32], tail: .4 },
+  { lean: .38, side: .16, tw: .2, hd: -.12, hy: -.14, aL: [.7, -.7, -.5], aR: [.95, 1.1, -.9], lL: [.72, -1.0, .06], lR: [.06, .12, .62], tail: .55 },
+  { lean: .32, side: .08, tw: .16, hd: -.08, hy: -.12, aL: [.7, -.7, -.5], aR: [.95, 1.1, -.9], lL: [.22, -.7, .32], lR: [.06, .12, .48], tail: .4 },
+  { lean: .38, side: -.16, tw: -.2, hd: -.12, hy: .14, aL: [.95, 1.1, -.9], aR: [.7, -.7, -.5], lL: [.06, .12, .62], lR: [.72, -1.0, .06], tail: .55 }
+];
+const C_SKATE_B = clip(4, [[0, SKB[0]], [1, SKB[1]], [2, SKB[2]], [3, SKB[3]], [4, SKB[0]]], null, true);
+// braço de samba (cotovelo dobrado, mão para cima) e braço baixo
+const SAM_UP = [2.1, .5, -1.2], SAM_DN = [.6, -.3, -.4], WAVE = [2.85, .25, -.15];
+/* --------- deslizes --------- */
+const C_GLIDE_B = [
+  // 1 · sambadinha: o quadril vai de um lado para o outro e os joelhos dobram no tempo, um braço sempre para cima
+  clip(4, [
+    [.5, { lean: .25, side: .22, tw: .2, hd: -.1, hy: .2, aL: SAM_UP, aR: SAM_DN, lL: [.06, .1, .65], lR: [.12, .2, .25] }],
+    [1, { side: -.22, tw: -.2, hy: -.2, aL: SAM_DN, aR: SAM_UP, lL: [.12, .2, .25], lR: [.06, .1, .65] }],
+    [1.5, { side: .22, tw: .2, hy: .2, aL: SAM_UP, aR: SAM_DN, lL: [.06, .1, .65], lR: [.12, .2, .25] }],
+    [2, { side: -.22, tw: -.2, hy: -.2, aL: SAM_DN, aR: SAM_UP, lL: [.12, .2, .25], lR: [.06, .1, .65] }],
+    [2.5, { side: .25, tw: .25, hy: .3, aL: WAVE, aR: WAVE, lL: [.06, .1, .6], lR: [.12, .2, .3], sq: .95 }],
+    [3.25, { side: -.25, tw: -.25, hy: -.3, lL: [.12, .2, .3], lR: [.06, .1, .6], sq: 1.02 }],
+    [4, { lean: .32, side: 0, tw: 0, hy: 0, ...A(.85, .5, -.6), lL: [.06, .15, .42], lR: [.06, .15, .42], sq: 1 }]
+  ]),
+  // 2 · slalom dos cones: pés juntos, o corpo inclina para cada curva e os braços abertos fazem de balança
+  clip(4, [
+    [.5, { lean: .35, side: .3, tw: 0, hd: -.1, aL: [1.5, .1, -.1], aR: [1.3, -.1, -.1], lL: [.06, .05, .55], lR: [.06, .05, .55] }],
+    [1, { side: -.3, aL: [1.3, -.1, -.1], aR: [1.5, .1, -.1] }],
+    [1.5, { side: .3, aL: [1.5, .1, -.1], aR: [1.3, -.1, -.1] }],
+    [2, { side: -.3, aL: [1.3, -.1, -.1], aR: [1.5, .1, -.1] }],
+    [2.5, { side: .3, aL: [1.5, .1, -.1], aR: [1.3, -.1, -.1] }],
+    [3, { side: -.3, aL: [1.3, -.1, -.1], aR: [1.5, .1, -.1] }],
+    [3.5, { side: 0, lean: .3, ...A(1.1, .3, -.3), lL: [.06, .1, .45], lR: [.06, .1, .45] }],
+    [4, { lean: .34, hd: -.12, ...A(.85, .45, -.4), lL: [.06, .15, .42], lR: [.06, .15, .42] }]
+  ], tb => { const k = sm(.3, .8, tb) * (1 - sm(3.2, 3.8, tb)), a = PI * (tb - .5) * 2; return { tx: .55 * Math.sin(a) * k, yaw: -.45 * Math.cos(a) * k }; }),
+  // 3 · mãozinha pra cima: cruzados com as duas mãos no alto balançando, e palma no fim
+  clip(4, [
+    [.5, { lean: .3, side: .12, hd: -.25, aL: [2.8, .5, -.2], aR: [2.8, .1, -.2], lL: [.06, .15, .55], lR: [.06, .15, .55] }],
+    [1, { lL: [.48, 2.3, .4], lR: [.08, .2, .62], side: .2, aL: [2.75, 1.0, -.3], aR: [2.75, -.4, -.2] }],
+    [1.5, { lL: [.08, .15, .58], lR: [.42, -1.0, .14], side: .12, aL: [2.75, -.4, -.2], aR: [2.75, 1.0, -.3] }],
+    [2, { lL: [.48, 2.3, .4], lR: [.08, .2, .62], side: .2, aL: [2.75, 1.0, -.3], aR: [2.75, -.4, -.2] }],
+    [2.5, { lL: [.08, .15, .58], lR: [.42, -1.0, .14], side: .12, aL: [2.75, -.4, -.2], aR: [2.75, 1.0, -.3] }],
+    [3, { lL: [.48, 2.3, .4], lR: [.08, .2, .62], side: .2, ...A(2.95, .9, -.5) }],
+    [3.4, { lL: [.08, .15, .5], lR: [.08, .15, .5], side: 0, ...A(1.6, 1.62, -.4), sq: .96 }],
+    [4, { lean: .34, hd: -.12, ...A(.9, .4, -.35), lL: [.06, .15, .42], lR: [.06, .15, .42], sq: 1 }]
+  ]),
+  // 4 · aviãozinho: avanço comprido, a perna de trás esticada, os braços abertos como asas que inclinam
+  clip(4, [
+    [.6, { lean: .55, hd: -.3, ...A(HP, 0, -.05), lL: [.9, HP, 1.35], lR: [.85, -HP, .1], tail: .6, sq: .95 }],
+    [1.3, { side: .35, tw: .1, aL: [1.9, 0, -.05], aR: [1.2, 0, -.05] }],
+    [2.1, { side: -.35, tw: -.1, aL: [1.2, 0, -.05], aR: [1.9, 0, -.05] }],
+    [2.9, { side: .35, tw: .1, aL: [1.9, 0, -.05], aR: [1.2, 0, -.05] }],
+    [3.5, { side: 0, tw: 0, lean: .4, ...A(1.3, .3, -.3), lL: [.4, HP, .7], lR: [.4, -HP, .3], sq: 1 }],
+    [4, { lean: .34, hd: -.12, ...A(.85, .4, -.35), lL: [.06, .15, .42], lR: [.06, .15, .42], tail: .45 }]
+  ]),
+  // 5 · Serpentina de Coco Gelado: curvas grandes em S, o corpo deitando para dentro de cada curva, um braço guiando
+  clip(4, [
+    [.5, { lean: .5, hd: -.25, side: .35, aL: [2.3, 1.2, -.3], aR: [1.0, -.6, -.2], lL: [.06, 0, .5], lR: [.35, -HP, .3], tail: .7, sq: .95 }],
+    [1.35, { side: -.4, hy: -.3, aL: [1.0, -.6, -.2], aR: [2.3, 1.2, -.3], lL: [.35, -HP, .3], lR: [.06, 0, .5] }],
+    [2.2, { side: .4, hy: .3, aL: [2.3, 1.2, -.3], aR: [1.0, -.6, -.2], lL: [.06, 0, .5], lR: [.35, -HP, .3] }],
+    [3.05, { side: -.4, hy: -.3, aL: [1.0, -.6, -.2], aR: [2.3, 1.2, -.3], lL: [.35, -HP, .3], lR: [.06, 0, .5] }],
+    [3.6, { side: 0, hy: 0, lean: .45, ...A(1.4, .4, -.3), lL: [.06, 0, .4], lR: [.4, -HP, .3], sq: 1 }],
+    [4, { lean: .34, hd: -.12, ...A(.9, .4, -.35), lL: [.06, .15, .42], lR: [.06, .15, .42], tail: .45 }]
+  ], tb => { const k = sm(.3, .9, tb) * (1 - sm(3.3, 3.9, tb)), a = TAU * (tb - .5) / 1.7; return { tx: 1.25 * Math.sin(a) * k, yaw: -.65 * Math.cos(a) * k }; }),
+  // 6 · Surfada Arco-Íris na Areia: de lado, base de surfista, desce e sobe as ondas, entra no tubo e sai com uma batida de volta inteira
+  clip(4, [
+    [.5, { lean: .35, hd: -.2, side: 0, tw: 0, hy: -1.2, aL: [1.45, -.2, -.3], aR: [1.3, .2, -.4], lL: [.55, .25, .9], lR: [.5, -.2, .8], tail: .6, sq: .92 }],
+    [1.1, { lean: .5, side: .25, hy: -1.3, aL: [1.7, -.4, -.2], aR: [1.1, .5, -.6], lL: [.7, .3, 1.2], lR: [.6, -.25, 1.0], sq: .88 }],
+    [1.7, { lean: .15, side: -.15, hy: -1.1, aL: [1.4, 0, -.1], aR: [1.6, .2, -.2], lL: [.35, .2, .5], lR: [.3, -.15, .45], sq: 1 }],
+    [2.3, { lean: .95, hd: -.6, side: .3, hy: -1.2, aL: [.4, 1.2, -.1], aR: [2.4, -.3, -.2], lL: [1.0, .3, 1.9], lR: [.9, -.2, 1.7], sq: .84, tail: .8 }],
+    [2.9, { lean: .2, hd: -.3, side: 0, hy: -1.0, aL: [2.6, .3, -.2], aR: [1.5, -.4, -.2], lL: [.4, .2, .6], lR: [.35, -.15, .55], sq: 1.02 }],
+    [3.5, { lean: .4, hd: -.2, hy: 0, ...A(1.4, .3, -.3), lL: [.3, HP, .6], lR: [.3, -HP, .3], sq: .95 }],
+    [4, { lean: .34, hd: -.12, ...A(.9, .4, -.35), lL: [.06, .15, .42], lR: [.06, .15, .42], sq: 1, tail: .45 }]
+  ], tb => { const s = sm(.2, .8, tb), out = easeIO(seg(tb, 2.9, 3.6)); return { yaw: HP * s + (TAU - HP) * out, ty: .35 * bump(seg(tb, .8, 1.5)) + .45 * bump(seg(tb, 1.5, 2.3)) - .1 * bump(seg(tb, 2.2, 2.9)) }; })
+];
+/* --------- giros --------- */
+const C_SPIN_B = [
+  // 1 · pião de duas rodas com as mãos de axé no alto, balançando
+  clip(4, [
+    [.5, SPIN_IN],
+    [1, { lean: .05, tw: 0, side: 0, hd: -.3, aL: [2.8, .5, -.3], aR: [2.8, .1, -.3], lL: [.04, .1, .08], lR: [.04, -.1, .08], sq: 1.03 }],
+    [1.8, { aL: [2.7, 1.0, -.4], aR: [2.7, -.4, -.2], hy: .3 }], [2.6, { aL: [2.7, -.4, -.2], aR: [2.7, 1.0, -.4], hy: -.3 }],
+    [3.2, { ...A(2.85, .4, -.3), hy: 0 }],
+    [3.6, SPIN_OUT], [4, SPIN_END]
+  ], spinRoot(2)),
+  // 2 · pião sentado segurando um coco imaginário com as duas mãos
+  clip(4, [
+    [.5, SPIN_IN],
+    [1.1, { lean: .6, tw: 0, side: 0, hd: .1, ...A(1.35, 1.5, -.7), lL: [1.2, HP, 2.1], lR: [1.45, HP, .05], sq: .9, tail: .4 }],
+    [2.2, { ...A(1.6, 1.5, -.9), hd: 0 }], [3.1, { ...A(1.35, 1.5, -.7) }],
+    [3.6, SPIN_OUT], [4, SPIN_END]
+  ], spinRoot(3)),
+  // 3 · pião do pescador: perna enroscada, um braço no alto jogando a rede em círculos
+  clip(4, [
+    [.5, SPIN_IN],
+    [1.1, { lean: .05, tw: 0, side: .08, hd: -.2, aL: [2.6, .2, -.8], aR: [1.0, .9, -1.4], lL: [.03, 0, .06], lR: [.55, .4, 1.7], sq: 1.02, tail: .8 }],
+    [1.8, { aL: [2.6, 1.2, -.6] }], [2.5, { aL: [2.6, -.6, -.6] }], [3.2, { aL: [2.6, .2, -.8] }],
+    [3.6, SPIN_OUT], [4, SPIN_END]
+  ], spinRoot(3)),
+  // 4 · pião da gaivota: tronco deitado, a perna esticada para trás e os braços para trás como asas
+  clip(4, [
+    [.5, SPIN_IN],
+    [1.1, { lean: 1.4, tw: 0, side: 0, hd: -1.05, aL: [1.75, -1.0, -.2], aR: [1.75, -1.0, -.2], lL: [.03, 0, .06], lR: [1.65, -HP, .05], tail: .85, sq: 1 }],
+    [1.9, { aL: [1.9, -.7, -.4], aR: [1.9, -.7, -.4] }], [2.7, { aL: [1.6, -1.2, -.1], aR: [1.6, -1.2, -.1] }], [3.2, { aL: [1.75, -1.0, -.2], aR: [1.75, -1.0, -.2] }],
+    [3.6, SPIN_OUT], [4, SPIN_END]
+  ], spinRoot(3)),
+  // 5 · Pião de Fitinha do Bonfim: rapidíssimo, as mãos no alto soltando fitinhas coloridas, subindo um pouco
+  clip(4, [
+    [.5, { lean: .4, hd: 0, ...A(.8, -.5, -.3), lL: [.1, .2, .8], lR: [.1, .2, .8], sq: .88 }],
+    [1, { lean: 0, hd: -.35, aL: [2.9, .6, -.4], aR: [2.9, -.2, -.4], lL: [.02, 0, .02], lR: [.3, .4, 1.5], sq: 1.07, tail: 1 }],
+    [2.2, { aL: [2.95, 1.2, -.2], aR: [2.95, -.8, -.2] }], [3.2, { aL: [2.9, .6, -.4], aR: [2.9, -.2, -.4], sq: 1.04 }],
+    [3.7, { lean: .3, ...A(1.6, .2, -.1), lR: [.9, -HP, .2], sq: .95 }],
+    [4, SPIN_END]
+  ], tb => ({ spin: spinOf(10, 5, seg(tb, .7, 3.7)), ty: .5 * bump(seg(tb, 1, 3.4)) })),
+  // 6 · Furacão de Axé Dourado: começa de pé com os braços no alto e desce girando em espiral até sentar, e sobe de novo
+  clip(4, [
+    [.5, SPIN_IN],
+    [1, { lean: 0, tw: 0, side: 0, hd: -.3, ...A(2.9, .3, -.2), lL: [.03, 0, .05], lR: [.3, .3, .9], sq: 1.06, tail: 1 }],
+    [1.8, { lean: .35, hd: -.1, aL: [2.0, 1.3, -.4], aR: [2.4, -.4, -.3], lL: [.5, HP, 1.0], lR: [.9, HP, .4], sq: .96 }],
+    [2.5, { lean: .6, hd: .1, ...A(1.5, 1.4, -.5), lL: [1.2, HP, 2.1], lR: [1.45, HP, .05], sq: .9 }],
+    [3.2, { lean: .1, hd: -.35, ...A(2.9, .5, -.2), lL: [.03, 0, .05], lR: [.3, .3, .9], sq: 1.08 }],
+    [3.6, SPIN_OUT], [4, SPIN_END]
+  ], tb => ({ spin: spinOf(8, 5, seg(tb, .7, 3.6)) }))
+];
+/* --------- saltos --------- */
+const JP_B = [
+  { tA: 1.25, tL: 2.0, rot: .5, h: .65, air: { lean: .1, hd: -.2, ...A(2.3, .4, -.3), lL: [.95, HP, .15], lR: [.95, -HP, .15], tail: .8, sq: 1.04 } },   // tesoura
+  { tA: 1.15, tL: 2.05, rot: 1, h: .8, air: { lean: .2, hd: -.1, ...A(1.4, 1.4, -.6), lL: [1.3, HP, 1.9], lR: [1.3, HP, 1.9], tail: .7, sq: .96 } },   // coelhinho
+  { tA: 1.0, tL: 2.15, rot: 1, h: 1.1, air: { lean: -.05, hd: -.4, aL: [2.6, 0, -.05], aR: [2.6, 0, -.05], lL: [.75, 0, .05], lR: [.75, 0, .05], tail: 1, sq: 1.05 } },   // estrela
+  { tA: .9, tL: 2.25, rot: 1.5, h: 1.3, air: { lean: .5, hd: -.1, aL: [2.4, .3, -.2], aR: [.6, 1.0, -.6], lL: [1.3, HP, 2.0], lR: [.5, HP, 1.6], tail: .8, sq: .95 } },   // 360 pegando o patins
+  { tA: .75, tL: 2.75, rot: 0, h: 3.0, cap: 4.5, air: { lean: .5, hd: .15, ...A(1.6, 1.8, -1.4), lL: [1.7, HP, 2.4], lR: [1.7, HP, 2.4], tail: .9, sq: .92 } },
+  { tA: .45, tL: 3.5, rot: 1, h: 7.5, flat: 1, cap: 9.5, air: { lean: -.6, hd: -.85, aL: [1.75, -.45, 0], aR: [1.75, -.45, 0], lL: [.25, 0, .15], lR: [.25, 0, .15], tail: 1, sq: 1.06 } }
+];
+const JUMPS_B = JP_B.map(j => Object.assign({ t0: j.tA / 4, t1: j.tL / 4 }, j));
+const C_JUMP_B = JUMPS_B.map(jumpClip);
+// 5 · Cambalhota de Água de Coco: mortal para a frente grupado, girando em volta do quadril
+{ const J = JUMPS_B[4], jm = C_JUMP_B[4], CC = .75;
+  C_JUMP_B[4] = { len: jm.len, R: jm.R, loop: false, root: tb => {
+    const o = jm.root(tb), s = easeIO(seg(tb, J.tA + .1, J.tL - .15)), f = TAU * s;
+    return { ty: o.ty + CC - CC * Math.cos(f), tz: -CC * Math.sin(f), flip: f, spin: 0, yaw: o.yaw };
+  } };
+}
+const CLIPS_B = [C_GLIDE_B, C_SPIN_B, C_JUMP_B];
+const MOVE_SPD_B = [[3.6, 3.4, 3.2, 3.0, 2.7, 2.4], [.6, .5, .5, .5, .3, .2], [4.2, 4.2, 4.3, 4.0, 3.0, 2.4]];
+/* --------- poses finais --------- */
+const C_WIND_B = [
+  // abaixa cruzando os braços embaixo e abre devagar, olhando para o sol
+  clip(4, [
+    [1, { lean: .45, hd: .15, ...A(.7, 1.9, -.6), lL: [.6, HP, 1.1], lR: [.6, HP, 1.1], sq: .92 }],
+    [2.5, { lean: .35, hd: -.1, ...A(1.2, .9, -.4), sq: .9 }],
+    [4, { lean: .5, hd: .2, ...A(.6, 1.5, -.5), sq: .86 }]
+  ], tb => ({ yaw: .2 * Math.sin(TAU * tb / 2) * sm(0, 1.2, tb) })),
+  // desliza em avanço, um braço para trás, preparando o giro
+  clip(4, [
+    [1, { lean: .5, hd: -.1, aL: [1.6, 1.4, -.3], aR: [1.2, -1.2, -.2], lL: [.7, HP, 1.2], lR: [.6, -HP, .2], sq: .94 }],
+    [3, { lean: .55, sq: .9 }], [4, { sq: .88 }]
+  ], tb => ({ spin: TAU * easeOut(seg(tb, 1, 4)) })),
+  // agachado juntando força para subir no farol
+  clip(4, [
+    [1, { lean: .45, hd: .1, ...A(.8, -1.0, -.3), lL: [.6, HP, 1.1], lR: [.6, HP, 1.1], sq: .92 }],
+    [2.5, { lean: .6, hd: .4, ...A(1.0, -1.4, -.2), lL: [1.1, HP, 1.9], lR: [1.1, HP, 1.9], sq: .8, tail: .2 }],
+    [4, { sq: .78 }]
+  ])
+];
+const FIN_B = [
+  // Saudação ao Pôr do Sol: arabesque com os braços em V para o alto
+  { lean: .6, hd: -.7, side: 0, tw: 0, hy: 0, aL: [2.55, .55, -.05], aR: [2.55, .55, -.05], lL: [.03, 0, .05], lR: [1.55, -HP, .08], tail: 1, sq: 1 },
+  // Sereia Encantada do Farol: a perna de trás dobrada até perto da cabeça (o rabo da sereia), a mão segurando o patins
+  { lean: .3, hd: -.55, side: .05, tw: 0, hy: 0, aL: [2.3, 1.2, -.2], aR: [2.6, -1.1, -.5], lL: [.03, 0, .05], lR: [2.35, -HP, 2.1], tail: 1, sq: 1 },
+  // Apoteose do Farol: em cima do farol, as mãos juntas no alto e uma perna em passé
+  { lean: -.08, hd: -.55, side: 0, tw: 0, hy: 0, aL: [2.95, .3, -.35], aR: [2.95, .3, -.35], lL: [.03, 0, .05], lR: [.9, .55, 1.9], tail: 1, sq: 1.02 }
+];
+const C_RISE_B = [
+  clip(4, [[.5, { lean: .1, hd: -.3, ...A(2.4, .4, -.2), lL: [.03, 0, .05], lR: [.5, .4, .9], sq: 1.08, tail: .8 }], [1.6, FIN_B[0]], [4, {}]],
+    tb => ({ spin: TAU * easeOut(seg(tb, 0, 1.4)) })),
+  clip(4, [[.6, { lean: .1, hd: -.2, ...A(2.6, .3, -.3), lL: [.4, HP, .6], lR: [.3, -HP, .4], sq: 1.05 }], [1.7, FIN_B[1]], [4, {}]],
+    tb => ({ spin: TAU * 2 * easeOut(seg(tb, 0, 1.6)) })),
+  clip(4, [[.4, { lean: .2, hd: -.2, ...A(1.3, 1.6, -1.2), lL: [.6, HP, 1.2], lR: [.6, HP, 1.2], sq: 1.15, tail: .6 }], [1.5, { ...A(2.7, .2, -.2), lL: [.5, HP, 1.2], lR: [.5, HP, 1.2], sq: 1.05 }], [2, FIN_B[2]], [4, {}]],
+    tb => ({ ty: PED_H * easeOut(seg(tb, 0, 1.9)) + .9 * bump(seg(tb, 0, 1.9)), spin: TAU * easeIO(seg(tb, 0, 1.8)) }))
+];
+const C_FIN_B = FIN_B.map((f, b) => clip(4, [[.25, Object.assign({}, f, { sq: .9 })], [.6, f], [4, f]], b === 2 ? () => ({ ty: PED_H }) : null));
+const C_LINGER_B = FIN_B.map((f, b) => clip(4, [[1, f], [4, f]], b === 2 ? () => ({ ty: PED_H }) : null));
+/* --------- fase 3: manobras e poses a dois --------- */
+const DUO_NAMES_B = {
+  pt: [['Chicote de Mãos Dadas na Areia', 'Pula-Carniça da Maré', 'Saudação ao Sol a Dois'],
+       ['Pião de Fitinha Espelhado', 'Surfada a Dois no Tubo da Onda', 'Sereia nos Braços do Farol'],
+       ['Arremesso da Baleia Jubarte', 'Furacão de Axé a Dois', 'Farol Humano da Barra']],
+  es: [['Látigo de la Mano en la Arena', 'Salto Rango de la Marea', 'Saludo al Sol a Dúo'],
+       ['Trompo de Cintitas en Espejo', 'Surfeada a Dúo en el Tubo', 'Sirena en Brazos del Faro'],
+       ['Lanzamiento de la Ballena Jorobada', 'Huracán de Axé a Dúo', 'Faro Humano de Barra']]
+};
+const DUO_MOVES_B = {}, DUO_POSES_B = [];
+{ // bloco 1 · 5ª: Chicote de Mãos Dadas (no lugar da Serpentina): A gira plantado num avanço e B, presa à mão dele,
+  // dá uma volta e um quarto bem aberta em volta dele, inclinada para fora, e é solta de volta para o lado
+  const ang = tb => PI + TAU * 1.25 * easeIO(seg(tb, .8, 3.3)), k = tb => sm(0, .8, tb) * (1 - sm(3.3, 4, tb)), RR = 1.7;
+  const cA = clip(4, [
+    [.6, { lean: .35, hd: -.1, side: 0, tw: .2, aL: HIP, aR: [1.5, 1.35, -.1], lL: [.9, HP, 1.3], lR: [.8, -HP, .1], tail: .7, sq: .92 }],
+    [2, { tw: .1, hd: -.2 }], [3.3, { tw: .2 }],
+    [3.7, { lean: .3, hd: -.15, ...A(1.2, .4, -.3), lL: [.3, HP, .6], lR: [.3, -HP, .3], sq: .96 }],
+    [4, { lean: .34, hd: -.12, ...A(.9, .4, -.35), lL: [.06, .15, .42], lR: [.06, .15, .42], sq: 1 }]
+  ]);
+  const cB = clip(4, [
+    [.6, { lean: .1, hd: -.3, side: -.3, tw: 0, aL: [2.3, .6, -.3], aR: [1.45, 0, -.05], lL: [.06, .1, .5], lR: [.6, -HP, .2], tail: .9, sq: .96 }],
+    [1.6, { side: -.42, aL: [2.6, .2, -.2], lR: [1.0, -HP, .1] }], [2.6, { side: -.38, aL: [2.2, .9, -.3] }],
+    [3.3, { side: -.2 }],
+    [3.8, { lean: .3, side: 0, hd: -.15, ...A(1.3, .4, -.3), lL: [.06, .1, .45], lR: [.5, -HP, .3], sq: 1 }],
+    [4, { lean: .34, hd: -.12, ...A(.9, .4, -.35), lL: [.06, .15, .42], lR: [.06, .15, .42] }]
+  ]);
+  DUO_MOVES_B['0.5'] = { nm: [0, 0], clips: [cA, cB], slot(r, tb) {
+    const a = ang(tb), w = k(tb), px = RR * Math.cos(a), pz = RR * Math.sin(a);
+    if (!r) return dslot(lerp(SIDE, .2, w), 0, lerpA(0, lookTo(px, pz), w), 0);
+    return dslot(lerp(-SIDE, .2 + px, w), lerp(0, pz, w), lerpA(0, lookTo(-Math.sin(a), Math.cos(a)), w), 0);
+  } };
+}
+{ // bloco 1 · 6ª: Pula-Carniça da Maré (no lugar da Cambalhota): A se agacha à frente e B salta por cima das costas dele,
+  // de pernas abertas, apoiando as mãos, e aterrissa na frente
+  const tA = 1.15, tL = 2.15, crouch = tb => easeIO(seg(tb, .5, 1.0)) * (1 - easeIO(seg(tb, 2.2, 2.8)));
+  const TUCKA = { lean: 1.05, hd: .45, side: 0, tw: 0, hy: 0, ...A(.75, 1.35, -.9), lL: [1.0, HP, 1.75], lR: [1.0, HP, 1.75], tail: .5, sq: .88 };
+  const cA = clip(4, [
+    [.5, { lean: .5, hd: .1, ...A(.9, .8, -.6), lL: [.5, HP, .9], lR: [.5, HP, .9], sq: .92 }],
+    [1.0, TUCKA], [2.2, TUCKA],
+    [2.8, { lean: .3, hd: -.3, aL: PT_UP, aR: [1.2, .3, -.4], lL: [.06, .1, .4], lR: [.06, .1, .4], sq: 1 }],
+    [4, { lean: .34, hd: -.12, ...A(.9, .4, -.35), lL: [.06, .15, .42], lR: [.06, .15, .42] }]
+  ]);
+  const cB = clip(4, [
+    [.5, { lean: .45, hd: -.05, ...A(1.0, -.9, -.3), lL: [.4, HP, .8], lR: [.3, -HP, .4], sq: .92 }],
+    [tA - .3, { lean: .5, hd: .1, ...A(.85, -1.2, -.3), lL: [.8, HP, 1.4], lR: [.55, -HP, .45], sq: .84 }],
+    [tA, { lean: .35, hd: -.2, ...A(1.2, 1.5, -.1), lL: [.3, 0, .1], lR: [.3, 0, .1], sq: 1.1 }],
+    [(tA + tL) / 2, { lean: .55, hd: -.35, ...A(.95, 1.6, -.05), lL: [1.4, .1, .05], lR: [1.4, .1, .05], tail: 1, sq: 1.05 }],
+    [tL - .15, { lean: .2, hd: -.3, ...A(2.0, .6, -.3), lL: [.4, HP, .5], lR: [.4, HP, .5], sq: 1 }],
+    [tL + .2, { lean: .45, hd: -.15, ...A(1.5, .4, -.2), lL: [.5, HP, .9], lR: [.5, HP, .9], sq: .88 }],
+    [3, { lean: .3, aL: HIP, aR: PT_UP, lL: [.06, .1, .45], lR: [.5, -HP, .3], sq: 1 }],
+    [4, { lean: .34, hd: -.12, ...A(.9, .4, -.35), lL: [.06, .15, .42], lR: [.06, .15, .42] }]
+  ]);
+  DUO_MOVES_B['2.5'] = { nm: [0, 1], clips: [cA, cB], slot(r, tb, P) {
+    const c = crouch(tb), s = seg(tb, tA, tL);
+    if (!r) return dslot(lerp(SIDE, 0, c), 0, 0, 0);
+    const back = sm(.2, 1.0, tb) * (1 - sm(2.6, 3.4, tb)), z = tb < tA ? -1.15 * back : tb < tL ? lerp(-1.15, 1.2, easeIO(s)) : 1.2 * back;
+    return dslot(lerp(-SIDE, 0, back), z, 0, (tb > tA && tb < tL) ? (P.reach[0] * .42 + .2) * Math.sin(PI * s) : 0);
+  } };
+}
+{ // bloco 2 · 5ª: Pião de Fitinha Espelhado (no lugar do Pião de Fitinha): lado a lado, piões sentados girando em sentidos
+  // opostos, como um espelho, e sobem juntos com os braços no alto
+  const c = clip(4, [
+    [.5, SPIN_IN],
+    [1.1, { lean: .6, tw: 0, side: 0, hd: .1, aL: [1.6, 1.2, -.5], aR: [2.2, .2, -.3], lL: [1.2, HP, 2.1], lR: [1.45, HP, .05], sq: .9, tail: .4 }],
+    [2.3, { aL: [2.2, .2, -.3], aR: [1.6, 1.2, -.5] }],
+    [3.0, { lean: .05, hd: -.35, ...A(2.9, .4, -.3), lL: [.03, 0, .05], lR: [.3, .3, .9], sq: 1.06 }],
+    [3.6, SPIN_OUT], [4, SPIN_END]
+  ], tb => ({ spin: spinOf(7, 5, seg(tb, .7, 3.6)), ty: .3 * bump(seg(tb, 2.8, 3.6)) }));
+  DUO_MOVES_B['1.5'] = { nm: [1, 0], clips: [c, mirrorClip(c)], slot(r, tb) { const k = sm(0, .8, tb) * (1 - sm(3.4, 4, tb)); return dslot((r ? -1 : 1) * lerp(SIDE, .95, k), 0, 0, 0); } };
+}
+{ // bloco 2 · 6ª: Surfada a Dois no Tubo da Onda (no lugar da Surfada Arco-Íris): um atrás do outro, na mesma prancha imaginária
+  const s = C_GLIDE_B[5];
+  DUO_MOVES_B['0.6'] = { nm: [1, 1], clips: [s, s], slot(r, tb) {
+    const k = sm(0, .8, tb) * (1 - sm(3.3, 4, tb));
+    return dslot((r ? -1 : 1) * lerp(SIDE, .12, k), (r ? -1 : 1) * .62 * k, 0, 0);
+  } };
+}
+{ // bloco 3 · 5ª: Arremesso da Baleia Jubarte (no lugar do Salto da Baleia): A pega B pela cintura e a joga para o alto;
+  // ela gira três vezes deitada no ar e aterrissa longe dele, em arabesque
+  const tA = 1.1, tL = 2.7, H = 3.4, s = tb => seg(tb, tA, tL);
+  const cA = clip(4, [
+    [.5, { lean: .4, hd: 0, aL: [1.2, 1.3, -.8], aR: [1.2, 1.3, -.8], lL: [.6, HP, 1.1], lR: [.6, HP, 1.1], sq: .88 }],
+    [tA, { lean: -.1, hd: -.55, ...A(2.9, .5, -.15), lL: [.1, .2, .2], lR: [.1, .2, .2], sq: 1.08, tail: .9 }],
+    [1.9, { hd: -.7, aL: [2.5, .3, -.2], aR: [1.6, -.3, -.2] }],
+    [tL, { lean: .3, hd: -.2, aL: [1.6, 1.2, -.3], aR: [1.6, 1.2, -.3], lL: [.4, HP, .7], lR: [.3, -HP, .3], sq: .95 }],
+    [3.3, { lean: .3, aL: PT_UP, aR: HIP, lL: [.06, .1, .4], lR: [.5, -HP, .3], sq: 1 }],
+    [4, { lean: .34, hd: -.12, ...A(.9, .4, -.35), lL: [.06, .15, .42], lR: [.06, .15, .42] }]
+  ]);
+  const jb = jumpClip({ tA, tL, rot: 3, h: 0, air: { lean: -.05, hd: -.3, aL: [2.9, .2, -.4], aR: [2.9, -.2, -.4], lL: [.04, 0, .05], lR: [.3, .4, .9], tail: 1, sq: 1.05 } });
+  DUO_MOVES_B['2.6'] = { nm: [2, 0], clips: [cA, jb], slot(r, tb, P) {
+    const k = sm(0, .7, tb) * (1 - sm(3.4, 4, tb)), u = s(tb);
+    if (!r) return dslot(lerp(SIDE, .35, k), 0, 0, 0);
+    const x = tb < tA ? lerp(-SIDE, -.35, k) : tb < tL ? lerp(-.35, -1.5, easeIO(u)) : lerp(-SIDE, -1.5, k);
+    return dslot(x, tb > tA && tb < tL ? .3 * Math.sin(PI * u) : 0, 0, tb > tA && tb < tL ? H * 4 * u * (1 - u) : 0);
+  } };
+}
+{ // bloco 3 · 6ª: Furacão de Axé a Dois (no lugar do Furacão de Axé): pião camelo do casal, quadril com quadril, olhando para
+  // lados opostos e girando em volta do ponto entre os dois
+  const R0 = .55, a = tb => TAU * 3 * spinEase(seg(tb, .8, 3.4));
+  const CAM = { lean: 1.38, hd: -1.0, side: 0, tw: 0, hy: 0, aL: [1.7, -.9, -.2], aR: [1.3, 1.3, -.3], lL: [.03, 0, .06], lR: [1.65, -HP, .05], tail: .9, sq: 1 };
+  const c = clip(4, [[.5, SPIN_IN], [1.1, CAM], [3.3, CAM], [3.7, SPIN_OUT], [4, SPIN_END]]);
+  DUO_MOVES_B['1.6'] = { nm: [2, 1], clips: [c, c], slot(r, tb) {
+    const k = sm(0, .8, tb) * (1 - sm(3.3, 4, tb)), g = a(tb) + (r ? PI : 0), px = R0 * Math.cos(g), pz = -R0 * Math.sin(g);
+    return dslot(lerp((r ? -1 : 1) * SIDE, px, k), lerp(0, pz, k), lerpA(0, lookTo(-Math.sin(g), -Math.cos(g)), k), 0);
+  } };
+}
+// poses a dois
+{ // bloco 1: Saudação ao Sol a Dois: lado a lado, os dois em arabesque com os braços em V, um espelho do outro
+  DUO_POSES_B[0] = { nm: [0, 2], clips: { wind: [C_WIND_B[0], mirrorClip(C_WIND_B[0])], rise: [C_RISE_B[0], mirrorClip(C_RISE_B[0])], fin: [C_FIN_B[0], mirrorClip(C_FIN_B[0])], linger: [C_LINGER_B[0], mirrorClip(C_LINGER_B[0])] }, slot(r, ph, tb) {
+    const k = ph === 'wind' ? sm(0, 2.5, tb) : 1, sg = r ? -1 : 1;
+    return dslot(sg * lerp(SIDE, .75, k), 0, sg * .35 * k, 0);
+  } };
+}
+{ // bloco 2: Sereia nos Braços do Farol: A segura B no colo, deitada de lado como uma sereia, a cauda (as pernas) dobrada
+  const HOLD = { lean: -.15, hd: .25, side: 0, tw: 0, hy: 0, ...A(1.35, 1.15, -.5), lL: [.25, .3, .3], lR: [.25, -.3, .3], tail: .7, sq: 1 };
+  const LIE = { lean: 0, hd: -.5, side: 0, tw: 0, hy: 0, aL: [2.7, .3, -.3], aR: [1.2, 1.0, -.9], lL: [.35, .2, 1.0], lR: [.3, .2, .9], tail: 1, sq: 1 };
+  const up = tb => easeIO(seg(tb, .45, 1.5));
+  const windA = clip(4, [[1, DPREP_A], [4, { ...DPREP_A, sq: .86 }]]), windB = clip(4, [[1, DPREP_B], [4, { ...DPREP_B, sq: .84 }]]);
+  const riseA = clip(4, [[.4, { ...DPREP_A, sq: .84 }], [1.4, HOLD], [4, HOLD]]);
+  const riseB = clip(4, [[.4, { lean: .1, hd: -.1, ...A(2.3, .3, -.3), lL: [.6, HP, 1.6], lR: [.6, HP, 1.6], sq: 1.05 }], [1.5, LIE], [4, LIE]], tb => ({ flip: -1.45 * up(tb), tz: .95 * up(tb) }));
+  const finA = clip(4, [[1, HOLD], [4, HOLD]]), finB = clip(4, [[1, LIE], [4, LIE]], () => ({ flip: -1.45, tz: .95 }));
+  DUO_POSES_B[1] = { nm: [1, 2], clips: { wind: [windA, windB], rise: [riseA, riseB], fin: [finA, finB], linger: [finA, finB] }, slot(r, ph, tb, now, P) {
+    const k = ph === 'wind' ? sm(0, 2.5, tb) : 1, rot = ph === 'wind' ? 0 : duoRot(now, P, .5);
+    if (!r) return dslot(lerp(SIDE, 0, k), lerp(0, -.2, k), rot, 0);
+    const s = ph === 'rise' ? up(tb) : ph === 'wind' ? 0 : 1;
+    return dslot(lerp(-SIDE, 0, k), lerp(0, .55, k), rot + HP * s, s * P.reach[0] * .55 + (ph === 'rise' ? .45 * bump(seg(tb, .45, 1.5)) : 0));
+  } };
+}
+{ // bloco 3: Farol Humano da Barra: A firme, os braços esticados para o alto; B em pé nas mãos dele, as mãos juntas lá em
+  // cima e uma perna em passé, como a torre do farol (o facho de luz sai das mãos dela)
+  const BASE = { lean: -.05, hd: -.6, side: 0, tw: 0, hy: 0, ...A(3.0, .2, 0), lL: [.25, .4, .15], lR: [.25, -.4, .15], tail: .8, sq: 1 };
+  const TOP = { ...FIN_B[2] };
+  const up = tb => easeIO(seg(tb, .5, 1.5));
+  const windA = clip(4, [[1, DPREP_A], [4, { ...DPREP_A, sq: .86 }]]), windB = clip(4, [[1, DPREP_B], [4, { ...DPREP_B, sq: .84 }]]);
+  const riseA = clip(4, [[.5, { ...DPREP_A, sq: .84 }], [1.3, BASE], [4, BASE]]);
+  const riseB = clip(4, [[.5, { lean: .1, hd: -.1, ...A(2.4, .3, -.3), lL: [.6, HP, 1.6], lR: [.6, HP, 1.6], sq: 1.08 }], [1.6, TOP], [4, TOP]]);
+  const finA = clip(4, [[1, BASE], [4, BASE]]), finB = clip(4, [[1, TOP], [4, TOP]]);
+  DUO_POSES_B[2] = { nm: [2, 2], clips: { wind: [windA, windB], rise: [riseA, riseB], fin: [finA, finB], linger: [finA, finB] }, slot(r, ph, tb, now, P) {
+    const k = ph === 'wind' ? sm(0, 2.5, tb) : 1;
+    if (!r) return dslot(lerp(SIDE, 0, k), 0, 0, 0);
+    const s = ph === 'rise' ? up(tb) : ph === 'wind' ? 0 : 1;
+    return dslot(lerp(-SIDE, 0, Math.max(k * (1 - s) * .6, s)), lerp(0, -.05, s), 0, s * P.lift + (ph === 'rise' ? .7 * bump(seg(tb, .5, 1.5)) : 0));
+  } };
+}
+
 /* --------- as fases: cada uma com a sua música, as suas notas e as suas manobras --------- */
 const PHASES = [
   { key: '', seq: SEQ1, pat: PATTERNS1, names: NAMES1, duoNames: DUO_NAMES1, clips: CLIPS1, jumps: JUMPS1, spd: MOVE_SPD1, skate: C_SKATE, wind: C_WIND, rise: C_RISE, fin: C_FIN, linger: C_LINGER, duoMoves: DUO_MOVES1, duoPoses: DUO_POSES1 },
-  { key: 'n:', seq: SEQ_D, pat: PATTERNS_D, names: NAMES_D, duoNames: DUO_NAMES_D, clips: CLIPS_D, jumps: JUMPS_D, spd: MOVE_SPD_D, skate: C_SKATE_D, wind: C_WIND_D, rise: C_RISE_D, fin: C_FIN_D, linger: C_LINGER_D, duoMoves: DUO_MOVES_D, duoPoses: DUO_POSES_D }
+  { key: 'n:', seq: SEQ_D, pat: PATTERNS_D, names: NAMES_D, duoNames: DUO_NAMES_D, clips: CLIPS_D, jumps: JUMPS_D, spd: MOVE_SPD_D, skate: C_SKATE_D, wind: C_WIND_D, rise: C_RISE_D, fin: C_FIN_D, linger: C_LINGER_D, duoMoves: DUO_MOVES_D, duoPoses: DUO_POSES_D },
+  { key: 'b:', seq: SEQ_B, pat: PATTERNS_B, names: NAMES_B, duoNames: DUO_NAMES_B, clips: CLIPS_B, jumps: JUMPS_B, spd: MOVE_SPD_B, skate: C_SKATE_B, wind: C_WIND_B, rise: C_RISE_B, fin: C_FIN_B, linger: C_LINGER_B, duoMoves: DUO_MOVES_B, duoPoses: DUO_POSES_B }
 ];
 let PHI = 0, PH = PHASES[0];
 function usePhase(i) {
-  PHI = i ? 1 : 0; PH = PHASES[PHI];
+  PHI = clamp(i | 0, 0, PHASES.length - 1); PH = PHASES[PHI];
   SEQ = PH.seq; PATTERNS = PH.pat; NAMES = PH.names; DUO_NAMES = PH.duoNames; CLIPS = PH.clips; JUMPS = PH.jumps; MOVE_SPD = PH.spd; DUO_MOVES = PH.duoMoves; DUO_POSES = PH.duoPoses;
 }
 
@@ -2404,7 +3207,7 @@ function pairMeasure(mi) {
   if (sec.k !== 'block') { if (sec.i === 0) for (const pl of PL) setAnim(pl, 'linger', { b: PAIR.landed, duo: roleOf(pl) }, state.songT); return; }
   const a = PL[0].ms[mi];
   if (sameSide() && !PANO.on && (a.kind !== 'move' || a.level >= 5)) panoOn(undefined, true);
-  if (PHI && sec.b === 2 && (a.kind !== 'move' || a.level >= 5)) BALL.target = Math.max(BALL.target, a.kind === 'move' ? (a.level >= 6 ? .62 : .42) : a.kind === 'wind' ? .8 : .88);   // lado a lado: a tela vira uma só a partir da primeira estrela
+  if (PHI >= 1 && sec.b === 2 && (a.kind !== 'move' || a.level >= 5)) BALL.target = Math.max(BALL.target, a.kind === 'move' ? (a.level >= 6 ? .62 : .42) : a.kind === 'wind' ? .8 : .88);   // lado a lado: a tela vira uma só a partir da primeira estrela
   if (a.kind === 'move' && a.level >= 5) for (const pl of PL) { const ms = pl.ms[mi], [ty, tl] = SEQ[ms.b][ms.level - 1]; ms.duo = true; setAnim(pl, 'move', { b: ty, lvl: tl, t0, duo: roleOf(pl) }, state.songT); }
   else if (a.kind === 'wind') { for (const pl of PL) { pl.ms[mi].duo = true; clearPoseFx(pl, false); setAnim(pl, 'wind', { b: a.b, t0, duo: roleOf(pl) }, state.songT); } startPoseFx(PL[PAIR.roleA], a.b, true); }
   else if (a.kind === 'hold') { PAIR.poseT = t0; for (const pl of PL) { pl.ms[mi].duo = true; setAnim(pl, 'hold', { b: a.b, t0, duo: roleOf(pl) }, state.songT); } }
@@ -2414,7 +3217,7 @@ function duoDone(pl, mi, b, i, tier) {
   pl.pend = { mi, b, i, tier };
   const o = partnerOf(pl); if (!o.pend || o.pend.mi !== mi) return;
   for (const p of PL) { p.pend = null; p.found.add('d' + b + '.' + i); }
-  if (i === 2) { PAIR.landed = b; if (sameSide() && !PANO.on) panoOn(); if (PHI && b === 2) BALL.target = 1; }
+  if (i === 2) { PAIR.landed = b; if (sameSide() && !PANO.on) panoOn(); if (PHI >= 1 && b === 2) BALL.target = 1; }
   if (PANO.on) { showNameIn(PANO.names, duoNameOf(b, i), tier, true); if (i === 2) PANO.flash.animate([{ opacity: REDUCED ? .3 : .85 }, { opacity: 0 }], { duration: 700, easing: 'ease-out' }); return; }
   for (const p of PL) showName(p, duoNameOf(b, i), tier, true);
 }
@@ -2437,7 +3240,7 @@ function pairUpdate(dt) {
   if (PAIR.target && !snap) { const spd = (PL[0].base.spd + PL[1].base.spd) / 2; PAIR.th += dt * spd * .5 / Math.max(.5, Math.hypot(PAIR_RX * Math.sin(PAIR.th), PAIR_RZ * Math.cos(PAIR.th))); }
   pairAnchor();
   { const W_ = PL[PAIR.roleA].W; _pd.copy(W_.fL).sub(PAIR.pos); PAIR.topA.set(_pd.dot(PAIR.left) * PAIR.sideA, _pd.y, _pd.dot(PAIR.fwd)); }
-  if (PHI) {   // fase 2: altura dos ombros de A (B senta neles) e o meio da coxa da frente de A (B sobe nela)
+  if (PHI === 1) {   // fase 2: altura dos ombros de A (B senta neles) e o meio da coxa da frente de A (B sobe nela)
     const pa = PL[PAIR.roleA], pb = PL[1 - PAIR.roleA], RA = pa.uni, RB = pb.uni;
     RA.shL.getWorldPosition(_pq); RA.shR.getWorldPosition(_pd); const shA = (_pq.y + _pd.y) / 2 - (pa.base.y || 0);
     RB.hpL.getWorldPosition(_pq); PAIR.seat = shA - (_pq.y - (pb.base.y || 0)) + .1;
@@ -2532,12 +3335,12 @@ function tiltStart() {
 function panoCamera(dt) {
   const a = PL[0].W, b = PL[1].W, tall = PANO.cam.aspect < 1;   // imagem em pé (replay): o casal ocupa a largura
   _mid.copy(a.chest).add(b.chest).multiplyScalar(.5);
-  const top = Math.max(a.horn.y, b.horn.y, a.chest.y, b.chest.y, a.fL.y, b.fL.y, PHI && BALL.w > .85 ? BALL.at.y + .4 : 0) + .5, span = Math.hypot(a.chest.x - b.chest.x, a.chest.z - b.chest.z) + (PANO.live ? 2.6 : tall ? 1.6 : 3.4);
+  const top = Math.max(a.horn.y, b.horn.y, a.chest.y, b.chest.y, a.fL.y, b.fL.y, PHI === 1 && BALL.w > .85 ? BALL.at.y + .4 : 0) + .5, span = Math.hypot(a.chest.x - b.chest.x, a.chest.z - b.chest.z) + (PANO.live ? 2.6 : tall ? 1.6 : 3.4);
   const low = Math.min(a.chest.y, b.chest.y) - 1.5, air = low > .6;   // no alto (saltos): enquadra só o casal, sem o gelo
   // ao vivo, o casal fica na faixa do meio (as pistas de cada um ocupam as pontas); no fim, ocupa quase toda a largura
   const cam = PANO.cam, tn = Math.tan(cam.fov * PI / 360), hw = (span / 2 + (tall ? .25 : .3)) / (PANO.live ? .38 : tall ? .95 : .9);
   const hh = air ? Math.max(1.6, (top - low) / 2 + .7) : Math.max(1.6, (top + .25) / 1.4);
-  const d = Math.max(hh / tn, hw / (tn * cam.aspect)), H = d * tn, t = (state.replay ? simT : performance.now() / 1000) - PANO.t0, ang = PAIR.yaw + .22 + .25 * Math.sin(t * .35) + (state.replay ? RP.angOff : 0);
+  const d = Math.max(hh / tn, hw / (tn * cam.aspect)) * (1 + 1.1 * whaleView()), H = d * tn, t = (state.replay ? simT : performance.now() / 1000) - PANO.t0, ang0 = PAIR.yaw + .22 + .25 * Math.sin(t * .35) + (state.replay ? RP.angOff : 0), ang = PHI === 2 && BALL.target > 0 ? lerpA(ang0, .15, sm(0, .4, BALL.w)) : ang0;
   // no gelo: o gelo um pouco abaixo da borda de baixo e o alto do casal longe do nome, em cima
   const ay = air ? (top + low) / 2 : tall ? Math.max(.64 * H, top - .9 * H) : Math.max(hh - .25, H * .82 - .35);
   _pq.set(_mid.x + Math.sin(ang) * d, ay + .5, _mid.z + Math.cos(ang) * d); keepOutOfStands(_pq);
@@ -2552,7 +3355,7 @@ function renderPano() {
   const cam = PANO.cam, mp = PANO.mp || (PANO.mp = {}), src = state.replay ? PL[RP.fp] : PL[0];
   mp.anim = src.anim; mp.W = src.W; mp.cam = cam; updMoon(mp); const bn = ballNear(mp);   // a lua do pulo lunar atrás do casal
   U.uLightDir.value.copy(LIGHT_WORLD).transformDirection(cam.matrixWorldInverse);
-  U.uScale.value = PANO.RH / (2 * Math.tan(cam.fov * PI / 360)); U.uRes.value.set(PANO.RTW / 2, PANO.RH / 2); U.uAmb.value.copy(PHI ? AMB_DISCO : AMB_GAME);
+  U.uScale.value = PANO.RH / (2 * Math.tan(cam.fov * PI / 360)); U.uRes.value.set(PANO.RTW / 2, PANO.RH / 2); U.uAmb.value.copy(ambOf());
   renderer.setRenderTarget(PANO.rt); renderer.clear();
   MIR.scale.y = -1; MIR.updateMatrixWorld(true); cam.layers.set(1); renderer.render(scene, cam);
   MIR.scale.y = 1; MIR.updateMatrixWorld(true); cam.layers.enableAll(); renderer.render(scene, cam);
@@ -2736,8 +3539,9 @@ function moonBoing(pl) {
 // efeitos que acompanham uma manobra
 function spawnAnimFx(pl, an) {
   const U_ = pl.uni;
-  if (an.duo !== undefined) { if (an.duo === 0) (PHI ? spawnDuoFxD : spawnDuoFx)(an); return; }
-  if (PHI && an.kind === 'move') { spawnAnimFxD(pl, an); return; }
+  if (an.duo !== undefined) { if (an.duo === 0) (PHI === 1 ? spawnDuoFxD : spawnDuoFx)(an); return; }
+  if (PHI === 1 && an.kind === 'move') { spawnAnimFxD(pl, an); return; }
+  if (PHI === 2 && an.kind === 'move') { spawnAnimFxB(pl, an); return; }
   if (an.kind === 'move' && an.b === 0 && an.lvl === 5) {
     const m = new THREE.Mesh(rainbowGeo(new THREE.TorusGeometry(1.6, .12, 4, 40)), psxMat({ vc: true, additive: true, emissive: 1, opacity: 0, side: DS }));
     m.rotation.y = HP; m.position.set(0, 1.6, 0);
@@ -2767,7 +3571,8 @@ function clearPoseFx(pl, melt) {
 }
 function startPoseFx(pl, b, duo) {
   clearPoseFx(pl, false);
-  if (PHI) { startPoseFxD(pl, b, duo); return; }
+  if (PHI === 1) { startPoseFxD(pl, b, duo); return; }
+  if (PHI === 2) { startPoseFxB(pl, b, duo); return; }
   const pf = pl.poseFx = { b, items: [], k: duo ? 1.75 : 1, hk: duo ? 1.9 : 1 }, U_ = pl.uni, par = duo ? PAIR.fx : null;
   if (b === 0) {
     const g = new THREE.Group(), mat = psxMat({ map: iceTex, rep: [1, 2], color: 0xc4f0ff, emissive: .6, opacity: .88, transparent: true, side: DS });
@@ -2785,7 +3590,8 @@ function startPoseFx(pl, b, duo) {
   }
 }
 function updPoseFx(pl, dt, now) {
-  if (PHI) { updPoseFxD(pl, dt, now); return; }
+  if (PHI === 1) { updPoseFxD(pl, dt, now); return; }
+  if (PHI === 2) { updPoseFxB(pl, dt, now); return; }
   const pf = pl.poseFx; if (!pf) return;
   const an = pl.anim, b = pf.b, k = an.kind, p = (k === 'wind' || k === 'hold') ? clamp((now - an.t0) / MEAS, 0, 1) : 1;
   const landed = (k === 'hold' && an.landed) || k === 'linger';
@@ -2805,7 +3611,8 @@ function updPoseFx(pl, dt, now) {
   }
 }
 function landFx(pl, b) {
-  if (PHI) { landFxD(pl, b); return; }
+  if (PHI === 1) { landFxD(pl, b); return; }
+  if (PHI === 2) { landFxB(pl, b); return; }
   const U_ = pl.uni, c = U_.chest.getWorldPosition(new THREE.Vector3());
   burst(c, 110, 10, 1.2, .11, () => hueCol(Math.random()), 1.5);
   ringFx(U_.root.position.x, U_.root.position.z, 7, 1.0);
@@ -2816,6 +3623,78 @@ function landFx(pl, b) {
     f.dur = f.age + .7; f.upd = (k, a, dt) => { const s = orb.scale.x * (1 + dt * 5); orb.scale.setScalar(s); setOpacity(orb, Math.max(0, .5 - (a - (f.dur - .7)) / .7 * .5)); };
     ringFx(U_.root.position.x, U_.root.position.z, 12, 1.4, .1);
   }
+}
+/* --------- efeitos da fase 3 (água, fitinhas, sol e o facho do farol) --------- */
+const C_SAND = new THREE.Color(1, .86, .62), C_SEA = new THREE.Color(.35, .95, .95), C_SUN = new THREE.Color(1, .62, .3);
+const BONFIM = [0xe8443a, 0xffd23f, 0x2ec4b6, 0x3d8bff, 0xff4f8b, 0x7b4bd6, 0x4dd64a, 0xffffff];
+// faixas de cor em volta de um cone (as fitinhas do Bonfim girando)
+function ribbonsGeo(g) {
+  const pos = g.attributes.position, cols = [], c = new THREE.Color();
+  for (let i = 0; i < pos.count; i++) { const a = Math.atan2(pos.getZ(i), pos.getX(i)), k = Math.floor(((a / TAU + 1) % 1) * 16 + pos.getY(i) * 1.5); c.set(BONFIM[((k % 8) + 8) % 8]); cols.push(c.r, c.g, c.b); }
+  g.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3)); return g;
+}
+function spawnAnimFxB(pl, an) {
+  const U_ = pl.uni;
+  if (an.b === 0 && an.lvl === 5) {   // serpentina: um arco de onda verde-água em volta
+    const g = new THREE.TorusGeometry(1.6, .12, 4, 40), cols = [], c = new THREE.Color(), pos = g.attributes.position;
+    for (let i = 0; i < pos.count; i++) { c.setHSL(.47 + .08 * Math.sin(Math.atan2(pos.getY(i), pos.getX(i)) * 3), .8, .6); cols.push(c.r, c.g, c.b); }
+    g.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
+    const m = new THREE.Mesh(g, psxMat({ vc: true, additive: true, emissive: 1, opacity: 0, side: DS })); m.rotation.y = HP; m.position.set(0, 1.6, 0);
+    an.fx.push(addFx(m, U_.root, MEAS * 1.05, (k, a, dt, al) => { m.rotation.x = .3 * Math.sin(a * 4); setOpacity(m, .8 * sm(0, .12, k) * (1 - sm(.85, 1, k)) * al); }));
+  }
+  if (an.b === 1 && (an.lvl === 5 || an.lvl === 6)) {   // fitinhas do Bonfim girando em volta
+    const g = ribbonsGeo(new THREE.ConeGeometry(1.3, 3.2, 16, 4, true));
+    const m = new THREE.Mesh(g, psxMat({ vc: true, additive: true, emissive: 1, opacity: 0, side: THREE.BackSide })); m.rotation.x = PI; m.position.y = 1.6;
+    an.fx.push(addFx(m, U_.root, MEAS * 1.05, (k, a, dt, al) => { m.rotation.y += dt * (an.lvl === 5 ? 15 : 10); setOpacity(m, .5 * bump(seg(k, .05, .95)) * al); }));
+  }
+  if (an.kind === 'bail') spawnAnimFx(pl, an);
+}
+function startPoseFxB(pl, b, duo) {
+  const pf = pl.poseFx = { b, items: [], k: duo ? 1.75 : 1, hk: duo ? 1.9 : 1 }, U_ = pl.uni, par = duo ? PAIR.fx : null;
+  if (b === 0) {   // sol: disco dourado que nasce atrás e cresce
+    const m = new THREE.Mesh(new THREE.CircleGeometry(1, 24), psxMat({ color: 0xff8a40, additive: true, emissive: 1, opacity: 0, side: DS }));
+    m.position.set(0, 1.9, -1.1); pf.sun = m; pf.items.push(addFx(m, par || U_.root, 999, null));
+    const r = new THREE.Mesh(new THREE.RingGeometry(1.05, 1.25, 24), psxMat({ color: 0xffe08a, additive: true, emissive: 1, opacity: 0, side: DS })); r.position.copy(m.position); pf.ring = r; pf.items.push(addFx(r, par || U_.root, 999, null));
+  } else if (b === 1) {   // bolhas subindo e conchinhas rodando
+    const g = new THREE.Group(), cols = [0xffd6e6, 0xfff4c8, 0xbfefff, 0xffffff, 0xffc0a0, 0xd8f8ff];
+    for (let i = 0; i < 6; i++) { const s = new THREE.Mesh(new THREE.ConeGeometry(.12, .16, 6), psxMat({ color: cols[i], emissive: .6 })); s.rotation.x = HP; g.add(s); }
+    g.position.y = 1.0; pf.shells = g; pf.ang = 0; pf.items.push(addFx(g, par || U_.root, 999, null));
+  } else if (!duo) {   // farol: pedestal listrado de branco e preto, como a torre
+    const g = new THREE.Group(), mat = psxMat({ map: farolTex, emissive: .45 });
+    const col = new THREE.Mesh(new THREE.CylinderGeometry(.42, .62, PED_H, 10), mat); col.position.y = PED_H / 2; g.add(col);
+    const rim = new THREE.Mesh(new THREE.CylinderGeometry(.66, .66, .08, 10), psxMat({ color: 0x24202c })); rim.position.y = PED_H; g.add(rim);
+    g.scale.y = .01; pf.ped = g; pf.items.push(addFx(g, U_.root, 999, null));
+  }
+  if (b === 2) {   // facho de luz que sai das mãos e gira, como o do farol
+    const bg = new THREE.ConeGeometry(.9, 14, 10, 1, true); bg.translate(0, -7, 0); bg.rotateX(HP);
+    const beam = new THREE.Mesh(bg, psxMat({ color: 0xfff2c0, additive: true, emissive: 1, opacity: 0, fog: false, side: DS })); beam.renderOrder = 7;
+    pf.beam = beam; pf.items.push(addFx(beam, par || U_.root, 999, null));
+  }
+}
+function updPoseFxB(pl, dt, now) {
+  const pf = pl.poseFx; if (!pf) return;
+  const an = pl.anim, b = pf.b, k = an.kind, p = (k === 'wind' || k === 'hold') ? clamp((now - an.t0) / MEAS, 0, 1) : 1;
+  const landed = (k === 'hold' && an.landed) || k === 'linger';
+  if (pf.sun) { const s = (k === 'wind' ? .25 + .45 * p : landed ? .95 : .7 + .25 * p) * (pf.k > 1 ? 1.35 : 1); pf.sun.scale.setScalar(s * (1 + .03 * Math.sin(now * 3))); pf.ring.scale.setScalar(s * (1.05 + .08 * Math.sin(now * 2))); setOpacity(pf.sun, k === 'wind' ? .18 * p : .22); setOpacity(pf.ring, k === 'wind' ? .3 * p : .45); }
+  if (pf.shells) {
+    pf.ang += dt * (k === 'wind' ? 2 + 3 * p : landed ? .8 : 6);
+    const kids = pf.shells.children, r = (landed ? 1.3 : 1 + .3 * p) * pf.k;
+    kids.forEach((s, i) => { const a = pf.ang + i * TAU / kids.length; s.position.set(Math.cos(a) * r, (landed ? .9 * pf.hk : .3) + .25 * Math.sin(a * 2 + now), Math.sin(a) * r); s.rotation.z += dt * 3; });
+    if (dt > 0) { const R_ = pl.uni.root.position; for (let i = cnt(dt * 14); i > 0; i--) emit(R_.x + rnd(-.8, .8) * pf.k, rnd(.2, 1.2), R_.z + rnd(-.8, .8) * pf.k, 0, rnd(.6, 1.2), 0, rnd(1, 1.8), rnd(.05, .09), C_SEA, -.5, .5); }
+  }
+  if (pf.ped) { const gr = k === 'hold' ? easeOut(p / .5) : (landed ? 1 : .01); pf.ped.scale.y = Math.max(.01, landed ? 1 : gr); }
+  if (pf.beam) {
+    const top = pl.W.horn, h = top.y + .3;
+    const par = pf.beam.parent; if (par) { _p.set(top.x, h, top.z); par.worldToLocal(_p); pf.beam.position.copy(_p); }
+    pf.beam.rotation.y += dt * (landed ? 1.6 : .8);
+    setOpacity(pf.beam, k === 'wind' ? 0 : (k === 'hold' && !landed ? .12 * p : .22 + .05 * Math.sin(now * 4)));
+  }
+}
+function landFxB(pl, b) {
+  const U_ = pl.uni, c = U_.chest.getWorldPosition(new THREE.Vector3());
+  burst(c, 110, 10, 1.2, .11, () => Math.random() < .5 ? C_SUN : Math.random() < .5 ? C_SEA : C_WHITE, 1.5);
+  ringFx(U_.root.position.x, U_.root.position.z, 7, 1.0);
+  flash(pl, .25); shake(pl, .8);
 }
 /* --------- efeitos da fase 2 (neon, espelhos, confete) --------- */
 const neonCol = (k) => NEON_C[((k % 6) + 6) % 6];
@@ -2937,7 +3816,7 @@ function fxTickD(pl, dt, now) {
 }
 // no salto ao globo, o globo vem para perto do unicórnio (como a lua da fase 1), só na imagem de quem salta
 function ballNear(pl) {
-  if (!PHI || !WORLD2 || !isMoonJump(pl)) return false;
+  if (PHI !== 1 || !WORLD2 || !isMoonJump(pl)) return false;
   const J = JUMPS[5], s = seg((simT - pl.anim.t0) / MEAS, J.t0, J.t1), w = sm(.1, .35, s) * (1 - sm(.8, .97, s));
   if (w < .002) return false;
   const B = WORLD2.ball; _md.copy(pl.W.chest).sub(pl.cam.position); _md.y = 0; _md.normalize();
@@ -2948,11 +3827,11 @@ function ballNear(pl) {
 function ballBack() { const B = WORLD2.ball; B.g.position.copy(B.pos); B.g.updateMatrixWorld(true); B.rod.position.set(B.pos.x, B.pos.y + .95, B.pos.z); B.rod.scale.y = Math.max(.05, HALL.y - B.pos.y - .95); }
 function updW(pl) { const U_ = pl.uni, W = pl.W; U_.chest.getWorldPosition(W.chest); U_.hornTip.getWorldPosition(W.horn); U_.feet[0].getWorldPosition(W.fL); U_.feet[2].getWorldPosition(W.fR); }
 function fxTick(pl, dt, now) {
-  if (PHI) { fxTickD(pl, dt, now); return; }
+  if (PHI === 1) { fxTickD(pl, dt, now); return; }
   if (dt <= 0) return;
   const an = pl.anim, W = pl.W, U_ = pl.uni, k = an.kind, b = an.b, l = an.lvl, p = clamp((now - an.t0) / MEAS, 0, 1.2);
   let glow = 0;
-  const spray = (src, n, spd) => { for (let i = 0; i < n; i++) emit(src.x, src.y + .05, src.z, rnd(-spd, spd), rnd(.3, 1.2), rnd(-spd, spd), rnd(.25, .55), rnd(.05, .09), C_ICE, 4, 2); };
+  const spray = (src, n, spd) => { for (let i = 0; i < n; i++) emit(src.x, src.y + .05, src.z, rnd(-spd, spd), rnd(.3, 1.2), rnd(-spd, spd), rnd(.25, .55), rnd(.05, .09), PHI === 2 ? C_SAND : C_ICE, 4, 2); };
   if (k === 'move') {
     if (b === 0) {
       if (l >= 2 && l <= 4) spray(Math.random() < .5 ? W.fL : W.fR, cnt(dt * 12), .8);
@@ -3045,7 +3924,7 @@ function animate(pl, t, dt) {
   pl.shadow.position.x = W.chest.x; pl.shadow.position.z = W.chest.z;
   { const h = Math.max(0, pl.curPose.ty + (pl.base.y || 0)), s = 1 / (1 + h * .6); pl.shadow.scale.set(s, s, s); pl.shadow.material.uniforms.uOpacity.value = .4 * s; }
   fxTick(pl, dt, t); updPoseFx(pl, dt, t);
-  ghostTick(pl, t, dt);
+  ghostTick(pl, t, dt); spinWheels(pl.uni, pl.base.spd, dt);
 }
 // inércia: cada canal do corpo segue a pose alvo por uma mola amortecida (peso, pequeno ultrapassar e assentar)
 // os membros são filtrados pela direção (vetor), não pelos ângulos: perto do braço caído o azimute muda muito sem mexer nada
@@ -3140,7 +4019,7 @@ function poseCam(pl, b) {
   for (const sg of [1, -1]) {   // tenta o lado esquerdo e o direito do unicórnio
     const d = new THREE.Vector3().addScaledVector(_left, side * sg).addScaledVector(B.fwd, front).normalize();
     const c = new THREE.Vector3(B.pos.x + d.x * 7.5, 1.8, B.pos.z + d.z * 7.5);
-    const pen = Math.max(0, CAM_ZMIN - c.z) + Math.max(0, Math.abs(c.x) - CAM_XMAX);
+    const pen = Math.max(0, CAM_ZMIN - c.z) + Math.max(0, Math.abs(c.x) - CAM_XMAX) - (PHI === 2 && BALL.target > 0 ? c.z * .2 : 0);
     if (!best || pen < best.pen - 1e-6) best = { c, pen };
   }
   return keepOutOfStands(best.c);
@@ -3177,7 +4056,7 @@ function updateCamera(pl, dt) {
   _aim.set(W.chest.x + B.fwd.x * lead, Math.min(W.chest.y + .2, 1.05 + cap), W.chest.z + B.fwd.z * lead);
   if (PAIR.w > 0 && ACTIVE.length > 1) { const oc = partnerOf(pl).W.chest; _mid.set((W.chest.x + oc.x) / 2, (W.chest.y + oc.y) / 2 + .2, (W.chest.z + oc.z) / 2); _aim.lerp(_mid, PAIR.w); }
   const posing = an.kind === 'wind' || an.kind === 'hold' || an.kind === 'linger';
-  const bw = PHI && posing ? sm(.3, 1, BALL.w) : 0; if (bw > 0) _aim.y += (BALL.at.y - .6 - _aim.y) * .45 * bw;
+  const bw = PHI === 1 && posing ? sm(.3, 1, BALL.w) : 0; if (bw > 0) _aim.y += (BALL.at.y - .6 - _aim.y) * .45 * bw;
   let fovT;
   if (OPT.cam === 'tv') {
     if (tv.cur < 0) _cp.copy(poseCam(pl, tv.poseB));
@@ -3244,7 +4123,7 @@ function renderView(pl) {
   updMoon(pl); const bn = ballNear(pl);
   U.uLightDir.value.copy(LIGHT_WORLD).transformDirection(cam.matrixWorldInverse);
   U.uScale.value = pl.RH / (2 * Math.tan(cam.fov * PI / 360));
-  U.uRes.value.set(pl.RTW / 2, pl.RH / 2); U.uAmb.value.copy(PHI ? AMB_DISCO : AMB_GAME);
+  U.uRes.value.set(pl.RTW / 2, pl.RH / 2); U.uAmb.value.copy(ambOf());
   renderer.setRenderTarget(pl.rt); renderer.clear();
   // reflexo no gelo: os unicórnios espelhados pelo plano do gelo, desenhados antes do gelo translúcido
   MIR.scale.y = -1; MIR.updateMatrixWorld(true);
@@ -3566,6 +4445,7 @@ function buildCharacter(D) {
   }
   /* ---------- unicórnio (mesmo esqueleto) ---------- */
   const V = D.uni, coat = um({ map: uniCoatTex(V, D.h * 100 | 0), rep: [2, 1] }), plush = um({ map: fluffTex, color: V.plush }), bootM = um({ map: fluffTex, color: V.boot });
+  const frameM = um({ color: 0x2c2838 }), wheelM = um({ color: V.plush || 0xff86c8, emissive: .35 });
   const bladeM = um({ color: 0xe3ecf8, emissive: .35 }), hoofM = um({ color: V.hoof || 0x6a4aa8 }), dark = um({ color: 0x1a0f2e }), white = um({ color: 0xffffff, emissive: .7 });
   { const T = slot(R.torso, 'u', 'torso'), Bd = slot(R.body, 'u', 'torso'), k = 1.1;
     addM(T, cyl((B.waist + B.chest) / 2 * k, B.waist * k, L.waist, 10), coat, 0, L.waist / 2, 0, 0, 0, 0, 1, 1, .82);
@@ -3598,8 +4478,13 @@ function buildCharacter(D) {
     addM(Sk, new THREE.BoxGeometry(.16, .12, .27), bootM, 0, -.01, .04);
     addM(Sk, cyl(B.calf * 1.5, B.calf * 1.5, .05, 8), bootM, 0, .05, 0);
     for (const e of [1, -1]) { addM(Sk, new THREE.BoxGeometry(.03, .04, .02), dark, .045 * e, .02, .175); addM(Sk, new THREE.BoxGeometry(.012, .012, .01), white, .04 * e, .03, .187); }
-    addM(Sk, new THREE.BoxGeometry(.028, .04, .04), bladeM, 0, -.085, -.07); addM(Sk, new THREE.BoxGeometry(.028, .04, .04), bladeM, 0, -.085, .14);
-    addM(Sk, new THREE.BoxGeometry(.028, .035, .4), bladeM, 0, -.115, .04);
+    { const ice = G(), inl = G(); Sk.add(ice); Sk.add(inl);
+      addM(ice, new THREE.BoxGeometry(.028, .04, .04), bladeM, 0, -.085, -.07); addM(ice, new THREE.BoxGeometry(.028, .04, .04), bladeM, 0, -.085, .14);
+      addM(ice, new THREE.BoxGeometry(.028, .035, .4), bladeM, 0, -.115, .04);
+      // inline: trilho e quatro rodinhas em fila (as rodinhas giram com a velocidade)
+      addM(inl, new THREE.BoxGeometry(.03, .03, .42), frameM, 0, -.074, .04);
+      for (const z of [-.13, -.017, .097, .21]) { const w = addM(inl, new THREE.CylinderGeometry(.05, .05, .03, 10), wheelM, 0, -.083, z, 0, 0, HP); (R.wheels = R.wheels || []).push(w); }
+      inl.visible = false; (R.skSets = R.skSets || []).push({ ice, inl }); }
     const f1 = G(); f1.position.set(0, -.133, .23); Sk.add(f1); const f2 = G(); f2.position.set(0, -.133, -.15); Sk.add(f2);
     (R.uFeet = R.uFeet || []).push(f1, f2);
   }
@@ -3635,7 +4520,11 @@ function setAllForms(R, form) { for (const p in R.state) setForm(R, p, form); }
 // No jogo, o unicórnio de cada jogador é o boneco do personagem escolhido na forma de unicórnio, um pouco maior
 // (do tamanho dos unicórnios antigos), para a câmera, as pistas e os efeitos da partida continuarem iguais.
 const GAME_K = 1.25, DEFAULT_CHARS = ['clau', 'jodri'];
-function rigForGame(id) { const R = buildCharacter(CHAR_BY_ID[id]); setAllForms(R, 'u'); R.feet = R.uFeet; R.body.scale.setScalar(GAME_K); return R; }
+function rigForGame(id) { const R = buildCharacter(CHAR_BY_ID[id]); setAllForms(R, 'u'); R.feet = R.uFeet; R.body.scale.setScalar(GAME_K); setSkates(R); return R; }
+// patins de gelo nas fases 1 e 2, inline na praia
+function setSkates(R, inline = PHI === 2) { if (!R || !R.skSets) return; R.inline = inline; for (const k of R.skSets) { k.ice.visible = !inline; k.inl.visible = inline; } }
+function applySkates() { for (const pl of PL) { if (!pl) continue; setSkates(pl.uni); if (pl.ghosts) for (const G_ of pl.ghosts) setSkates(G_); if (pl.stage && pl.stage.R) setSkates(pl.stage.R); } }
+function spinWheels(R, v, dt) { if (!R || !R.inline || !R.wheels || !(dt > 0)) return; const a = v * dt / (.05 * GAME_K); for (const w of R.wheels) w.rotation.x += a; }
 let KEEP_TEX = null;   // texturas que vários bonecos dividem: não se descartam junto com um deles
 function disposeRig(o) {
   if (!KEEP_TEX) { KEEP_TEX = new Set([hornTex, fluffTex, iceTex]); for (const D of CHARS) for (const x of [D.shorts, D.sock]) if (x && x.isTexture) KEEP_TEX.add(x); }
@@ -3835,6 +4724,7 @@ function setupStage(st, charId) {
     st.R = buildCharacter(CHAR_BY_ID[charId]); st.MIR.add(st.R.root); st.C = makeChoreo(st.R);
     st.ribbons = PARTS.map(p => makeRibbons(st.R, p)); st.fx = st.ribbons.flat();
   } else setAllForms(st.R, 'h');
+  setSkates(st.R);
   for (const f of st.fx) f.m.visible = false;
   st.R.SIL.uSil.value = 0; worldIn(st);
   st.t = 0; st.rate = 1; st.done = false; st.active = true; st.hold = false; st.ev = {};
@@ -4087,7 +4977,7 @@ function renderStage(o, rb) {
   const cam = o.cam;
   U.uLightDir.value.copy(LIGHT_WORLD).transformDirection(cam.matrixWorldInverse);
   U.uScale.value = o.RH / (2 * Math.tan(cam.fov * PI / 360)); U.uRes.value.set(o.RTW / 2, o.RH / 2);
-  U.uAmb.value.copy(o === LINE ? (PHI ? AMB_DISCO_LINE : AMB_LINE) : AMB_NIGHT).lerp(AMB_BRIGHT, rb || 0);
+  U.uAmb.value.copy(o === LINE ? [AMB_LINE, AMB_DISCO_LINE, AMB_BEACH_LINE][PHI] : PHI === 2 ? AMB_BEACH : AMB_NIGHT).lerp(AMB_BRIGHT, rb || 0);
   renderer.setRenderTarget(o.rt); renderer.clear();
   if (!rb || rb < .999) { o.MIR.scale.y = -1; o.MIR.updateMatrixWorld(true); cam.layers.set(1); renderer.render(o.scene, cam); o.MIR.scale.y = 1; o.MIR.updateMatrixWorld(true); }
   cam.layers.enableAll(); renderer.render(o.scene, cam);
@@ -4106,11 +4996,11 @@ function bindStage(st, pl, dt) {
   if (st.off > 0) st.cam.setViewOffset(st.RTW, st.RH, 0, Math.round(st.RH * st.off), st.RTW, st.RH); else st.cam.clearViewOffset();
   st.cam.updateProjectionMatrix();
 }
-function selFrame(now, dt) { bindLine(); lineupUpdate(now, dt); if (PHI) discoUpdate(LINE.disco, now, dt, .6, 0, null); renderStage(LINE, 0); drawLanes(PL[0], 0); postRender(); }
+function selFrame(now, dt) { bindLine(); lineupUpdate(now, dt); sceneWorldTick(LINE, now, dt, .6); renderStage(LINE, 0); drawLanes(PL[0], 0); postRender(); }
 function tfFrame(now, dt) {
   for (const pl of ACTIVE) {
     const st = pl.stage; if (!st || !st.active) continue;
-    bindStage(st, pl, dt); stageUpdate(st, dt, now); if (PHI && worldShown(st)) discoUpdate(st.disco, now, dt, .55, 0, null);
+    bindStage(st, pl, dt); stageUpdate(st, dt, now); sceneWorldTick(st, now, dt, .55);
     renderStage(st, st.t < T_FINAL ? st.C.rainbow(st.t) : 0); drawLanes(pl, 0);
   }
   postRender();
@@ -4155,14 +5045,14 @@ function applySides() {
 function swapSides() { OPT.swap = !OPT.swap; store.set('swap2', OPT.swap); renderChips(); for (const m of $$('#select .mini')) m.animate([{ scale: '1.5' }, { scale: '1' }], { duration: 300, easing: 'ease-out' }); }
 /* --------- escolha da fase (depois do modo, antes dos personagens) --------- */
 function setPhase(i) { usePhase(i); store.set('phase', PHI); applyWorld(); }
-const bestKey = () => PHI ? 'best_n' : 'best';
+const BEST_KEYS = ['best', 'best_n', 'best_b'], bestKey = () => BEST_KEYS[PHI];
 function openPhase(two) {
   initAudio(); AC.resume().catch(() => {});
   if (state.screen === 'title') goFull();
   endTransformUI(); SEL.two = !!two;
   $('#phMode').textContent = t(two ? 'p2' : 'p1');
   for (const b of $$('.phc')) {
-    const i = +b.dataset.ph, best = store.get(i ? 'best_n' : 'best', 0) || 0;
+    const i = +b.dataset.ph, best = store.get(BEST_KEYS[i], 0) || 0;
     b.setAttribute('aria-pressed', String(i === PHI)); b.querySelector('.phb').textContent = best ? `${t('best')}: ${fmt(best)}` : '';
   }
   openScreen('phase');
@@ -4664,9 +5554,9 @@ function albumRows(ol, P, withKinds) {
 function fillAlbum(ol, withKinds) {
   ol.innerHTML = '';
   if (!withKinds) { albumRows(ol, PH, false); return; }
-  PHASES.forEach((P, i) => { const hd = document.createElement('li'); hd.className = 'phsep'; hd.textContent = `${t('phase')} ${i + 1} · ${t(i ? 'ph2' : 'ph1')}`; ol.appendChild(hd); albumRows(ol, P, true); });
+  PHASES.forEach((P, i) => { const hd = document.createElement('li'); hd.className = 'phsep'; hd.textContent = `${t('phase')} ${i + 1} · ${t('ph' + (i + 1))}`; ol.appendChild(hd); albumRows(ol, P, true); });
 }
-function openAlbum() { fillAlbum($('#aList'), true); $('#aCount').textContent = t('albumCount', { n: album.size }); openScreen('album'); }
+function openAlbum() { fillAlbum($('#aList'), true); $('#aCount').textContent = t('albumCount', { n: album.size, t: 18 * PHASES.length }); openScreen('album'); }
 function offText() { const ms = Math.round(state.offset * 1000); return `${ms > 0 ? '+' : ''}${ms} ms`; }
 function updOffInfo() { $('#oOff').textContent = offText(); $('#cOff').textContent = offText(); }
 function syncOptUI() {
@@ -4896,6 +5786,12 @@ function saveReplay() {
     p: ACTIVE.map(pl => pl.notes.map(n => [J[n.j] !== undefined ? J[n.j] : 2, Math.round((n.dt || 0) * 1000), n.hold ? (n.tail === 'ok' ? 1 : n.tail === 'm' ? 2 : 0) : 0, n.tt !== undefined ? Math.round((n.tt - n.t) * 1000) : 0])) };
   store.set('replay', RP.data); updReplayBtns();
 }
+// replay de uma partida perfeita (todas as notas no PERFEITO), para a demonstração da dupla
+function perfectReplay(ph, two, chars) {
+  setPhase(ph); const C = buildChart(), rec = C.notes.map(n => [0, 0, n.hold ? 1 : 0, 0]);
+  RP.data = { v: 1, ph, two: !!two, chars: (chars || DEFAULT_CHARS).slice(0, two ? 2 : 1), at: Date.now(), p: two ? [rec, rec.map(r => r.slice())] : [rec] };
+  updReplayBtns(); return rec.length;
+}
 function clearReplay() { RP.data = null; store.del('replay'); updReplayBtns(); }
 function updReplayBtns() { for (const b of $$('.rpBtn')) b.hidden = !RP.data; }
 // prepara a partida para o replay a partir de T0 (as notas anteriores ficam com o resultado gravado, sem efeito)
@@ -5010,7 +5906,7 @@ function rpIntroFrame(now, dt) {
     SND.mute = i > 0 || !!RP.exp;   // as duas andam juntas: os sons tocam uma vez só
     stageUpdate(st, dt, now);
     SND.mute = false;
-    if (PHI && worldShown(st)) discoUpdate(st.disco, now, dt, .55, 0, null);
+    sceneWorldTick(st, now, dt, .55);
     PANO.rt.viewport.set(x, y, w, h); PANO.rt.scissor.set(x, y, w, h); PANO.rt.scissorTest = true;
     renderStage(st, st.t < T_FINAL ? st.C.rainbow(st.t) : 0);
     fl = Math.max(fl, st.C.flash(st.t));
@@ -5069,7 +5965,7 @@ function fixedCam(dt) {
     vis = Math.max(6.6 * (1 + .35 * PAIR.w), (span * 1.15 + 2.5) / asp);
     _pq.set(clamp(_mid.x * .7, -12, 12), 4.6, 25); _pd.set(_mid.x, Math.max(1.2, _mid.y + .2), _mid.z);
     const d0 = _pq.distanceTo(_pd), d = Math.max(d0, vis / 2 / tn);
-    if (d <= Math.min(32, PHI ? d0 + 3.5 : 32)) { if (d > d0) _pq.sub(_pd).multiplyScalar(d / d0).add(_pd); aimOk = true; }
+    if (d <= Math.min(32, PHI === 1 ? d0 + 3.5 : 32)) { if (d > d0) _pq.sub(_pd).multiplyScalar(d / d0).add(_pd); aimOk = true; }
   }
   if (!aimOk) {
     const pl = PL[RP.fp], W = pl.W, B = pl.base, lead = B.spd * .2;
@@ -5085,6 +5981,7 @@ function fixedCam(dt) {
   cam.updateMatrixWorld();
 }
 function directorCam(dt) {
+  if (RP.lock) { const c = PANO.cam, L = RP.lock; c.position.fromArray(L.pos); c.lookAt(L.aim[0], L.aim[1], L.aim[2]); if (c.fov !== L.fov) { c.fov = L.fov; c.updateProjectionMatrix(); } c.updateMatrixWorld(); return; }
   if (RP.cam === 'fixed') { fixedCam(dt); return; }
   const both = state.two && PAIR.w > .5, cam = PANO.cam, now = state.songT;
   if (both !== RP.both) { RP.both = both; PANO.snap = true; RP.alt = null; RP.angOff = 0; RP.occT0 = -1; }
@@ -5220,7 +6117,7 @@ function collectOcc(group, list) {
     if (sz.y > .75 && Math.max(sz.x, sz.z) < 45) list.push(o);
   });
 }
-function occList() { const L = OCC[PHI]; if (!L.length) collectOcc(PHI ? WORLD2.group : WORLD1, L); return L; }
+function occList() { const L = OCC[PHI] || (OCC[PHI] = []); if (!L.length) collectOcc([WORLD1, WORLD2 && WORLD2.group, WORLD3 && WORLD3.group][PHI], L); return L; }
 // pontos que precisam aparecer: peito e pés de quem está em cena
 function occTargets(pls) { const pts = []; for (const pl of pls) { pts.push(pl.W.chest); _oc2.copy(pl.W.fL).add(pl.W.fR).multiplyScalar(.5); _oc2.y += .25; pts.push(_oc2.clone()); } return pts; }
 function blocked(from, pts) {
@@ -5263,7 +6160,7 @@ function openReplayScreen() {
   if (!RP.data) { toMenu(); return; }
   tiltStart(); lockOrient(false);
   const D = RP.data;
-  $('#rpInfo').textContent = `${t('phase')} ${D.ph + 1} · ${t(D.ph ? 'ph2' : 'ph1')} · ${t(D.two ? 'p2' : 'p1')}`;
+  $('#rpInfo').textContent = `${t('phase')} ${D.ph + 1} · ${t('ph' + (D.ph + 1))} · ${t(D.two ? 'p2' : 'p1')}`;
   const segs = $('#rpSegs'); segs.innerHTML = '';
   RP_SEGS.forEach((sg, i) => {
     const b = document.createElement('button'); b.className = 'rpSeg'; b.setAttribute('aria-pressed', String(i === RP.seg));
@@ -5320,7 +6217,7 @@ async function renderAudio(T0, dur0, sfx, prog = () => {}, IL = 0) {
     sched(() => { for (let k = a; k < Math.min(s1, a + 48); k++) playStep(k, IL + k * S16 - T0); });
     prog('sched', (a - s0) / Math.max(1, s1 - s0)); await sleep0();
   }
-  sched(() => { for (const [k, a, ts] of sfx) { const at = IL + ts - T0; if (at < IL || at > dur) continue; if (k === 'name') SFX.name(a, at); else if (k === 'sync') SFX.sync(at); else if (k === 'duo') SFX.duo(at); } });
+  sched(() => { for (const [k, a, ts] of sfx) { const at = IL + ts - T0; if (at < IL || at > dur) continue; if (k === 'name') SFX.name(a, at); else if (k === 'sync') SFX.sync(at); else if (k === 'duo') SFX.duo(at); else if (k === 'whale') SFX.whale(at); else if (k === 'splash') SFX.splash(at); } });
   // 2) grava; a cada trecho o contexto pausa um instante, o que dá o andamento real da gravação
   try {
     const step = Math.max(.5, dur / 80);
@@ -5442,7 +6339,7 @@ async function exportReplay(sgI) {
     expLearn(RP.exp, IL + dur);
     muxer.finalize();
     const D = RP.data, part = sgI ? 'bloco' + sgI : 'partida';
-    RP.exp.name = `galope-${D.ph ? 'discoteca' : 'buenos-aires'}-${part}-${land ? 'deitado' : 'em-pe'}.mp4`;
+    RP.exp.name = `galope-${['buenos-aires', 'discoteca', 'praia-da-barra'][D.ph] || 'galope'}-${part}-${land ? 'deitado' : 'em-pe'}.mp4`;
     RP.exp.blob = new Blob([muxer.target.buffer], { type: 'video/mp4' }); RP.exp.codec = V.cfg.codec + (A ? ' + ' + A.cfg.codec : '');
     ok = true;
   } catch (e) {
@@ -5502,7 +6399,14 @@ function tick(nowMs, forceDt) {
   if (RP.seek) { for (const pl of ACTIVE) updateCamera(pl, dt); directorCam(dt); return; }   // busca no replay: só o estado do jogo e das câmeras
   updFx(dt); updParticles(dt);
   if (STARS) { const ts = nowMs / 1000; for (let i = 0; i < STARS.n; i++) STARS.alpha[i] = .55 + .45 * Math.sin(ts * 1.7 + STARS.phase[i]); STARS.geo.attributes.palpha.needsUpdate = true; }
-  if (PHI && WORLD2) { ballUpdate(dt); const play = state.screen === 'play'; discoUpdate(WORLD2, play ? state.songT : nowMs / 1000, dt, play ? hypeOf(state.mi) : .55, BALL.w, BALL.w > .001 ? BALL.at : null); }
+  if (PHI === 1 && WORLD2) { ballUpdate(dt); const play = state.screen === 'play'; discoUpdate(WORLD2, play ? state.songT : nowMs / 1000, dt, play ? hypeOf(state.mi) : .55, BALL.w, BALL.w > .001 ? BALL.at : null); }
+  if (PHI === 2 && WORLD3) {
+    ballUpdate(dt); const play = state.screen === 'play';
+    // a baleia aparece na direção em que a câmera olha quando começa a antecipação do final a dois
+    WORLD3.cam = PANO.on ? PANO.cam : ACTIVE[0].cam;
+    if (BALL.target > .3 && !WORLD3.placed) { whaleSpot(WORLD3, WORLD3.cam); WORLD3.placed = 1; } else if (BALL.target === 0 && BALL.w < .05) WORLD3.placed = 0;
+    beachUpdate(WORLD3, play ? state.songT : nowMs / 1000, dt, play ? hypeOf(state.mi) : .55, BALL.w, BALL.target >= 1);
+  }
   if (BULBS) { const ts = nowMs / 1000; for (let i = 0; i < BULBS.n; i++) BULBS.alpha[i] = .75 + .25 * Math.sin(ts * 3 + i * 1.3); BULBS.geo.attributes.palpha.needsUpdate = true; }
   for (const pl of ACTIVE) { if (preview) pl.tv.snap = true; updateCamera(pl, dt); }
   if (state.replay) directorCam(dt); else if (PANO.on) panoCamera(dt);
@@ -5597,7 +6501,7 @@ window.UG = {
   ndc: () => ACTIVE.map(pl => { const q = pl.W.chest.clone().project(PANO.cam); return [+q.x.toFixed(2), +q.y.toFixed(2)]; }),
   occWhat() { const pls = state.two && PAIR.w > .5 ? PL : [PL[RP.fp]], out = []; for (const pt of occTargets(pls)) { _ocd.copy(pt).sub(PANO.cam.position); const d = _ocd.length(); _ocd.divideScalar(d); occRay.set(PANO.cam.position, _ocd); occRay.far = d - .35; for (const h of occRay.intersectObjects(occList(), false)) { const o = h.object, w = new THREE.Vector3(); o.getWorldPosition(w); out.push([o.geometry.type, w.toArray().map(v => +v.toFixed(1)), +h.distance.toFixed(1), pt.toArray().map(v => +v.toFixed(1))]); } } const pl0 = PL[RP.fp], pk = pickClearCam(pl0, occTargets([pl0]), PANO.cam.position); return { pick: pk && pk.toArray().map(v => +v.toFixed(1)), occT0: RP.occT0, cam: PANO.cam.position.toArray().map(v => +v.toFixed(1)), fp: RP.fp, tvcur: PL[RP.fp].tv.cur, virt: PL[RP.fp].tv.virt, hits: out }; },
   replayData: () => RP.data && { ph: RP.data.ph, two: RP.data.two, chars: RP.data.chars, n: RP.data.p.map(x => x.length), miss: RP.data.p.map(x => x.filter(r => r[0] === 2 || r[2] === 2).length) },
-  replay: (seg, o, c) => { if (o) RP.orient = o; if (c) RP.cam = c; playReplay(seg || 0); }, replayStop: () => replayStop(), rpx: () => ({ t0: RP.t0, t1: RP.t1, paused: state.paused, drag: !!RP.drag, seek: RP.seek, tilt: TILT.q, rotQ: PANO.rotQ, intro: RP.intro && +RP.intro.t.toFixed(2), frac: +rpFrac().toFixed(3), songT: +state.songT.toFixed(2), mus: MUS.on && !MUS.end, stT: ACTIVE.map(pl => pl.stage ? +pl.stage.t.toFixed(2) : null) }), rpSeek: f => rpSeek(f), rp: () => ({ on: !!state.replay, seg: RP.seg, fp: RP.fp, both: RP.both, mode: RP.mode, songT: state.songT, caps: RP.caps.length, score: ACTIVE.map(pl => pl.score), alt: !!RP.alt, angOff: +RP.angOff.toFixed(2), occ: blocked(PANO.cam.position, occTargets(state.two && PAIR.w > .5 ? PL : [PL[RP.fp]])), press: RP.press.length }),
+  replay: (seg, o, c) => { if (o) RP.orient = o; if (c) RP.cam = c; playReplay(seg || 0); }, rpLock: (pos, aim, fov) => { RP.lock = pos ? { pos, aim, fov } : null; }, pairPos: () => ({ pos: PAIR.pos.toArray(), yaw: PAIR.yaw, pl: PL.map(q => q.W.chest.toArray()) }), perfectReplay: (ph, two, chars) => perfectReplay(ph, two, chars), whale: () => WORLD3 && { t: +WORLD3.whale.t.toFixed(2), at: WORLD3.whale.at.toArray(), w: +BALL.w.toFixed(2), target: BALL.target }, replayStop: () => replayStop(), rpx: () => ({ t0: RP.t0, t1: RP.t1, paused: state.paused, drag: !!RP.drag, seek: RP.seek, tilt: TILT.q, rotQ: PANO.rotQ, intro: RP.intro && +RP.intro.t.toFixed(2), frac: +rpFrac().toFixed(3), songT: +state.songT.toFixed(2), mus: MUS.on && !MUS.end, stT: ACTIVE.map(pl => pl.stage ? +pl.stage.t.toFixed(2) : null) }), rpSeek: f => rpSeek(f), rp: () => ({ on: !!state.replay, seg: RP.seg, fp: RP.fp, both: RP.both, mode: RP.mode, songT: state.songT, caps: RP.caps.length, score: ACTIVE.map(pl => pl.score), alt: !!RP.alt, angOff: +RP.angOff.toFixed(2), occ: blocked(PANO.cam.position, occTargets(state.two && PAIR.w > .5 ? PL : [PL[RP.fp]])), press: RP.press.length }),
   exportReplay: async (seg, o, c) => { if (o) RP.orient = o; if (c) RP.cam = c; await exportReplay(seg || 0); const E = RP.exp; return E && { ok: !!E.blob, size: E.blob ? E.blob.size : 0, codec: E.codec, error: E.error, name: E.name }; },
   exportBlob: async () => { const E = RP.exp; if (!E || !E.blob) return null; const b = new Uint8Array(await E.blob.arrayBuffer()); let s = ''; for (let i = 0; i < b.length; i += 32768) s += String.fromCharCode.apply(null, b.subarray(i, i + 32768)); return btoa(s); }, ball: () => ({ target: BALL.target, w: +BALL.w.toFixed(3), at: BALL.at.toArray().map(v => +v.toFixed(2)) }),
   gap: () => +((((PL[1].base.s - PL[0].base.s) % PATH_L) + PATH_L) % PATH_L / PATH_L).toFixed(3)
