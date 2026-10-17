@@ -1922,7 +1922,7 @@ function buildWhale() {
   bg.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
   body.add(new THREE.Mesh(bg, psxMat({ vc: true })));
   // calombos na cabeça
-  for (let i = 0; i < 10; i++) { const k = new THREE.Mesh(new THREE.SphereGeometry(.16, 5, 4), dark); k.position.set((i % 2 ? .35 : -.35) * (1 - i / 14), 1.15 - i * .02, 6.2 - i * .38); body.add(k); }
+  for (let i = 0; i < 10; i++) { const k = new THREE.Mesh(new THREE.SphereGeometry(.11, 5, 4), dark); k.position.set((i % 2 ? .35 : -.35) * (1 - i / 14), 1.15 - i * .02, 6.2 - i * .38); body.add(k); }
   // nadadeiras peitorais (longas e brancas por baixo, como as da jubarte)
   for (const s of [-1, 1]) { const f = new THREE.Mesh(new THREE.BoxGeometry(5.2, .18, 1.1), belly); f.geometry.translate(s * 2.6, 0, 0); f.position.set(s * 1.3, -.6, 2.6); f.rotation.set(0, -s * .35, -s * .5); body.add(f); f.userData.s = s; (g.userData.fins = g.userData.fins || []).push(f); }
   // cauda e nadadeira caudal
@@ -1930,9 +1930,20 @@ function buildWhale() {
   const ped = new THREE.Mesh(new THREE.CylinderGeometry(.5, .9, 3, 8), dark); ped.rotation.x = HP; ped.position.z = -1.2; tail.add(ped);
   const fl = new THREE.Shape(); fl.moveTo(0, 0); fl.quadraticCurveTo(2.2, .4, 3.4, 1.6); fl.quadraticCurveTo(2.6, .2, 1.2, -.6); fl.quadraticCurveTo(.4, -.5, 0, -.2); fl.quadraticCurveTo(-.4, -.5, -1.2, -.6); fl.quadraticCurveTo(-2.6, .2, -3.4, 1.6); fl.quadraticCurveTo(-2.2, .4, 0, 0);
   const fluke = new THREE.Mesh(new THREE.ShapeGeometry(fl, 6), fin); fluke.rotation.x = -HP; fluke.position.z = -2.6; tail.add(fluke);
+  // olhos (claros, para aparecerem no close) com uma dobra escura em cima; piscar = achatar o olho
+  const eyes = [], scl = psxMat({ color: 0xece4d6, emissive: .25 }), iris = psxMat({ color: 0x1c1410 }), shine = psxMat({ color: 0xffffff, emissive: 1 });
+  for (const s of [-1, 1]) {
+    const e = new THREE.Group(); e.position.set(s * 1.3, -.22, 4.3); body.add(e);
+    const sc = new THREE.Mesh(new THREE.SphereGeometry(.21, 10, 8), scl); e.add(sc);
+    const ir = new THREE.Mesh(new THREE.SphereGeometry(.135, 10, 8), iris); ir.position.set(s * .11, 0, .03); e.add(ir);
+    const sh = new THREE.Mesh(new THREE.SphereGeometry(.045, 6, 4), shine); sh.position.set(s * .23, .06, .07); e.add(sh);
+    const brow = new THREE.Mesh(new THREE.SphereGeometry(.3, 8, 6), dark); brow.scale.set(.7, .38, 1); brow.position.set(s * .02, .19, 0); body.add(brow); brow.position.add(e.position);
+    eyes.push(e);
+  }
+  g.rotation.order = 'YXZ';   // rumo, inclinação do focinho e rolamento em volta do corpo
   g.visible = false; g.userData.tail = tail; g.userData.body = body;
   g.scale.setScalar(1.1);
-  return { g, body, tail, t: -1, at: new THREE.Vector3(-4, 0, -62), dir: 1, spouted: 0, view: 0 };
+  return { g, body, tail, eyes, t: -1, ct: -1, at: new THREE.Vector3(4, 0, -45), e0: new THREE.Vector3(), view: 0 };
 }
 /* --------- a cada quadro: ondas, espuma, brilho do sol, banhistas, farol, baleia e borrifo --------- */
 function beachUpdate(B, t, dt, hype, whaleW, whaleGo) {
@@ -1969,45 +1980,77 @@ function splashEmit(B, x, y, z, vx, vy, vz, life, size) {
   S.pos[i * 3] = x; S.pos[i * 3 + 1] = y; S.pos[i * 3 + 2] = z; B.sv[i * 3] = vx; B.sv[i * 3 + 1] = vy; B.sv[i * 3 + 2] = vz; B.sl[i] = life; B.sm[i] = life;
   const r = Math.random(), c = r < .6 ? C_WHITE : r < .85 ? SPL_A : SPL_B; S.col[i * 3] = c.r; S.col[i * 3 + 1] = c.g; S.col[i * 3 + 2] = c.b; S.size[i] = size; S.alpha[i] = 1; B.sDirty = 1;
 }
-// salto da jubarte: sobe inclinada girando de lado, as nadadeiras abertas, e cai de costas num splash enorme
-const WHALE_T = 3.6;   // segundos do salto inteiro
+// a cena da baleia (tempo c desde o fim sincronizado): ela aparece na tona olhando para a câmera e pisca duas vezes,
+// afunda, salta girando de lado com as nadadeiras abertas e cai de costas num splash enorme
+const WH_S = 1.7, WHALE_T = 4.2, WH_END = 8.9;
 function whaleUpdate(B, t, dt, w, go) {
   const W_ = B.whale, g = W_.g;
-  // a câmera do casal se afasta enquanto a baleia se anuncia e volta depois do splash
-  { const vT = W_.done && W_.t >= WHALE_T ? 0 : sm(.6, .95, w); if (dt > 0) W_.view += (vT - W_.view) * (1 - Math.exp(-dt * (vT > W_.view ? 1.4 : .8))); }
-  // antecipação (w entre .4 e .9): esguichos de respiração no mar, cada vez mais perto
+  // a câmera do casal se afasta enquanto a baleia se anuncia (esguichos)
+  { const vT = W_.done ? 0 : sm(.6, .95, w); if (dt > 0) W_.view += (vT - W_.view) * (1 - Math.exp(-dt * (vT > W_.view ? 1.4 : 2))); }
+  // antecipação (w entre .4 e .9): esguichos de respiração no mar
   if (w > .38 && !go && dt > 0) {
     W_.spT = (W_.spT || 0) - dt;
-    if (W_.spT <= 0) { W_.spT = 1.6 - w; const x = W_.at.x + (Math.random() - .5) * 14, z = W_.at.z + 6 + (Math.random() - .5) * 6; for (let i = 0; i < 26; i++) splashEmit(B, x + rnd(-.3, .3), .2, z + rnd(-.3, .3), rnd(-.6, .6), rnd(5, 8), rnd(-.6, .6), rnd(1, 1.6), rnd(.35, .6)); }
+    if (W_.spT <= 0) { W_.spT = 1.6 - w; const x = W_.at.x + (Math.random() - .5) * 14, z = W_.at.z + 4 + (Math.random() - .5) * 6; for (let i = 0; i < 26; i++) splashEmit(B, x + rnd(-.3, .3), .2, z + rnd(-.3, .3), rnd(-.6, .6), rnd(5, 8), rnd(-.6, .6), rnd(1, 1.6), rnd(.35, .6)); }
   }
-  if (go && W_.t < 0 && !W_.done) { if (B.cam) whaleSpot(B, B.cam); W_.t = 0; W_.done = 1; g.visible = true; SFX.whale && SFX.whale(); }
-  if (!go && w < .2) W_.done = 0;
-  if (W_.t >= WHALE_T && !go) { W_.t = -1; g.visible = false; }
-  if (W_.t < 0 || W_.t >= WHALE_T) { if (W_.t >= WHALE_T) g.visible = false; return; }
-  W_.t += dt; const s = clamp(W_.t / WHALE_T, 0, 1), at = W_.at;
-  // trajetória: sai da água subindo (até 2/3 do corpo para fora), gira de lado e cai de costas
-  const up = s < .45 ? easeOut(s / .45) : 1 - easeIO((s - .45) / .55);
-  g.position.set(at.x + 3 * s * W_.dir, -8 + 15 * up, at.z + 4 * s);
-  g.rotation.set(-1.25 * (1 - s) + .3 * s, .4 * W_.dir, W_.dir * PI * .9 * easeIO(seg(s, .2, .8)));
-  for (const f of g.userData.fins) f.rotation.z = -f.userData.s * (.5 + .5 * Math.sin(s * PI));
-  W_.tail.rotation.x = .3 * Math.sin(s * TAU * 1.5);
-  // borrifo: na saída da água e, maior, na queda
-  const burstAt = (n, spd, up_, size) => { for (let i = 0; i < n; i++) { const a = Math.random() * TAU, r = rnd(0, 3); splashEmit(B, g.position.x + Math.cos(a) * r, 0, g.position.z + Math.sin(a) * r * .6, Math.cos(a) * rnd(1, spd), rnd(up_ * .5, up_), Math.sin(a) * rnd(1, spd) * .6, rnd(1.4, 2.6), size * rnd(.7, 1.3)); } };
-  const column = (n, up_, size) => { for (let i = 0; i < n; i++) splashEmit(B, g.position.x + rnd(-2.2, 2.2), 0, g.position.z + rnd(-1.2, 1.2), rnd(-1.5, 1.5), rnd(up_ * .6, up_), rnd(-.8, .8), rnd(1.8, 2.8), size * rnd(.8, 1.3)); };
-  if (!W_.f1 && s > .02) { W_.f1 = 1; burstAt(200, 6, 12, 1.1); column(60, 15, 1.2); B.ringT = 0; }
-  if (!W_.f2 && s > .86) { W_.f2 = 1; burstAt(420, 10, 19, 1.25); column(180, 24, 1.4); B.ringT = 0; SFX.splash && SFX.splash(); }
-  if (s >= 1) { W_.f1 = W_.f2 = 0; }
-  if (B.ringT !== undefined && B.ringT < 2.2) { B.ringT += dt; const k = B.ringT / 2.2; B.ring.position.set(g.position.x, -.15, g.position.z); B.ring.scale.setScalar(2 + 16 * easeOut(k)); setOpacity(B.ring, .7 * (1 - k)); }
+  if (go && !W_.done) { W_.done = 1; W_.ct = 0; W_.f0 = W_.f1 = W_.f2 = 0; whaleSpot(B); g.visible = true; SFX.whale && SFX.whale(); }
+  if (!go && w < .2 && W_.done) { W_.done = 0; W_.ct = -1; g.visible = false; }
+  if (B.ringT !== undefined && B.ringT < 2.2) { B.ringT += dt; const k = B.ringT / 2.2; B.ring.scale.setScalar(2 + 16 * easeOut(k)); setOpacity(B.ring, .7 * (1 - k)); }
+  W_.t = W_.ct;
+  if (W_.ct < 0) return;
+  if (dt > 0) W_.ct += dt;
+  const c = W_.ct, at = W_.at;
+  if (c >= WH_S + WHALE_T) { g.visible = false; return; }
+  g.visible = true;
+  let blink = 0;
+  if (c < WH_S) {   // na tona, de lado para a praia: o olho virado para a câmera
+    const r = easeOut(seg(c, 0, .35)), dn = easeIO(seg(c, 1.2, WH_S)), bob = .06 * Math.sin(c * 3.5);
+    g.position.set(at.x, lerp(-4.2, -.4, r) + bob - 5 * dn, at.z);
+    g.rotation.set(-.24 - .6 * dn, HP, 0);
+    blink = Math.max(bump(seg(c, .42, .68)), bump(seg(c, .8, 1.06)));
+    for (const f of g.userData.fins) f.rotation.z = -f.userData.s * .35;
+    W_.tail.rotation.x = .15 * Math.sin(c * 2);
+    if (!W_.f0 && c > .1) { W_.f0 = 1; for (let i = 0; i < 40; i++) splashEmit(B, at.x + rnd(3, 8.5), 0, at.z - rnd(.8, 2.2), rnd(-1, 1), rnd(2, 4), -rnd(.3, 1.2), rnd(.8, 1.3), rnd(.18, .3)); }   // atrás da cabeça, longe da câmera
+  } else {   // o salto
+    const s = clamp((c - WH_S) / WHALE_T, 0, 1), up = s < .5 ? easeOut(s / .5) : 1 - easeIO((s - .5) / .5);
+    g.position.set(at.x + 3 * s, -8 + 16 * up, at.z + 2 * s);
+    g.rotation.set(-1.3 + s * s * 1.05, HP, -PI * .9 * easeIO(seg(s, .25, .8)));   // fica bem empinada no alto e cai de costas   // gira mostrando a barriga para a praia
+    for (const f of g.userData.fins) f.rotation.z = -f.userData.s * (.5 + .5 * Math.sin(s * PI));
+    W_.tail.rotation.x = .3 * Math.sin(s * TAU * 1.5);
+    const burstAt = (n, spd, up_, size) => { for (let i = 0; i < n; i++) { const a = Math.random() * TAU, r = rnd(0, 3); splashEmit(B, g.position.x + Math.cos(a) * r, 0, g.position.z + Math.sin(a) * r * .6, Math.cos(a) * rnd(1, spd), rnd(up_ * .5, up_), Math.sin(a) * rnd(1, spd) * .6, rnd(1.4, 2.6), size * rnd(.7, 1.3)); } };
+    const column = (n, up_, size) => { for (let i = 0; i < n; i++) splashEmit(B, g.position.x + rnd(-2.2, 2.2), 0, g.position.z + rnd(-1.2, 1.2), rnd(-1.5, 1.5), rnd(up_ * .6, up_), rnd(-.8, .8), rnd(1.8, 2.8), size * rnd(.8, 1.3)); };
+    if (!W_.f1 && s > .02) { W_.f1 = 1; burstAt(200, 6, 12, 1.1); column(60, 15, 1.2); B.ringT = 0; B.ring.position.set(g.position.x, -.15, g.position.z); }
+    if (!W_.f2 && s > .88) { W_.f2 = 1; burstAt(420, 10, 19, 1.25); column(180, 24, 1.4); B.ringT = 0; B.ring.position.set(g.position.x, -.15, g.position.z); SFX.splash && SFX.splash(); }
+  }
+  for (const e of W_.eyes) e.scale.y = 1 - .9 * blink;
 }
-// onde a baleia aparece: no mar, na direção em que a câmera do casal olha, um pouco à direita dele (à esquerda fica o sol, que apagaria o borrifo)
-function whaleSpot(B, cam) {
-  const W_ = B.whale, d = new THREE.Vector3(), Z = -62; cam.getWorldDirection(d);
-  let x = -4;
-  if (d.z < -.2) {
-    const k = (Z - cam.position.z) / d.z, cx = cam.position.x + d.x * k, hw = k * Math.tan(cam.fov * PI / 360) * cam.aspect * (1 + 1.1 * (1 - W_.view));
-    x = clamp(cx + clamp(.5 * hw, 8, 15), -34, 5);
-  }
-  W_.at.set(x, 0, Z); W_.dir = -1;
+// onde a baleia aparece: no mar à frente do casal, um pouco à direita (à esquerda fica o sol, que apagaria o borrifo; atrás, o farol)
+function whaleSpot(B) { B.whale.at.set(clamp(PAIR.pos.x + 5, -20, 6), 0, -45); }
+// a câmera da cena: corta para o olho, abre enquanto ela salta e voa de volta por cima do casal até mostrar a dupla na
+// pose final com a baleia no ar atrás; no fim, devolve a câmera ao casal
+const _wcE = new THREE.Vector3(), _wcW = new THREE.Vector3(), _wcC = new THREE.Vector3(), _wcF = new THREE.Vector3(), _wcS = new THREE.Vector3(), _wcQ = new THREE.Vector3(), _wcd = new THREE.Vector3(), _wcd2 = new THREE.Vector3();
+const WC = { pos: new THREE.Vector3(), aim: new THREE.Vector3(), w: 0 }, _wcL = new THREE.Vector3();
+function whaleCamPose(aspect, eyeDy = .5) {   // eyeDy: quanto mirar acima do olho (o olho fica abaixo do meio; negativo, acima)
+  if (PHI !== 2 || !WORLD3) return null;
+  const W_ = WORLD3.whale, c = W_.ct; if (!(c >= 0) || c > WH_END) return null;
+  const g = W_.g, at = W_.at, P = PAIR.pos; g.updateMatrixWorld(true);
+  W_.eyes[0].getWorldPosition(_wcE);   // o olho do lado da praia (o corpo aponta para +x)
+  if (c < 1.3) W_.e0.copy(_wcE);
+  _wcW.set(g.position.x, Math.max(1, g.position.y + 1.5), g.position.z);   // o meio da baleia, sem descer para baixo d'água
+  // enquadramento final: atrás do casal, um pouco para o lado, o casal à esquerda e a baleia à direita
+  const wbx = at.x + 2.5, wbz = at.z; let bx = P.x - wbx, bz = P.z - wbz; const bl = Math.hypot(bx, bz) || 1; bx /= bl; bz /= bl;
+  const tall = aspect < 1, D = tall ? 14 : 12, L = tall ? 2.2 : 4;
+  _wcC.set(P.x + bx * D + bz * L, 1.9, P.z + bz * D - bx * L);
+  _wcd.set(P.x, 2.3, P.z).sub(_wcC).normalize(); _wcd2.set(g.position.x, clamp(g.position.y + 3, 3, 10), g.position.z).sub(_wcC).normalize(); _wcF.copy(_wcC).addScaledVector(_wcd.multiplyScalar(.42).addScaledVector(_wcd2, .58).normalize(), 10);   // a baleia, maior, pesa mais no meio
+  const S = _wcS.copy(W_.e0).add(new THREE.Vector3(0, 5.5, 26));
+  if (c < 1.3) { WC.pos.set(_wcE.x, Math.max(_wcE.y, .45) + .3, _wcE.z + 4.2 - .3 * c / 1.3); WC.aim.copy(_wcE).y += eyeDy; }
+  else if (c < 2.6) { const k = easeIO(seg(c, 1.3, 2.6)); WC.pos.copy(W_.e0).add(new THREE.Vector3(0, lerp(.3, 5.5, k), lerp(3.9, 26, k))); _wcL.copy(W_.e0).y += eyeDy; WC.aim.lerpVectors(_wcL, _wcW, sm(0, .55, k)); }
+  else if (c < 3.9) {   // voo de volta: curva que passa por cima do casal
+    const k = easeIO(seg(c, 2.6, 3.9)), q = 1 - k; _wcQ.set(lerp(S.x, _wcC.x, .5), 10, P.z + 2);
+    WC.pos.set(q * q * S.x + 2 * k * q * _wcQ.x + k * k * _wcC.x, q * q * S.y + 2 * k * q * _wcQ.y + k * k * _wcC.y, q * q * S.z + 2 * k * q * _wcQ.z + k * k * _wcC.z);
+    WC.aim.lerpVectors(_wcW, _wcF, sm(.15, 1, k));
+  } else { WC.pos.copy(_wcC); WC.aim.copy(_wcF); }
+  WC.w = 1 - easeIO(seg(c, 7.4, WH_END));
+  return WC;
 }
 // quanto a câmera do casal se afasta para mostrar a baleia (0 a 1)
 function whaleView() { return PHI === 2 && WORLD3 ? WORLD3.whale.view : 0; }
@@ -3097,34 +3140,39 @@ const DUO_MOVES_B = {}, DUO_POSES_B = [];
   } };
 }
 { // bloco 2: Sereia nos Braços do Farol: A segura B no colo, deitada de lado como uma sereia, a cauda (as pernas) dobrada
-  const HOLD = { lean: -.15, hd: .25, side: 0, tw: 0, hy: 0, ...A(1.35, 1.15, -.5), lL: [.25, .3, .3], lR: [.25, -.3, .3], tail: .7, sq: 1 };
-  const LIE = { lean: 0, hd: -.5, side: 0, tw: 0, hy: 0, aL: [2.7, .3, -.3], aR: [1.2, 1.0, -.9], lL: [.35, .2, 1.0], lR: [.3, .2, .9], tail: 1, sq: 1 };
+  // A: antebraços na altura do peito, um sob as costas dela e o outro sob os joelhos; B sentada no colo (quadril no meio dele),
+  // o tronco e as coxas um pouco erguidos, as pernas juntas como uma cauda, o braço de dentro no pescoço dele
+  const HOLD = { lean: -.15, hd: .3, side: 0, tw: 0, hy: 0, ...A(.55, 1.15, -1.0), lL: [.25, .3, .3], lR: [.25, -.3, .3], tail: .7, sq: 1 };
+  const LIE = { lean: 0, hd: -.2, side: 0, tw: 0, hy: 0, aL: [.67, .81, -.6], aR: [1.9, 1.2, -.3], lL: [.6, HP, .75], lR: [.65, HP, .7], tail: 1, sq: 1 };
   const up = tb => easeIO(seg(tb, .45, 1.5));
   const windA = clip(4, [[1, DPREP_A], [4, { ...DPREP_A, sq: .86 }]]), windB = clip(4, [[1, DPREP_B], [4, { ...DPREP_B, sq: .84 }]]);
   const riseA = clip(4, [[.4, { ...DPREP_A, sq: .84 }], [1.4, HOLD], [4, HOLD]]);
-  const riseB = clip(4, [[.4, { lean: .1, hd: -.1, ...A(2.3, .3, -.3), lL: [.6, HP, 1.6], lR: [.6, HP, 1.6], sq: 1.05 }], [1.5, LIE], [4, LIE]], tb => ({ flip: -1.45 * up(tb), tz: .95 * up(tb) }));
-  const finA = clip(4, [[1, HOLD], [4, HOLD]]), finB = clip(4, [[1, LIE], [4, LIE]], () => ({ flip: -1.45, tz: .95 }));
+  const riseB = clip(4, [[.4, { lean: .1, hd: -.1, ...A(2.3, .3, -.3), lL: [.6, HP, 1.6], lR: [.6, HP, 1.6], sq: 1.05 }], [1.5, LIE], [4, LIE]], tb => ({ flip: -1.3 * up(tb), tz: 1.65 * up(tb) }));
+  const finA = clip(4, [[1, HOLD], [4, HOLD]]), finB = clip(4, [[1, LIE], [4, LIE]], () => ({ flip: -1.3, tz: 1.65 }));
   DUO_POSES_B[1] = { nm: [1, 2], clips: { wind: [windA, windB], rise: [riseA, riseB], fin: [finA, finB], linger: [finA, finB] }, slot(r, ph, tb, now, P) {
     const k = ph === 'wind' ? sm(0, 2.5, tb) : 1, rot = ph === 'wind' ? 0 : duoRot(now, P, .5);
     if (!r) return dslot(lerp(SIDE, 0, k), lerp(0, -.2, k), rot, 0);
     const s = ph === 'rise' ? up(tb) : ph === 'wind' ? 0 : 1;
-    return dslot(lerp(-SIDE, 0, k), lerp(0, .55, k), rot + HP * s, s * P.reach[0] * .55 + (ph === 'rise' ? .45 * bump(seg(tb, .45, 1.5)) : 0));
+    return dslot(lerp(-SIDE, 0, k), lerp(0, .55, k), rot + HP * s, s * P.reach[0] * .51 + (ph === 'rise' ? .45 * bump(seg(tb, .45, 1.5)) : 0));
   } };
 }
 { // bloco 3: Farol Humano da Barra: A firme, os braços esticados para o alto; B em pé nas mãos dele, as mãos juntas lá em
-  // cima e uma perna em passé, como a torre do farol (o facho de luz sai das mãos dela)
+  // cima e uma perna em passé, como a torre do farol (o facho de luz sai das mãos dela).
+  // Preparação: um de frente para o outro, com um vão entre os dois; A agachado com as mãos juntas embaixo, como um degrau;
+  // B com as mãos nos ombros dele e um joelho erguido, pronta para pisar nas mãos
   const BASE = { lean: -.05, hd: -.6, side: 0, tw: 0, hy: 0, ...A(3.0, .2, 0), lL: [.25, .4, .15], lR: [.25, -.4, .15], tail: .8, sq: 1 };
   const TOP = { ...FIN_B[2] };
+  const PREPA = { lean: .38, hd: .2, side: 0, tw: 0, hy: 0, ...A(.75, 1.6, -.5), lL: [.6, HP, 1.2], lR: [.6, HP, 1.2], tail: .4, sq: .86 };
+  const PREPB = { lean: .22, hd: .12, side: 0, tw: 0, hy: 0, ...A(1.2, 1.5, -.15), lL: [1.2, HP, 1.85], lR: [.08, .1, .35], tail: .6, sq: .98 };
   const up = tb => easeIO(seg(tb, .5, 1.5));
-  const windA = clip(4, [[1, DPREP_A], [4, { ...DPREP_A, sq: .86 }]]), windB = clip(4, [[1, DPREP_B], [4, { ...DPREP_B, sq: .84 }]]);
-  const riseA = clip(4, [[.5, { ...DPREP_A, sq: .84 }], [1.3, BASE], [4, BASE]]);
+  const windA = clip(4, [[1, PREPA], [4, { ...PREPA, sq: .82 }]]), windB = clip(4, [[1, PREPB], [4, { ...PREPB, sq: .95 }]]);
+  const riseA = clip(4, [[.5, { ...PREPA, sq: .8 }], [1.3, BASE], [4, BASE]]);
   const riseB = clip(4, [[.5, { lean: .1, hd: -.1, ...A(2.4, .3, -.3), lL: [.6, HP, 1.6], lR: [.6, HP, 1.6], sq: 1.08 }], [1.6, TOP], [4, TOP]]);
   const finA = clip(4, [[1, BASE], [4, BASE]]), finB = clip(4, [[1, TOP], [4, TOP]]);
   DUO_POSES_B[2] = { nm: [2, 2], clips: { wind: [windA, windB], rise: [riseA, riseB], fin: [finA, finB], linger: [finA, finB] }, slot(r, ph, tb, now, P) {
-    const k = ph === 'wind' ? sm(0, 2.5, tb) : 1;
-    if (!r) return dslot(lerp(SIDE, 0, k), 0, 0, 0);
-    const s = ph === 'rise' ? up(tb) : ph === 'wind' ? 0 : 1;
-    return dslot(lerp(-SIDE, 0, Math.max(k * (1 - s) * .6, s)), lerp(0, -.05, s), 0, s * P.lift + (ph === 'rise' ? .7 * bump(seg(tb, .5, 1.5)) : 0));
+    const k = ph === 'wind' ? sm(0, 2.5, tb) : 1, s = ph === 'rise' ? up(tb) : ph === 'wind' ? 0 : 1, m = k * (1 - s);
+    if (!r) return dslot(SIDE * (1 - s), 0, -HP * m, 0);
+    return dslot(-SIDE * (1 - s), -.05 * s, HP * m, s * P.lift + (ph === 'rise' ? .7 * bump(seg(tb, .5, 1.5)) : 0));
   } };
 }
 
@@ -3348,7 +3396,9 @@ function panoCamera(dt) {
   _pd.set(_mid.x, ay, _mid.z);
   if (PANO.snap || !(dt > 0)) { PANO.pos.copy(_pq); PANO.aim.copy(_pd); PANO.snap = false; }
   else { const k = 1 - Math.exp(-dt * (air ? 6 : 2)); PANO.pos.lerp(_pq, k); PANO.aim.lerp(_pd, k); }
-  cam.position.copy(PANO.pos); cam.lookAt(PANO.aim); cam.updateMatrixWorld();
+  const wc = whaleCamPose(cam.aspect);
+  if (wc) { cam.position.lerpVectors(PANO.pos, wc.pos, wc.w); _pd.lerpVectors(PANO.aim, wc.aim, wc.w); cam.lookAt(_pd); } else { cam.position.copy(PANO.pos); cam.lookAt(PANO.aim); }
+  cam.updateMatrixWorld();
 }
 function panoPosAt(off) { const L = PANO.last; if (!L) return null; return keepOutOfStands(new THREE.Vector3(L.x + Math.sin(L.ang + off) * L.d, L.y, L.z + Math.cos(L.ang + off) * L.d)); }
 function renderPano() {
@@ -4085,8 +4135,11 @@ function updateCamera(pl, dt) {
     tv.aim.set(B.pos.x, 1.4, B.pos.z); tv.pos.set(B.pos.x + 6, 3, B.pos.z + 6); tv.fov = 50; tv.snap = true;
   }
   cam.position.set(tv.pos.x + sx, tv.pos.y + sy, tv.pos.z);
-  if (Math.abs(cam.fov - tv.fov) > .01) { cam.fov = tv.fov; cam.updateProjectionMatrix(); }
-  cam.lookAt(tv.aim); cam.updateMatrixWorld();
+  const wc = whaleCamPose(cam.aspect, 1), fv = wc ? lerp(tv.fov, 36, wc.w) : tv.fov;   // na tela dividida o nome da figura fica na altura da mira: o olho vai mais para baixo
+  if (wc) cam.position.lerpVectors(tv.pos, wc.pos, wc.w);
+  if (Math.abs(cam.fov - fv) > .01) { cam.fov = fv; cam.updateProjectionMatrix(); }
+  if (wc) { _wcL.lerpVectors(tv.aim, wc.aim, wc.w); cam.lookAt(_wcL); } else cam.lookAt(tv.aim);
+  cam.updateMatrixWorld();
 }
 function updCamBtn() {
   for (const pl of PL) pl.camBtn.textContent = OPT.cam === 'tv' ? t('camTv') : t('camCh');
@@ -5990,7 +6043,7 @@ function directorCam(dt) {
     panoCamera(dt);
     // algo do cenário na frente do casal: gira o ângulo da câmera até achar um caminho livre
     const o = occCheck(PL, cam.position);
-    if (o.hit && now > RP.angT) {
+    if (o.hit && now > RP.angT && !whaleCamPose(cam.aspect)) {
       for (const off of [.6, -.6, 1.2, -1.2, 1.9, -1.9, PI]) { const q = panoPosAt(off); if (q && !blocked(q, o.pts)) { RP.angOff += off; break; } }
       RP.angT = now + 1.5; RP.occT0 = -1; PANO.snap = true;
     }
@@ -6501,7 +6554,7 @@ window.UG = {
   ndc: () => ACTIVE.map(pl => { const q = pl.W.chest.clone().project(PANO.cam); return [+q.x.toFixed(2), +q.y.toFixed(2)]; }),
   occWhat() { const pls = state.two && PAIR.w > .5 ? PL : [PL[RP.fp]], out = []; for (const pt of occTargets(pls)) { _ocd.copy(pt).sub(PANO.cam.position); const d = _ocd.length(); _ocd.divideScalar(d); occRay.set(PANO.cam.position, _ocd); occRay.far = d - .35; for (const h of occRay.intersectObjects(occList(), false)) { const o = h.object, w = new THREE.Vector3(); o.getWorldPosition(w); out.push([o.geometry.type, w.toArray().map(v => +v.toFixed(1)), +h.distance.toFixed(1), pt.toArray().map(v => +v.toFixed(1))]); } } const pl0 = PL[RP.fp], pk = pickClearCam(pl0, occTargets([pl0]), PANO.cam.position); return { pick: pk && pk.toArray().map(v => +v.toFixed(1)), occT0: RP.occT0, cam: PANO.cam.position.toArray().map(v => +v.toFixed(1)), fp: RP.fp, tvcur: PL[RP.fp].tv.cur, virt: PL[RP.fp].tv.virt, hits: out }; },
   replayData: () => RP.data && { ph: RP.data.ph, two: RP.data.two, chars: RP.data.chars, n: RP.data.p.map(x => x.length), miss: RP.data.p.map(x => x.filter(r => r[0] === 2 || r[2] === 2).length) },
-  replay: (seg, o, c) => { if (o) RP.orient = o; if (c) RP.cam = c; playReplay(seg || 0); }, rpLock: (pos, aim, fov) => { RP.lock = pos ? { pos, aim, fov } : null; }, pairPos: () => ({ pos: PAIR.pos.toArray(), yaw: PAIR.yaw, pl: PL.map(q => q.W.chest.toArray()) }), perfectReplay: (ph, two, chars) => perfectReplay(ph, two, chars), whale: () => WORLD3 && { t: +WORLD3.whale.t.toFixed(2), at: WORLD3.whale.at.toArray(), w: +BALL.w.toFixed(2), target: BALL.target }, replayStop: () => replayStop(), rpx: () => ({ t0: RP.t0, t1: RP.t1, paused: state.paused, drag: !!RP.drag, seek: RP.seek, tilt: TILT.q, rotQ: PANO.rotQ, intro: RP.intro && +RP.intro.t.toFixed(2), frac: +rpFrac().toFixed(3), songT: +state.songT.toFixed(2), mus: MUS.on && !MUS.end, stT: ACTIVE.map(pl => pl.stage ? +pl.stage.t.toFixed(2) : null) }), rpSeek: f => rpSeek(f), rp: () => ({ on: !!state.replay, seg: RP.seg, fp: RP.fp, both: RP.both, mode: RP.mode, songT: state.songT, caps: RP.caps.length, score: ACTIVE.map(pl => pl.score), alt: !!RP.alt, angOff: +RP.angOff.toFixed(2), occ: blocked(PANO.cam.position, occTargets(state.two && PAIR.w > .5 ? PL : [PL[RP.fp]])), press: RP.press.length }),
+  replay: (seg, o, c) => { if (o) RP.orient = o; if (c) RP.cam = c; playReplay(seg || 0); }, rpLock: (pos, aim, fov) => { RP.lock = pos ? { pos, aim, fov } : null; }, pairPos: () => ({ pos: PAIR.pos.toArray(), yaw: PAIR.yaw, pl: PL.map(q => q.W.chest.toArray()) }), wcam: () => { const r = v => v.toArray().map(x => +x.toFixed(2)), d = new THREE.Vector3(); PANO.cam.getWorldDirection(d); return { c: WORLD3 && +WORLD3.whale.ct.toFixed(2), wc: r(WC.pos), aim: r(WC.aim), w: +WC.w.toFixed(2), cam: r(PANO.cam.position), dir: r(d), fov: PANO.cam.fov, asp: +PANO.cam.aspect.toFixed(2), P: r(PAIR.pos), whale: WORLD3 && r(WORLD3.whale.g.position), at: WORLD3 && r(WORLD3.whale.at) }; }, bones: () => PL.map(q => { const U_ = q.uni, o = { yaw: +q.uni.root.rotation.y.toFixed(3), root: U_.root.position.toArray().map(v => +v.toFixed(2)) }; for (const k of ['chest', 'hornTip', 'handL', 'handR', 'hpL', 'hpR', 'knL', 'knR', 'skL', 'skR', 'shL', 'shR']) { const v = new THREE.Vector3(); U_[k].getWorldPosition(v); o[k] = v.toArray().map(x => +x.toFixed(2)); } return o; }), perfectReplay: (ph, two, chars) => perfectReplay(ph, two, chars), whale: () => WORLD3 && { eye: +WORLD3.whale.eyes[0].scale.y.toFixed(2), t: +WORLD3.whale.t.toFixed(2), at: WORLD3.whale.at.toArray(), w: +BALL.w.toFixed(2), target: BALL.target }, replayStop: () => replayStop(), rpx: () => ({ t0: RP.t0, t1: RP.t1, paused: state.paused, drag: !!RP.drag, seek: RP.seek, tilt: TILT.q, rotQ: PANO.rotQ, intro: RP.intro && +RP.intro.t.toFixed(2), frac: +rpFrac().toFixed(3), songT: +state.songT.toFixed(2), mus: MUS.on && !MUS.end, stT: ACTIVE.map(pl => pl.stage ? +pl.stage.t.toFixed(2) : null) }), rpSeek: f => rpSeek(f), rp: () => ({ on: !!state.replay, seg: RP.seg, fp: RP.fp, both: RP.both, mode: RP.mode, songT: state.songT, caps: RP.caps.length, score: ACTIVE.map(pl => pl.score), alt: !!RP.alt, angOff: +RP.angOff.toFixed(2), occ: blocked(PANO.cam.position, occTargets(state.two && PAIR.w > .5 ? PL : [PL[RP.fp]])), press: RP.press.length }),
   exportReplay: async (seg, o, c) => { if (o) RP.orient = o; if (c) RP.cam = c; await exportReplay(seg || 0); const E = RP.exp; return E && { ok: !!E.blob, size: E.blob ? E.blob.size : 0, codec: E.codec, error: E.error, name: E.name }; },
   exportBlob: async () => { const E = RP.exp; if (!E || !E.blob) return null; const b = new Uint8Array(await E.blob.arrayBuffer()); let s = ''; for (let i = 0; i < b.length; i += 32768) s += String.fromCharCode.apply(null, b.subarray(i, i + 32768)); return btoa(s); }, ball: () => ({ target: BALL.target, w: +BALL.w.toFixed(3), at: BALL.at.toArray().map(v => +v.toFixed(2)) }),
   gap: () => +((((PL[1].base.s - PL[0].base.s) % PATH_L) + PATH_L) % PATH_L / PATH_L).toFixed(3)
