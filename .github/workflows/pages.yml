@@ -1,7 +1,7 @@
 name: Publicar no GitHub Pages
 on:
   push:
-    branches: [main, dupla-wifi]
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
@@ -24,7 +24,8 @@ jobs:
         run: |
           mkdir _site
           cp -r index.html teste-dupla.html manifest.webmanifest sw.js icons fonts vendor _site/
-          # versão em teste da dupla em dois celulares (ramo dupla-wifi) em /dupla/; o jogo publicado (main) fica na raiz
+          # versão em teste da dupla em dois celulares (ramo dupla-wifi) em /dupla/; o jogo publicado (main) fica na raiz.
+          # Só o main publica (regra do ambiente github-pages): depois de atualizar o ramo, rodar este fluxo à mão no main.
           if git fetch --depth 1 origin dupla-wifi; then
             mkdir _dupla _site/dupla && git archive FETCH_HEAD | tar -x -C _dupla
             cp -r _dupla/index.html _dupla/mp-net.js _dupla/icons _dupla/fonts _dupla/vendor _site/dupla/
