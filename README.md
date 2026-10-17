@@ -1,4 +1,4 @@
-# Galope no Gelo · Galope en el Hielo · Gallop on Ice · 冰上奔腾
+# Galope Mágico · Magic Gallop · 魔法奔腾
 
 Jogo de ritmo para celular: unicórnios de pantufa patinam no gelo, numa praça de Buenos Aires, numa discoteca neon dos anos 70 ou numa pista de patins inline na areia da Praia da Barra, em Salvador, com visual de PlayStation 1.
 

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#160d38">
-<meta name="description" content="Jogo de ritmo: unicórnios de pantufa patinam no gelo em Buenos Aires e numa discoteca neon dos anos 70. Para 1 ou 2 jogadores.">
+<meta name="description" content="Galope Mágico, jogo de ritmo: unicórnios de pantufa patinam em Buenos Aires, numa discoteca neon dos anos 70 e na Praia da Barra, em Salvador. Para 1 ou 2 jogadores, em português, espanhol, inglês e chinês.">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -13,7 +13,8 @@
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="preload" href="fonts/titan-one-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/silkscreen-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<title>Galope no Gelo</title>
+<title>Galope Mágico</title>
+<meta name="apple-mobile-web-app-title" content="Galope Mágico">
 <style>
 @font-face{font-family:"Titan One";src:url(fonts/titan-one-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
 @font-face{font-family:"M PLUS Rounded 1c";src:url(fonts/m-plus-rounded-1c-latin-500-normal.woff2) format("woff2");font-weight:500;font-display:swap}
@@ -405,7 +406,7 @@ div.opt{cursor:default}
   <section id="title" class="screen">
     <div class="flags" role="group" aria-label="Idioma / Language / 语言"><button class="flag" data-lang="pt"></button><button class="flag" data-lang="es"></button><button class="flag" data-lang="en"></button><button class="flag" data-lang="zh"></button></div>
     <div>
-      <div class="logo"><span class="l1" data-i18n="logo1">Galope</span><span class="l2" data-i18n="logo2">no Gelo</span></div>
+      <div class="logo"><span class="l1" data-i18n="logo1">Galope</span><span class="l2" data-i18n="logo2">Mágico</span></div>
       <p class="sub" data-i18n="sub"></p>
     </div>
     <div class="menu">
@@ -630,7 +631,7 @@ const app = $('#app');
 /* ============================== idiomas ============================== */
 const STR = {
   pt: {
-    logo1: 'Galope', logo2: 'no Gelo', appName: 'Galope no Gelo', sub: 'Ritmo · patins · purpurina', pTag: 'J',
+    logo1: 'Galope', logo2: 'Mágico', appName: 'Galope Mágico', sub: 'Ritmo · patins · purpurina', pTag: 'J',
     p1: '1 jogador', p2: '2 jogadores', demo: 'Ver demonstração', options: 'Opções', album: 'Álbum',
     hint: 'Toque o casco <b>rosa</b> (esquerda) e o <b>azul</b> (direita) quando cada estrela chegar ao anel. Segure os dois na estrela longa.',
     points: 'PONTOS', block: 'Bloco', blocks: ['Básico', 'Avançado', 'Mágico'],
@@ -666,7 +667,7 @@ const STR = {
     rpMaking: 'Gerando o vídeo… {p}%', rpAudio: 'Gravando o som… {p}%', rpDone: 'Vídeo pronto!', rpSave: 'Salvar ou compartilhar', rpClose: 'Fechar', rpFail: 'Não deu para gerar o vídeo neste aparelho.', close: 'Fechar'
   },
   es: {
-    logo1: 'Galope', logo2: 'en el Hielo', appName: 'Galope en el Hielo', sub: 'Ritmo · patines · brillantina', pTag: 'J',
+    logo1: 'Galope', logo2: 'Mágico', appName: 'Galope Mágico', sub: 'Ritmo · patines · brillantina', pTag: 'J',
     p1: '1 jugador', p2: '2 jugadores', demo: 'Ver demostración', options: 'Opciones', album: 'Álbum',
     hint: 'Tocá el casco <b>rosa</b> (izquierda) y el <b>azul</b> (derecha) cuando cada estrella llegue al anillo. Mantené los dos en la estrella larga.',
     points: 'PUNTOS', block: 'Bloque', blocks: ['Básico', 'Avanzado', 'Mágico'],
@@ -702,7 +703,7 @@ const STR = {
     rpMaking: 'Generando el video… {p}%', rpAudio: 'Grabando el sonido… {p}%', rpDone: '¡Video listo!', rpSave: 'Guardar o compartir', rpClose: 'Cerrar', rpFail: 'No se pudo generar el video en este dispositivo.', close: 'Cerrar'
   },
   en: {
-    logo1: 'Gallop', logo2: 'on Ice', appName: 'Gallop on Ice', sub: 'Rhythm · skates · glitter', pTag: 'P',
+    logo1: 'Magic', logo2: 'Gallop', appName: 'Magic Gallop', sub: 'Rhythm · skates · glitter', pTag: 'P',
     p1: '1 player', p2: '2 players', demo: 'Watch demo', options: 'Options', album: 'Album',
     hint: 'Tap the <b>pink</b> hoof (left) and the <b>blue</b> one (right) when each star reaches the ring. Hold both on the long star.',
     points: 'POINTS', block: 'Block', blocks: ['Basic', 'Advanced', 'Magic'],
@@ -738,7 +739,7 @@ const STR = {
     rpMaking: 'Making the video… {p}%', rpAudio: 'Recording the sound… {p}%', rpDone: 'Video ready!', rpSave: 'Save or share', rpClose: 'Close', rpFail: 'The video could not be made on this device.', close: 'Close'
   },
   zh: {
-    logo1: '奔腾', logo2: '冰上', appName: '冰上奔腾', sub: '节奏 · 溜冰 · 亮片', pTag: 'P',
+    logo1: '魔法', logo2: '奔腾', appName: '魔法奔腾', sub: '节奏 · 溜冰 · 亮片', pTag: 'P',
     p1: '单人', p2: '双人', demo: '观看演示', options: '设置', album: '图鉴',
     hint: '星星到达圆环时，点击对应的<b>粉色</b>蹄子（左）或<b>蓝色</b>蹄子（右）。遇到长星星时，两个蹄子一起按住。',
     points: '得分', block: '乐段', blocks: ['基础', '进阶', '魔法'],
@@ -823,7 +824,7 @@ const isCJK = s => /[\u3000-\u9fff\uff00-\uffef]/.test(s), CANVAS_CJK = '"PingFa
 const fmt = n => Math.round(n).toLocaleString(LOCALE[OPT.lang] || 'pt-BR');
 
 /* ============================== mapa da música ============================== */
-const APP_VERSION = '19';   // subir junto com VERSION em sw.js a cada publicação
+const APP_VERSION = '20';   // subir junto com VERSION em sw.js a cada publicação
 const BPM = 120, BEAT = 60 / BPM, MEAS = BEAT * 4, S8 = BEAT / 2, S16 = BEAT / 4;
 const BLOCK_START = [4, 14, 24], TOTAL_MEAS = 36;
 // manobra de cada etapa do bloco: [tipo (0 deslize, 1 giro, 2 salto), nível dentro do tipo]
