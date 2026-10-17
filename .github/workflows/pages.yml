@@ -1,7 +1,7 @@
 name: Publicar no GitHub Pages
 on:
   push:
-    branches: [main]
+    branches: [main, dupla-wifi]
   workflow_dispatch:
 permissions:
   contents: read
@@ -18,10 +18,21 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: main
       - name: Montar o site
         run: |
           mkdir _site
           cp -r index.html teste-dupla.html manifest.webmanifest sw.js icons fonts vendor _site/
+          # versão em teste da dupla em dois celulares (ramo dupla-wifi) em /dupla/; o jogo publicado (main) fica na raiz
+          if git fetch --depth 1 origin dupla-wifi; then
+            mkdir _dupla _site/dupla && git archive FETCH_HEAD | tar -x -C _dupla
+            cp -r _dupla/index.html _dupla/mp-net.js _dupla/icons _dupla/fonts _dupla/vendor _site/dupla/
+            sha=$(git rev-parse --short FETCH_HEAD)
+            # sem service worker nem manifesto próprios; mp-net.js com versão no endereço (o service worker da raiz guarda cópia)
+            sed -i -e "s#src=\"mp-net.js\"#src=\"mp-net.js?v=$sha\"#" -e "s#navigator.serviceWorker.register('sw.js')#Promise.resolve()#" -e "s#const APP_VERSION = '\([0-9]*\)'#const APP_VERSION = '\1 teste $sha'#" _site/dupla/index.html
+            sed -i -e "s#'vendor/peerjs.min.js'#'vendor/peerjs.min.js?v=$sha'#g" _site/dupla/mp-net.js
+          fi
           echo "::notice::site montado com $(find _site -type f | wc -l) arquivos"
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
