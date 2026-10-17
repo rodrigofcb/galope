@@ -390,6 +390,7 @@ div.opt{cursor:default}
 .album li small{display:block;font-family:var(--f-pixel);font-size:9px;font-weight:400;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
 .album.big li{font-size:15px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.07)}
 @media (prefers-reduced-motion:reduce){.burst{animation:none}.nm.t3 .c{animation:drop .3s both}}
+/* @@MP-CSS@@ (dupla em dois celulares: estilos da interface entram aqui) */
 </style>
 </head>
 <body>
@@ -576,6 +577,7 @@ div.opt{cursor:default}
   </section>
 </div>
 
+<!-- @@MP-HTML@@ (dupla em dois celulares: telas da interface entram aqui) -->
 <template id="pvT">
   <div class="pv">
     <canvas class="lanes"></canvas>
@@ -602,6 +604,7 @@ div.opt{cursor:default}
 </template>
 
 <script src="vendor/three.min.js"></script>
+<script src="mp-net.js"></script>
 <script>
 (() => {
 'use strict';
@@ -6674,6 +6677,7 @@ window.UG = {
   exportBlob: async () => { const E = RP.exp; if (!E || !E.blob) return null; const b = new Uint8Array(await E.blob.arrayBuffer()); let s = ''; for (let i = 0; i < b.length; i += 32768) s += String.fromCharCode.apply(null, b.subarray(i, i + 32768)); return btoa(s); }, ball: () => ({ target: BALL.target, w: +BALL.w.toFixed(3), at: BALL.at.toArray().map(v => +v.toFixed(2)) }),
   gap: () => +((((PL[1].base.s - PL[0].base.s) % PATH_L) + PATH_L) % PATH_L / PATH_L).toFixed(3)
 };
+// @@MP-JS@@ (dupla em dois celulares: código da interface entra aqui, dentro do escopo do jogo)
 })();
 </script>
 </body>
