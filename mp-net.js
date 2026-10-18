@@ -303,9 +303,10 @@ const NET = window.NET = {
   toShared(l) { return l + offNow(); },
   ready() { if (NET.synced) return Promise.resolve(); const s = S; return new Promise(r => { if (s) s.wait.push(r); }); },
   // instante da sala (ms) → tempo do relógio do som em que a amostra precisa sair para ser OUVIDA nesse instante neste celular
-  ctxTime(ac, sh) {
+  // (noAdj: sem o ajuste deste celular; a música só em quem criou a sala não usa o ajuste)
+  ctxTime(ac, sh, noAdj) {
     ac = ac || C.ac; if (!ac) return NaN;
-    const p = NET.toLocal(sh) + NET.adj, n = pnow(), ts = ac.getOutputTimestamp ? ac.getOutputTimestamp() : null;
+    const p = NET.toLocal(sh) + (noAdj ? 0 : NET.adj), n = pnow(), ts = ac.getOutputTimestamp ? ac.getOutputTimestamp() : null;
     if (ts && ts.performanceTime > 0 && ts.contextTime > 0 && Math.abs(ts.performanceTime - n) < 2000) return ts.contextTime + (p - ts.performanceTime) / 1000;
     return ac.currentTime + (p - n) / 1000 - ((ac.outputLatency || 0) || (ac.baseLatency || 0));
   },
