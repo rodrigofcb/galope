@@ -1,0 +1,2 @@
+# commit do ramo dupla-wifi publicado em /dupla/ (versão em teste da dupla em dois celulares)
+edf251ff68737e1f7a4d84f572cf42a41b0e2a35

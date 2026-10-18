@@ -25,8 +25,10 @@ jobs:
           mkdir _site
           cp -r index.html teste-dupla.html manifest.webmanifest sw.js icons fonts vendor _site/
           # versão em teste da dupla em dois celulares (ramo dupla-wifi) em /dupla/; o jogo publicado (main) fica na raiz.
-          # Só o main publica (regra do ambiente github-pages): depois de atualizar o ramo, rodar este fluxo à mão no main.
-          if git fetch --depth 1 origin dupla-wifi; then
+          # Só o main publica (regra do ambiente github-pages).
+          # .github/dupla-teste.txt guarda o commit do ramo publicado; mudar esse arquivo no main republica a cópia de teste
+          ref=dupla-wifi; [ -f .github/dupla-teste.txt ] && ref=$(grep -v '^#' .github/dupla-teste.txt | head -1)
+          if git fetch --depth 1 origin "$ref"; then
             mkdir _dupla _site/dupla && git archive FETCH_HEAD | tar -x -C _dupla
             cp -r _dupla/index.html _dupla/mp-net.js _dupla/icons _dupla/fonts _dupla/vendor _site/dupla/
             sha=$(git rev-parse --short FETCH_HEAD)
